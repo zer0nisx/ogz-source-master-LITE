@@ -221,6 +221,19 @@ void RShaderMgr::Update()
 	dev->SetVertexShaderConstantF(MATERIAL_DIFFUSE, (float*)&mpMtrl->m_diffuse, 1);
 	dev->SetVertexShaderConstantF(MATERIAL_SPECULAR, (float*)&mpMtrl->m_specular, 1);
 	dev->SetVertexShaderConstantF(MATERIAL_POWER, (float*)&mpMtrl->m_power, 1);
+	
+	// Update fog constants
+	// Constants: x=1.0, y=FogStart, z=FogEnd, w=1.0/(FogEnd-FogStart)
+	float fogStart = RGetFogNear();
+	float fogEnd = RGetFogFar();
+	float fogRange = fogEnd - fogStart;
+	float fogInvRange = (fogRange > 0.0001f) ? (1.0f / fogRange) : 0.0f;
+	
+	float fConst[] = {
+		1.0f, fogStart, fogEnd, fogInvRange
+	};
+	
+	dev->SetVertexShaderConstantF(CONSTANTS, fConst, 1);
 }
 
 void RShaderMgr::init()
@@ -230,8 +243,9 @@ void RShaderMgr::init()
 	v4 constv{ 0, 0, 0, 0 };
 	v4 constvatten{ 0.1f, 0.1f, 0.1f, 0.1f };
 
+	// Constants: x=1.0, y=FogStart, z=FogEnd, w=1.0/(FogEnd-FogStart)
 	float fConst[] = {
-		1.0f, -1.0f, 0.5f, 255.f
+		1.0f, 0.0f, 1000.0f, 0.001f  // Default: sin fog (FogStart=0, FogEnd=1000, range=1000)
 	};
 
 	dev->SetVertexShaderConstantF(CONSTANTS, fConst, 1);

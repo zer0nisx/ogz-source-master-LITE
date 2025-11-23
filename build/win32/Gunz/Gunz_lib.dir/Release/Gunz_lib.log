@@ -1,1 +1,11 @@
-﻿  Gunz_lib.vcxproj -> C:\ogz-source-master-LITE\build\win32\lib\Release\Gunz_lib.lib
+﻿  Gunz_lib_ORIGINAL_CXX_unity.cxx
+C:\ogz-source-master-LITE\src\Gunz\ZCharacterObject.cpp(305,3): warning C4834: Descartar el valor de retorno de la función con el atributo [[nodiscard]]
+  (compilando archivo de origen "Release/cotire/Gunz_lib_ORIGINAL_CXX_unity.cxx")
+  
+C:\ogz-source-master-LITE\src\Gunz\ZCharacterObject.cpp(306,3): warning C4834: Descartar el valor de retorno de la función con el atributo [[nodiscard]]
+  (compilando archivo de origen "Release/cotire/Gunz_lib_ORIGINAL_CXX_unity.cxx")
+  
+C:\ogz-source-master-LITE\src\Gunz\ZCharacterObject.cpp(307,3): warning C4834: Descartar el valor de retorno de la función con el atributo [[nodiscard]]
+  (compilando archivo de origen "Release/cotire/Gunz_lib_ORIGINAL_CXX_unity.cxx")
+  
+  Gunz_lib.vcxproj -> C:\ogz-source-master-LITE\build\win32\lib\Release\Gunz_lib.lib

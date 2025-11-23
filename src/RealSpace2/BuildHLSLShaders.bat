@@ -11,7 +11,7 @@ call:CompileSingle DepthCopy DepthCopy vs_main /Tvs_3_0 ps_main /Tps_3_0
 call:CompilePS VisualizeLinearDepth
 call:CompilePS Monochrome
 call:CompilePS ColorInvert
-call:CompileShader skin /Tvs_1_1
+call:CompileShader skin /Tvs_3_0
 goto:eof
 
 :CompileVSPS

@@ -1,7 +1,7 @@
 float4x3 Identity : register(c0);
 float4x3 World : register(c3);
 float4x4 ViewProjection : register(c6);
-float4 Constants : register(c10);
+float4 Constants : register(c10);  // x=1.0, y=FogStart, z=FogEnd, w=1.0/(FogEnd-FogStart)
 float3 CameraPosition : register(c11);
 float4 MaterialAmbient : register(c12);
 float4 MaterialDiffuse : register(c13);
@@ -115,7 +115,20 @@ void main(float4 Pos            : POSITION,
 	// Pasar coordenadas de textura
 	oT0 = T0;
 	
-	// Fog hardcodeado a 1.0 (sin fog)
-	// Nota: Si se necesita fog en el futuro, calcular basado en distancia a cámara
-	oFog = 1.0f;
+	// Calcular fog basado en distancia desde cámara
+	// Fog linear: fogFactor = (FogEnd - dist) / (FogEnd - FogStart)
+	// Constants.y = FogStart, Constants.z = FogEnd, Constants.w = 1.0/(FogEnd-FogStart)
+	// Si Constants.w es 0.0, no hay fog configurado (retornar 1.0)
+	float3 cameraToVertex = TransformedPos - CameraPosition;
+	float distToCamera = length(cameraToVertex);
+	
+	// Calcular factor de fog (1.0 = sin fog, 0.0 = fog completo)
+	// Si Constants.w es 0, no hay fog, usar lerp para seleccionar entre fogFactor y 1.0
+	float fogFactor = (Constants.z - distToCamera) * Constants.w;
+	fogFactor = saturate(fogFactor);  // Clamp entre 0.0 y 1.0
+	
+	// Si no hay fog configurado (Constants.w == 0), retornar 1.0
+	// Usar step para detectar si hay fog: step(0.0001, Constants.w) retorna 1 si Constants.w >= 0.0001
+	float fogEnabled = step(0.0001f, Constants.w);
+	oFog = lerp(1.0f, fogFactor, fogEnabled);
 }
