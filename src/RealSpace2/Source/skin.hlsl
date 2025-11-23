@@ -40,17 +40,30 @@ float4x3 Get4x3(int Index)
 	return ret;
 }
 
+// Calcula la iluminación difusa de una luz puntual con atenuación
 float4 GetLightDiffuse(float3 VertexPosition, float3 VertexNormal, 
-	float3 LightPosition, float4 Diffuse, float4 Attenuation)
+	float3 LightPosition, float4 LightDiffuse, float4 Attenuation)
 {
-	float3 diff = LightPosition - VertexPosition;
-	float lsq = dot(diff, diff);
-	float l = rsqrt(lsq);
-	float3 DirVertexToLight = mul(diff, l);
-	float something = 1 / dot(dst(lsq, l).xyz, Attenuation.xyz);
-	float somethingelse = dot(VertexNormal, DirVertexToLight);
-	float abc = mul(max(somethingelse, 0), something);
-	return mul(Diffuse, abc);
+	// Vector desde vértice a luz
+	float3 lightDir = LightPosition - VertexPosition;
+	
+	// Distancia al cuadrado y distancia inversa
+	float distSq = dot(lightDir, lightDir);
+	float invDist = rsqrt(distSq);
+	
+	// Dirección normalizada de la luz
+	float3 normalizedLightDir = lightDir * invDist;
+	
+	// Cálculo de atenuación: 1 / (Attenuation0 + Attenuation1 * dist + Attenuation2 * dist^2)
+	// Usando dst() para optimización: dst(lsq, l) = (1, lsq, lsq, l)
+	float attenuationFactor = 1.0f / dot(dst(distSq, invDist).xyz, Attenuation.xyz);
+	
+	// Factor de iluminación difusa (dot product normalizado)
+	float NdotL = dot(VertexNormal, normalizedLightDir);
+	float diffuseFactor = max(NdotL, 0.0f) * attenuationFactor;
+	
+	// Retornar color difuso modulado
+	return LightDiffuse * diffuseFactor;
 }
 
 void main(float4 Pos            : POSITION,
@@ -63,29 +76,46 @@ void main(float4 Pos            : POSITION,
       out float4 oDiffuse       : COLOR0,
       out float  oFog           : FOG)
 {
-	// Compute position
+	// Skinning de posición: transformar vértice usando hasta 3 huesos
 	float3 TransformedPos =
 		mul(mul(Pos, Get4x3(Indices.x)), Weight.x) +
 		mul(mul(Pos, Get4x3(Indices.y)), Weight.y) +
-		mul(mul(Pos, Get4x3(Indices.z)), 1 - (Weight.x + Weight.y));
+		mul(mul(Pos, Get4x3(Indices.z)), 1.0f - (Weight.x + Weight.y));
 
-	TransformedPos = mul(float4(TransformedPos, 1), World);
-	oPos = mul(float4(TransformedPos, 1), ViewProjection);
+	// Transformar a espacio de mundo y luego a espacio de pantalla
+	TransformedPos = mul(float4(TransformedPos, 1.0f), World);
+	oPos = mul(float4(TransformedPos, 1.0f), ViewProjection);
 
-	// Compute lighting
+	// Skinning de normal: transformar normal usando las mismas matrices de huesos
 	float3 TransformedNormal = 
 		mul(mul(Normal, Get3x3(Indices.x)), Weight.x) +
 		mul(mul(Normal, Get3x3(Indices.y)), Weight.y) +
-		mul(mul(Normal, Get3x3(Indices.z)), 1 - (Weight.x + Weight.y));
+		mul(mul(Normal, Get3x3(Indices.z)), 1.0f - (Weight.x + Weight.y));
+	
+	// CORRECCIÓN CRÍTICA: Normalizar la normal después del skinning
+	// Esto es esencial para una iluminación correcta, ya que las transformaciones
+	// de skinning pueden hacer que la normal no esté normalizada
+	TransformedNormal = normalize(TransformedNormal);
 
+	// Calcular iluminación difusa de ambas luces
 	oDiffuse = GetLightDiffuse(TransformedPos, TransformedNormal,
 		Light0Position, Light0Diffuse, Light0Attenuation);
 	oDiffuse += GetLightDiffuse(TransformedPos, TransformedNormal,
 		Light1Position, Light1Diffuse, Light1Attenuation);
+	
+	// Aplicar color difuso del material
 	oDiffuse *= MaterialDiffuse;
+	
+	// Agregar iluminación ambiente (global + luces)
 	oDiffuse += (Light0Ambient + Light1Ambient + GlobalAmbient) * MaterialAmbient;
+	
+	// Preservar alpha del material
 	oDiffuse.w = MaterialDiffuse.w;
 
+	// Pasar coordenadas de textura
 	oT0 = T0;
-	oFog = 1;
+	
+	// Fog hardcodeado a 1.0 (sin fog)
+	// Nota: Si se necesita fog en el futuro, calcular basado en distancia a cámara
+	oFog = 1.0f;
 }
