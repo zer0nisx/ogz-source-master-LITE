@@ -437,12 +437,12 @@ void ZCharacter::UpdateLoadAnimation()
 void ZCharacter::UpdateMotion(float fDelta)
 {
 	if (m_bInitialized == false) return;
-	// Á¡ÇÁ·Î ¸ð¼Ç ¹Ù²Ù±â - ÀÌÀü»óÅÂ ¹é¾÷
-	// Á¡ÇÁ´Â ¾î¶² »óÅÂ¿¡¼­µç ¸ð¼ÇÀÌ¹Ù²ð¼öÀÖÀ¸¹Ç·Î..
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Ù²Ù±ï¿½ - ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½î¶² ï¿½ï¿½ï¿½Â¿ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ì¹Ù²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½..
 	// run , idle
 
-	// ÀÚ½ÅÀÇ Å¸°Ù¹æÇâ¿¡ Ä³¸¯ÅÍÀÇ ¹æÇâÀ» ¸ÂÃá´Ù..
-	if (IsDead()) { //Çã¸® º¯Çü ¾ø´Ù~
+	// ï¿½Ú½ï¿½ï¿½ï¿½ Å¸ï¿½Ù¹ï¿½ï¿½â¿¡ Ä³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½..
+	if (IsDead()) { //ï¿½ã¸® ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½~
 
 		m_pVMesh->m_vRotXYZ.x = 0.f;
 		m_pVMesh->m_vRotXYZ.y = 0.f;
@@ -476,7 +476,7 @@ void ZCharacter::UpdateMotion(float fDelta)
 			bInversed = true;
 		}
 
-		// fAngleLower ´Â ÇöÀç ¹ß¹æÇâ°ú ÇØ¾ßÇÏ´Â ¹ß¹æÇâÀÇ °¢µµ Â÷ÀÌ
+		// fAngleLower ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ß¹ï¿½ï¿½ï¿½ï¿½ ï¿½Ø¾ï¿½ï¿½Ï´ï¿½ ï¿½ß¹ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		float fAngleLower = GetAngleOfVectors(dir, m_DirectionLower);
 
 		rmatrix mat;
@@ -490,17 +490,17 @@ void ZCharacter::UpdateMotion(float fDelta)
 			m_DirectionLower = m_DirectionLower * mat;
 		}
 
-		// ÀÏÁ¤°¢µµ ÀÌ»óµÇ¸é ÇÏÃ¼¸¦ Æ²¾îÁØ´Ù
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì»ï¿½Ç¸ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ Æ²ï¿½ï¿½ï¿½Ø´ï¿½
 		if (fAngleLower > 5.f / 180.f * PI_FLOAT)
 		{
 			mat = RGetRotZRad(max(-ROTATION_SPEED * fDelta / 180.f * PI_FLOAT, -fAngleLower));
 			m_DirectionLower = m_DirectionLower * mat;
 		}
 
-		// »óÃ¼°¡ ÇâÇØ¾ß ÇÏ´Â ¹æÇâÀº ¾ðÁ¦³ª Å¸°Ù¹æÇâ
+		// ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½Ø¾ï¿½ ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½Ù¹ï¿½ï¿½ï¿½
 		float fAngle = GetAngleOfVectors(m_TargetDir, m_DirectionLower);
 
-		// ±×·¯³ª ÇÏÃ¼¿ÍÀÇ °¢µµ¸¦ Ç×»ó ÀÏÁ¤°¢µµ ÀÌÇÏ·Î À¯ÁöÇÑ´Ù.
+		// ï¿½×·ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½×»ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ï·ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
 
 		if (fAngle < -65.f / 180.f * PI_FLOAT)
 		{
@@ -518,10 +518,10 @@ void ZCharacter::UpdateMotion(float fDelta)
 
 		m_pVMesh->m_vRotXYZ.x = -fAngle * 180 / PI_FLOAT * .9f;
 
-		// ½ÇÁ¦º¸´Ù ¾à°£ °í°³¸¦ µé¾îÁØ´Ù :)
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½à°£ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ø´ï¿½ :)
 		m_pVMesh->m_vRotXYZ.y = (m_TargetDir.z + 0.05f) * 50.f;
 	}
-	else // ´Þ¸®±â/°¡¸¸ÀÖ±âµîÀÇ ¾Ö´Ï¸ÞÀÌ¼ÇÀÌ ¾Æ´Ï¸é Çã¸®¾Èµ¹¸°´Ù.
+	else // ï¿½Þ¸ï¿½ï¿½ï¿½/ï¿½ï¿½ï¿½ï¿½ï¿½Ö±ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ï¿½ï¿½ ï¿½Æ´Ï¸ï¿½ ï¿½ã¸®ï¿½Èµï¿½ï¿½ï¿½ï¿½ï¿½.
 	{
 		m_Direction = m_TargetDir;
 		m_DirectionLower = m_Direction;
@@ -1218,7 +1218,7 @@ void ZCharacter::UpdateVelocity(float fDelta)
 		forward.z=0;
 		Normalize(forward);
 
-		// ÃÖ´ë°ªÀ» ºñÀ²·Î Á¦¾îÇÑ´Ù.
+		// ï¿½Ö´ë°ªï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
 		float run_speed = RUN_SPEED * fRatio;
 		float back_speed = BACK_SPEED * fRatio;
 		float stop_formax_speed = STOP_FORMAX_SPEED * (1/fRatio);  
@@ -1540,8 +1540,14 @@ void ZCharacter::SetDirection(const rvector& dir)
 
 void ZCharacter::OnKnockback(const rvector& dir, float fForce)
 {
-	if(IsHero())
-		ZCharacterObject::OnKnockback(dir,fForce);
+	// CORRECCIÃ“N: Eliminado filtro IsHero() restrictivo
+	// Anteriormente solo los personajes marcados como "Hero" recibÃ­an knockback,
+	// causando que otros jugadores/personajes no recibieran el efecto visual/fÃ­sico.
+	// Ahora todos los personajes reciben knockback de manera consistente.
+	// 
+	// Nota: ZMyCharacter tiene su propia implementaciÃ³n (override final) que se ejecuta primero,
+	// por lo que este cambio principalmente afecta a otros ZCharacter que no son ZMyCharacter.
+	ZCharacterObject::OnKnockback(dir, fForce);
 }
 
 void ZCharacter::UpdateSound()
@@ -1593,7 +1599,7 @@ void ZCharacter::UpdateSound()
 		if(m_nWhichFootSound!=nCurrFoot && pMaterial) {	
 			if(m_nWhichFootSound==0)
 			{	
-				// ¿Þ¹ß
+				// ï¿½Þ¹ï¿½
 				rvector pos = m_pVMesh->GetLFootPosition();
 				char *szSndName=g_pGame->GetSndNameFromBsp("man_fs_l", pMaterial);
 
@@ -1876,7 +1882,7 @@ void ZCharacter::OutputDebugString_CharacterState()
 
 	ZItem* pItem = m_Items.GetSelectedWeapon();
 
-	// ¼±ÅÃµÈ ¹«±â
+	// ï¿½ï¿½ï¿½Ãµï¿½ ï¿½ï¿½ï¿½ï¿½
 #define IF_SITEM_ENUM(a)		if(a==m_Items.GetSelectedWeaponType())		{ AddTextEnum(m_Items.GetSelectedWeaponType(),a); }
 #define ELSE_IF_SITEM_ENUM(a)	else if(a==m_Items.GetSelectedWeaponType())	{ AddTextEnum(m_Items.GetSelectedWeaponType(),a); }
 
@@ -2127,13 +2133,13 @@ void ZCharacter::InitMesh()
 	pMesh = ZGetMeshMgr()->Get(szMeshName);
 
 	if(!pMesh) {
-		mlog("AddCharacter ¿øÇÏ´Â ¸ðµ¨À» Ã£À»¼ö ¾øÀ½\n");
+		mlog("AddCharacter ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã£ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½\n");
 	}
 
 	int nVMID = g_pGame->m_VisualMeshMgr.Add(pMesh);
 
 	if(nVMID==-1) {
-		mlog("AddCharacter Ä³¸¯ÅÍ »ý¼º ½ÇÆÐ\n");
+		mlog("AddCharacter Ä³ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½\n");
 	}
 
 	m_nVMID = nVMID;
@@ -2402,8 +2408,8 @@ void ZCharacter::ChangeWeapon(MMatchCharItemParts nParts)
 
 	if (pSelectedItemDesc==NULL) {
 		m_Items.SelectWeapon(BackupParts);
-		mlog("¼±ÅÃµÈ ¹«±âÀÇ µ¥ÀÌÅÍ°¡ ¾ø´Ù.\n");
-		mlog("ZCharacter ¹«±â»óÅÂ¿Í RVisualMesh ÀÇ ¹«±â»óÅÂ°¡ Æ²·ÁÁ³´Ù\n");
+		mlog("ï¿½ï¿½ï¿½Ãµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í°ï¿½ ï¿½ï¿½ï¿½ï¿½.\n");
+		mlog("ZCharacter ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¿ï¿½ RVisualMesh ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â°ï¿½ Æ²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½\n");
 		return;
 	}
 
@@ -2434,11 +2440,11 @@ bool ZCharacter::CheckValidShotTime(int nItemID, float fTime, ZItem* pItem)
 			if ( (MWT_DAGGER <= nWeaponType && nWeaponType <= MWT_DOUBLE_KATANA) &&
 				(fTime - GetLastShotTime() >= 0.23f) ) 
 			{
-				// continue Valid... (Ä®Áú Á¤È®ÇÑ ½Ã°£ÃøÁ¤ÀÌ ¾î·Á¿ö ¸ÅÁ÷³Ñ¹ö»ç¿ë.
+				// continue Valid... (Ä®ï¿½ï¿½ ï¿½ï¿½È®ï¿½ï¿½ ï¿½Ã°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¹ï¿½ï¿½ï¿½ï¿½.
 			} else if ( (nWeaponType==MWT_DOUBLE_KATANA || nWeaponType==MWT_DUAL_DAGGER) &&
 				(fTime - GetLastShotTime() >= 0.11f) ) 
 			{
-				// continue Valid... (Ä®Áú Á¤È®ÇÑ ½Ã°£ÃøÁ¤ÀÌ ¾î·Á¿ö ¸ÅÁ÷³Ñ¹ö»ç¿ë.
+				// continue Valid... (Ä®ï¿½ï¿½ ï¿½ï¿½È®ï¿½ï¿½ ï¿½Ã°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¹ï¿½ï¿½ï¿½ï¿½.
 			} else {
 #ifdef _CHECKVALIDSHOTLOG
 				sprintf_safe(szLog, "IGNORE>> [%s] (%u:%u) Interval(%0.2f) Delay(%0.2f) \n", 

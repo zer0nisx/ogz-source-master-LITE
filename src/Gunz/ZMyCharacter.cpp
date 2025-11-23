@@ -1,6 +1,6 @@
 /*
-last modify : Á¤µ¿¼· @ 2006/3/16
-desc : ¹«±â »ç¿ë Å° Ä¿½ºÅÍ¸¶ÀÌÁî °ü·Ã
+last modify : ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ @ 2006/3/16
+desc : ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ Å° Ä¿ï¿½ï¿½ï¿½Í¸ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 */
 
 #include "stdafx.h"
@@ -2430,7 +2430,7 @@ void ZMyCharacter::UpdateCAFactor(float fDelta)
 ////////////////////////////////////////////////////////////
 ZDummyCharacter::ZDummyCharacter() : ZMyCharacter()
 {
-	// ·£´ýÀ¸·Î ¾Æ¹«°Å³ª ÀÔµµ·Ï ¸¸µç´Ù
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Æ¹ï¿½ï¿½Å³ï¿½ ï¿½Ôµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½
 #define _DUMMY_CHARACTER_PRESET		5
 	u32 nMeleePreset[_DUMMY_CHARACTER_PRESET] = { 1, 11, 3, 14, 15 };
 	u32 nPrimaryPreset[_DUMMY_CHARACTER_PRESET] = { 4010, 4013, 5004, 6004, 9001 };
@@ -2831,18 +2831,26 @@ void ZMyCharacter::OnDamaged(ZObject* pAttacker, rvector srcPos, ZDAMAGETYPE dam
 	if (GameType == MMATCH_GAMETYPE_SKILLMAP)
 		return;
 
-	if (GameType == MMATCH_GAMETYPE_TRAINING &&
-		GetRGMain().TrainingSettings.Godmode)
+	if (GameType == MMATCH_GAMETYPE_TRAINING && GetRGMain().TrainingSettings.Godmode)
 	{
 		if (damageType == ZD_MELEE)
 		{
 			OnDamagedAnimation(pAttacker, nMeleeType);
 		}
+		// AddAlert should still be shown even in godmode for visual feedback
+		if (pAttacker)
+			ZGetScreenEffectManager()->AddAlert(GetPosition(), m_Direction, srcPos);
 		return;
 	}
 
+	// Call AddAlert BEFORE ZCharacter::OnDamaged to ensure it's shown even if there are early returns
+	// This is critical for shotgun/antilead damage where validations in ZCharacter::OnDamaged
+	// (like m_bInitialized, IsVisible, IsDead, or bCanAttack) might prevent the alert from showing
+	// AddAlert should show visual feedback for all incoming attacks, even if damage is blocked
+	if (pAttacker)
+		ZGetScreenEffectManager()->AddAlert(GetPosition(), m_Direction, srcPos);
+
 	ZCharacter::OnDamaged(pAttacker, srcPos, damageType, weaponType, fDamage, fPiercingRatio, nMeleeType);
-	ZGetScreenEffectManager()->AddAlert(GetPosition(), m_Direction, srcPos);
 
 	if (damageType == ZD_EXPLOSION)
 	{
@@ -2869,7 +2877,18 @@ void ZMyCharacter::OnKnockback(const rvector& dir, float fForce)
 		vKnockBackDir *= (fForce * BLASTED_KNOCKBACK_RATIO);
 		vKnockBackDir.x = vKnockBackDir.x * 0.2f;
 		vKnockBackDir.y = vKnockBackDir.y * 0.2f;
-		SetVelocity(vKnockBackDir);
+		
+		// CORRECCIÃ“N: Aplicar lÃ­mite de velocidad consistente con knockback normal
+		// Anteriormente solo se limitaba por MAX_SPEED (1000) en UpdateVelocity,
+		// ahora aplicamos MAX_KNOCKBACK_VELOCITY (1700) directamente para consistencia
+		#define MAX_KNOCKBACK_VELOCITY		1700.f
+		rvector vel = vKnockBackDir;
+		if (Magnitude(vel) > MAX_KNOCKBACK_VELOCITY) {
+			Normalize(vel);
+			vel *= MAX_KNOCKBACK_VELOCITY;
+		}
+		SetVelocity(vel);
+		#undef MAX_KNOCKBACK_VELOCITY
 	}
 	else {
 		ZCharacter::OnKnockback(dir, fForce);

@@ -254,12 +254,12 @@ void ZActor::InitMesh(char* szMeshName, MQUEST_NPC nNPCType)
 	if(!pMesh) 
 	{
 		_ASSERT(0);
-		mlog("ZActor::InitMesh() -  ø¯«œ¥¬ ∏µ®¿ª √£¿ªºˆ æ¯¿Ω\n");
+		mlog("ZActor::InitMesh() -  ÔøΩÔøΩÔøΩœ¥ÔøΩ ÔøΩÔøΩÔøΩÔøΩ √£ÔøΩÔøΩÔøΩÔøΩ ÔøΩÔøΩÔøΩÔøΩ\n");
 		return;
 	}
 
 	int nVMID = g_pGame->m_VisualMeshMgr.Add(pMesh);
-	if(nVMID==-1) mlog("ZActor::InitMesh() - ƒ≥∏Ø≈Õ ª˝º∫ Ω«∆–\n");
+	if(nVMID==-1) mlog("ZActor::InitMesh() - ƒ≥ÔøΩÔøΩÔøΩÔøΩ ÔøΩÔøΩÔøΩÔøΩ ÔøΩÔøΩÔøΩÔøΩ\n");
 
 	RVisualMesh* pVMesh = g_pGame->m_VisualMeshMgr.GetFast(nVMID);
 
@@ -830,8 +830,16 @@ void ZActor::OnDamaged(ZObject* pAttacker, rvector srcPos, ZDAMAGETYPE damageTyp
 
 void ZActor::OnKnockback(const rvector& dir, float fForce)
 {
+	// NOTA: Validaci√≥n de control local del NPC
+	// Solo aplica knockback si este NPC est√° bajo control local del cliente.
+	// Esto es necesario porque en un sistema cliente-servidor, solo el cliente que controla
+	// el NPC debe aplicar efectos f√≠sicos para evitar inconsistencias.
 	if(!CheckFlag(AF_MY_CONTROL)) return;
 
+	// NOTA: Esta implementaci√≥n ya est√° correcta y no requiere correcciones.
+	// - No tiene el problema del filtro IsHero() (llama directamente a ZCharacterObject)
+	// - Ya usa el l√≠mite correcto MAX_KNOCKBACK_VELOCITY (1700) v√≠a ZCharacterObject::OnKnockback
+	// - El factor NPC_KNOCKBACK_FACTOR es 1.0, aplicando knockback normal a los NPCs
 #define NPC_KNOCKBACK_FACTOR	1.0f
 
 	ZCharacterObject::OnKnockback(dir,NPC_KNOCKBACK_FACTOR*fForce);
