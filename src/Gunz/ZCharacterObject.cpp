@@ -65,7 +65,9 @@ ZCharacterObject::ZCharacterObject()
 {
 	m_pSoundMaterial[0] = 0;
 
-#define ADD_MODULE(module) m_pModule_##module = AddModule<ZModule_##module>();
+#define ADD_MODULE(module) \
+	m_pModule_##module = AddModule<ZModule_##module>(); \
+	assert(m_pModule_##module != nullptr && "Failed to create ZModule_" #module " in ZCharacterObject constructor");
 	ADD_MODULE(HPAP);
 	ADD_MODULE(Resistance);
 	ADD_MODULE(FireDamage);

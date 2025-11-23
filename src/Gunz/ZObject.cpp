@@ -8,15 +8,19 @@
 
 MImplementRTTI(ZObject, ZModuleContainer);
 
-ZObject::ZObject() : m_Position(0,0,0),m_Direction(1,0,0), m_bInitialized(false), m_UID(MUID(0,0)),
-					 m_fSpawnTime(0.0f), m_fDeadTime(0.0f), m_pVMesh(NULL), m_bVisible(false),
-					 m_bIsNPC(false)
-{ 
+ZObject::ZObject() : m_Position(0, 0, 0), m_Direction(1, 0, 0), m_bInitialized(false), m_UID(MUID(0, 0)),
+m_fSpawnTime(0.0f), m_fDeadTime(0.0f), m_pVMesh(NULL), m_bVisible(false),
+m_bIsNPC(false)
+{
 	m_Collision.bCollideable = true;
-	m_Collision.fRadius = m_Collision.fHeight = 0.0f;
+	m_Collision.fRadius = 0.0f;
+	m_Collision.fHeight = 0.0f;
 
 	m_pModule_Movable = AddModule<ZModule_Movable>();
-	m_pModule_Movable->Active = true;
+	assert(m_pModule_Movable != nullptr && "Failed to create ZModule_Movable in ZObject constructor");
+	if (m_pModule_Movable) {
+		m_pModule_Movable->Active = true;
+	}
 }
 
 void ZObject::OnDraw()
@@ -26,51 +30,46 @@ void ZObject::OnUpdate(float fDelta)
 {
 }
 
-
 void ZObject::Draw()
 {
 	OnDraw();
 }
-
 
 void ZObject::Update(float fDelta)
 {
 	OnUpdate(fDelta);
 }
 
-
-bool ZObject::Pick(int x,int y,RPickInfo* pInfo)
+bool ZObject::Pick(int x, int y, RPickInfo* pInfo)
 {
-	if(m_pVMesh) 
-		return m_pVMesh->Pick(x,y,pInfo);
+	if (m_pVMesh)
+		return m_pVMesh->Pick(x, y, pInfo);
 
 	return false;
 }
 
-
-bool ZObject::Pick(int x,int y,rvector* v,float* f)
+bool ZObject::Pick(int x, int y, rvector* v, float* f)
 {
 	RPickInfo info;
-	bool hr = Pick(x,y,&info);
+	bool hr = Pick(x, y, &info);
 	*v = info.vOut;
 	*f = info.t;
 	return hr;
 }
 
-
 bool ZObject::Pick(const rvector& pos, const rvector& dir, RPickInfo* pInfo)
 {
-	if(m_pVMesh) 
+	if (m_pVMesh)
 		return m_pVMesh->Pick(pos, dir, pInfo);
 
 	return false;
 }
 
-bool ZObject::GetHistory(rvector *pos, rvector *direction, float fTime, rvector* cameradir)
+bool ZObject::GetHistory(rvector* pos, rvector* direction, float fTime, rvector* cameradir)
 {
 	if (!m_pVMesh)
 		return false;
-	
+
 	if (pos)
 		*pos = GetPosition();
 	if (direction)
@@ -86,10 +85,9 @@ void ZObject::SetDirection(const rvector& dir)
 	m_Direction = dir;
 }
 
-
 void ZObject::SetSpawnTime(float fTime)
 {
-	m_fSpawnTime=fTime;
+	m_fSpawnTime = fTime;
 }
 
 void ZObject::SetDeadTime(float fTime)
@@ -105,53 +103,50 @@ bool IsPlayerObject(ZObject* pObject)
 
 void ZObject::Tremble(float fValue, DWORD nMaxTime, DWORD nReturnMaxTime)
 {
-	if(m_pVMesh)
+	if (m_pVMesh)
 	{
 		RFrameTime* ft = &m_pVMesh->m_FrameTime;
-		if(ft && !ft->m_bActive)
-			ft->Start(fValue,nMaxTime,nReturnMaxTime);// °­µµ , ÃÖ´ë½Ã°£ , º¹±Í½Ã°£...
+		if (ft && !ft->m_bActive)
+			ft->Start(fValue, nMaxTime, nReturnMaxTime);// ï¿½ï¿½ï¿½ï¿½ , ï¿½Ö´ï¿½Ã°ï¿½ , ï¿½ï¿½ï¿½Í½Ã°ï¿½...
 	}
-
 }
 
 void ZObject::OnDamaged(ZObject* pAttacker, rvector srcPos, ZDAMAGETYPE damageType, MMatchWeaponType weaponType, float fDamage, float fPiercingRatio, int nMeleeType)
 {
-	ZModule_HPAP *pModule = (ZModule_HPAP*)GetModule(ZMID_HPAP);
-	if(!pModule) return;
+	ZModule_HPAP* pModule = (ZModule_HPAP*)GetModule(ZMID_HPAP);
+	if (!pModule) return;
 
-	pModule->OnDamage(pAttacker ? pAttacker->GetUID() : MUID(0,0), fDamage, fPiercingRatio);
+	pModule->OnDamage(pAttacker ? pAttacker->GetUID() : MUID(0, 0), fDamage, fPiercingRatio);
 }
 
 void ZObject::OnDamagedSkill(ZObject* pAttacker, rvector srcPos, ZDAMAGETYPE damageType, MMatchWeaponType weaponType, float fDamage, float fPiercingRatio, int nMeleeType)
 {
-	ZModule_HPAP *pModule = (ZModule_HPAP*)GetModule(ZMID_HPAP);
-	if(!pModule) return;
+	ZModule_HPAP* pModule = (ZModule_HPAP*)GetModule(ZMID_HPAP);
+	if (!pModule) return;
 
-	pModule->OnDamage(pAttacker ? pAttacker->GetUID() : MUID(0,0), fDamage, fPiercingRatio);
+	pModule->OnDamage(pAttacker ? pAttacker->GetUID() : MUID(0, 0), fDamage, fPiercingRatio);
 }
 
 void ZObject::OnSimpleDamaged(ZObject* pAttacker, float fDamage, float fPiercingRatio)
 {
-	ZModule_HPAP *pModule = (ZModule_HPAP*)GetModule(ZMID_HPAP);
-	if(!pModule) return;
+	ZModule_HPAP* pModule = (ZModule_HPAP*)GetModule(ZMID_HPAP);
+	if (!pModule) return;
 
-	pModule->OnDamage(pAttacker ? pAttacker->GetUID() : MUID(0,0), fDamage, fPiercingRatio);
+	pModule->OnDamage(pAttacker ? pAttacker->GetUID() : MUID(0, 0), fDamage, fPiercingRatio);
 }
 
-// HP/AP¸¦ È¸º¹ÇÑ´Ù
-void ZObject::OnHealing(ZObject* pOwner,int nHP,int nAP)
+// HP/APï¿½ï¿½ È¸ï¿½ï¿½ï¿½Ñ´ï¿½
+void ZObject::OnHealing(ZObject* pOwner, int nHP, int nAP)
 {
-	// Èú¸µ
-	ZModule_HPAP *pModule = (ZModule_HPAP*)GetModule(ZMID_HPAP);
-	if(!pModule) return;
+	// ï¿½ï¿½ï¿½ï¿½
+	ZModule_HPAP* pModule = (ZModule_HPAP*)GetModule(ZMID_HPAP);
+	if (!pModule) return;
 
-	pModule->SetHP( min( pModule->GetHP() + nHP, pModule->GetMaxHP() ) );
-	pModule->SetAP( min( pModule->GetAP() + nAP, pModule->GetMaxAP() ) );
+	pModule->SetHP(min(pModule->GetHP() + nHP, pModule->GetMaxHP()));
+	pModule->SetAP(min(pModule->GetAP() + nAP, pModule->GetMaxAP()));
 
-
-	// TODO: ÀÌÆåÆ® Ãß°¡. ÀÓ½Ã·Î ´Þ¾ÒÀ½
-	ZGetEffectManager()->AddHealEffect(GetPosition(),this);
-
+	// TODO: ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ß°ï¿½. ï¿½Ó½Ã·ï¿½ ï¿½Þ¾ï¿½ï¿½ï¿½
+	ZGetEffectManager()->AddHealEffect(GetPosition(), this);
 }
 
 bool ZObject::ColTest(const rvector& p1, const rvector& p2, float radius, float fTime)
@@ -159,14 +154,13 @@ bool ZObject::ColTest(const rvector& p1, const rvector& p2, float radius, float 
 	rvector p, d;
 	if (GetHistory(&p, &d, fTime))
 	{
-		rvector a1 = p + rvector(0,0, (min(m_Collision.fHeight, m_Collision.fRadius)/2.0f));
-		rvector a2 = p + rvector(0,0, m_Collision.fHeight - (min(m_Collision.fHeight, m_Collision.fRadius)/2.0f));
+		rvector a1 = p + rvector(0, 0, (min(m_Collision.fHeight, m_Collision.fRadius) / 2.0f));
+		rvector a2 = p + rvector(0, 0, m_Collision.fHeight - (min(m_Collision.fHeight, m_Collision.fRadius) / 2.0f));
 
-		rvector ap,cp;
-		float dist = GetDistanceBetweenLineSegment(p1, p2 , a1, a2, &ap, &cp);
+		rvector ap, cp;
+		float dist = GetDistanceBetweenLineSegment(p1, p2, a1, a2, &ap, &cp);
 
 		if (dist < (radius + m_Collision.fRadius)) return true;
-
 	}
 
 	return false;
