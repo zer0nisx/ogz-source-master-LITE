@@ -42,13 +42,28 @@ float4x3 Get4x3(int Index)
 
 // Calcula la iluminación difusa de una luz puntual con atenuación
 float4 GetLightDiffuse(float3 VertexPosition, float3 VertexNormal, 
-	float3 LightPosition, float4 LightDiffuse, float4 Attenuation)
+	float3 LightPosition, float4 LightDiffuse, float4 Attenuation, float LightRange)
 {
 	// Vector desde vértice a luz
 	float3 lightDir = LightPosition - VertexPosition;
 	
 	// Distancia al cuadrado y distancia inversa
 	float distSq = dot(lightDir, lightDir);
+	
+	// VALIDACIÓN DE RANGO: Si la luz tiene rango definido y estamos fuera de rango, retornar 0
+	// Esto permite que la luz se renderice correctamente hasta que salga de rango
+	if (LightRange > 0.0f)
+	{
+		float lightRangeSq = LightRange * LightRange;
+		if (distSq > lightRangeSq)
+			return float4(0, 0, 0, 0);
+	}
+	
+	// CORRECCIÓN: Protección contra distancias muy pequeñas (evitar división por cero)
+	// Si la distancia es muy pequeña, usar un valor mínimo para evitar problemas numéricos
+	const float MIN_DIST_SQ = 0.0001f;  // 0.01 unidades mínimo (1cm)
+	distSq = max(distSq, MIN_DIST_SQ);
+	
 	float invDist = rsqrt(distSq);
 	
 	// Dirección normalizada de la luz
@@ -57,6 +72,10 @@ float4 GetLightDiffuse(float3 VertexPosition, float3 VertexNormal,
 	// Cálculo de atenuación: 1 / (Attenuation0 + Attenuation1 * dist + Attenuation2 * dist^2)
 	// Usando dst() para optimización: dst(lsq, l) = (1, lsq, lsq, l)
 	float attenuationFactor = 1.0f / dot(dst(distSq, invDist).xyz, Attenuation.xyz);
+	
+	// CORRECCIÓN: Limitar atenuación para evitar valores extremos cuando estás muy cerca
+	// Esto previene que la luz desaparezca o se sature cuando estás muy cerca
+	attenuationFactor = min(attenuationFactor, 100.0f);  // Limitar a máximo 100x
 	
 	// Factor de iluminación difusa (dot product normalizado)
 	float NdotL = dot(VertexNormal, normalizedLightDir);
@@ -69,7 +88,7 @@ float4 GetLightDiffuse(float3 VertexPosition, float3 VertexNormal,
 // Calcula la iluminación especular de una luz puntual usando modelo Blinn-Phong
 float4 GetLightSpecular(float3 VertexPosition, float3 VertexNormal, float3 ViewDir,
 	float3 LightPosition, float4 LightSpecular, float4 Attenuation,
-	float4 MaterialSpecular, float MaterialPower, float NdotL)
+	float4 MaterialSpecular, float MaterialPower, float NdotL, float LightRange)
 {
 	// Solo calcular si hay contribución difusa (NdotL > 0) y MaterialPower > 0
 	if (NdotL <= 0.0f || MaterialPower <= 0.0f)
@@ -78,11 +97,27 @@ float4 GetLightSpecular(float3 VertexPosition, float3 VertexNormal, float3 ViewD
 	// Vector desde vértice a luz
 	float3 lightDir = LightPosition - VertexPosition;
 	float distSq = dot(lightDir, lightDir);
+	
+	// VALIDACIÓN DE RANGO: Si la luz tiene rango definido y estamos fuera de rango, retornar 0
+	if (LightRange > 0.0f)
+	{
+		float lightRangeSq = LightRange * LightRange;
+		if (distSq > lightRangeSq)
+			return float4(0, 0, 0, 0);
+	}
+	
+	// CORRECCIÓN: Protección contra distancias muy pequeñas (evitar división por cero)
+	const float MIN_DIST_SQ = 0.0001f;  // 0.01 unidades mínimo (1cm)
+	distSq = max(distSq, MIN_DIST_SQ);
+	
 	float invDist = rsqrt(distSq);
 	float3 normalizedLightDir = lightDir * invDist;
 	
 	// Cálculo de atenuación
 	float attenuationFactor = 1.0f / dot(dst(distSq, invDist).xyz, Attenuation.xyz);
+	
+	// CORRECCIÓN: Limitar atenuación para evitar valores extremos cuando estás muy cerca
+	attenuationFactor = min(attenuationFactor, 100.0f);  // Limitar a máximo 100x
 	
 	// Calcular vector halfway (Blinn-Phong es más eficiente que Phong)
 	float3 halfway = normalize(normalizedLightDir + ViewDir);
@@ -126,11 +161,11 @@ void main(float4 Pos            : POSITION,
 	// de skinning pueden hacer que la normal no esté normalizada
 	TransformedNormal = normalize(TransformedNormal);
 
-	// Calcular iluminación difusa de ambas luces
+	// Calcular iluminación difusa de ambas luces (con validación de rango)
 	oDiffuse = GetLightDiffuse(TransformedPos, TransformedNormal,
-		Light0Position, Light0Diffuse, Light0Attenuation);
+		Light0Position, Light0Diffuse, Light0Attenuation, Light0Range.x);
 	oDiffuse += GetLightDiffuse(TransformedPos, TransformedNormal,
-		Light1Position, Light1Diffuse, Light1Attenuation);
+		Light1Position, Light1Diffuse, Light1Attenuation, Light1Range.x);
 	
 	// Calcular iluminación especular si MaterialPower > 0
 	if (MaterialPower.x > 0.0f)
@@ -144,14 +179,14 @@ void main(float4 Pos            : POSITION,
 		float NdotL0 = max(dot(TransformedNormal, light0Dir), 0.0f);
 		float NdotL1 = max(dot(TransformedNormal, light1Dir), 0.0f);
 		
-		// Agregar especular de ambas luces
+		// Agregar especular de ambas luces (con validación de rango)
 		oDiffuse += GetLightSpecular(TransformedPos, TransformedNormal, viewDir,
 			Light0Position, Light0Specular, Light0Attenuation,
-			MaterialSpecular, MaterialPower.x, NdotL0);
+			MaterialSpecular, MaterialPower.x, NdotL0, Light0Range.x);
 		
 		oDiffuse += GetLightSpecular(TransformedPos, TransformedNormal, viewDir,
 			Light1Position, Light1Specular, Light1Attenuation,
-			MaterialSpecular, MaterialPower.x, NdotL1);
+			MaterialSpecular, MaterialPower.x, NdotL1, Light1Range.x);
 	}
 	
 	// Aplicar color difuso del material
