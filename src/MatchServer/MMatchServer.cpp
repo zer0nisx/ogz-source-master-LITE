@@ -195,9 +195,9 @@ void CopyCharInfoDetailForTrans(MTD_CharInfo_Detail* pDest, MMatchCharInfo* pSrc
 		pDest->nKillCount = pSrcCharInfo->m_nTotalKillCount;
 		pDest->nDeathCount = pSrcCharInfo->m_nTotalDeathCount;
 
-		unsigned long int nNowTime = MMatchServer::GetInstance()->GetTickTime();
+		unsigned long int nNowTime = static_cast<unsigned long int>(MMatchServer::GetInstance()->GetTickTime());
 
-		pDest->nConnPlayTimeSec = MGetTimeDistance(pSrcCharInfo->m_nConnTime, nNowTime) / 1000;
+		pDest->nConnPlayTimeSec = MGetTimeDistance(static_cast<unsigned long int>(pSrcCharInfo->m_nConnTime), nNowTime) / 1000;
 		pDest->nTotalPlayTimeSec = pDest->nConnPlayTimeSec + pSrcCharInfo->m_nTotalPlayTimeSec;
 
 		for (int i = 0; i < MMCIP_END; i++)
@@ -278,7 +278,7 @@ bool MMatchServer::LoadInitFile()
 	}
 
 	if (!InitLocale()) {
-		LOG(LOG_ALL, "Locale ¼³Á¤ ½ÇÆÐ.");
+		LOG(LOG_ALL, "Locale ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.");
 		return false;
 	}
 
@@ -798,7 +798,7 @@ void MMatchServer::UpdateServerStatusDB()
 {
 	if (!IsCreated()) return;
 
-#define SERVER_STATUS_TICK		(30000)	// 30ÃÊ (1000 * 30)
+#define SERVER_STATUS_TICK		(30000)	// 30ï¿½ï¿½ (1000 * 30)
 
 	static u64 st_nElapsedTime = 0;
 	static auto nLastTime = GetGlobalTimeMS();
@@ -1523,7 +1523,7 @@ void MMatchServer::RouteToBattle(const MUID& uidStage, MCommand* pCommand)
 		}
 		else {
 			LOG(LOG_ALL, "WARNING(RouteToBattle) : Not Existing Obj(%u:%u)\n", uidObj.High, uidObj.Low);
-			i = pStage->RemoveObject(uidObj);	// RAONHAJE : ¹æ¿¡ ¾²·¹±âUID ³²´Â°Í ¹ß°ß½Ã ·Î±×&Ã»¼Ò
+			i = pStage->RemoveObject(uidObj);	// RAONHAJE : ï¿½æ¿¡ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½UID ï¿½ï¿½ï¿½Â°ï¿½ ï¿½ß°ß½ï¿½ ï¿½Î±ï¿½&Ã»ï¿½ï¿½
 		}
 	}
 	delete pCommand;
@@ -1554,7 +1554,7 @@ void MMatchServer::RouteToBattleExcept(const MUID& uidStage, MCommand* pCommand,
 		}
 		else {
 			LOG(LOG_ALL, "WARNING(RouteToBattle) : Not Existing Obj(%u:%u)\n", uidObj.High, uidObj.Low);
-			i = pStage->RemoveObject(uidObj);	// RAONHAJE : ¹æ¿¡ ¾²·¹±âUID ³²´Â°Í ¹ß°ß½Ã ·Î±×&Ã»¼Ò
+			i = pStage->RemoveObject(uidObj);	// RAONHAJE : ï¿½æ¿¡ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½UID ï¿½ï¿½ï¿½Â°ï¿½ ï¿½ß°ß½ï¿½ ï¿½Î±ï¿½&Ã»ï¿½ï¿½
 		}
 	}
 	delete pCommand;
@@ -1591,7 +1591,7 @@ void MMatchServer::ResponseRoundState(const MUID& uidStage)
 	pCmd->AddParameter(new MCommandParameterInt(pRule->GetRoundState()));
 	pCmd->AddParameter(new MCommandParameterInt(pRule->GetRoundArg()));
 
-	// °ÔÀÓ ¾È¿¡ ÀÖ´Â ÇÃ·¹ÀÌ¾î¿¡°Ô¸¸ Àü¼Û
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½È¿ï¿½ ï¿½Ö´ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾î¿¡ï¿½Ô¸ï¿½ ï¿½ï¿½ï¿½ï¿½
 	RouteToBattle(uidStage, pCmd);
 }
 
@@ -1659,7 +1659,7 @@ int MMatchServer::ObjectRemove(const MUID& uid, MMatchObjectList::iterator* pNex
 		ChannelLeave(pObj->GetUID(), pObj->GetChannelUID());
 	}
 
-	// m_ClanMap¿¡¼­µµ »èÁ¦
+	// m_ClanMapï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	m_ClanMap.RemoveObject(pObj->GetUID(), pObj);
 
 	delete pObj;
@@ -1851,7 +1851,7 @@ void MMatchServer::ParseUDPPacket(char* pData, MPacketHeader* pPacketHeader, u32
 		unsigned short nCheckSum = MBuildCheckSum(pPacketHeader, pPacketHeader->nSize);
 		if (pPacketHeader->nCheckSum != nCheckSum) {
 			static int nLogCount = 0;
-			if (nLogCount++ < 100) {	// Log Flooding ¹æÁö
+			if (nLogCount++ < 100) {	// Log Flooding ï¿½ï¿½ï¿½ï¿½
 				mlog("MMatchServer::ParseUDPPacket() -> CHECKSUM ERROR(R=%u/C=%u)\n",
 					pPacketHeader->nCheckSum, nCheckSum);
 			}
@@ -1894,7 +1894,7 @@ void MMatchServer::ParseUDPPacket(char* pData, MPacketHeader* pPacketHeader, u32
 	case MSGID_COMMAND:
 	{
 		_ASSERT(0);
-		// ¼­¹ö»ó¿¡ ¾ÏÈ£È­µÈ UDP´Â »ç¿ëÇÏÁö ¾ÊÀ½
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È£È­ï¿½ï¿½ UDPï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		Log(LOG_DEBUG, "MMatchServer::ParseUDPPacket: Parse Packet Error");
 	}
 	break;
@@ -1919,7 +1919,7 @@ void MMatchServer::ResponseBridgePeer(const MUID& uidChar, int nCode)
 	RouteToListener(pObj, pNew);
 }
 
-// ³­ÀÔÇÑ À¯Àú°¡ ¹æ¾È¿¡ ÀÖ´Â ´Ù¸¥ »ç¶÷µé Á¤º¸ ´Þ¶ó°í ¿äÃ»ÇßÀ»¶§ ¹æ¾ÈÀÇ À¯ÀúÁ¤º¸¸¦ ¾Ë·ÁÁØ´Ù
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¿ï¿½ ï¿½Ö´ï¿½ ï¿½Ù¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Þ¶ï¿½ï¿½ ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ë·ï¿½ï¿½Ø´ï¿½
 void MMatchServer::ResponsePeerList(const MUID& uidChar, const MUID& uidStage)
 {
 	MMatchStage* pStage = FindStage(uidStage);
@@ -1930,7 +1930,7 @@ void MMatchServer::ResponsePeerList(const MUID& uidChar, const MUID& uidStage)
 	MCommand* pNew = CreateCommand(MC_MATCH_RESPONSE_PEERLIST, MUID(0, 0));
 	pNew->AddParameter(new MCommandParameterUID(pStage->GetUID()));
 
-	// Battle¿¡ µé¾î°£ »ç¶÷¸¸ List¸¦ ¸¸µç´Ù.
+	// Battleï¿½ï¿½ ï¿½ï¿½î°£ ï¿½ï¿½ï¿½ï¿½ï¿½ Listï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½.
 	int nPeerCount = pStage->GetObjInBattleCount() + pStage->Bots.size();
 
 	void* pPeerArray = MMakeBlobArray(sizeof(MTD_PeerListNode), nPeerCount);
@@ -2186,7 +2186,7 @@ void MMatchServer::OnChatRoomInvite(const MUID& uidComm, const char* pszTargetNa
 	RouteToListener(pTargetObj, pCmd);
 }
 
-// RAONHAJE ÀÓ½ÃÄÚµå
+// RAONHAJE ï¿½Ó½ï¿½ï¿½Úµï¿½
 #ifdef _DEBUG
 #include "CMLexicalAnalyzer.h"
 bool StageFinish(MMatchServer* pServer, const MUID& uidPlayer, char* pszChat)
@@ -2270,7 +2270,7 @@ void MMatchServer::InsertChatDBLog(const MUID& uidPlayer, const char* szMsg)
 	stChatLog[stnLogTop].nTime = GetGlobalTimeMS();
 	stnLogTop++;
 
-	// ÀÏÁ¤ °³¼ö°¡ µÉ¶§¸¸ DB¿¡ ³Ö´Â´Ù.
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½É¶ï¿½ï¿½ï¿½ DBï¿½ï¿½ ï¿½Ö´Â´ï¿½.
 	if (stnLogTop >= MAX_CHAT_LOG)
 	{
 		for (int i = 0; i < stnLogTop; i++)
@@ -2396,14 +2396,14 @@ int MMatchServer::ValidateEquipItem(MMatchObject* pObj, MMatchItem* pItem, const
 		return MERR_LOW_LEVEL;
 	}
 
-	// ¹«°Ô Ã¼Å©
+	// ï¿½ï¿½ï¿½ï¿½ Ã¼Å©
 	int nWeight = 0;
 	int nMaxWeight = 0;
 
 	MMatchEquipedItem* pEquipedItem = &pObj->GetCharInfo()->m_EquipedItem;
 	pObj->GetCharInfo()->GetTotalWeight(&nWeight, &nMaxWeight);
 
-	// ±³Ã¼ÇÒ ¾ÆÀÌÅÛÀÇ ¹«°Ô¸¦ »«´Ù.
+	// ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ô¸ï¿½ ï¿½ï¿½ï¿½ï¿½.
 	if (!pEquipedItem->IsEmpty(parts))
 	{
 		if (pEquipedItem->GetItem(parts)->GetDesc() != NULL)
@@ -2413,7 +2413,7 @@ int MMatchServer::ValidateEquipItem(MMatchObject* pObj, MMatchItem* pItem, const
 		}
 	}
 
-	// ÀåÂøÇÒ ¾ÆÀÌÅÛÀÇ ¹«°Ô¸¦ ´õÇÑ´Ù.
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ô¸ï¿½ ï¿½ï¿½ï¿½Ñ´ï¿½.
 	if (pItem->GetDesc() != NULL)
 	{
 		nWeight += pItem->GetDesc()->m_nWeight;
@@ -2490,7 +2490,7 @@ void MMatchServer::UpdateCharDBCachingData(MMatchObject* pObject)
 			nAddedDeathCount);
 		PostAsyncJob(pJob);
 
-		// ½ÇÆÐÇß´ÂÁö´Â ¾Ë ¼ö ¾øÁö¸¸, ¾Ç¿ëÀ» À§ÇØ ResetÇÑ´Ù.
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ß´ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½Ç¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Resetï¿½Ñ´ï¿½.
 		pObject->GetCharInfo()->GetDBCachingData()->Reset();
 
 		/*
@@ -2520,7 +2520,7 @@ void MMatchServer::UpdateCharDBCachingData(MMatchObject* pObject)
 	}
 }
 
-// item xml Ã¼Å©¿ë - Å×½ºÆ®
+// item xml Ã¼Å©ï¿½ï¿½ - ï¿½×½ï¿½Æ®
 bool MMatchServer::CheckItemXML()
 {
 	map<u32, string>	ItemXmlMap;
@@ -2558,9 +2558,9 @@ bool MMatchServer::CheckItemXML()
 
 			if (ItemXmlMap.find(id) != ItemXmlMap.end())
 			{
-				_ASSERT(0);	// ¾ÆÀÌÅÛ ID Áßº¹
+				_ASSERT(0);	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ID ï¿½ßºï¿½
 				char szTemp[256];
-				sprintf_safe(szTemp, "item xml ¾ÆÀÌµð Áßº¹: %u\n", id);
+				sprintf_safe(szTemp, "item xml ï¿½ï¿½ï¿½Ìµï¿½ ï¿½ßºï¿½: %u\n", id);
 				mlog(szTemp);
 				return false;
 			}
@@ -2586,7 +2586,7 @@ bool MMatchServer::CheckItemXML()
 		if (string::npos == pos)
 		{
 			// TODO: Fix
-			//ASSERT( 0 && "±¸ºÐÀÚ¸¦ Ã£Áö ¸øÇÔ. ¹®¹ý¿À·ù." );
+			//ASSERT( 0 && "ï¿½ï¿½ï¿½ï¿½ï¿½Ú¸ï¿½ Ã£ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½." );
 			continue;
 		}
 
@@ -2658,7 +2658,7 @@ bool MMatchServer::CheckItemXML()
 
 		fprintf(fp, "Description='%s' \n", pItemDesc->m_szDesc);
 
-		// ÀÌ°Å Àý´ë·Î Áö¿ìÁö ¸¶¼¼¿ä. DBÀÛ¾÷ÇÒ¶§ ´ëÇü »ç°í ³¯¼ö ÀÖ½À´Ï´Ù. - by SungE.
+		// ï¿½Ì°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½. DBï¿½Û¾ï¿½ï¿½Ò¶ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ö½ï¿½ï¿½Ï´ï¿½. - by SungE.
 		fprintf(fp, "WHERE ItemID = %u\n", pItemDesc->m_nID);
 
 		/*
@@ -2671,7 +2671,7 @@ bool MMatchServer::CheckItemXML()
 	return true;
 }
 
-// sqlÆÄÀÏ »ý¼ºÀ» À§ÇØ¼­. °ÔÀÓÀ» À§ÇØ¼­ »ç¿ëµÇÁö´Â ¾ÊÀ½.
+// sqlï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ø¼ï¿½. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ø¼ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
 struct ix
 {
 	string id;
@@ -2721,7 +2721,7 @@ bool MMatchServer::CheckUpdateItemXML()
 			{
 				if (imName.end() != imName.find(szID))
 				{
-					ASSERT("Áßº¹");
+					ASSERT("ï¿½ßºï¿½");
 					continue;
 				}
 
@@ -2734,7 +2734,7 @@ bool MMatchServer::CheckUpdateItemXML()
 			{
 				if (imDesc.end() != imDesc.find(szID))
 				{
-					ASSERT("Áßº¹");
+					ASSERT("ï¿½ßºï¿½");
 					continue;
 				}
 
@@ -2745,7 +2745,7 @@ bool MMatchServer::CheckUpdateItemXML()
 			}
 			else
 			{
-				// ASSERT( 0 && "ÀÌ»óÇÏ´Ù...." );
+				// ASSERT( 0 && "ï¿½Ì»ï¿½ï¿½Ï´ï¿½...." );
 			}
 		}
 	}
@@ -2866,8 +2866,8 @@ void MMatchServer::BroadCastDuelInterruptVictories(const MUID& chanID, const cha
 
 bool MMatchServer::InitScheduler()
 {
-	// ½ºÄÉÁì ¾÷µ¥ÀÌÆ®½Ã Ä¿¸àµå¸¦ Æ÷½ºÆ®ÇÏ±â À§ÇØ¼­,
-	//  MMatchServerÀÇ ÁÖ¼Ò¸¦ ÀÎÀÚ·Î ¹Þ¾Æ ¸â¹ö·Î ÀúÀåÇØµÒ.
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ Ä¿ï¿½ï¿½å¸¦ ï¿½ï¿½ï¿½ï¿½Æ®ï¿½Ï±ï¿½ ï¿½ï¿½ï¿½Ø¼ï¿½,
+	//  MMatchServerï¿½ï¿½ ï¿½Ö¼Ò¸ï¿½ ï¿½ï¿½ï¿½Ú·ï¿½ ï¿½Þ¾ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Øµï¿½.
 	m_pScheduler = new MMatchScheduleMgr(this);
 	if (0 == m_pScheduler)
 		return false;
@@ -2878,10 +2878,10 @@ bool MMatchServer::InitScheduler()
 		return false;
 	}
 
-	// °Ë»ç ½Ã°£À» 10ÃÊ·Î ¼³Á¤. ÀÓ½Ã.
+	// ï¿½Ë»ï¿½ ï¿½Ã°ï¿½ï¿½ï¿½ 10ï¿½Ê·ï¿½ ï¿½ï¿½ï¿½ï¿½. ï¿½Ó½ï¿½.
 	m_pScheduler->SetUpdateTerm(10);
 
-	// »ó¼ÓÇÑ Å¬·¡½ºÀÇ ½ºÄÉÁì µî·Ï.
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½.
 	if (!InitSubTaskSchedule()) {
 		delete m_pScheduler;
 		m_pScheduler = 0;
@@ -2931,8 +2931,8 @@ bool MMatchServer::InitEvent()
 	EventPtrVec EvnPtrVec;
 	if (!MMatchEventFactoryManager::GetInstance().GetEventList(MMATCH_GAMETYPE_ALL, ET_CUSTOM_EVENT, EvnPtrVec))
 	{
-		ASSERT(0 && "ÀÌº¥Æ® ¸®½ºÆ® »ý¼º ½ÇÆÐ.\n");
-		mlog("MMatchServer::InitEvent - ¸®½ºÆ® »ý¼º ½ÇÆÐ.\n");
+		ASSERT(0 && "ï¿½Ìºï¿½Æ® ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.\n");
+		mlog("MMatchServer::InitEvent - ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.\n");
 		MMatchEventManager::ClearEventPtrVec(EvnPtrVec);
 		return false;
 	}

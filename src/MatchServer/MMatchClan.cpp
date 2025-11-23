@@ -62,7 +62,7 @@ void MMatchClan::Create(int nCLID, const char* szClanName)
 	strcpy_safe(m_szClanName, szClanName);
 
 
-	m_SmartRefresh.AddCategory(new MRefreshCategoryClanMemberImpl(this, 0));	// Category 0 ·Î ÀüÃ¼¸ñ·Ï ¸ðµÎ ´ã´ç
+	m_SmartRefresh.AddCategory(new MRefreshCategoryClanMemberImpl(this, 0));	// Category 0 ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
 }
 
 void MMatchClan::InitClanInfoEx(const int nLevel, const int nTotalPoint, const int nPoint, const int nRanking,
@@ -196,7 +196,7 @@ void MMatchClanMap::AddObject(const MUID& uid, MMatchObject* pObj)
 	int nCLID = pObj->GetCharInfo()->m_ClanInfo.m_nClanID;
 	if (nCLID == 0) return;
 
-	// Å¬·£ÀÌ ¾øÀ¸¸é »õ·Î »ý¼º
+	// Å¬ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	iterator itor = find(nCLID);
 	if (itor == end()) 
 	{
@@ -229,7 +229,7 @@ void MMatchClanMap::RemoveObject(const MUID& uid, MMatchObject* pObj)
 
 bool MMatchClanMap::CheckTick(u64 nClock)
 {
-	if (MGetTimeDistance(m_nLastTick, nClock) < MTICK_CLAN_RUN) return false;
+	if (MGetTimeDistance(static_cast<unsigned long int>(m_nLastTick), static_cast<unsigned long int>(nClock)) < MTICK_CLAN_RUN) return false;
 
 	m_nLastTick = nClock;
 	return true;

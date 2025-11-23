@@ -74,7 +74,7 @@ void MMatchServer::OnRequestAccountCharList(const MUID& uidPlayer)
 									pObj->GetCharInfo()->m_QuestItemList, 
 									pObj->GetCharInfo()->m_QMonsterBible) )
 		{
-			mlog( "MMatchServer::OnAsyncGetAccountCharList - °´Ã¼ »ý¼º ½ÇÆÐ.\n" );
+			mlog( "MMatchServer::OnAsyncGetAccountCharList - ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.\n" );
 			delete pQItemUpdateJob;
 			return;
 		}
@@ -123,7 +123,7 @@ bool MMatchServer::ResponseDeleteChar(const MUID& uidPlayer, const int nCharInde
 	if ((pObj == NULL) || (pObj->GetAccountInfo()->m_nAID < 0)) return false;
 	if ((nCharIndex < 0) || (nCharIndex >= MAX_CHAR_COUNT)) return false;
 
-    // »ý¼ºÁ¶°Ç Åë°ú - Post AsyncJob
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ - Post AsyncJob
 	MAsyncDBJob_DeleteChar* pJob = new MAsyncDBJob_DeleteChar(uidPlayer, pObj->GetAccountInfo()->m_nAID, nCharIndex, szCharName);
 	PostAsyncJob(pJob);
 
@@ -154,7 +154,7 @@ bool MMatchServer::ResponseCreateChar(const MUID& uidPlayer, const int nCharInde
 		int nResult = -1;	// false
 		MCommand* pNewCmd = CreateCommand(MC_MATCH_RESPONSE_CREATE_CHAR, MUID(0,0));
 		pNewCmd->AddParameter(new MCommandParameterInt(nResult));			// result
-		pNewCmd->AddParameter(new MCommandParameterString(szCharName));		// ¸¸µé¾îÁø Ä³¸¯ÅÍ ÀÌ¸§
+		pNewCmd->AddParameter(new MCommandParameterString(szCharName));		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ä³ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½
 		RouteToListener(pObj, pNewCmd);
 		return false;
 	}
@@ -165,19 +165,19 @@ bool MMatchServer::ResponseCreateChar(const MUID& uidPlayer, const int nCharInde
 	if (nResult != MOK) {
 		MCommand* pNewCmd = CreateCommand(MC_MATCH_RESPONSE_CREATE_CHAR, MUID(0,0));
 		pNewCmd->AddParameter(new MCommandParameterInt(nResult));			// result
-		pNewCmd->AddParameter(new MCommandParameterString(szCharName));		// ¸¸µé¾îÁø Ä³¸¯ÅÍ ÀÌ¸§
+		pNewCmd->AddParameter(new MCommandParameterString(szCharName));		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ä³ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½
 		RouteToListener(pObj, pNewCmd);
 
 		return false;
 	}	
 
-	// »ý¼ºÁ¶°Ç Åë°ú - Post AsyncJob
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ - Post AsyncJob
 	MAsyncDBJob_CreateChar* pJob = new MAsyncDBJob_CreateChar(uidPlayer, pObj->GetAccountInfo()->m_nAID, 
 											szCharName, nCharIndex, nSex, nHair, nFace, nCostume);
 	
 
 #ifdef _DEBUG
-	// Á¦°¡ ÁÖ¼®Ã³¸®Çß½À´Ï´Ù - bird
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¼ï¿½Ã³ï¿½ï¿½ï¿½ß½ï¿½ï¿½Ï´ï¿½ - bird
 	mlog( "Selected character name : %s (", szCharName);
 
 	for ( int i = 0;  i < (int)strlen( szCharName);  i++)
@@ -242,7 +242,7 @@ bool MMatchServer::CharInitialize(const MUID& uidPlayer)
 
 		m_ClanMap.AddObject(uidPlayer, pObj);
 
-		// ¸¸¾à Å¬·£Àü ¼­¹öÀÏ °æ¿ì Å¬·£Àü Á¤º¸µµ ¹Þ¾Æ¿Â´Ù. - ¿¥ºí·½¶§¹®¿¡ ±×³É ¼­¹öµµ Å¬·£Á¤º¸ ÀÐ¾î¿È
+		// ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Þ¾Æ¿Â´ï¿½. - ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½×³ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ð¾ï¿½ï¿½
 		//if ( (MGetServerConfig()->GetServerMode() == MSM_CLAN) || (MGetServerConfig()->GetServerMode() == MSM_TEST) )
 		//{
 			MMatchClan* pClan = m_ClanMap.GetClan(pCharInfo->m_ClanInfo.m_nClanID);
@@ -266,28 +266,28 @@ void MMatchServer::CheckExpiredItems(MMatchObject* pObj)
 	if (!pCharInfo->m_ItemList.HasRentItem()) return;
 
 	vector<u32> vecExpiredItemIDList;
-	vector<MUID> vecExpiredItemUIDList;				// ¸¸·áµÈ ¾ÆÀÌÅÛ UID
+	vector<MUID> vecExpiredItemUIDList;				// ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ UID
 
-	// ±â°£ ¸¸·á ¾ÆÀÌÅÛÀÌ ÀÖ´ÂÁö Ã¼Å©ÇÏ°í ÀÖÀ¸¸é ¾ÆÀÌÅÛ ÇØÁ¦ÇÏ°í ÅëÁöÇÑ´Ù.
+	// ï¿½â°£ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ï¿½ï¿½ Ã¼Å©ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
 	for (MMatchItemMap::iterator itor = pCharInfo->m_ItemList.begin(); itor != pCharInfo->m_ItemList.end(); ++itor)
 	{
 		MMatchItem* pCheckItem = (*itor).second;
 		if (pCheckItem->IsRentItem())
 		{
-			// ÀÎ½ºÅÏ½º »ý¼ºµÇ°í³ª¼­ Áö³­ ½Ã°£
-			auto nPassTime = MGetTimeDistance(pCheckItem->GetRentItemRegTime(), GetTickTime());
+			// ï¿½Î½ï¿½ï¿½Ï½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½
+			auto nPassTime = MGetTimeDistance(static_cast<unsigned long int>(pCheckItem->GetRentItemRegTime()), static_cast<unsigned long int>(GetTickTime()));
 			int nPassMinuteTime = static_cast<int>(nPassTime / (1000 * 60));
 
 			if ((pCheckItem->GetRentMinutePeriodRemainder()-nPassMinuteTime) <= 0)
 			{
-				// ÀåºñÁßÀÌ¸é ¹þ±ä´Ù.
+				// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½.
 				MMatchCharItemParts nCheckParts = MMCIP_END;
 				if (pCharInfo->m_EquipedItem.IsEquipedItem(pCheckItem, nCheckParts))
 				{
 					ResponseTakeoffItem(pObj->GetUID(), nCheckParts);
 				}
 
-				// ¾ÆÀÌÅÛ Á¦°Å
+				// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 				int nExpiredItemID = pCheckItem->GetDescID();
 				if (nExpiredItemID != 0)
 				{
@@ -298,13 +298,13 @@ void MMatchServer::CheckExpiredItems(MMatchObject* pObj)
 		}
 	}
 
-	// ¸¸·áµÈ ¾ÆÀÌÅÛÀÌ ÀÖÀ¸¸é ÅëÁö
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	if (!vecExpiredItemIDList.empty())
 	{
 		int nExpiredItemUIDListCount = (int)vecExpiredItemUIDList.size();
 		for (int i = 0; i < nExpiredItemUIDListCount; i++)
 		{
-			// ½ÇÁ¦·Î ¿©±â¼­ ¾ÆÀÌÅÛÀ» Áö¿î´Ù.
+			// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½â¼­ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½.
 			RemoveCharItem(pObj, vecExpiredItemUIDList[i]);
 		}
 
@@ -329,7 +329,7 @@ void MMatchServer::ResponseExpiredItemIDList(MMatchObject* pObj, vector<u32>& ve
 	RouteToListener(pObj, pNewCmd);
 }
 
-// ¼öÁ¤µÇ¸é true
+// ï¿½ï¿½ï¿½ï¿½ï¿½Ç¸ï¿½ true
 bool MMatchServer::CorrectEquipmentByLevel(MMatchObject* pPlayer, MMatchCharItemParts nPart, int nLegalItemLevelDiff)	
 {
 	if (!IsEnabledObject(pPlayer)) return false;
@@ -352,7 +352,7 @@ bool MMatchServer::CharFinalize(const MUID& uidPlayer)
 	MMatchObject* pObj = GetObject(uidPlayer);
 	if (pObj == NULL) return false;
 
-	if (MGetServerConfig()->GetServerMode() == MSM_EVENT) {	// EVENT¶§ ·¹º§Á¦ÇÑ ¾øÀÌ ÀåÂøÇÑ ¾ÆÀÌÅÛÀ» ¹þ±ä´Ù
+	if (MGetServerConfig()->GetServerMode() == MSM_EVENT) {	// EVENTï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½
 		CorrectEquipmentByLevel(pObj, MMCIP_MELEE);
 		CorrectEquipmentByLevel(pObj, MMCIP_PRIMARY);
 		CorrectEquipmentByLevel(pObj, MMCIP_SECONDARY);
@@ -360,20 +360,20 @@ bool MMatchServer::CharFinalize(const MUID& uidPlayer)
 		CorrectEquipmentByLevel(pObj, MMCIP_CUSTOM2);
 	}
 
-	// xp, bp, KillCount, DeathCount Ä³½³ ¾÷µ¥ÀÌÆ®
+	// xp, bp, KillCount, DeathCount Ä³ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®
 	UpdateCharDBCachingData(pObj);
 
 	MMatchCharInfo*	pCharInfo = pObj->GetCharInfo();
 	if (pCharInfo == NULL) return false;
 	
 
-	// Å¬·£¿¡ °¡ÀÔµÇ¾î ÀÖÀ¸¸é MMatchMap¿¡¼­ »èÁ¦
+	// Å¬ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ÔµÇ¾ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ MMatchMapï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	if (pCharInfo->m_ClanInfo.IsJoined())
 	{
 		m_ClanMap.RemoveObject(uidPlayer, pObj);
 	}
 
-	// Ä³¸¯³¡³¯¶§ ·Î±× ³²±ä´Ù
+	// Ä³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Î±ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½
 	if (pCharInfo->m_nCID != 0)
 	{
 		u32 nPlayTime = 0;
@@ -381,7 +381,7 @@ bool MMatchServer::CharFinalize(const MUID& uidPlayer)
 
 		if (pCharInfo->m_nConnTime != 0)
 		{
-			nPlayTime = MGetTimeDistance(pCharInfo->m_nConnTime, nNowTime) / 1000;
+			nPlayTime = MGetTimeDistance(static_cast<unsigned long int>(pCharInfo->m_nConnTime), static_cast<unsigned long int>(nNowTime)) / 1000;
 		}
 
 		MAsyncDBJob_CharFinalize* pJob = new MAsyncDBJob_CharFinalize();
@@ -400,7 +400,7 @@ bool MMatchServer::CharFinalize(const MUID& uidPlayer)
 /*
 #ifdef _DEBUG
 		{
-			// ¾÷µ¥ÀÌÆ® Á¤º¸°¡ Á¤»óÀûÀ¸·Î µÇ´ÂÁö ·Î±×¸¦ ³²±è.
+			// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ç´ï¿½ï¿½ï¿½ ï¿½Î±×¸ï¿½ ï¿½ï¿½ï¿½ï¿½.
 			char szDbgOut[ 1000 ] = {0};
 			MQuestItemMap::iterator it, end;
 
@@ -444,7 +444,7 @@ bool MMatchServer::CharFinalize(const MUID& uidPlayer)
 */
 	}
 
-	// pObj¿¡¼­ µ¿ÀûÀ¸·Î »ý¼ºÇÑ CharInfo, FriendInfo¸¦ ÇØÁ¦½ÃÅ²´Ù.
+	// pObjï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ CharInfo, FriendInfoï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å²ï¿½ï¿½.
 
 
 
@@ -591,7 +591,7 @@ void MMatchServer::OnFriendList(const MUID& uidPlayer)
 	}
 	else if (!pObj->GetFriendInfo())
 	{
-		// ¾ÆÁ÷ DB¿¡¼­ FriendList¸¦ ¾È¹Þ¾Æ¿ÔÀ¸¸é ±×³É ¸®ÅÏ
+		// ï¿½ï¿½ï¿½ï¿½ DBï¿½ï¿½ï¿½ï¿½ FriendListï¿½ï¿½ ï¿½È¹Þ¾Æ¿ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½×³ï¿½ ï¿½ï¿½ï¿½ï¿½
 		return;
 	}
 
@@ -650,7 +650,7 @@ void MMatchServer::ResponseCharInfoDetail(const MUID& uidChar, const char* szCha
 	}
 
 
-	// Client¿¡ ¼±ÅÃÇÑ Ä³¸¯ÅÍ Á¤º¸ Àü¼Û
+	// Clientï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ä³ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	MTD_CharInfo_Detail trans_charinfo_detail;
 	CopyCharInfoDetailForTrans(&trans_charinfo_detail, pTarObject->GetCharInfo(), pTarObject);
 	

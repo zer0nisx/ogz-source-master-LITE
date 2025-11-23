@@ -9,3 +9,6 @@
 /src/out/build/x64-Debug
 /MatchServer.exe - Shortcut.lnk
 /Gunz.exe - Shortcut.lnk
+/build
+/build
+*.log
