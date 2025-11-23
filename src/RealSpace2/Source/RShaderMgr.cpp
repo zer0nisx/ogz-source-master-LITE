@@ -126,10 +126,19 @@ void RShaderMgr::setMtrl(RMtrl* pmtrl_, float fVisAlpha_)
 	mpMtrl->m_ambient.b = 0.35f;
 	mpMtrl->m_ambient.a = 1.0f;
 
-	mpMtrl->m_specular.r = 1.0f;
-	mpMtrl->m_specular.g = 1.0f;
-	mpMtrl->m_specular.b = 1.0f;
-	pmtrl_->m_specular.a = 1.0f - fVisAlpha_;
+	// MEJORA: Copiar specular y power del material original para iluminación especular
+	mpMtrl->m_specular.r = pmtrl_->m_specular.r;
+	mpMtrl->m_specular.g = pmtrl_->m_specular.g;
+	mpMtrl->m_specular.b = pmtrl_->m_specular.b;
+	mpMtrl->m_specular.a = 1.0f - fVisAlpha_;
+	
+	// MEJORA: Copiar power del material original (ajustado para vertex shader: valores típicos 4-32)
+	// Si el power es muy alto (típico de pixel shader), reducir para vertex shader
+	mpMtrl->m_power = pmtrl_->m_power;
+	if (mpMtrl->m_power > 32.0f)
+		mpMtrl->m_power = 32.0f;  // Limitar para vertex shader
+	if (mpMtrl->m_power < 0.0f)
+		mpMtrl->m_power = 0.0f;  // Asegurar no negativo
 }
 
 void RShaderMgr::setMtrl(color_r32& rColor_, float fVisAlpha_)
@@ -146,10 +155,14 @@ void RShaderMgr::setMtrl(color_r32& rColor_, float fVisAlpha_)
 	mpMtrl->m_ambient.b = rColor_.b*0.2f;
 	mpMtrl->m_ambient.a = 1.0f;
 
-	mpMtrl->m_specular.r = 1.f;
-	mpMtrl->m_specular.g = 1.f;
-	mpMtrl->m_specular.b = 1.f;
-	mpMtrl->m_specular.a = 1.f;
+	// MEJORA: Configurar specular y power por defecto para iluminación especular
+	mpMtrl->m_specular.r = 1.0f;
+	mpMtrl->m_specular.g = 1.0f;
+	mpMtrl->m_specular.b = 1.0f;
+	mpMtrl->m_specular.a = 1.0f;
+	
+	// Power por defecto para vertex shader (valores típicos 4-16)
+	mpMtrl->m_power = 8.0f;
 }
 
 void RShaderMgr::setLight(int iLignt_, D3DLIGHT9* pLight_)

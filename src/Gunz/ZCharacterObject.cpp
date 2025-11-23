@@ -302,9 +302,11 @@ void ZCharacterObject::SetGunLight()
 		m_vLightColor.x -= 0.03f;
 		m_vLightColor.y -= 0.03f;
 		m_vLightColor.z -= 0.03f;
-		max(m_vLightColor.x, 0.0f);
-		max(m_vLightColor.y, 0.0f);
-		max(m_vLightColor.z, 0.0f);
+		// CORRECCIÓN: Asignar el resultado de max() para evitar warning C4834 [[nodiscard]]
+		// max() devuelve el valor máximo, que debe ser asignado para limitar los valores a no menos de 0.0f
+		m_vLightColor.x = max(m_vLightColor.x, 0.0f);
+		m_vLightColor.y = max(m_vLightColor.y, 0.0f);
+		m_vLightColor.z = max(m_vLightColor.z, 0.0f);
 		Light.Diffuse.r = m_vLightColor.x;
 		Light.Diffuse.g = m_vLightColor.y;
 		Light.Diffuse.b = m_vLightColor.z;

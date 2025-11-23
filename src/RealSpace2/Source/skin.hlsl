@@ -66,6 +66,35 @@ float4 GetLightDiffuse(float3 VertexPosition, float3 VertexNormal,
 	return LightDiffuse * diffuseFactor;
 }
 
+// Calcula la iluminación especular de una luz puntual usando modelo Blinn-Phong
+float4 GetLightSpecular(float3 VertexPosition, float3 VertexNormal, float3 ViewDir,
+	float3 LightPosition, float4 LightSpecular, float4 Attenuation,
+	float4 MaterialSpecular, float MaterialPower, float NdotL)
+{
+	// Solo calcular si hay contribución difusa (NdotL > 0) y MaterialPower > 0
+	if (NdotL <= 0.0f || MaterialPower <= 0.0f)
+		return float4(0, 0, 0, 0);
+	
+	// Vector desde vértice a luz
+	float3 lightDir = LightPosition - VertexPosition;
+	float distSq = dot(lightDir, lightDir);
+	float invDist = rsqrt(distSq);
+	float3 normalizedLightDir = lightDir * invDist;
+	
+	// Cálculo de atenuación
+	float attenuationFactor = 1.0f / dot(dst(distSq, invDist).xyz, Attenuation.xyz);
+	
+	// Calcular vector halfway (Blinn-Phong es más eficiente que Phong)
+	float3 halfway = normalize(normalizedLightDir + ViewDir);
+	float NdotH = dot(VertexNormal, halfway);
+	
+	// Calcular factor especular: pow(NdotH, MaterialPower)
+	float specularFactor = pow(max(NdotH, 0.0f), MaterialPower) * attenuationFactor;
+	
+	// Color especular = LightSpecular * MaterialSpecular * specularFactor
+	return LightSpecular * MaterialSpecular * specularFactor;
+}
+
 void main(float4 Pos            : POSITION,
           float2 Weight         : BLENDWEIGHT,
           float3 Indices        : BLENDINDICES,
@@ -102,6 +131,28 @@ void main(float4 Pos            : POSITION,
 		Light0Position, Light0Diffuse, Light0Attenuation);
 	oDiffuse += GetLightDiffuse(TransformedPos, TransformedNormal,
 		Light1Position, Light1Diffuse, Light1Attenuation);
+	
+	// Calcular iluminación especular si MaterialPower > 0
+	if (MaterialPower.x > 0.0f)
+	{
+		// Calcular vector de vista para iluminación especular
+		float3 viewDir = normalize(CameraPosition - TransformedPos);
+		
+		// Calcular NdotL para ambas luces (necesario para especular)
+		float3 light0Dir = normalize(Light0Position - TransformedPos);
+		float3 light1Dir = normalize(Light1Position - TransformedPos);
+		float NdotL0 = max(dot(TransformedNormal, light0Dir), 0.0f);
+		float NdotL1 = max(dot(TransformedNormal, light1Dir), 0.0f);
+		
+		// Agregar especular de ambas luces
+		oDiffuse += GetLightSpecular(TransformedPos, TransformedNormal, viewDir,
+			Light0Position, Light0Specular, Light0Attenuation,
+			MaterialSpecular, MaterialPower.x, NdotL0);
+		
+		oDiffuse += GetLightSpecular(TransformedPos, TransformedNormal, viewDir,
+			Light1Position, Light1Specular, Light1Attenuation,
+			MaterialSpecular, MaterialPower.x, NdotL1);
+	}
 	
 	// Aplicar color difuso del material
 	oDiffuse *= MaterialDiffuse;
