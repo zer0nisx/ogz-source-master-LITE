@@ -61,6 +61,7 @@ public:
 
 public:
 	ZObject();
+	virtual ~ZObject() = default;
 
 	auto& GetPosition() const { return m_Position; }
 	void SetPosition(const rvector& pos) { m_Position = pos; }

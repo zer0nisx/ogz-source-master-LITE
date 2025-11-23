@@ -30,7 +30,7 @@ class ZCharacterObject : public ZObject
 	MDeclareRTTI;
 public:
 	ZCharacterObject();
-	~ZCharacterObject();
+	virtual ~ZCharacterObject() = default;
 
 	void CreateShadow();
 

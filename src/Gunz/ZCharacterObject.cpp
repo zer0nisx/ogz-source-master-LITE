@@ -75,7 +75,6 @@ ZCharacterObject::ZCharacterObject()
 #undef ADD_MODULE
 }
 
-ZCharacterObject::~ZCharacterObject() = default;
 
 void ZCharacterObject::CreateShadow()
 {
