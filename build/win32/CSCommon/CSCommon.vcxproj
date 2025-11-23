@@ -1,0 +1,467 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="18.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="MinSizeRel|Win32">
+      <Configuration>MinSizeRel</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="RelWithDebInfo|Win32">
+      <Configuration>RelWithDebInfo</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{18B5AEAC-ED56-32B8-91A3-D548C275992E}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>
+    <Platform>Win32</Platform>
+    <ProjectName>CSCommon</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\ogz-source-master-LITE\build\win32\lib\Debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CSCommon.dir\Debug\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CSCommon</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\ogz-source-master-LITE\build\win32\lib\Release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CSCommon.dir\Release\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CSCommon</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">C:\ogz-source-master-LITE\build\win32\lib\MinSizeRel\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">CSCommon.dir\MinSizeRel\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">CSCommon</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">C:\ogz-source-master-LITE\build\win32\lib\RelWithDebInfo\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">CSCommon.dir\RelWithDebInfo\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">CSCommon</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">.lib</TargetExt>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\CSCommon\.;C:\ogz-source-master-LITE\src\CSCommon\Include;C:\ogz-source-master-LITE\src\CSCommon\..\SafeUDP\Include;C:\ogz-source-master-LITE\src\CSCommon\..\RealSpace2\Include;C:\ogz-source-master-LITE\src\CSCommon\..\sdk\dx9\Include;C:\ogz-source-master-LITE\src\CSCommon\..\sdk;C:\ogz-source-master-LITE\src\CSCommon\..\MCountryFilter\Include;C:\ogz-source-master-LITE\src\CSCommon\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\CSCommon\..\cml\Include;C:\ogz-source-master-LITE\src\sdk\libsodium\include;C:\ogz-source-master-LITE\src\cml\.;C:\ogz-source-master-LITE\src\cml\Include;C:\ogz-source-master\src\sdk\zlib\include;C:\ogz-source-master-LITE\src\cml\..\sdk\curl\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidjson\include;C:\ogz-source-master-LITE\src\sdk\curl\include;C:\ogz-source-master-LITE\src\sdk\rapidxml\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <BufferSecurityCheck></BufferSecurityCheck>
+      <CallingConvention></CallingConvention>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <FloatingPointModel></FloatingPointModel>
+      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SupportJustMyCode></SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;_WINSOCK_DEPRECATED_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;CURL_STATICLIB;SODIUM_STATIC;CMAKE_INTDIR="Debug"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;_WINSOCK_DEPRECATED_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;CURL_STATICLIB;SODIUM_STATIC;CMAKE_INTDIR=\"Debug\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\CSCommon\.;C:\ogz-source-master-LITE\src\CSCommon\Include;C:\ogz-source-master-LITE\src\CSCommon\..\SafeUDP\Include;C:\ogz-source-master-LITE\src\CSCommon\..\RealSpace2\Include;C:\ogz-source-master-LITE\src\CSCommon\..\sdk\dx9\Include;C:\ogz-source-master-LITE\src\CSCommon\..\sdk;C:\ogz-source-master-LITE\src\CSCommon\..\MCountryFilter\Include;C:\ogz-source-master-LITE\src\CSCommon\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\CSCommon\..\cml\Include;C:\ogz-source-master-LITE\src\sdk\libsodium\include;C:\ogz-source-master-LITE\src\cml\.;C:\ogz-source-master-LITE\src\cml\Include;C:\ogz-source-master\src\sdk\zlib\include;C:\ogz-source-master-LITE\src\cml\..\sdk\curl\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidjson\include;C:\ogz-source-master-LITE\src\sdk\curl\include;C:\ogz-source-master-LITE\src\sdk\rapidxml\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\CSCommon\.;C:\ogz-source-master-LITE\src\CSCommon\Include;C:\ogz-source-master-LITE\src\CSCommon\..\SafeUDP\Include;C:\ogz-source-master-LITE\src\CSCommon\..\RealSpace2\Include;C:\ogz-source-master-LITE\src\CSCommon\..\sdk\dx9\Include;C:\ogz-source-master-LITE\src\CSCommon\..\sdk;C:\ogz-source-master-LITE\src\CSCommon\..\MCountryFilter\Include;C:\ogz-source-master-LITE\src\CSCommon\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\CSCommon\..\cml\Include;C:\ogz-source-master-LITE\src\sdk\libsodium\include;C:\ogz-source-master-LITE\src\cml\.;C:\ogz-source-master-LITE\src\cml\Include;C:\ogz-source-master\src\sdk\zlib\include;C:\ogz-source-master-LITE\src\cml\..\sdk\curl\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidjson\include;C:\ogz-source-master-LITE\src\sdk\curl\include;C:\ogz-source-master-LITE\src\sdk\rapidxml\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:X86 /ignore:4099 /ignore:4221</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\CSCommon\.;C:\ogz-source-master-LITE\src\CSCommon\Include;C:\ogz-source-master-LITE\src\CSCommon\..\SafeUDP\Include;C:\ogz-source-master-LITE\src\CSCommon\..\RealSpace2\Include;C:\ogz-source-master-LITE\src\CSCommon\..\sdk\dx9\Include;C:\ogz-source-master-LITE\src\CSCommon\..\sdk;C:\ogz-source-master-LITE\src\CSCommon\..\MCountryFilter\Include;C:\ogz-source-master-LITE\src\CSCommon\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\CSCommon\..\cml\Include;C:\ogz-source-master-LITE\src\sdk\libsodium\include;C:\ogz-source-master-LITE\src\cml\.;C:\ogz-source-master-LITE\src\cml\Include;C:\ogz-source-master\src\sdk\zlib\include;C:\ogz-source-master-LITE\src\cml\..\sdk\curl\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidjson\include;C:\ogz-source-master-LITE\src\sdk\curl\include;C:\ogz-source-master-LITE\src\sdk\rapidxml\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <BufferSecurityCheck></BufferSecurityCheck>
+      <CallingConvention></CallingConvention>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <FloatingPointModel></FloatingPointModel>
+      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SupportJustMyCode></SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;_WINSOCK_DEPRECATED_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;NDEBUG;_PUBLISH;CURL_STATICLIB;SODIUM_STATIC;CMAKE_INTDIR="Release"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;_WINSOCK_DEPRECATED_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;NDEBUG;_PUBLISH;CURL_STATICLIB;SODIUM_STATIC;CMAKE_INTDIR=\"Release\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\CSCommon\.;C:\ogz-source-master-LITE\src\CSCommon\Include;C:\ogz-source-master-LITE\src\CSCommon\..\SafeUDP\Include;C:\ogz-source-master-LITE\src\CSCommon\..\RealSpace2\Include;C:\ogz-source-master-LITE\src\CSCommon\..\sdk\dx9\Include;C:\ogz-source-master-LITE\src\CSCommon\..\sdk;C:\ogz-source-master-LITE\src\CSCommon\..\MCountryFilter\Include;C:\ogz-source-master-LITE\src\CSCommon\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\CSCommon\..\cml\Include;C:\ogz-source-master-LITE\src\sdk\libsodium\include;C:\ogz-source-master-LITE\src\cml\.;C:\ogz-source-master-LITE\src\cml\Include;C:\ogz-source-master\src\sdk\zlib\include;C:\ogz-source-master-LITE\src\cml\..\sdk\curl\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidjson\include;C:\ogz-source-master-LITE\src\sdk\curl\include;C:\ogz-source-master-LITE\src\sdk\rapidxml\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\CSCommon\.;C:\ogz-source-master-LITE\src\CSCommon\Include;C:\ogz-source-master-LITE\src\CSCommon\..\SafeUDP\Include;C:\ogz-source-master-LITE\src\CSCommon\..\RealSpace2\Include;C:\ogz-source-master-LITE\src\CSCommon\..\sdk\dx9\Include;C:\ogz-source-master-LITE\src\CSCommon\..\sdk;C:\ogz-source-master-LITE\src\CSCommon\..\MCountryFilter\Include;C:\ogz-source-master-LITE\src\CSCommon\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\CSCommon\..\cml\Include;C:\ogz-source-master-LITE\src\sdk\libsodium\include;C:\ogz-source-master-LITE\src\cml\.;C:\ogz-source-master-LITE\src\cml\Include;C:\ogz-source-master\src\sdk\zlib\include;C:\ogz-source-master-LITE\src\cml\..\sdk\curl\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidjson\include;C:\ogz-source-master-LITE\src\sdk\curl\include;C:\ogz-source-master-LITE\src\sdk\rapidxml\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:X86 /ignore:4099 /ignore:4221</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\CSCommon\.;C:\ogz-source-master-LITE\src\CSCommon\Include;C:\ogz-source-master-LITE\src\CSCommon\..\SafeUDP\Include;C:\ogz-source-master-LITE\src\CSCommon\..\RealSpace2\Include;C:\ogz-source-master-LITE\src\CSCommon\..\sdk\dx9\Include;C:\ogz-source-master-LITE\src\CSCommon\..\sdk;C:\ogz-source-master-LITE\src\CSCommon\..\MCountryFilter\Include;C:\ogz-source-master-LITE\src\CSCommon\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\CSCommon\..\cml\Include;C:\ogz-source-master-LITE\src\sdk\libsodium\include;C:\ogz-source-master-LITE\src\cml\.;C:\ogz-source-master-LITE\src\cml\Include;C:\ogz-source-master\src\sdk\zlib\include;C:\ogz-source-master-LITE\src\cml\..\sdk\curl\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidjson\include;C:\ogz-source-master-LITE\src\sdk\curl\include;C:\ogz-source-master-LITE\src\sdk\rapidxml\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <BufferSecurityCheck></BufferSecurityCheck>
+      <CallingConvention></CallingConvention>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <FloatingPointModel></FloatingPointModel>
+      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>MinSpace</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SupportJustMyCode></SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;_WINSOCK_DEPRECATED_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;NDEBUG;_PUBLISH;CURL_STATICLIB;SODIUM_STATIC;CMAKE_INTDIR="MinSizeRel"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;_WINSOCK_DEPRECATED_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;NDEBUG;_PUBLISH;CURL_STATICLIB;SODIUM_STATIC;CMAKE_INTDIR=\"MinSizeRel\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\CSCommon\.;C:\ogz-source-master-LITE\src\CSCommon\Include;C:\ogz-source-master-LITE\src\CSCommon\..\SafeUDP\Include;C:\ogz-source-master-LITE\src\CSCommon\..\RealSpace2\Include;C:\ogz-source-master-LITE\src\CSCommon\..\sdk\dx9\Include;C:\ogz-source-master-LITE\src\CSCommon\..\sdk;C:\ogz-source-master-LITE\src\CSCommon\..\MCountryFilter\Include;C:\ogz-source-master-LITE\src\CSCommon\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\CSCommon\..\cml\Include;C:\ogz-source-master-LITE\src\sdk\libsodium\include;C:\ogz-source-master-LITE\src\cml\.;C:\ogz-source-master-LITE\src\cml\Include;C:\ogz-source-master\src\sdk\zlib\include;C:\ogz-source-master-LITE\src\cml\..\sdk\curl\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidjson\include;C:\ogz-source-master-LITE\src\sdk\curl\include;C:\ogz-source-master-LITE\src\sdk\rapidxml\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\CSCommon\.;C:\ogz-source-master-LITE\src\CSCommon\Include;C:\ogz-source-master-LITE\src\CSCommon\..\SafeUDP\Include;C:\ogz-source-master-LITE\src\CSCommon\..\RealSpace2\Include;C:\ogz-source-master-LITE\src\CSCommon\..\sdk\dx9\Include;C:\ogz-source-master-LITE\src\CSCommon\..\sdk;C:\ogz-source-master-LITE\src\CSCommon\..\MCountryFilter\Include;C:\ogz-source-master-LITE\src\CSCommon\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\CSCommon\..\cml\Include;C:\ogz-source-master-LITE\src\sdk\libsodium\include;C:\ogz-source-master-LITE\src\cml\.;C:\ogz-source-master-LITE\src\cml\Include;C:\ogz-source-master\src\sdk\zlib\include;C:\ogz-source-master-LITE\src\cml\..\sdk\curl\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidjson\include;C:\ogz-source-master-LITE\src\sdk\curl\include;C:\ogz-source-master-LITE\src\sdk\rapidxml\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:X86 /ignore:4099 /ignore:4221</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\CSCommon\.;C:\ogz-source-master-LITE\src\CSCommon\Include;C:\ogz-source-master-LITE\src\CSCommon\..\SafeUDP\Include;C:\ogz-source-master-LITE\src\CSCommon\..\RealSpace2\Include;C:\ogz-source-master-LITE\src\CSCommon\..\sdk\dx9\Include;C:\ogz-source-master-LITE\src\CSCommon\..\sdk;C:\ogz-source-master-LITE\src\CSCommon\..\MCountryFilter\Include;C:\ogz-source-master-LITE\src\CSCommon\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\CSCommon\..\cml\Include;C:\ogz-source-master-LITE\src\sdk\libsodium\include;C:\ogz-source-master-LITE\src\cml\.;C:\ogz-source-master-LITE\src\cml\Include;C:\ogz-source-master\src\sdk\zlib\include;C:\ogz-source-master-LITE\src\cml\..\sdk\curl\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidjson\include;C:\ogz-source-master-LITE\src\sdk\curl\include;C:\ogz-source-master-LITE\src\sdk\rapidxml\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <BufferSecurityCheck></BufferSecurityCheck>
+      <CallingConvention></CallingConvention>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <FloatingPointModel></FloatingPointModel>
+      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SupportJustMyCode></SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;_WINSOCK_DEPRECATED_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;NDEBUG;_PUBLISH;CURL_STATICLIB;SODIUM_STATIC;CMAKE_INTDIR="RelWithDebInfo"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;_WINSOCK_DEPRECATED_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;NDEBUG;_PUBLISH;CURL_STATICLIB;SODIUM_STATIC;CMAKE_INTDIR=\"RelWithDebInfo\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\CSCommon\.;C:\ogz-source-master-LITE\src\CSCommon\Include;C:\ogz-source-master-LITE\src\CSCommon\..\SafeUDP\Include;C:\ogz-source-master-LITE\src\CSCommon\..\RealSpace2\Include;C:\ogz-source-master-LITE\src\CSCommon\..\sdk\dx9\Include;C:\ogz-source-master-LITE\src\CSCommon\..\sdk;C:\ogz-source-master-LITE\src\CSCommon\..\MCountryFilter\Include;C:\ogz-source-master-LITE\src\CSCommon\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\CSCommon\..\cml\Include;C:\ogz-source-master-LITE\src\sdk\libsodium\include;C:\ogz-source-master-LITE\src\cml\.;C:\ogz-source-master-LITE\src\cml\Include;C:\ogz-source-master\src\sdk\zlib\include;C:\ogz-source-master-LITE\src\cml\..\sdk\curl\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidjson\include;C:\ogz-source-master-LITE\src\sdk\curl\include;C:\ogz-source-master-LITE\src\sdk\rapidxml\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\CSCommon\.;C:\ogz-source-master-LITE\src\CSCommon\Include;C:\ogz-source-master-LITE\src\CSCommon\..\SafeUDP\Include;C:\ogz-source-master-LITE\src\CSCommon\..\RealSpace2\Include;C:\ogz-source-master-LITE\src\CSCommon\..\sdk\dx9\Include;C:\ogz-source-master-LITE\src\CSCommon\..\sdk;C:\ogz-source-master-LITE\src\CSCommon\..\MCountryFilter\Include;C:\ogz-source-master-LITE\src\CSCommon\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\CSCommon\..\cml\Include;C:\ogz-source-master-LITE\src\sdk\libsodium\include;C:\ogz-source-master-LITE\src\cml\.;C:\ogz-source-master-LITE\src\cml\Include;C:\ogz-source-master\src\sdk\zlib\include;C:\ogz-source-master-LITE\src\cml\..\sdk\curl\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidjson\include;C:\ogz-source-master-LITE\src\sdk\curl\include;C:\ogz-source-master-LITE\src\sdk\rapidxml\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:X86 /ignore:4099 /ignore:4221</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\ogz-source-master-LITE\build\win32\CMakeFiles\234c000aab84458d81eecbd82d485d65\CSCommon_ORIGINAL_CXX_unity.cxx.rule">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Generating CXX unity source C:\ogz-source-master-LITE\build\win32\CSCommon\$(Configuration)\cotire\CSCommon_ORIGINAL_CXX_unity.cxx</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">setlocal
+cd C:\ogz-source-master-LITE\src\CSCommon
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -DCOTIRE_BUILD_TYPE:STRING=Debug -P C:/ogz-source-master-LITE/src/cmake/cotire.cmake unity C:/ogz-source-master-LITE/build/win32/CSCommon/CSCommon_ORIGINAL_CXX_cotire.cmake C:/ogz-source-master-LITE/build/win32/CSCommon/$(Configuration)/cotire/CSCommon_ORIGINAL_CXX_unity.cxx
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\ogz-source-master-LITE\build\win32\CSCommon\CSCommon_ORIGINAL_CXX_cotire.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\ogz-source-master-LITE\build\win32\CSCommon\$(Configuration)\cotire\CSCommon_ORIGINAL_CXX_unity.cxx</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Generating CXX unity source C:\ogz-source-master-LITE\build\win32\CSCommon\$(Configuration)\cotire\CSCommon_ORIGINAL_CXX_unity.cxx</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">setlocal
+cd C:\ogz-source-master-LITE\src\CSCommon
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -DCOTIRE_BUILD_TYPE:STRING=Release -P C:/ogz-source-master-LITE/src/cmake/cotire.cmake unity C:/ogz-source-master-LITE/build/win32/CSCommon/CSCommon_ORIGINAL_CXX_cotire.cmake C:/ogz-source-master-LITE/build/win32/CSCommon/$(Configuration)/cotire/CSCommon_ORIGINAL_CXX_unity.cxx
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\ogz-source-master-LITE\build\win32\CSCommon\CSCommon_ORIGINAL_CXX_cotire.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\ogz-source-master-LITE\build\win32\CSCommon\$(Configuration)\cotire\CSCommon_ORIGINAL_CXX_unity.cxx</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">Generating CXX unity source C:\ogz-source-master-LITE\build\win32\CSCommon\$(Configuration)\cotire\CSCommon_ORIGINAL_CXX_unity.cxx</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">setlocal
+cd C:\ogz-source-master-LITE\src\CSCommon
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -DCOTIRE_BUILD_TYPE:STRING=MinSizeRel -P C:/ogz-source-master-LITE/src/cmake/cotire.cmake unity C:/ogz-source-master-LITE/build/win32/CSCommon/CSCommon_ORIGINAL_CXX_cotire.cmake C:/ogz-source-master-LITE/build/win32/CSCommon/$(Configuration)/cotire/CSCommon_ORIGINAL_CXX_unity.cxx
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">C:\ogz-source-master-LITE\build\win32\CSCommon\CSCommon_ORIGINAL_CXX_cotire.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">C:\ogz-source-master-LITE\build\win32\CSCommon\$(Configuration)\cotire\CSCommon_ORIGINAL_CXX_unity.cxx</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">Generating CXX unity source C:\ogz-source-master-LITE\build\win32\CSCommon\$(Configuration)\cotire\CSCommon_ORIGINAL_CXX_unity.cxx</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">setlocal
+cd C:\ogz-source-master-LITE\src\CSCommon
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -DCOTIRE_BUILD_TYPE:STRING=RelWithDebInfo -P C:/ogz-source-master-LITE/src/cmake/cotire.cmake unity C:/ogz-source-master-LITE/build/win32/CSCommon/CSCommon_ORIGINAL_CXX_cotire.cmake C:/ogz-source-master-LITE/build/win32/CSCommon/$(Configuration)/cotire/CSCommon_ORIGINAL_CXX_unity.cxx
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">C:\ogz-source-master-LITE\build\win32\CSCommon\CSCommon_ORIGINAL_CXX_cotire.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">C:\ogz-source-master-LITE\build\win32\CSCommon\$(Configuration)\cotire\CSCommon_ORIGINAL_CXX_unity.cxx</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\ogz-source-master-LITE\src\CSCommon\CMakeLists.txt">
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Building Custom Rule C:/ogz-source-master-LITE/src/CSCommon/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/ogz-source-master-LITE/src -BC:/ogz-source-master-LITE/build/win32 --check-stamp-file C:/ogz-source-master-LITE/build/win32/CSCommon/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\ogz-source-master-LITE\build\win32\CSCommon\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Building Custom Rule C:/ogz-source-master-LITE/src/CSCommon/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/ogz-source-master-LITE/src -BC:/ogz-source-master-LITE/build/win32 --check-stamp-file C:/ogz-source-master-LITE/build/win32/CSCommon/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\ogz-source-master-LITE\build\win32\CSCommon\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">Building Custom Rule C:/ogz-source-master-LITE/src/CSCommon/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/ogz-source-master-LITE/src -BC:/ogz-source-master-LITE/build/win32 --check-stamp-file C:/ogz-source-master-LITE/build/win32/CSCommon/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">C:\ogz-source-master-LITE\build\win32\CSCommon\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">Building Custom Rule C:/ogz-source-master-LITE/src/CSCommon/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/ogz-source-master-LITE/src -BC:/ogz-source-master-LITE/build/win32 --check-stamp-file C:/ogz-source-master-LITE/build/win32/CSCommon/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">C:\ogz-source-master-LITE\build\win32\CSCommon\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="C:\ogz-source-master-LITE\src\CSCommon\Include\AnimationStuff.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\CSCommon\Include\BasicInfo.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\CSCommon\Include\BasicInfoHistory.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\CSCommon\Include\Config.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\CSCommon\Include\HitRegistration.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\CSCommon\Include\IndexPage.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\CSCommon\Include\MAgentObject.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\CSCommon\Include\MBaseChannelRule.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\CSCommon\Include\MBaseGameType.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\CSCommon\Include\MBaseItem.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\CSCommon\Include\MBaseLocale.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\CSCommon\Include\MBaseQuest.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\CSCommon\Include\MBaseStringResManager.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\CSCommon\Include\MChattingFilter.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\CSCommon\Include\MCommand.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\CSCommon\Include\MCommandBuilder.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\CSCommon\Include\MCommandCommunicator.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\CSCommon\Include\MCommandManager.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\CSCommon\Include\MCommandParameter.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\CSCommon\Include\MCommandProfiler.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\CSCommon\Include\MCommandRegistration.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\CSCommon\Include\MCustomClient.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\CSCommon\Include\MErrorTable.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\CSCommon\Include\MGridMap.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\CSCommon\Include\MLadderGroup.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\CSCommon\Include\MLadderStatistics.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\CSCommon\Include\MMatchGameType.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\CSCommon\Include\MMatchGlobal.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\CSCommon\Include\MMatchItem.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\CSCommon\Include\MMatchMap.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\CSCommon\Include\MMatchNotify.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\CSCommon\Include\MMatchObjCache.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\CSCommon\Include\MMatchStageSetting.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\CSCommon\Include\MMatchStringResManager.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\CSCommon\Include\MMatchTransDataType.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\CSCommon\Include\MMatchUtil.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\CSCommon\Include\MMatchWorldItemDesc.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\CSCommon\Include\MObject.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\CSCommon\Include\MObjectTypes.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\CSCommon\Include\MPacket.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\CSCommon\Include\MPacketCrypter.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\CSCommon\Include\MPickInfo.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\CSCommon\Include\MPreHeader.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\CSCommon\Include\MQuestConst.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\CSCommon\Include\MQuestDropTable.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\CSCommon\Include\MQuestFormula.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\CSCommon\Include\MQuestItem.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\CSCommon\Include\MQuestMap.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\CSCommon\Include\MQuestNPC.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\CSCommon\Include\MServer.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\CSCommon\Include\MSharedCommandTable.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\CSCommon\Include\MSkillDesc.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\CSCommon\Include\MSkillTypes.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\CSCommon\Include\MStringRes.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\CSCommon\Include\MSurvivalMap.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\CSCommon\Include\MTCPSocket.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\CSCommon\Include\MUID.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\CSCommon\Include\MXmlParser.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\CSCommon\Include\NetIO.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\CSCommon\Include\Physics.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\CSCommon\Include\RGVersion.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\CSCommon\Include\RealCPNet.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\CSCommon\Include\stuff.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\build\win32\CSCommon\$(Configuration)\cotire\CSCommon_ORIGINAL_CXX_unity.cxx">
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalOptions) /bigobj</AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(AdditionalOptions) /bigobj</AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">%(AdditionalOptions) /bigobj</AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">%(AdditionalOptions) /bigobj</AdditionalOptions>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="C:\ogz-source-master-LITE\build\win32\ZERO_CHECK.vcxproj">
+      <Project>{5B1216EE-1D01-3B9C-8E8F-ACD32D771E06}</Project>
+      <Name>ZERO_CHECK</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\ogz-source-master-LITE\build\win32\cml\cml.vcxproj">
+      <Project>{65F26DF4-191B-3662-9288-C8D12B6D8C1F}</Project>
+      <Name>cml</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\ogz-source-master-LITE\build\win32\sdk\libsodium\sodium.vcxproj">
+      <Project>{8AFB7AC9-760D-37FD-AF14-A20B0A7CD512}</Project>
+      <Name>sodium</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="18.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\ogz-source-master-LITE\build\win32\launcher\$(Configuration)\cotire\launcher_ORIGINAL_CXX_unity.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\ogz-source-master-LITE\build\win32\CMakeFiles\f15d689a91357defdb1c072fa1cba350\launcher_ORIGINAL_CXX_unity.cxx.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\ogz-source-master-LITE\src\launcher\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{E0E033D4-E3FF-340B-9ECC-781AAF5A7114}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{65A8B673-198B-3040-9A85-9F2C6AC6DD25}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

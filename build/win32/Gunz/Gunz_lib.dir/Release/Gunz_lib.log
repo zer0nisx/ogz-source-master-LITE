@@ -1,0 +1,22 @@
+﻿  Generating CXX unity source C:\ogz-source-master-LITE\build\win32\Gunz\Release\cotire\Gunz_lib_ORIGINAL_CXX_unity.cxx
+  CMake Deprecation Warning at C:/ogz-source-master-LITE/src/cmake/cotire.cmake:40 (cmake_minimum_required):
+    Compatibility with CMake < 3.10 will be removed from a future version of
+    CMake.
+  
+    Update the VERSION argument <min> value.  Or, use the <min>...<max> syntax
+    to tell CMake that the project requires at least <min> but has been updated
+    to work with policies introduced by <max> or earlier.
+  
+  
+  Building Custom Rule C:/ogz-source-master-LITE/src/Gunz/CMakeLists.txt
+  Gunz_lib_ORIGINAL_CXX_unity.cxx
+C:\ogz-source-master-LITE\src\Gunz\ZCharacterObject.cpp(304,3): warning C4834: Descartar el valor de retorno de la función con el atributo [[nodiscard]]
+  (compilando archivo de origen "Release/cotire/Gunz_lib_ORIGINAL_CXX_unity.cxx")
+  
+C:\ogz-source-master-LITE\src\Gunz\ZCharacterObject.cpp(305,3): warning C4834: Descartar el valor de retorno de la función con el atributo [[nodiscard]]
+  (compilando archivo de origen "Release/cotire/Gunz_lib_ORIGINAL_CXX_unity.cxx")
+  
+C:\ogz-source-master-LITE\src\Gunz\ZCharacterObject.cpp(306,3): warning C4834: Descartar el valor de retorno de la función con el atributo [[nodiscard]]
+  (compilando archivo de origen "Release/cotire/Gunz_lib_ORIGINAL_CXX_unity.cxx")
+  
+  Gunz_lib.vcxproj -> C:\ogz-source-master-LITE\build\win32\lib\Release\Gunz_lib.lib

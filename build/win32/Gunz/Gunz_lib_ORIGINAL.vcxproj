@@ -1,0 +1,746 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="18.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="MinSizeRel|Win32">
+      <Configuration>MinSizeRel</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="RelWithDebInfo|Win32">
+      <Configuration>RelWithDebInfo</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{1EBE195E-0863-34AA-A260-9239F5ABCC19}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>
+    <Platform>Win32</Platform>
+    <ProjectName>Gunz_lib_ORIGINAL</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\ogz-source-master-LITE\build\win32\lib\Debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Gunz_lib_ORIGINAL.dir\Debug\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Gunz_lib_ORIGINAL</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\ogz-source-master-LITE\build\win32\lib\Release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Gunz_lib_ORIGINAL.dir\Release\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Gunz_lib_ORIGINAL</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">C:\ogz-source-master-LITE\build\win32\lib\MinSizeRel\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">Gunz_lib_ORIGINAL.dir\MinSizeRel\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">Gunz_lib_ORIGINAL</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">C:\ogz-source-master-LITE\build\win32\lib\RelWithDebInfo\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">Gunz_lib_ORIGINAL.dir\RelWithDebInfo\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">Gunz_lib_ORIGINAL</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">.lib</TargetExt>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\Gunz\..\sdk\dx9\include;C:\ogz-source-master-LITE\src\Gunz\..\sdk;C:\ogz-source-master-LITE\src\Gunz\..\CSCommon\Include;C:\ogz-source-master-LITE\src\Gunz\..\SafeUDP\Include;C:\ogz-source-master-LITE\src\Gunz\..\CML\Include;C:\ogz-source-master-LITE\src\Gunz\..\RealSpace2\Include;C:\ogz-source-master-LITE\src\Gunz\..\MAI\Include;C:\ogz-source-master-LITE\src\Gunz\..\RealSpace\Include;C:\ogz-source-master-LITE\src\Gunz\..\Mint2\Include;C:\ogz-source-master-LITE\src\Gunz\..\RealSound\Include;C:\ogz-source-master-LITE\src\Gunz\..\MCountryFilter\Include;C:\ogz-source-master-LITE\src\Gunz\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\sdk\libsodium\include;C:\ogz-source-master-LITE\src\Gunz\..\sdk\opus\include;C:\ogz-source-master-LITE\src\Gunz\..\sdk\portaudio\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <BufferSecurityCheck></BufferSecurityCheck>
+      <CallingConvention></CallingConvention>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <FloatingPointModel></FloatingPointModel>
+      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SupportJustMyCode></SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;_WINSOCK_DEPRECATED_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;CMAKE_INTDIR="Debug"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;_WINSOCK_DEPRECATED_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;CMAKE_INTDIR=\"Debug\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\Gunz\..\sdk\dx9\include;C:\ogz-source-master-LITE\src\Gunz\..\sdk;C:\ogz-source-master-LITE\src\Gunz\..\CSCommon\Include;C:\ogz-source-master-LITE\src\Gunz\..\SafeUDP\Include;C:\ogz-source-master-LITE\src\Gunz\..\CML\Include;C:\ogz-source-master-LITE\src\Gunz\..\RealSpace2\Include;C:\ogz-source-master-LITE\src\Gunz\..\MAI\Include;C:\ogz-source-master-LITE\src\Gunz\..\RealSpace\Include;C:\ogz-source-master-LITE\src\Gunz\..\Mint2\Include;C:\ogz-source-master-LITE\src\Gunz\..\RealSound\Include;C:\ogz-source-master-LITE\src\Gunz\..\MCountryFilter\Include;C:\ogz-source-master-LITE\src\Gunz\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\sdk\libsodium\include;C:\ogz-source-master-LITE\src\Gunz\..\sdk\opus\include;C:\ogz-source-master-LITE\src\Gunz\..\sdk\portaudio\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\Gunz\..\sdk\dx9\include;C:\ogz-source-master-LITE\src\Gunz\..\sdk;C:\ogz-source-master-LITE\src\Gunz\..\CSCommon\Include;C:\ogz-source-master-LITE\src\Gunz\..\SafeUDP\Include;C:\ogz-source-master-LITE\src\Gunz\..\CML\Include;C:\ogz-source-master-LITE\src\Gunz\..\RealSpace2\Include;C:\ogz-source-master-LITE\src\Gunz\..\MAI\Include;C:\ogz-source-master-LITE\src\Gunz\..\RealSpace\Include;C:\ogz-source-master-LITE\src\Gunz\..\Mint2\Include;C:\ogz-source-master-LITE\src\Gunz\..\RealSound\Include;C:\ogz-source-master-LITE\src\Gunz\..\MCountryFilter\Include;C:\ogz-source-master-LITE\src\Gunz\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\sdk\libsodium\include;C:\ogz-source-master-LITE\src\Gunz\..\sdk\opus\include;C:\ogz-source-master-LITE\src\Gunz\..\sdk\portaudio\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:X86 /ignore:4099 /ignore:4221</AdditionalOptions>
+      <SubSystem>Windows</SubSystem>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\Gunz\..\sdk\dx9\include;C:\ogz-source-master-LITE\src\Gunz\..\sdk;C:\ogz-source-master-LITE\src\Gunz\..\CSCommon\Include;C:\ogz-source-master-LITE\src\Gunz\..\SafeUDP\Include;C:\ogz-source-master-LITE\src\Gunz\..\CML\Include;C:\ogz-source-master-LITE\src\Gunz\..\RealSpace2\Include;C:\ogz-source-master-LITE\src\Gunz\..\MAI\Include;C:\ogz-source-master-LITE\src\Gunz\..\RealSpace\Include;C:\ogz-source-master-LITE\src\Gunz\..\Mint2\Include;C:\ogz-source-master-LITE\src\Gunz\..\RealSound\Include;C:\ogz-source-master-LITE\src\Gunz\..\MCountryFilter\Include;C:\ogz-source-master-LITE\src\Gunz\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\sdk\libsodium\include;C:\ogz-source-master-LITE\src\Gunz\..\sdk\opus\include;C:\ogz-source-master-LITE\src\Gunz\..\sdk\portaudio\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <BufferSecurityCheck></BufferSecurityCheck>
+      <CallingConvention></CallingConvention>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <FloatingPointModel></FloatingPointModel>
+      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SupportJustMyCode></SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;_WINSOCK_DEPRECATED_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;NDEBUG;_PUBLISH;CMAKE_INTDIR="Release"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;_WINSOCK_DEPRECATED_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;NDEBUG;_PUBLISH;CMAKE_INTDIR=\"Release\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\Gunz\..\sdk\dx9\include;C:\ogz-source-master-LITE\src\Gunz\..\sdk;C:\ogz-source-master-LITE\src\Gunz\..\CSCommon\Include;C:\ogz-source-master-LITE\src\Gunz\..\SafeUDP\Include;C:\ogz-source-master-LITE\src\Gunz\..\CML\Include;C:\ogz-source-master-LITE\src\Gunz\..\RealSpace2\Include;C:\ogz-source-master-LITE\src\Gunz\..\MAI\Include;C:\ogz-source-master-LITE\src\Gunz\..\RealSpace\Include;C:\ogz-source-master-LITE\src\Gunz\..\Mint2\Include;C:\ogz-source-master-LITE\src\Gunz\..\RealSound\Include;C:\ogz-source-master-LITE\src\Gunz\..\MCountryFilter\Include;C:\ogz-source-master-LITE\src\Gunz\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\sdk\libsodium\include;C:\ogz-source-master-LITE\src\Gunz\..\sdk\opus\include;C:\ogz-source-master-LITE\src\Gunz\..\sdk\portaudio\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\Gunz\..\sdk\dx9\include;C:\ogz-source-master-LITE\src\Gunz\..\sdk;C:\ogz-source-master-LITE\src\Gunz\..\CSCommon\Include;C:\ogz-source-master-LITE\src\Gunz\..\SafeUDP\Include;C:\ogz-source-master-LITE\src\Gunz\..\CML\Include;C:\ogz-source-master-LITE\src\Gunz\..\RealSpace2\Include;C:\ogz-source-master-LITE\src\Gunz\..\MAI\Include;C:\ogz-source-master-LITE\src\Gunz\..\RealSpace\Include;C:\ogz-source-master-LITE\src\Gunz\..\Mint2\Include;C:\ogz-source-master-LITE\src\Gunz\..\RealSound\Include;C:\ogz-source-master-LITE\src\Gunz\..\MCountryFilter\Include;C:\ogz-source-master-LITE\src\Gunz\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\sdk\libsodium\include;C:\ogz-source-master-LITE\src\Gunz\..\sdk\opus\include;C:\ogz-source-master-LITE\src\Gunz\..\sdk\portaudio\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:X86 /ignore:4099 /ignore:4221</AdditionalOptions>
+      <SubSystem>Windows</SubSystem>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\Gunz\..\sdk\dx9\include;C:\ogz-source-master-LITE\src\Gunz\..\sdk;C:\ogz-source-master-LITE\src\Gunz\..\CSCommon\Include;C:\ogz-source-master-LITE\src\Gunz\..\SafeUDP\Include;C:\ogz-source-master-LITE\src\Gunz\..\CML\Include;C:\ogz-source-master-LITE\src\Gunz\..\RealSpace2\Include;C:\ogz-source-master-LITE\src\Gunz\..\MAI\Include;C:\ogz-source-master-LITE\src\Gunz\..\RealSpace\Include;C:\ogz-source-master-LITE\src\Gunz\..\Mint2\Include;C:\ogz-source-master-LITE\src\Gunz\..\RealSound\Include;C:\ogz-source-master-LITE\src\Gunz\..\MCountryFilter\Include;C:\ogz-source-master-LITE\src\Gunz\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\sdk\libsodium\include;C:\ogz-source-master-LITE\src\Gunz\..\sdk\opus\include;C:\ogz-source-master-LITE\src\Gunz\..\sdk\portaudio\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <BufferSecurityCheck></BufferSecurityCheck>
+      <CallingConvention></CallingConvention>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <FloatingPointModel></FloatingPointModel>
+      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>MinSpace</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SupportJustMyCode></SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;_WINSOCK_DEPRECATED_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;NDEBUG;_PUBLISH;CMAKE_INTDIR="MinSizeRel"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;_WINSOCK_DEPRECATED_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;NDEBUG;_PUBLISH;CMAKE_INTDIR=\"MinSizeRel\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\Gunz\..\sdk\dx9\include;C:\ogz-source-master-LITE\src\Gunz\..\sdk;C:\ogz-source-master-LITE\src\Gunz\..\CSCommon\Include;C:\ogz-source-master-LITE\src\Gunz\..\SafeUDP\Include;C:\ogz-source-master-LITE\src\Gunz\..\CML\Include;C:\ogz-source-master-LITE\src\Gunz\..\RealSpace2\Include;C:\ogz-source-master-LITE\src\Gunz\..\MAI\Include;C:\ogz-source-master-LITE\src\Gunz\..\RealSpace\Include;C:\ogz-source-master-LITE\src\Gunz\..\Mint2\Include;C:\ogz-source-master-LITE\src\Gunz\..\RealSound\Include;C:\ogz-source-master-LITE\src\Gunz\..\MCountryFilter\Include;C:\ogz-source-master-LITE\src\Gunz\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\sdk\libsodium\include;C:\ogz-source-master-LITE\src\Gunz\..\sdk\opus\include;C:\ogz-source-master-LITE\src\Gunz\..\sdk\portaudio\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\Gunz\..\sdk\dx9\include;C:\ogz-source-master-LITE\src\Gunz\..\sdk;C:\ogz-source-master-LITE\src\Gunz\..\CSCommon\Include;C:\ogz-source-master-LITE\src\Gunz\..\SafeUDP\Include;C:\ogz-source-master-LITE\src\Gunz\..\CML\Include;C:\ogz-source-master-LITE\src\Gunz\..\RealSpace2\Include;C:\ogz-source-master-LITE\src\Gunz\..\MAI\Include;C:\ogz-source-master-LITE\src\Gunz\..\RealSpace\Include;C:\ogz-source-master-LITE\src\Gunz\..\Mint2\Include;C:\ogz-source-master-LITE\src\Gunz\..\RealSound\Include;C:\ogz-source-master-LITE\src\Gunz\..\MCountryFilter\Include;C:\ogz-source-master-LITE\src\Gunz\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\sdk\libsodium\include;C:\ogz-source-master-LITE\src\Gunz\..\sdk\opus\include;C:\ogz-source-master-LITE\src\Gunz\..\sdk\portaudio\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:X86 /ignore:4099 /ignore:4221</AdditionalOptions>
+      <SubSystem>Windows</SubSystem>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\Gunz\..\sdk\dx9\include;C:\ogz-source-master-LITE\src\Gunz\..\sdk;C:\ogz-source-master-LITE\src\Gunz\..\CSCommon\Include;C:\ogz-source-master-LITE\src\Gunz\..\SafeUDP\Include;C:\ogz-source-master-LITE\src\Gunz\..\CML\Include;C:\ogz-source-master-LITE\src\Gunz\..\RealSpace2\Include;C:\ogz-source-master-LITE\src\Gunz\..\MAI\Include;C:\ogz-source-master-LITE\src\Gunz\..\RealSpace\Include;C:\ogz-source-master-LITE\src\Gunz\..\Mint2\Include;C:\ogz-source-master-LITE\src\Gunz\..\RealSound\Include;C:\ogz-source-master-LITE\src\Gunz\..\MCountryFilter\Include;C:\ogz-source-master-LITE\src\Gunz\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\sdk\libsodium\include;C:\ogz-source-master-LITE\src\Gunz\..\sdk\opus\include;C:\ogz-source-master-LITE\src\Gunz\..\sdk\portaudio\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <BufferSecurityCheck></BufferSecurityCheck>
+      <CallingConvention></CallingConvention>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <FloatingPointModel></FloatingPointModel>
+      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SupportJustMyCode></SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;_WINSOCK_DEPRECATED_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;NDEBUG;_PUBLISH;CMAKE_INTDIR="RelWithDebInfo"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;_WINSOCK_DEPRECATED_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;NDEBUG;_PUBLISH;CMAKE_INTDIR=\"RelWithDebInfo\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\Gunz\..\sdk\dx9\include;C:\ogz-source-master-LITE\src\Gunz\..\sdk;C:\ogz-source-master-LITE\src\Gunz\..\CSCommon\Include;C:\ogz-source-master-LITE\src\Gunz\..\SafeUDP\Include;C:\ogz-source-master-LITE\src\Gunz\..\CML\Include;C:\ogz-source-master-LITE\src\Gunz\..\RealSpace2\Include;C:\ogz-source-master-LITE\src\Gunz\..\MAI\Include;C:\ogz-source-master-LITE\src\Gunz\..\RealSpace\Include;C:\ogz-source-master-LITE\src\Gunz\..\Mint2\Include;C:\ogz-source-master-LITE\src\Gunz\..\RealSound\Include;C:\ogz-source-master-LITE\src\Gunz\..\MCountryFilter\Include;C:\ogz-source-master-LITE\src\Gunz\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\sdk\libsodium\include;C:\ogz-source-master-LITE\src\Gunz\..\sdk\opus\include;C:\ogz-source-master-LITE\src\Gunz\..\sdk\portaudio\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\Gunz\..\sdk\dx9\include;C:\ogz-source-master-LITE\src\Gunz\..\sdk;C:\ogz-source-master-LITE\src\Gunz\..\CSCommon\Include;C:\ogz-source-master-LITE\src\Gunz\..\SafeUDP\Include;C:\ogz-source-master-LITE\src\Gunz\..\CML\Include;C:\ogz-source-master-LITE\src\Gunz\..\RealSpace2\Include;C:\ogz-source-master-LITE\src\Gunz\..\MAI\Include;C:\ogz-source-master-LITE\src\Gunz\..\RealSpace\Include;C:\ogz-source-master-LITE\src\Gunz\..\Mint2\Include;C:\ogz-source-master-LITE\src\Gunz\..\RealSound\Include;C:\ogz-source-master-LITE\src\Gunz\..\MCountryFilter\Include;C:\ogz-source-master-LITE\src\Gunz\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\sdk\libsodium\include;C:\ogz-source-master-LITE\src\Gunz\..\sdk\opus\include;C:\ogz-source-master-LITE\src\Gunz\..\sdk\portaudio\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:X86 /ignore:4099 /ignore:4221</AdditionalOptions>
+      <SubSystem>Windows</SubSystem>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\ogz-source-master-LITE\src\Gunz\CMakeLists.txt">
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Building Custom Rule C:/ogz-source-master-LITE/src/Gunz/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/ogz-source-master-LITE/src -BC:/ogz-source-master-LITE/build/win32 --check-stamp-file C:/ogz-source-master-LITE/build/win32/Gunz/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\ogz-source-master-LITE\build\win32\Gunz\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Building Custom Rule C:/ogz-source-master-LITE/src/Gunz/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/ogz-source-master-LITE/src -BC:/ogz-source-master-LITE/build/win32 --check-stamp-file C:/ogz-source-master-LITE/build/win32/Gunz/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\ogz-source-master-LITE\build\win32\Gunz\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">Building Custom Rule C:/ogz-source-master-LITE/src/Gunz/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/ogz-source-master-LITE/src -BC:/ogz-source-master-LITE/build/win32 --check-stamp-file C:/ogz-source-master-LITE/build/win32/Gunz/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">C:\ogz-source-master-LITE\build\win32\Gunz\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">Building Custom Rule C:/ogz-source-master-LITE/src/Gunz/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/ogz-source-master-LITE/src -BC:/ogz-source-master-LITE/build/win32 --check-stamp-file C:/ogz-source-master-LITE/build/win32/Gunz/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">C:\ogz-source-master-LITE\build\win32\Gunz\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\FunctionalListener.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\Hitboxes.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\Hitboxes.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\MClient.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\MClient.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\MCommandLogFrame.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\MCommandLogFrame.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\MEmblemMgr.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\MEmblemMgr.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\MMatchClient.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\MMatchClient.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\MPartialBitmap.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\MSysInfo.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\MSysInfo.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\Mint4Gunz.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\Mint4Gunz.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\Mint4R2.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\Mint4R2.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\NATUPnP.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\NMCrypt.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\NewChat.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\NewChat.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\Portal.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\Portal.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\RGCommands.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\RGGlobal.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\RGMain.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\RGMain.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ReplayControl.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ReplayControl.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\Tasks.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\Tasks.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\VersionNo.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\VoiceChat.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\VoiceChat.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZAI_Base.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZActionDef.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZActionKey.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZActionKey.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZActor.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZActor.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZActorAnimation.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZActorAnimation.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZActorController.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZActorController.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZActorSound.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZActorSound.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZApplication.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZApplication.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZBehavior.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZBehavior.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZBehavior_Attack.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZBehavior_Attack.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZBehavior_Idle.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZBehavior_Idle.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZBehavior_Patrol.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZBehavior_Patrol.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZBehavior_Script.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZBehavior_Script.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZBirdDummyAI.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZBirdDummyAI.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZBirdDummyClient.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZBirdDummyClient.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZBirdTest.cpp" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZBmNumLabel.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZBmNumLabel.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZBrain.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZBrain.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZButton.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZButton.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZCamera.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZCamera.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZCanvas.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZCanvas.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZChannelListItem.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZChannelRule.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZChannelRule.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZCharacter.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZCharacter.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZCharacterItem.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZCharacterItem.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZCharacterManager.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZCharacterManager.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZCharacterObject.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZCharacterObject.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZCharacterSelectView.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZCharacterSelectView.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZCharacterStructs.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZCharacterView.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZCharacterView.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZCharacterViewList.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZCharacterViewList.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZChat.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZChat.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZChatCmd.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZChatCmd.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZChat_CmdID.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZChat_Cmds.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZClan.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZClanListBox.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZClanListBox.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZClothEmblem.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZClothEmblem.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZColorTable.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZCombatChat.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZCombatChat.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZCombatInterface.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZCombatInterface.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZCombatMenu.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZCombatMenu.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZCombatQuestScreen.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZCombatQuestScreen.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZCommandTable.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZCommandTable.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZConfiguration.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZConfiguration.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZConsole.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZConsole.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZCountDown.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZCountDown.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZCrossHair.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZCrossHair.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZDirectInput.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZDirectInput.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZEffectAniMesh.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZEffectAniMesh.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZEffectBase.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZEffectBase.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZEffectBillboard.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZEffectBillboard.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZEffectBillboardList.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZEffectBillboardList.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZEffectBulletMark.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZEffectBulletMark.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZEffectBulletMarkList.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZEffectBulletMarkList.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZEffectFlashBang.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZEffectFlashBang.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZEffectLightFragment.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZEffectLightFragment.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZEffectLightFragmentList.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZEffectLightFragmentList.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZEffectLightTracer.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZEffectLightTracer.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZEffectManager.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZEffectManager.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZEffectSmoke.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZEffectSmoke.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZEffectStaticMesh.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZEffectStaticMesh.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZEmblemInterface.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZEmblemInterface.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZEnemy.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZEnemy.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZEnvObject.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZEnvObject.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZEquipmentListBox.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZEquipmentListBox.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZFile.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZFile.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZFilePath.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZFrame.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZFrame.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZGame.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZGame.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZGameAction.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZGameAction.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZGameClient.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZGameClient.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZGameClient_Clan.cpp" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZGameClient_Command.cpp" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZGameClient_HShield.cpp" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZGameClient_Ladder.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZGameConst.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZGameDraw.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZGameDrawD3D9.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZGameDrawD3D9.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZGameDrawVulkan.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZGameInput.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZGameInput.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZGameInput_Debug.cpp" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZGameInterface.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZGameInterface.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZGameInterface_OnCommand.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZGameTimer.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZGameType.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZGameType.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZGameTypeList.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZGameTypeList.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZGlobal.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZGlobal.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZHelpScreen.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZHelpScreen.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZIDLResource.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZIDLResource.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZInitialLoading.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZInitialLoading.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZInput.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZInput.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZInterface.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZInterface.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZInterfaceBackground.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZInterfaceBackground.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZInterfaceItem.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZInterfaceListener.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZInterfaceListener.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZItem.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZItem.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZItemDesc.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZItemDesc.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZItemMenu.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZItemMenu.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZItemSlotView.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZItemSlotView.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZLoading.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZLoading.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZLocatorList.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZLocatorList.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZMap.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZMap.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZMapDesc.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZMapDesc.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZMapListBox.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZMapListBox.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZMatch.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZMatch.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZMeshView.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZMeshView.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZMeshViewList.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZMeshViewList.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZMessageManager.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZMessageManager.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZMessages.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZMessages.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZMiniMap.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZMiniMap.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZModule.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZModule.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZModuleID.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZModule_ElementalDamage.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZModule_ElementalDamage.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZModule_HPAP.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZModule_HPAP.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZModule_Movable.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZModule_Movable.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZModule_QuestStatus.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZModule_QuestStatus.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZModule_Resistance.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZModule_Resistance.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZModule_Skills.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZModule_Skills.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZMonsterBookInterface.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZMonsterBookInterface.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZMsgBox.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZMsgBox.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZMyBotCharacter.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZMyBotCharacter.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZMyCharacter.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZMyCharacter.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZMyInfo.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZMyInfo.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZMyItemList.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZMyItemList.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZNetAgreementBuilder.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZNetAgreementBuilder.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZNetCharacter.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZNetCharacter.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZNetRepository.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZNetRepository.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZObject.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZObject.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZObjectManager.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZObjectManager.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZObserver.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZObserver.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZOptionInterface.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZOptionInterface.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZPickInfo.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZPlayerList.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZPlayerList.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZPlayerListBox.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZPlayerListBox.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZPlayerMenu.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZPlayerMenu.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZPlayerSelectListBox.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZPlayerSelectListBox.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZPost.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZPost.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZPostLocal.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZPostLocal.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZPrerequisites.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZProfiler.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZProfiler.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZQuest.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZQuest.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZQuestGameInfo.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZQuestGameInfo.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZQuestMap.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZQuestMap.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZRadar.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZRadar.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZRangeWeaponHitDice.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZRangeWeaponHitDice.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZReplay.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZReplay.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZReplayStructs.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZReplayWrite.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZReplayWrite.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZReportAbuse.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZReportAbuse.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZRoomListBox.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZRoomListBox.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZRule.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZRule.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZRuleAssassinate.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZRuleAssassinate.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZRuleBaseQuest.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZRuleBaseQuest.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZRuleBerserker.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZRuleBerserker.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZRuleDeathMatch.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZRuleDeathMatch.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZRuleDuel.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZRuleDuel.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZRuleGladiator.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZRuleGladiator.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZRuleGunGame.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZRuleGunGame.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZRuleQuest.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZRuleQuest.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZRuleSkillmap.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZRuleSkillmap.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZRuleSurvival.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZRuleSurvival.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZRuleTraining.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZRuleTraining.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZScoreListBox.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZScoreListBox.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZScreenDebugger.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZScreenDebugger.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZScreenEffectManager.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZScreenEffectManager.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZSecurity.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZSecurity.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZServerView.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZServerView.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZShadow.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZShadow.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZShop.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZShop.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZSkill.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZSkill.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZSkyBox.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZSkyBox.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZSoundEngine.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZSoundEngine.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZSoundFMod.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZSoundFMod.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZStageInfoBox.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZStageInfoBox.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZStageInterface.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZStageInterface.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZStageSetting.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZStageSetting.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZStateMachine.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZStateMachine.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZStencilLight.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZStencilLight.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZStringResManager.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZStringResManager.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZTask.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZTask.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZTaskBase_Attack.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZTaskID.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZTaskManager.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZTaskManager.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZTask_AttackMelee.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZTask_AttackMelee.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZTask_AttackRange.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZTask_AttackRange.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZTask_Delay.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZTask_Delay.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZTask_MoveToPos.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZTask_MoveToPos.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZTask_RotateToDir.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZTask_RotateToDir.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZTask_Skill.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZTask_Skill.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZTestGame.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZTestGame.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZTimer.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZTimer.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZTips.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZTips.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZToolTip.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZToolTip.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZUtil.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZUtil.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZVoteInterface.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZVoteInterface.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZWater.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZWater.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZWeapon.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZWeapon.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZWeaponMgr.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZWeaponMgr.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZWeaponScreenEffect.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZWeaponScreenEffect.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZWorld.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZWorld.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZWorldItem.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZWorldItem.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZWorldManager.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZWorldManager.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\fmod.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\fmod_errors.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\main.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\resource.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\resource1.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\resource2.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\stdafx.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\stdafx.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\upnp.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\upnp.h" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="C:\ogz-source-master-LITE\build\win32\ZERO_CHECK.vcxproj">
+      <Project>{5B1216EE-1D01-3B9C-8E8F-ACD32D771E06}</Project>
+      <Name>ZERO_CHECK</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

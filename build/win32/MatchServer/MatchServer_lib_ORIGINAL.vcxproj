@@ -1,0 +1,512 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="18.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="MinSizeRel|Win32">
+      <Configuration>MinSizeRel</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="RelWithDebInfo|Win32">
+      <Configuration>RelWithDebInfo</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{B76AB46F-092F-3A11-9BCE-C167A3387520}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>
+    <Platform>Win32</Platform>
+    <ProjectName>MatchServer_lib_ORIGINAL</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\ogz-source-master-LITE\build\win32\lib\Debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">MatchServer_lib_ORIGINAL.dir\Debug\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">MatchServer_lib_ORIGINAL</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\ogz-source-master-LITE\build\win32\lib\Release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">MatchServer_lib_ORIGINAL.dir\Release\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">MatchServer_lib_ORIGINAL</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">C:\ogz-source-master-LITE\build\win32\lib\MinSizeRel\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">MatchServer_lib_ORIGINAL.dir\MinSizeRel\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">MatchServer_lib_ORIGINAL</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">C:\ogz-source-master-LITE\build\win32\lib\RelWithDebInfo\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">MatchServer_lib_ORIGINAL.dir\RelWithDebInfo\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">MatchServer_lib_ORIGINAL</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">.lib</TargetExt>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\MatchServer\.;C:\ogz-source-master-LITE\src\MatchServer\..\sdk\dx9\Include;C:\ogz-source-master-LITE\src\MatchServer\..\cml\Include;C:\ogz-source-master-LITE\src\MatchServer\..\rapidxml\Include;C:\ogz-source-master-LITE\src\MatchServer\..\CSCommon\Include;C:\ogz-source-master-LITE\src\MatchServer\..\RealSpace2\Include;C:\ogz-source-master-LITE\src\MatchServer\..\sdk;C:\ogz-source-master-LITE\src\MatchServer\..\SafeUDP\Include;C:\ogz-source-master-LITE\src\MatchServer\..\Locator;C:\ogz-source-master-LITE\src\sdk\sqlite\include;C:\ogz-source-master-LITE\src\sdk\libsodium\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <BufferSecurityCheck></BufferSecurityCheck>
+      <CallingConvention></CallingConvention>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <FloatingPointModel></FloatingPointModel>
+      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SupportJustMyCode></SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;_WINSOCK_DEPRECATED_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;CMAKE_INTDIR="Debug"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;_WINSOCK_DEPRECATED_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;CMAKE_INTDIR=\"Debug\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\MatchServer\.;C:\ogz-source-master-LITE\src\MatchServer\..\sdk\dx9\Include;C:\ogz-source-master-LITE\src\MatchServer\..\cml\Include;C:\ogz-source-master-LITE\src\MatchServer\..\rapidxml\Include;C:\ogz-source-master-LITE\src\MatchServer\..\CSCommon\Include;C:\ogz-source-master-LITE\src\MatchServer\..\RealSpace2\Include;C:\ogz-source-master-LITE\src\MatchServer\..\sdk;C:\ogz-source-master-LITE\src\MatchServer\..\SafeUDP\Include;C:\ogz-source-master-LITE\src\MatchServer\..\Locator;C:\ogz-source-master-LITE\src\sdk\sqlite\include;C:\ogz-source-master-LITE\src\sdk\libsodium\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\MatchServer\.;C:\ogz-source-master-LITE\src\MatchServer\..\sdk\dx9\Include;C:\ogz-source-master-LITE\src\MatchServer\..\cml\Include;C:\ogz-source-master-LITE\src\MatchServer\..\rapidxml\Include;C:\ogz-source-master-LITE\src\MatchServer\..\CSCommon\Include;C:\ogz-source-master-LITE\src\MatchServer\..\RealSpace2\Include;C:\ogz-source-master-LITE\src\MatchServer\..\sdk;C:\ogz-source-master-LITE\src\MatchServer\..\SafeUDP\Include;C:\ogz-source-master-LITE\src\MatchServer\..\Locator;C:\ogz-source-master-LITE\src\sdk\sqlite\include;C:\ogz-source-master-LITE\src\sdk\libsodium\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:X86 /ignore:4099 /ignore:4221</AdditionalOptions>
+      <SubSystem>Console</SubSystem>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\MatchServer\.;C:\ogz-source-master-LITE\src\MatchServer\..\sdk\dx9\Include;C:\ogz-source-master-LITE\src\MatchServer\..\cml\Include;C:\ogz-source-master-LITE\src\MatchServer\..\rapidxml\Include;C:\ogz-source-master-LITE\src\MatchServer\..\CSCommon\Include;C:\ogz-source-master-LITE\src\MatchServer\..\RealSpace2\Include;C:\ogz-source-master-LITE\src\MatchServer\..\sdk;C:\ogz-source-master-LITE\src\MatchServer\..\SafeUDP\Include;C:\ogz-source-master-LITE\src\MatchServer\..\Locator;C:\ogz-source-master-LITE\src\sdk\sqlite\include;C:\ogz-source-master-LITE\src\sdk\libsodium\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <BufferSecurityCheck></BufferSecurityCheck>
+      <CallingConvention></CallingConvention>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <FloatingPointModel></FloatingPointModel>
+      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SupportJustMyCode></SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;_WINSOCK_DEPRECATED_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;NDEBUG;_PUBLISH;CMAKE_INTDIR="Release"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;_WINSOCK_DEPRECATED_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;NDEBUG;_PUBLISH;CMAKE_INTDIR=\"Release\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\MatchServer\.;C:\ogz-source-master-LITE\src\MatchServer\..\sdk\dx9\Include;C:\ogz-source-master-LITE\src\MatchServer\..\cml\Include;C:\ogz-source-master-LITE\src\MatchServer\..\rapidxml\Include;C:\ogz-source-master-LITE\src\MatchServer\..\CSCommon\Include;C:\ogz-source-master-LITE\src\MatchServer\..\RealSpace2\Include;C:\ogz-source-master-LITE\src\MatchServer\..\sdk;C:\ogz-source-master-LITE\src\MatchServer\..\SafeUDP\Include;C:\ogz-source-master-LITE\src\MatchServer\..\Locator;C:\ogz-source-master-LITE\src\sdk\sqlite\include;C:\ogz-source-master-LITE\src\sdk\libsodium\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\MatchServer\.;C:\ogz-source-master-LITE\src\MatchServer\..\sdk\dx9\Include;C:\ogz-source-master-LITE\src\MatchServer\..\cml\Include;C:\ogz-source-master-LITE\src\MatchServer\..\rapidxml\Include;C:\ogz-source-master-LITE\src\MatchServer\..\CSCommon\Include;C:\ogz-source-master-LITE\src\MatchServer\..\RealSpace2\Include;C:\ogz-source-master-LITE\src\MatchServer\..\sdk;C:\ogz-source-master-LITE\src\MatchServer\..\SafeUDP\Include;C:\ogz-source-master-LITE\src\MatchServer\..\Locator;C:\ogz-source-master-LITE\src\sdk\sqlite\include;C:\ogz-source-master-LITE\src\sdk\libsodium\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:X86 /ignore:4099 /ignore:4221</AdditionalOptions>
+      <SubSystem>Console</SubSystem>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\MatchServer\.;C:\ogz-source-master-LITE\src\MatchServer\..\sdk\dx9\Include;C:\ogz-source-master-LITE\src\MatchServer\..\cml\Include;C:\ogz-source-master-LITE\src\MatchServer\..\rapidxml\Include;C:\ogz-source-master-LITE\src\MatchServer\..\CSCommon\Include;C:\ogz-source-master-LITE\src\MatchServer\..\RealSpace2\Include;C:\ogz-source-master-LITE\src\MatchServer\..\sdk;C:\ogz-source-master-LITE\src\MatchServer\..\SafeUDP\Include;C:\ogz-source-master-LITE\src\MatchServer\..\Locator;C:\ogz-source-master-LITE\src\sdk\sqlite\include;C:\ogz-source-master-LITE\src\sdk\libsodium\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <BufferSecurityCheck></BufferSecurityCheck>
+      <CallingConvention></CallingConvention>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <FloatingPointModel></FloatingPointModel>
+      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>MinSpace</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SupportJustMyCode></SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;_WINSOCK_DEPRECATED_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;NDEBUG;_PUBLISH;CMAKE_INTDIR="MinSizeRel"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;_WINSOCK_DEPRECATED_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;NDEBUG;_PUBLISH;CMAKE_INTDIR=\"MinSizeRel\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\MatchServer\.;C:\ogz-source-master-LITE\src\MatchServer\..\sdk\dx9\Include;C:\ogz-source-master-LITE\src\MatchServer\..\cml\Include;C:\ogz-source-master-LITE\src\MatchServer\..\rapidxml\Include;C:\ogz-source-master-LITE\src\MatchServer\..\CSCommon\Include;C:\ogz-source-master-LITE\src\MatchServer\..\RealSpace2\Include;C:\ogz-source-master-LITE\src\MatchServer\..\sdk;C:\ogz-source-master-LITE\src\MatchServer\..\SafeUDP\Include;C:\ogz-source-master-LITE\src\MatchServer\..\Locator;C:\ogz-source-master-LITE\src\sdk\sqlite\include;C:\ogz-source-master-LITE\src\sdk\libsodium\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\MatchServer\.;C:\ogz-source-master-LITE\src\MatchServer\..\sdk\dx9\Include;C:\ogz-source-master-LITE\src\MatchServer\..\cml\Include;C:\ogz-source-master-LITE\src\MatchServer\..\rapidxml\Include;C:\ogz-source-master-LITE\src\MatchServer\..\CSCommon\Include;C:\ogz-source-master-LITE\src\MatchServer\..\RealSpace2\Include;C:\ogz-source-master-LITE\src\MatchServer\..\sdk;C:\ogz-source-master-LITE\src\MatchServer\..\SafeUDP\Include;C:\ogz-source-master-LITE\src\MatchServer\..\Locator;C:\ogz-source-master-LITE\src\sdk\sqlite\include;C:\ogz-source-master-LITE\src\sdk\libsodium\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:X86 /ignore:4099 /ignore:4221</AdditionalOptions>
+      <SubSystem>Console</SubSystem>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\MatchServer\.;C:\ogz-source-master-LITE\src\MatchServer\..\sdk\dx9\Include;C:\ogz-source-master-LITE\src\MatchServer\..\cml\Include;C:\ogz-source-master-LITE\src\MatchServer\..\rapidxml\Include;C:\ogz-source-master-LITE\src\MatchServer\..\CSCommon\Include;C:\ogz-source-master-LITE\src\MatchServer\..\RealSpace2\Include;C:\ogz-source-master-LITE\src\MatchServer\..\sdk;C:\ogz-source-master-LITE\src\MatchServer\..\SafeUDP\Include;C:\ogz-source-master-LITE\src\MatchServer\..\Locator;C:\ogz-source-master-LITE\src\sdk\sqlite\include;C:\ogz-source-master-LITE\src\sdk\libsodium\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <BufferSecurityCheck></BufferSecurityCheck>
+      <CallingConvention></CallingConvention>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <FloatingPointModel></FloatingPointModel>
+      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SupportJustMyCode></SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;_WINSOCK_DEPRECATED_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;NDEBUG;_PUBLISH;CMAKE_INTDIR="RelWithDebInfo"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;_WINSOCK_DEPRECATED_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;NDEBUG;_PUBLISH;CMAKE_INTDIR=\"RelWithDebInfo\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\MatchServer\.;C:\ogz-source-master-LITE\src\MatchServer\..\sdk\dx9\Include;C:\ogz-source-master-LITE\src\MatchServer\..\cml\Include;C:\ogz-source-master-LITE\src\MatchServer\..\rapidxml\Include;C:\ogz-source-master-LITE\src\MatchServer\..\CSCommon\Include;C:\ogz-source-master-LITE\src\MatchServer\..\RealSpace2\Include;C:\ogz-source-master-LITE\src\MatchServer\..\sdk;C:\ogz-source-master-LITE\src\MatchServer\..\SafeUDP\Include;C:\ogz-source-master-LITE\src\MatchServer\..\Locator;C:\ogz-source-master-LITE\src\sdk\sqlite\include;C:\ogz-source-master-LITE\src\sdk\libsodium\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\MatchServer\.;C:\ogz-source-master-LITE\src\MatchServer\..\sdk\dx9\Include;C:\ogz-source-master-LITE\src\MatchServer\..\cml\Include;C:\ogz-source-master-LITE\src\MatchServer\..\rapidxml\Include;C:\ogz-source-master-LITE\src\MatchServer\..\CSCommon\Include;C:\ogz-source-master-LITE\src\MatchServer\..\RealSpace2\Include;C:\ogz-source-master-LITE\src\MatchServer\..\sdk;C:\ogz-source-master-LITE\src\MatchServer\..\SafeUDP\Include;C:\ogz-source-master-LITE\src\MatchServer\..\Locator;C:\ogz-source-master-LITE\src\sdk\sqlite\include;C:\ogz-source-master-LITE\src\sdk\libsodium\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:X86 /ignore:4099 /ignore:4221</AdditionalOptions>
+      <SubSystem>Console</SubSystem>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\ogz-source-master-LITE\src\MatchServer\CMakeLists.txt">
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Building Custom Rule C:/ogz-source-master-LITE/src/MatchServer/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/ogz-source-master-LITE/src -BC:/ogz-source-master-LITE/build/win32 --check-stamp-file C:/ogz-source-master-LITE/build/win32/MatchServer/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\ogz-source-master-LITE\build\win32\MatchServer\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Building Custom Rule C:/ogz-source-master-LITE/src/MatchServer/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/ogz-source-master-LITE/src -BC:/ogz-source-master-LITE/build/win32 --check-stamp-file C:/ogz-source-master-LITE/build/win32/MatchServer/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\ogz-source-master-LITE\build\win32\MatchServer\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">Building Custom Rule C:/ogz-source-master-LITE/src/MatchServer/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/ogz-source-master-LITE/src -BC:/ogz-source-master-LITE/build/win32 --check-stamp-file C:/ogz-source-master-LITE/build/win32/MatchServer/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">C:\ogz-source-master-LITE\build\win32\MatchServer\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">Building Custom Rule C:/ogz-source-master-LITE/src/MatchServer/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/ogz-source-master-LITE/src -BC:/ogz-source-master-LITE/build/win32 --check-stamp-file C:/ogz-source-master-LITE/build/win32/MatchServer/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">C:\ogz-source-master-LITE\build\win32\MatchServer\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\CPSSOLib.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\ChildFrm.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\ChildFrm.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\CommandLogView.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\CommandLogView.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\ConsoleBar.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\ConsoleBar.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\DBQuestCachingData.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\DBQuestCachingData.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\ExceptionAttacher.cpp" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\GunGame.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\GunGame.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\IDatabase.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\LagCompensation.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\LagCompensation.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MAsyncDBJob.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MAsyncDBJob.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MAsyncDBJob_BringAccountItem.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MAsyncDBJob_BringAccountItem.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MAsyncDBJob_CharFinalize.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MAsyncDBJob_CharFinalize.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MAsyncDBJob_Event.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MAsyncDBJob_Event.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MAsyncDBJob_FriendList.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MAsyncDBJob_FriendList.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MAsyncDBJob_GetLoginInfo.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MAsyncDBJob_GetLoginInfo.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MAsyncDBJob_InsertConnLog.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MAsyncDBJob_InsertConnLog.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MAsyncDBJob_UpdateCharInfoData.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MAsyncDBJob_UpdateCharInfoData.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MAsyncDBJob_WinTheClanGame.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MAsyncDBJob_WinTheClanGame.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MAsyncProxy.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MAsyncProxy.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MBMatchServer.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MBMatchServer.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MBMatchServerConfigReloader.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MBMatchServerConfigReloader.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MBMatchServer_Input.cpp" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MBMatchServer_OnCommand.cpp" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MBMatchServer_ServerKeeper.cpp" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MLadderMgr.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MLadderMgr.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MLadderPicker.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MLadderPicker.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MMaster.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchAdmin.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchAdmin.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchAgent.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchAntiHack.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchAntiHack.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchAuth.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchChannel.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchChannel.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchChannelRule.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchChannelRule.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchChatRoom.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchChatRoom.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchClan.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchClan.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchConfig.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchConfig.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchDBFilter.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchDBFilter.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchEvent.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchEvent.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchEventFactory.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchEventFactory.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchEventManager.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchEventManager.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchFormula.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchFormula.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchFriendInfo.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchFriendInfo.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchLocale.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchLocale.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchMission.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchMission.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchNPCObject.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchNPCObject.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchObject.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchObject.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchObjectCacheBuilder.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchObjectCacheBuilder.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchPremiumIPCache.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchPremiumIPCache.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchQuest.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchQuest.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchQuestGameLog.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchQuestGameLog.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchQuestMonsterGroup.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchQuestMonsterGroup.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchQuestRound.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchQuestRound.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchRule.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchRule.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchRuleAssassinate.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchRuleAssassinate.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchRuleBaseQuest.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchRuleBaseQuest.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchRuleBerserker.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchRuleBerserker.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchRuleDeathMatch.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchRuleDeathMatch.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchRuleDuel.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchRuleDuel.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchRuleGladiator.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchRuleGladiator.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchRuleGunGame.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchRuleGunGame.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchRuleQuest.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchRuleQuest.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchRuleSkillmap.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchRuleSkillmap.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchRuleSurvival.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchRuleSurvival.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchRuleTraining.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchRuleTraining.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchSchedule.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchSchedule.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchServer.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchServer.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchServer_Admin.cpp" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchServer_Agent.cpp" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchServer_Async.cpp" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchServer_Channel.cpp" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchServer_Char.cpp" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchServer_Clan.cpp" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchServer_Item.cpp" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchServer_Ladder.cpp" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchServer_Login.cpp" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchServer_OnCommand.cpp" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchServer_Quest.cpp" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchServer_Schedule.cpp" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchServer_Stage.cpp" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchShop.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchShop.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchShutdown.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchShutdown.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchStage.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchStage.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchStatus.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchStatus.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchWorldItem.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchWorldItem.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MNJ_DBAgentClient.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MNJ_DBAgentClient.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MQuestLevel.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MQuestLevel.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MQuestLevelGenerator.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MQuestLevelGenerator.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MQuestNPCSpawnTrigger.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MQuestNPCSpawnTrigger.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MQuestPlayer.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MQuestPlayer.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MQuestScenario.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MQuestScenario.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MSSQLDatabase.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MSSQLDatabase.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MSacrificeQItemTable.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MSacrificeQItemTable.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MSmartRefreshImpl.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MSmartRefreshImpl.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MTeamGameStrategy.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MTeamGameStrategy.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MVoteDiscussImpl.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MVoteDiscussImpl.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MVoteMgr.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MVoteMgr.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MainFrm.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MainFrm.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MatchServer.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MatchServer.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MatchServerDoc.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MatchServerDoc.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MatchServerView.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MatchServerView.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MovingWeaponManager.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MovingWeaponManager.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\OutputView.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\OutputView.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\SQLiteDatabase.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\SQLiteDatabase.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\TrayIcon.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\TrayIcon.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\VersionNo.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\resource.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\stdafx.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\stdafx.h" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="C:\ogz-source-master-LITE\build\win32\ZERO_CHECK.vcxproj">
+      <Project>{5B1216EE-1D01-3B9C-8E8F-ACD32D771E06}</Project>
+      <Name>ZERO_CHECK</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

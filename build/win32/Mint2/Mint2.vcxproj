@@ -1,0 +1,457 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="18.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="MinSizeRel|Win32">
+      <Configuration>MinSizeRel</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="RelWithDebInfo|Win32">
+      <Configuration>RelWithDebInfo</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{0DFFEE67-DDAD-3BA5-A00C-E4E66808F621}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>
+    <Platform>Win32</Platform>
+    <ProjectName>Mint2</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\ogz-source-master-LITE\build\win32\lib\Debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Mint2.dir\Debug\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Mint2</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\ogz-source-master-LITE\build\win32\lib\Release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Mint2.dir\Release\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Mint2</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">C:\ogz-source-master-LITE\build\win32\lib\MinSizeRel\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">Mint2.dir\MinSizeRel\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">Mint2</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">C:\ogz-source-master-LITE\build\win32\lib\RelWithDebInfo\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">Mint2.dir\RelWithDebInfo\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">Mint2</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">.lib</TargetExt>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\Mint2\.;C:\ogz-source-master-LITE\src\Mint2\Include;C:\ogz-source-master-LITE\src\cml\.;C:\ogz-source-master-LITE\src\cml\Include;C:\ogz-source-master\src\sdk\zlib\include;C:\ogz-source-master-LITE\src\cml\..\sdk\curl\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidjson\include;C:\ogz-source-master-LITE\src\sdk\curl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <BufferSecurityCheck></BufferSecurityCheck>
+      <CallingConvention></CallingConvention>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <FloatingPointModel></FloatingPointModel>
+      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SupportJustMyCode></SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;_WINSOCK_DEPRECATED_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;CURL_STATICLIB;CMAKE_INTDIR="Debug"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;_WINSOCK_DEPRECATED_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;CURL_STATICLIB;CMAKE_INTDIR=\"Debug\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\Mint2\.;C:\ogz-source-master-LITE\src\Mint2\Include;C:\ogz-source-master-LITE\src\cml\.;C:\ogz-source-master-LITE\src\cml\Include;C:\ogz-source-master\src\sdk\zlib\include;C:\ogz-source-master-LITE\src\cml\..\sdk\curl\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidjson\include;C:\ogz-source-master-LITE\src\sdk\curl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\Mint2\.;C:\ogz-source-master-LITE\src\Mint2\Include;C:\ogz-source-master-LITE\src\cml\.;C:\ogz-source-master-LITE\src\cml\Include;C:\ogz-source-master\src\sdk\zlib\include;C:\ogz-source-master-LITE\src\cml\..\sdk\curl\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidjson\include;C:\ogz-source-master-LITE\src\sdk\curl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:X86 /ignore:4099 /ignore:4221</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\Mint2\.;C:\ogz-source-master-LITE\src\Mint2\Include;C:\ogz-source-master-LITE\src\cml\.;C:\ogz-source-master-LITE\src\cml\Include;C:\ogz-source-master\src\sdk\zlib\include;C:\ogz-source-master-LITE\src\cml\..\sdk\curl\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidjson\include;C:\ogz-source-master-LITE\src\sdk\curl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <BufferSecurityCheck></BufferSecurityCheck>
+      <CallingConvention></CallingConvention>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <FloatingPointModel></FloatingPointModel>
+      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SupportJustMyCode></SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;_WINSOCK_DEPRECATED_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;NDEBUG;_PUBLISH;CURL_STATICLIB;CMAKE_INTDIR="Release"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;_WINSOCK_DEPRECATED_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;NDEBUG;_PUBLISH;CURL_STATICLIB;CMAKE_INTDIR=\"Release\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\Mint2\.;C:\ogz-source-master-LITE\src\Mint2\Include;C:\ogz-source-master-LITE\src\cml\.;C:\ogz-source-master-LITE\src\cml\Include;C:\ogz-source-master\src\sdk\zlib\include;C:\ogz-source-master-LITE\src\cml\..\sdk\curl\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidjson\include;C:\ogz-source-master-LITE\src\sdk\curl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\Mint2\.;C:\ogz-source-master-LITE\src\Mint2\Include;C:\ogz-source-master-LITE\src\cml\.;C:\ogz-source-master-LITE\src\cml\Include;C:\ogz-source-master\src\sdk\zlib\include;C:\ogz-source-master-LITE\src\cml\..\sdk\curl\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidjson\include;C:\ogz-source-master-LITE\src\sdk\curl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:X86 /ignore:4099 /ignore:4221</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\Mint2\.;C:\ogz-source-master-LITE\src\Mint2\Include;C:\ogz-source-master-LITE\src\cml\.;C:\ogz-source-master-LITE\src\cml\Include;C:\ogz-source-master\src\sdk\zlib\include;C:\ogz-source-master-LITE\src\cml\..\sdk\curl\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidjson\include;C:\ogz-source-master-LITE\src\sdk\curl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <BufferSecurityCheck></BufferSecurityCheck>
+      <CallingConvention></CallingConvention>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <FloatingPointModel></FloatingPointModel>
+      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>MinSpace</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SupportJustMyCode></SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;_WINSOCK_DEPRECATED_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;NDEBUG;_PUBLISH;CURL_STATICLIB;CMAKE_INTDIR="MinSizeRel"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;_WINSOCK_DEPRECATED_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;NDEBUG;_PUBLISH;CURL_STATICLIB;CMAKE_INTDIR=\"MinSizeRel\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\Mint2\.;C:\ogz-source-master-LITE\src\Mint2\Include;C:\ogz-source-master-LITE\src\cml\.;C:\ogz-source-master-LITE\src\cml\Include;C:\ogz-source-master\src\sdk\zlib\include;C:\ogz-source-master-LITE\src\cml\..\sdk\curl\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidjson\include;C:\ogz-source-master-LITE\src\sdk\curl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\Mint2\.;C:\ogz-source-master-LITE\src\Mint2\Include;C:\ogz-source-master-LITE\src\cml\.;C:\ogz-source-master-LITE\src\cml\Include;C:\ogz-source-master\src\sdk\zlib\include;C:\ogz-source-master-LITE\src\cml\..\sdk\curl\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidjson\include;C:\ogz-source-master-LITE\src\sdk\curl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:X86 /ignore:4099 /ignore:4221</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\Mint2\.;C:\ogz-source-master-LITE\src\Mint2\Include;C:\ogz-source-master-LITE\src\cml\.;C:\ogz-source-master-LITE\src\cml\Include;C:\ogz-source-master\src\sdk\zlib\include;C:\ogz-source-master-LITE\src\cml\..\sdk\curl\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidjson\include;C:\ogz-source-master-LITE\src\sdk\curl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <BufferSecurityCheck></BufferSecurityCheck>
+      <CallingConvention></CallingConvention>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <FloatingPointModel></FloatingPointModel>
+      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SupportJustMyCode></SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;_WINSOCK_DEPRECATED_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;NDEBUG;_PUBLISH;CURL_STATICLIB;CMAKE_INTDIR="RelWithDebInfo"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;_WINSOCK_DEPRECATED_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;NDEBUG;_PUBLISH;CURL_STATICLIB;CMAKE_INTDIR=\"RelWithDebInfo\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\Mint2\.;C:\ogz-source-master-LITE\src\Mint2\Include;C:\ogz-source-master-LITE\src\cml\.;C:\ogz-source-master-LITE\src\cml\Include;C:\ogz-source-master\src\sdk\zlib\include;C:\ogz-source-master-LITE\src\cml\..\sdk\curl\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidjson\include;C:\ogz-source-master-LITE\src\sdk\curl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\Mint2\.;C:\ogz-source-master-LITE\src\Mint2\Include;C:\ogz-source-master-LITE\src\cml\.;C:\ogz-source-master-LITE\src\cml\Include;C:\ogz-source-master\src\sdk\zlib\include;C:\ogz-source-master-LITE\src\cml\..\sdk\curl\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidjson\include;C:\ogz-source-master-LITE\src\sdk\curl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:X86 /ignore:4099 /ignore:4221</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\ogz-source-master-LITE\build\win32\CMakeFiles\43b9a91994a8819d5da6d36ee645ff4f\Mint2_ORIGINAL_CXX_unity.cxx.rule">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Generating CXX unity source C:\ogz-source-master-LITE\build\win32\Mint2\$(Configuration)\cotire\Mint2_ORIGINAL_CXX_unity.cxx</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">setlocal
+cd C:\ogz-source-master-LITE\src\Mint2
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -DCOTIRE_BUILD_TYPE:STRING=Debug -P C:/ogz-source-master-LITE/src/cmake/cotire.cmake unity C:/ogz-source-master-LITE/build/win32/Mint2/Mint2_ORIGINAL_CXX_cotire.cmake C:/ogz-source-master-LITE/build/win32/Mint2/$(Configuration)/cotire/Mint2_ORIGINAL_CXX_unity.cxx
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\ogz-source-master-LITE\build\win32\Mint2\Mint2_ORIGINAL_CXX_cotire.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\ogz-source-master-LITE\build\win32\Mint2\$(Configuration)\cotire\Mint2_ORIGINAL_CXX_unity.cxx</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Generating CXX unity source C:\ogz-source-master-LITE\build\win32\Mint2\$(Configuration)\cotire\Mint2_ORIGINAL_CXX_unity.cxx</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">setlocal
+cd C:\ogz-source-master-LITE\src\Mint2
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -DCOTIRE_BUILD_TYPE:STRING=Release -P C:/ogz-source-master-LITE/src/cmake/cotire.cmake unity C:/ogz-source-master-LITE/build/win32/Mint2/Mint2_ORIGINAL_CXX_cotire.cmake C:/ogz-source-master-LITE/build/win32/Mint2/$(Configuration)/cotire/Mint2_ORIGINAL_CXX_unity.cxx
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\ogz-source-master-LITE\build\win32\Mint2\Mint2_ORIGINAL_CXX_cotire.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\ogz-source-master-LITE\build\win32\Mint2\$(Configuration)\cotire\Mint2_ORIGINAL_CXX_unity.cxx</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">Generating CXX unity source C:\ogz-source-master-LITE\build\win32\Mint2\$(Configuration)\cotire\Mint2_ORIGINAL_CXX_unity.cxx</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">setlocal
+cd C:\ogz-source-master-LITE\src\Mint2
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -DCOTIRE_BUILD_TYPE:STRING=MinSizeRel -P C:/ogz-source-master-LITE/src/cmake/cotire.cmake unity C:/ogz-source-master-LITE/build/win32/Mint2/Mint2_ORIGINAL_CXX_cotire.cmake C:/ogz-source-master-LITE/build/win32/Mint2/$(Configuration)/cotire/Mint2_ORIGINAL_CXX_unity.cxx
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">C:\ogz-source-master-LITE\build\win32\Mint2\Mint2_ORIGINAL_CXX_cotire.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">C:\ogz-source-master-LITE\build\win32\Mint2\$(Configuration)\cotire\Mint2_ORIGINAL_CXX_unity.cxx</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">Generating CXX unity source C:\ogz-source-master-LITE\build\win32\Mint2\$(Configuration)\cotire\Mint2_ORIGINAL_CXX_unity.cxx</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">setlocal
+cd C:\ogz-source-master-LITE\src\Mint2
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -DCOTIRE_BUILD_TYPE:STRING=RelWithDebInfo -P C:/ogz-source-master-LITE/src/cmake/cotire.cmake unity C:/ogz-source-master-LITE/build/win32/Mint2/Mint2_ORIGINAL_CXX_cotire.cmake C:/ogz-source-master-LITE/build/win32/Mint2/$(Configuration)/cotire/Mint2_ORIGINAL_CXX_unity.cxx
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">C:\ogz-source-master-LITE\build\win32\Mint2\Mint2_ORIGINAL_CXX_cotire.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">C:\ogz-source-master-LITE\build\win32\Mint2\$(Configuration)\cotire\Mint2_ORIGINAL_CXX_unity.cxx</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\ogz-source-master-LITE\src\Mint2\CMakeLists.txt">
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Building Custom Rule C:/ogz-source-master-LITE/src/Mint2/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/ogz-source-master-LITE/src -BC:/ogz-source-master-LITE/build/win32 --check-stamp-file C:/ogz-source-master-LITE/build/win32/Mint2/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\ogz-source-master-LITE\build\win32\Mint2\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Building Custom Rule C:/ogz-source-master-LITE/src/Mint2/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/ogz-source-master-LITE/src -BC:/ogz-source-master-LITE/build/win32 --check-stamp-file C:/ogz-source-master-LITE/build/win32/Mint2/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\ogz-source-master-LITE\build\win32\Mint2\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">Building Custom Rule C:/ogz-source-master-LITE/src/Mint2/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/ogz-source-master-LITE/src -BC:/ogz-source-master-LITE/build/win32 --check-stamp-file C:/ogz-source-master-LITE/build/win32/Mint2/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">C:\ogz-source-master-LITE\build\win32\Mint2\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">Building Custom Rule C:/ogz-source-master-LITE/src/Mint2/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/ogz-source-master-LITE/src -BC:/ogz-source-master-LITE/build/win32 --check-stamp-file C:/ogz-source-master-LITE/build/win32/Mint2/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">C:\ogz-source-master-LITE\build\win32\Mint2\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Mint2\Include\MAniBmButton.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Mint2\Include\MAnimation.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Mint2\Include\MBButtonLook.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Mint2\Include\MBEditLook.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Mint2\Include\MBFrameLook.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Mint2\Include\MBGroupLook.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Mint2\Include\MBLabelLook.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Mint2\Include\MBListBoxLook.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Mint2\Include\MBPopupMenu.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Mint2\Include\MBScrollBarLook.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Mint2\Include\MBSliderLook.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Mint2\Include\MBTabCtrlLook.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Mint2\Include\MBTextAreaLook.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Mint2\Include\MBitmap.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Mint2\Include\MBitmapDrawer.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Mint2\Include\MBmButton.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Mint2\Include\MBmLabel.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Mint2\Include\MButton.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Mint2\Include\MButtonGroup.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Mint2\Include\MColorTable.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Mint2\Include\MComboBox.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Mint2\Include\MConsoleFrame.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Mint2\Include\MCursor.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Mint2\Include\MDragObject.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Mint2\Include\MDrawContext.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Mint2\Include\MEdit.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Mint2\Include\MEvent.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Mint2\Include\MFileBox.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Mint2\Include\MFileDialog.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Mint2\Include\MFont.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Mint2\Include\MFrame.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Mint2\Include\MFrameDrawer.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Mint2\Include\MGroup.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Mint2\Include\MHotKey.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Mint2\Include\MHyperText.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Mint2\Include\MIDLResource.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Mint2\Include\MLabel.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Mint2\Include\MLayoutManager.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Mint2\Include\MListBox.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Mint2\Include\MLookNFeel.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Mint2\Include\MMsgBox.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Mint2\Include\MPanel.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Mint2\Include\MPicture.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Mint2\Include\MPopupMenu.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Mint2\Include\MResource.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Mint2\Include\MResourceManager.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Mint2\Include\MScalableLook.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Mint2\Include\MScrollBar.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Mint2\Include\MSkin.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Mint2\Include\MSlider.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Mint2\Include\MStringTable.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Mint2\Include\MTabCtrl.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Mint2\Include\MTextArea.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Mint2\Include\MToolTip.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Mint2\Include\MTypes.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Mint2\Include\MWidget.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Mint2\Include\Mint.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\build\win32\Mint2\$(Configuration)\cotire\Mint2_ORIGINAL_CXX_unity.cxx">
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalOptions) /bigobj</AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(AdditionalOptions) /bigobj</AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">%(AdditionalOptions) /bigobj</AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">%(AdditionalOptions) /bigobj</AdditionalOptions>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="C:\ogz-source-master-LITE\build\win32\ZERO_CHECK.vcxproj">
+      <Project>{5B1216EE-1D01-3B9C-8E8F-ACD32D771E06}</Project>
+      <Name>ZERO_CHECK</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\ogz-source-master-LITE\build\win32\cml\cml.vcxproj">
+      <Project>{65F26DF4-191B-3662-9288-C8D12B6D8C1F}</Project>
+      <Name>cml</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

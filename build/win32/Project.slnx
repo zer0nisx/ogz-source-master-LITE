@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Solution>
+	<Configurations>
+		<BuildType Name="Debug"/>
+		<BuildType Name="Release"/>
+		<BuildType Name="MinSizeRel"/>
+		<BuildType Name="RelWithDebInfo"/>
+		<Platform Name="Win32"/>
+	</Configurations>
+	<Project Path="ALL_BUILD.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="c4a017be-978c-35ff-aaaf-3790721ae378" DefaultStartup="true">
+		<BuildDependency Project="CSCommon/CSCommon.vcxproj"/>
+		<BuildDependency Project="Gunz/Gunz.vcxproj"/>
+		<BuildDependency Project="Gunz/Gunz_lib.vcxproj"/>
+		<BuildDependency Project="Locator/Locator.vcxproj"/>
+		<BuildDependency Project="MDatabase/MDatabase.vcxproj"/>
+		<BuildDependency Project="MatchServer/MatchServer.vcxproj"/>
+		<BuildDependency Project="MatchServer/MatchServer_lib.vcxproj"/>
+		<BuildDependency Project="Mint2/Mint2.vcxproj"/>
+		<BuildDependency Project="PartsIndexer/PartsIndexer.vcxproj"/>
+		<BuildDependency Project="PatchCreator/PatchCreator.vcxproj"/>
+		<BuildDependency Project="RealSound/RealSound.vcxproj"/>
+		<BuildDependency Project="RealSpace2/RealSpace2.vcxproj"/>
+		<BuildDependency Project="SafeUDP/SafeUDP.vcxproj"/>
+		<BuildDependency Project="ZERO_CHECK.vcxproj"/>
+		<BuildDependency Project="cml/cml.vcxproj"/>
+		<BuildDependency Project="sdk/imgui/imgui.vcxproj"/>
+		<BuildDependency Project="sdk/ini/ini.vcxproj"/>
+		<BuildDependency Project="launcher/launcher.vcxproj"/>
+		<BuildDependency Project="launcher/launcher_lib.vcxproj"/>
+		<BuildDependency Project="sdk/libsodium/sodium.vcxproj"/>
+		<BuildDependency Project="sdk/sqlite/sqlite3.vcxproj"/>
+	</Project>
+	<Project Path="CSCommon/CSCommon.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="18b5aeac-ed56-32b8-91a3-d548c275992e">
+		<BuildDependency Project="ZERO_CHECK.vcxproj"/>
+		<BuildDependency Project="cml/cml.vcxproj"/>
+		<BuildDependency Project="sdk/libsodium/sodium.vcxproj"/>
+	</Project>
+	<Project Path="CSCommon/CSCommon_ORIGINAL.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="e51a0fe9-5f9c-365f-ab95-952f89d146fe">
+		<BuildDependency Project="ZERO_CHECK.vcxproj"/>
+		<Build Solution="Debug|*" Project="false"/>
+		<Build Solution="Release|*" Project="false"/>
+		<Build Solution="MinSizeRel|*" Project="false"/>
+		<Build Solution="RelWithDebInfo|*" Project="false"/>
+	</Project>
+	<Project Path="Gunz/Gunz.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="3f360a18-ef85-3940-a68c-91c0007ec18d">
+		<BuildDependency Project="CSCommon/CSCommon.vcxproj"/>
+		<BuildDependency Project="Gunz/Gunz_lib.vcxproj"/>
+		<BuildDependency Project="Mint2/Mint2.vcxproj"/>
+		<BuildDependency Project="RealSound/RealSound.vcxproj"/>
+		<BuildDependency Project="RealSpace2/RealSpace2.vcxproj"/>
+		<BuildDependency Project="SafeUDP/SafeUDP.vcxproj"/>
+		<BuildDependency Project="ZERO_CHECK.vcxproj"/>
+		<BuildDependency Project="cml/cml.vcxproj"/>
+		<BuildDependency Project="sdk/libsodium/sodium.vcxproj"/>
+	</Project>
+	<Project Path="Gunz/Gunz_lib.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="9fda3dc7-7a95-3b4b-b73f-688f093547f5">
+		<BuildDependency Project="CSCommon/CSCommon.vcxproj"/>
+		<BuildDependency Project="Mint2/Mint2.vcxproj"/>
+		<BuildDependency Project="RealSound/RealSound.vcxproj"/>
+		<BuildDependency Project="RealSpace2/RealSpace2.vcxproj"/>
+		<BuildDependency Project="SafeUDP/SafeUDP.vcxproj"/>
+		<BuildDependency Project="ZERO_CHECK.vcxproj"/>
+		<BuildDependency Project="cml/cml.vcxproj"/>
+		<BuildDependency Project="sdk/libsodium/sodium.vcxproj"/>
+	</Project>
+	<Project Path="Gunz/Gunz_lib_ORIGINAL.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="1ebe195e-0863-34aa-a260-9239f5abcc19">
+		<BuildDependency Project="ZERO_CHECK.vcxproj"/>
+		<Build Solution="Debug|*" Project="false"/>
+		<Build Solution="Release|*" Project="false"/>
+		<Build Solution="MinSizeRel|*" Project="false"/>
+		<Build Solution="RelWithDebInfo|*" Project="false"/>
+	</Project>
+	<Project Path="INSTALL.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="18e900cd-af5b-3f01-a86e-dd396bcd1520">
+		<BuildDependency Project="ALL_BUILD.vcxproj"/>
+		<BuildDependency Project="ZERO_CHECK.vcxproj"/>
+		<Build Solution="Debug|*" Project="false"/>
+		<Build Solution="Release|*" Project="false"/>
+		<Build Solution="MinSizeRel|*" Project="false"/>
+		<Build Solution="RelWithDebInfo|*" Project="false"/>
+	</Project>
+	<Project Path="Locator/Locator.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="e3fa6dd6-6b6b-3200-9215-b856bee946bd">
+		<BuildDependency Project="CSCommon/CSCommon.vcxproj"/>
+		<BuildDependency Project="MDatabase/MDatabase.vcxproj"/>
+		<BuildDependency Project="SafeUDP/SafeUDP.vcxproj"/>
+		<BuildDependency Project="ZERO_CHECK.vcxproj"/>
+		<BuildDependency Project="cml/cml.vcxproj"/>
+		<BuildDependency Project="sdk/ini/ini.vcxproj"/>
+		<BuildDependency Project="sdk/libsodium/sodium.vcxproj"/>
+	</Project>
+	<Project Path="Locator/Locator_ORIGINAL.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="6f8ee1df-88f2-3b9c-8119-3007d2950946">
+		<BuildDependency Project="ZERO_CHECK.vcxproj"/>
+		<Build Solution="Debug|*" Project="false"/>
+		<Build Solution="Release|*" Project="false"/>
+		<Build Solution="MinSizeRel|*" Project="false"/>
+		<Build Solution="RelWithDebInfo|*" Project="false"/>
+	</Project>
+	<Project Path="MDatabase/MDatabase.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="99199146-dc97-3337-8511-7ce99e91ba7a">
+		<BuildDependency Project="ZERO_CHECK.vcxproj"/>
+	</Project>
+	<Project Path="MDatabase/MDatabase_ORIGINAL.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="2ae52813-a18d-3db3-aa16-ffdd3a56f1eb">
+		<BuildDependency Project="ZERO_CHECK.vcxproj"/>
+		<Build Solution="Debug|*" Project="false"/>
+		<Build Solution="Release|*" Project="false"/>
+		<Build Solution="MinSizeRel|*" Project="false"/>
+		<Build Solution="RelWithDebInfo|*" Project="false"/>
+	</Project>
+	<Project Path="MatchServer/MatchServer.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="b244826f-6f1c-3077-8aa7-e41d738a62aa">
+		<BuildDependency Project="CSCommon/CSCommon.vcxproj"/>
+		<BuildDependency Project="Locator/Locator.vcxproj"/>
+		<BuildDependency Project="MDatabase/MDatabase.vcxproj"/>
+		<BuildDependency Project="MatchServer/MatchServer_lib.vcxproj"/>
+		<BuildDependency Project="RealSpace2/RealSpace2.vcxproj"/>
+		<BuildDependency Project="SafeUDP/SafeUDP.vcxproj"/>
+		<BuildDependency Project="ZERO_CHECK.vcxproj"/>
+		<BuildDependency Project="cml/cml.vcxproj"/>
+		<BuildDependency Project="sdk/ini/ini.vcxproj"/>
+		<BuildDependency Project="sdk/libsodium/sodium.vcxproj"/>
+		<BuildDependency Project="sdk/sqlite/sqlite3.vcxproj"/>
+	</Project>
+	<Project Path="MatchServer/MatchServer_lib.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="f2a1cd13-2dc8-391a-bfb9-3db0a6206247">
+		<BuildDependency Project="CSCommon/CSCommon.vcxproj"/>
+		<BuildDependency Project="Locator/Locator.vcxproj"/>
+		<BuildDependency Project="MDatabase/MDatabase.vcxproj"/>
+		<BuildDependency Project="RealSpace2/RealSpace2.vcxproj"/>
+		<BuildDependency Project="SafeUDP/SafeUDP.vcxproj"/>
+		<BuildDependency Project="ZERO_CHECK.vcxproj"/>
+		<BuildDependency Project="cml/cml.vcxproj"/>
+		<BuildDependency Project="sdk/ini/ini.vcxproj"/>
+		<BuildDependency Project="sdk/libsodium/sodium.vcxproj"/>
+		<BuildDependency Project="sdk/sqlite/sqlite3.vcxproj"/>
+	</Project>
+	<Project Path="MatchServer/MatchServer_lib_ORIGINAL.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="b76ab46f-092f-3a11-9bce-c167a3387520">
+		<BuildDependency Project="ZERO_CHECK.vcxproj"/>
+		<Build Solution="Debug|*" Project="false"/>
+		<Build Solution="Release|*" Project="false"/>
+		<Build Solution="MinSizeRel|*" Project="false"/>
+		<Build Solution="RelWithDebInfo|*" Project="false"/>
+	</Project>
+	<Project Path="Mint2/Mint2.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="0dffee67-ddad-3ba5-a00c-e4e66808f621">
+		<BuildDependency Project="ZERO_CHECK.vcxproj"/>
+		<BuildDependency Project="cml/cml.vcxproj"/>
+	</Project>
+	<Project Path="Mint2/Mint2_ORIGINAL.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="a694ad5f-b8d1-3b22-83a9-0d022da59056">
+		<BuildDependency Project="ZERO_CHECK.vcxproj"/>
+		<Build Solution="Debug|*" Project="false"/>
+		<Build Solution="Release|*" Project="false"/>
+		<Build Solution="MinSizeRel|*" Project="false"/>
+		<Build Solution="RelWithDebInfo|*" Project="false"/>
+	</Project>
+	<Project Path="PartsIndexer/PartsIndexer.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="89d18e10-9b55-3179-bd50-fcd906cead6d">
+		<BuildDependency Project="ZERO_CHECK.vcxproj"/>
+	</Project>
+	<Project Path="PatchCreator/PatchCreator.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="1b6f507b-8110-3513-998e-450b84616751">
+		<BuildDependency Project="ZERO_CHECK.vcxproj"/>
+		<BuildDependency Project="cml/cml.vcxproj"/>
+		<BuildDependency Project="launcher/launcher_lib.vcxproj"/>
+		<BuildDependency Project="sdk/libsodium/sodium.vcxproj"/>
+	</Project>
+	<Project Path="RUN_TESTS.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="16403f54-4e16-35a9-bd47-07d48e367f57">
+		<BuildDependency Project="ZERO_CHECK.vcxproj"/>
+		<Build Solution="Debug|*" Project="false"/>
+		<Build Solution="Release|*" Project="false"/>
+		<Build Solution="MinSizeRel|*" Project="false"/>
+		<Build Solution="RelWithDebInfo|*" Project="false"/>
+	</Project>
+	<Project Path="RealSound/RealSound.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="ed7435a7-3fbd-315e-9988-4bb720d2085b">
+		<BuildDependency Project="ZERO_CHECK.vcxproj"/>
+	</Project>
+	<Project Path="RealSound/RealSound_ORIGINAL.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="18d3fdfa-8968-3e27-bbfd-d1e939fc24dc">
+		<BuildDependency Project="ZERO_CHECK.vcxproj"/>
+		<Build Solution="Debug|*" Project="false"/>
+		<Build Solution="Release|*" Project="false"/>
+		<Build Solution="MinSizeRel|*" Project="false"/>
+		<Build Solution="RelWithDebInfo|*" Project="false"/>
+	</Project>
+	<Project Path="RealSpace2/RealSpace2.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="770f7f34-902f-36be-9fa6-71d13475aaba">
+		<BuildDependency Project="ZERO_CHECK.vcxproj"/>
+		<BuildDependency Project="cml/cml.vcxproj"/>
+	</Project>
+	<Project Path="RealSpace2/RealSpace2_ORIGINAL.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="548934c4-26bb-386a-a185-9b3371aa9d42">
+		<BuildDependency Project="ZERO_CHECK.vcxproj"/>
+		<Build Solution="Debug|*" Project="false"/>
+		<Build Solution="Release|*" Project="false"/>
+		<Build Solution="MinSizeRel|*" Project="false"/>
+		<Build Solution="RelWithDebInfo|*" Project="false"/>
+	</Project>
+	<Project Path="SafeUDP/SafeUDP.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="8ed8152d-c69f-3d3b-8c9e-e6cb844f5b4a">
+		<BuildDependency Project="ZERO_CHECK.vcxproj"/>
+		<BuildDependency Project="cml/cml.vcxproj"/>
+	</Project>
+	<Project Path="SafeUDP/SafeUDP_ORIGINAL.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="4776fcc0-7e73-3b9b-a92c-6a5191da49f7">
+		<BuildDependency Project="ZERO_CHECK.vcxproj"/>
+		<Build Solution="Debug|*" Project="false"/>
+		<Build Solution="Release|*" Project="false"/>
+		<Build Solution="MinSizeRel|*" Project="false"/>
+		<Build Solution="RelWithDebInfo|*" Project="false"/>
+	</Project>
+	<Project Path="ZERO_CHECK.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="5b1216ee-1d01-3b9c-8e8f-acd32d771e06"/>
+	<Project Path="cml/all_unity.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="ab8c76df-e450-3be8-ab89-84faeae55265">
+		<BuildDependency Project="CSCommon/CSCommon.vcxproj"/>
+		<BuildDependency Project="Gunz/Gunz_lib.vcxproj"/>
+		<BuildDependency Project="Locator/Locator.vcxproj"/>
+		<BuildDependency Project="MDatabase/MDatabase.vcxproj"/>
+		<BuildDependency Project="MatchServer/MatchServer_lib.vcxproj"/>
+		<BuildDependency Project="Mint2/Mint2.vcxproj"/>
+		<BuildDependency Project="RealSound/RealSound.vcxproj"/>
+		<BuildDependency Project="RealSpace2/RealSpace2.vcxproj"/>
+		<BuildDependency Project="SafeUDP/SafeUDP.vcxproj"/>
+		<BuildDependency Project="ZERO_CHECK.vcxproj"/>
+		<BuildDependency Project="cml/cml.vcxproj"/>
+		<BuildDependency Project="launcher/launcher.vcxproj"/>
+		<BuildDependency Project="launcher/launcher_lib.vcxproj"/>
+		<Build Solution="Debug|*" Project="false"/>
+		<Build Solution="Release|*" Project="false"/>
+		<Build Solution="MinSizeRel|*" Project="false"/>
+		<Build Solution="RelWithDebInfo|*" Project="false"/>
+	</Project>
+	<Project Path="cml/clean_cotire.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="0c2e96bb-977f-3fce-ba0e-02a9187c4a79">
+		<BuildDependency Project="ZERO_CHECK.vcxproj"/>
+		<Build Solution="Debug|*" Project="false"/>
+		<Build Solution="Release|*" Project="false"/>
+		<Build Solution="MinSizeRel|*" Project="false"/>
+		<Build Solution="RelWithDebInfo|*" Project="false"/>
+	</Project>
+	<Project Path="cml/cml.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="65f26df4-191b-3662-9288-c8d12b6d8c1f">
+		<BuildDependency Project="ZERO_CHECK.vcxproj"/>
+	</Project>
+	<Project Path="cml/cml_ORIGINAL.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="9be6b54c-faef-37b8-aa3b-c6a2fd43a2ce">
+		<BuildDependency Project="ZERO_CHECK.vcxproj"/>
+		<Build Solution="Debug|*" Project="false"/>
+		<Build Solution="Release|*" Project="false"/>
+		<Build Solution="MinSizeRel|*" Project="false"/>
+		<Build Solution="RelWithDebInfo|*" Project="false"/>
+	</Project>
+	<Project Path="sdk/imgui/imgui.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="8470a16a-4753-32fc-b02f-1a1fa6f34aba">
+		<BuildDependency Project="ZERO_CHECK.vcxproj"/>
+	</Project>
+	<Project Path="sdk/ini/ini.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="ab09122d-a726-3dc8-a393-86a40f9e7144">
+		<BuildDependency Project="ZERO_CHECK.vcxproj"/>
+	</Project>
+	<Project Path="launcher/launcher.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="e2f3aa3a-b282-3db6-a7bd-0a2206ff50b3">
+		<BuildDependency Project="ZERO_CHECK.vcxproj"/>
+		<BuildDependency Project="cml/cml.vcxproj"/>
+		<BuildDependency Project="sdk/imgui/imgui.vcxproj"/>
+		<BuildDependency Project="launcher/launcher_lib.vcxproj"/>
+		<BuildDependency Project="sdk/libsodium/sodium.vcxproj"/>
+	</Project>
+	<Project Path="launcher/launcher_ORIGINAL.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="138b9157-f250-31fe-a4c2-c1da27fd4296">
+		<BuildDependency Project="ZERO_CHECK.vcxproj"/>
+		<Build Solution="Debug|*" Project="false"/>
+		<Build Solution="Release|*" Project="false"/>
+		<Build Solution="MinSizeRel|*" Project="false"/>
+		<Build Solution="RelWithDebInfo|*" Project="false"/>
+	</Project>
+	<Project Path="launcher/launcher_lib.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="f77c6b09-a898-3229-aebc-e4c1a423bb0c">
+		<BuildDependency Project="ZERO_CHECK.vcxproj"/>
+		<BuildDependency Project="cml/cml.vcxproj"/>
+		<BuildDependency Project="sdk/libsodium/sodium.vcxproj"/>
+	</Project>
+	<Project Path="launcher/launcher_lib_ORIGINAL.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="c9f42aa5-13ce-3fb8-8fba-d7825d2b5aa3">
+		<BuildDependency Project="ZERO_CHECK.vcxproj"/>
+		<Build Solution="Debug|*" Project="false"/>
+		<Build Solution="Release|*" Project="false"/>
+		<Build Solution="MinSizeRel|*" Project="false"/>
+		<Build Solution="RelWithDebInfo|*" Project="false"/>
+	</Project>
+	<Project Path="sdk/libsodium/sodium.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="8afb7ac9-760d-37fd-af14-a20b0a7cd512">
+		<BuildDependency Project="ZERO_CHECK.vcxproj"/>
+	</Project>
+	<Project Path="sdk/sqlite/sqlite3.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="06caedc5-93a8-3eeb-94f8-9feccd809d33">
+		<BuildDependency Project="ZERO_CHECK.vcxproj"/>
+	</Project>
+</Solution>

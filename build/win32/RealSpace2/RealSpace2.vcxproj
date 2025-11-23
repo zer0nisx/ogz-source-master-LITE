@@ -1,0 +1,503 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="18.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="MinSizeRel|Win32">
+      <Configuration>MinSizeRel</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="RelWithDebInfo|Win32">
+      <Configuration>RelWithDebInfo</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{770F7F34-902F-36BE-9FA6-71D13475AABA}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>
+    <Platform>Win32</Platform>
+    <ProjectName>RealSpace2</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\ogz-source-master-LITE\build\win32\lib\Debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">RealSpace2.dir\Debug\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">RealSpace2</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\ogz-source-master-LITE\build\win32\lib\Release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">RealSpace2.dir\Release\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">RealSpace2</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">C:\ogz-source-master-LITE\build\win32\lib\MinSizeRel\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">RealSpace2.dir\MinSizeRel\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">RealSpace2</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">C:\ogz-source-master-LITE\build\win32\lib\RelWithDebInfo\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">RealSpace2.dir\RelWithDebInfo\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">RealSpace2</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">.lib</TargetExt>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\RealSpace2\.;C:\ogz-source-master-LITE\src\RealSpace2\Include;C:\ogz-source-master-LITE\src\RealSpace2\..\cml\Include;C:\ogz-source-master-LITE\src\RealSpace2\..\RealSpace\Include;C:\ogz-source-master-LITE\src\RealSpace2\..\sdk;C:\ogz-source-master-LITE\src\RealSpace2\..\sdk\dx9\include;C:\ogz-source-master-LITE\src\cml\.;C:\ogz-source-master-LITE\src\cml\Include;C:\ogz-source-master\src\sdk\zlib\include;C:\ogz-source-master-LITE\src\cml\..\sdk\curl\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidjson\include;C:\ogz-source-master-LITE\src\sdk\curl\include;C:\ogz-source-master-LITE\src\sdk\rapidxml\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <BufferSecurityCheck></BufferSecurityCheck>
+      <CallingConvention></CallingConvention>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <FloatingPointModel></FloatingPointModel>
+      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SupportJustMyCode></SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;_WINSOCK_DEPRECATED_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_USE_GDIPLUS;CURL_STATICLIB;CMAKE_INTDIR="Debug"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;_WINSOCK_DEPRECATED_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_USE_GDIPLUS;CURL_STATICLIB;CMAKE_INTDIR=\"Debug\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\RealSpace2\.;C:\ogz-source-master-LITE\src\RealSpace2\Include;C:\ogz-source-master-LITE\src\RealSpace2\..\cml\Include;C:\ogz-source-master-LITE\src\RealSpace2\..\RealSpace\Include;C:\ogz-source-master-LITE\src\RealSpace2\..\sdk;C:\ogz-source-master-LITE\src\RealSpace2\..\sdk\dx9\include;C:\ogz-source-master-LITE\src\cml\.;C:\ogz-source-master-LITE\src\cml\Include;C:\ogz-source-master\src\sdk\zlib\include;C:\ogz-source-master-LITE\src\cml\..\sdk\curl\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidjson\include;C:\ogz-source-master-LITE\src\sdk\curl\include;C:\ogz-source-master-LITE\src\sdk\rapidxml\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\RealSpace2\.;C:\ogz-source-master-LITE\src\RealSpace2\Include;C:\ogz-source-master-LITE\src\RealSpace2\..\cml\Include;C:\ogz-source-master-LITE\src\RealSpace2\..\RealSpace\Include;C:\ogz-source-master-LITE\src\RealSpace2\..\sdk;C:\ogz-source-master-LITE\src\RealSpace2\..\sdk\dx9\include;C:\ogz-source-master-LITE\src\cml\.;C:\ogz-source-master-LITE\src\cml\Include;C:\ogz-source-master\src\sdk\zlib\include;C:\ogz-source-master-LITE\src\cml\..\sdk\curl\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidjson\include;C:\ogz-source-master-LITE\src\sdk\curl\include;C:\ogz-source-master-LITE\src\sdk\rapidxml\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:X86 /ignore:4099 /ignore:4221</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\RealSpace2\.;C:\ogz-source-master-LITE\src\RealSpace2\Include;C:\ogz-source-master-LITE\src\RealSpace2\..\cml\Include;C:\ogz-source-master-LITE\src\RealSpace2\..\RealSpace\Include;C:\ogz-source-master-LITE\src\RealSpace2\..\sdk;C:\ogz-source-master-LITE\src\RealSpace2\..\sdk\dx9\include;C:\ogz-source-master-LITE\src\cml\.;C:\ogz-source-master-LITE\src\cml\Include;C:\ogz-source-master\src\sdk\zlib\include;C:\ogz-source-master-LITE\src\cml\..\sdk\curl\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidjson\include;C:\ogz-source-master-LITE\src\sdk\curl\include;C:\ogz-source-master-LITE\src\sdk\rapidxml\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <BufferSecurityCheck></BufferSecurityCheck>
+      <CallingConvention></CallingConvention>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <FloatingPointModel></FloatingPointModel>
+      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SupportJustMyCode></SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;_WINSOCK_DEPRECATED_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_USE_GDIPLUS;NDEBUG;_PUBLISH;CURL_STATICLIB;CMAKE_INTDIR="Release"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;_WINSOCK_DEPRECATED_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_USE_GDIPLUS;NDEBUG;_PUBLISH;CURL_STATICLIB;CMAKE_INTDIR=\"Release\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\RealSpace2\.;C:\ogz-source-master-LITE\src\RealSpace2\Include;C:\ogz-source-master-LITE\src\RealSpace2\..\cml\Include;C:\ogz-source-master-LITE\src\RealSpace2\..\RealSpace\Include;C:\ogz-source-master-LITE\src\RealSpace2\..\sdk;C:\ogz-source-master-LITE\src\RealSpace2\..\sdk\dx9\include;C:\ogz-source-master-LITE\src\cml\.;C:\ogz-source-master-LITE\src\cml\Include;C:\ogz-source-master\src\sdk\zlib\include;C:\ogz-source-master-LITE\src\cml\..\sdk\curl\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidjson\include;C:\ogz-source-master-LITE\src\sdk\curl\include;C:\ogz-source-master-LITE\src\sdk\rapidxml\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\RealSpace2\.;C:\ogz-source-master-LITE\src\RealSpace2\Include;C:\ogz-source-master-LITE\src\RealSpace2\..\cml\Include;C:\ogz-source-master-LITE\src\RealSpace2\..\RealSpace\Include;C:\ogz-source-master-LITE\src\RealSpace2\..\sdk;C:\ogz-source-master-LITE\src\RealSpace2\..\sdk\dx9\include;C:\ogz-source-master-LITE\src\cml\.;C:\ogz-source-master-LITE\src\cml\Include;C:\ogz-source-master\src\sdk\zlib\include;C:\ogz-source-master-LITE\src\cml\..\sdk\curl\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidjson\include;C:\ogz-source-master-LITE\src\sdk\curl\include;C:\ogz-source-master-LITE\src\sdk\rapidxml\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:X86 /ignore:4099 /ignore:4221</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\RealSpace2\.;C:\ogz-source-master-LITE\src\RealSpace2\Include;C:\ogz-source-master-LITE\src\RealSpace2\..\cml\Include;C:\ogz-source-master-LITE\src\RealSpace2\..\RealSpace\Include;C:\ogz-source-master-LITE\src\RealSpace2\..\sdk;C:\ogz-source-master-LITE\src\RealSpace2\..\sdk\dx9\include;C:\ogz-source-master-LITE\src\cml\.;C:\ogz-source-master-LITE\src\cml\Include;C:\ogz-source-master\src\sdk\zlib\include;C:\ogz-source-master-LITE\src\cml\..\sdk\curl\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidjson\include;C:\ogz-source-master-LITE\src\sdk\curl\include;C:\ogz-source-master-LITE\src\sdk\rapidxml\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <BufferSecurityCheck></BufferSecurityCheck>
+      <CallingConvention></CallingConvention>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <FloatingPointModel></FloatingPointModel>
+      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>MinSpace</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SupportJustMyCode></SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;_WINSOCK_DEPRECATED_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_USE_GDIPLUS;NDEBUG;_PUBLISH;CURL_STATICLIB;CMAKE_INTDIR="MinSizeRel"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;_WINSOCK_DEPRECATED_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_USE_GDIPLUS;NDEBUG;_PUBLISH;CURL_STATICLIB;CMAKE_INTDIR=\"MinSizeRel\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\RealSpace2\.;C:\ogz-source-master-LITE\src\RealSpace2\Include;C:\ogz-source-master-LITE\src\RealSpace2\..\cml\Include;C:\ogz-source-master-LITE\src\RealSpace2\..\RealSpace\Include;C:\ogz-source-master-LITE\src\RealSpace2\..\sdk;C:\ogz-source-master-LITE\src\RealSpace2\..\sdk\dx9\include;C:\ogz-source-master-LITE\src\cml\.;C:\ogz-source-master-LITE\src\cml\Include;C:\ogz-source-master\src\sdk\zlib\include;C:\ogz-source-master-LITE\src\cml\..\sdk\curl\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidjson\include;C:\ogz-source-master-LITE\src\sdk\curl\include;C:\ogz-source-master-LITE\src\sdk\rapidxml\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\RealSpace2\.;C:\ogz-source-master-LITE\src\RealSpace2\Include;C:\ogz-source-master-LITE\src\RealSpace2\..\cml\Include;C:\ogz-source-master-LITE\src\RealSpace2\..\RealSpace\Include;C:\ogz-source-master-LITE\src\RealSpace2\..\sdk;C:\ogz-source-master-LITE\src\RealSpace2\..\sdk\dx9\include;C:\ogz-source-master-LITE\src\cml\.;C:\ogz-source-master-LITE\src\cml\Include;C:\ogz-source-master\src\sdk\zlib\include;C:\ogz-source-master-LITE\src\cml\..\sdk\curl\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidjson\include;C:\ogz-source-master-LITE\src\sdk\curl\include;C:\ogz-source-master-LITE\src\sdk\rapidxml\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:X86 /ignore:4099 /ignore:4221</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\RealSpace2\.;C:\ogz-source-master-LITE\src\RealSpace2\Include;C:\ogz-source-master-LITE\src\RealSpace2\..\cml\Include;C:\ogz-source-master-LITE\src\RealSpace2\..\RealSpace\Include;C:\ogz-source-master-LITE\src\RealSpace2\..\sdk;C:\ogz-source-master-LITE\src\RealSpace2\..\sdk\dx9\include;C:\ogz-source-master-LITE\src\cml\.;C:\ogz-source-master-LITE\src\cml\Include;C:\ogz-source-master\src\sdk\zlib\include;C:\ogz-source-master-LITE\src\cml\..\sdk\curl\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidjson\include;C:\ogz-source-master-LITE\src\sdk\curl\include;C:\ogz-source-master-LITE\src\sdk\rapidxml\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <BufferSecurityCheck></BufferSecurityCheck>
+      <CallingConvention></CallingConvention>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <FloatingPointModel></FloatingPointModel>
+      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SupportJustMyCode></SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;_WINSOCK_DEPRECATED_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_USE_GDIPLUS;NDEBUG;_PUBLISH;CURL_STATICLIB;CMAKE_INTDIR="RelWithDebInfo"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;_WINSOCK_DEPRECATED_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_USE_GDIPLUS;NDEBUG;_PUBLISH;CURL_STATICLIB;CMAKE_INTDIR=\"RelWithDebInfo\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\RealSpace2\.;C:\ogz-source-master-LITE\src\RealSpace2\Include;C:\ogz-source-master-LITE\src\RealSpace2\..\cml\Include;C:\ogz-source-master-LITE\src\RealSpace2\..\RealSpace\Include;C:\ogz-source-master-LITE\src\RealSpace2\..\sdk;C:\ogz-source-master-LITE\src\RealSpace2\..\sdk\dx9\include;C:\ogz-source-master-LITE\src\cml\.;C:\ogz-source-master-LITE\src\cml\Include;C:\ogz-source-master\src\sdk\zlib\include;C:\ogz-source-master-LITE\src\cml\..\sdk\curl\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidjson\include;C:\ogz-source-master-LITE\src\sdk\curl\include;C:\ogz-source-master-LITE\src\sdk\rapidxml\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\RealSpace2\.;C:\ogz-source-master-LITE\src\RealSpace2\Include;C:\ogz-source-master-LITE\src\RealSpace2\..\cml\Include;C:\ogz-source-master-LITE\src\RealSpace2\..\RealSpace\Include;C:\ogz-source-master-LITE\src\RealSpace2\..\sdk;C:\ogz-source-master-LITE\src\RealSpace2\..\sdk\dx9\include;C:\ogz-source-master-LITE\src\cml\.;C:\ogz-source-master-LITE\src\cml\Include;C:\ogz-source-master\src\sdk\zlib\include;C:\ogz-source-master-LITE\src\cml\..\sdk\curl\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidjson\include;C:\ogz-source-master-LITE\src\sdk\curl\include;C:\ogz-source-master-LITE\src\sdk\rapidxml\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:X86 /ignore:4099 /ignore:4221</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\ogz-source-master-LITE\build\win32\CMakeFiles\7b15d7aef9ccb2409a106ce30e6604fb\RealSpace2_ORIGINAL_CXX_unity.cxx.rule">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Generating CXX unity source C:\ogz-source-master-LITE\build\win32\RealSpace2\$(Configuration)\cotire\RealSpace2_ORIGINAL_CXX_unity.cxx</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">setlocal
+cd C:\ogz-source-master-LITE\src\RealSpace2
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -DCOTIRE_BUILD_TYPE:STRING=Debug -P C:/ogz-source-master-LITE/src/cmake/cotire.cmake unity C:/ogz-source-master-LITE/build/win32/RealSpace2/RealSpace2_ORIGINAL_CXX_cotire.cmake C:/ogz-source-master-LITE/build/win32/RealSpace2/$(Configuration)/cotire/RealSpace2_ORIGINAL_CXX_unity.cxx
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\ogz-source-master-LITE\build\win32\RealSpace2\RealSpace2_ORIGINAL_CXX_cotire.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\ogz-source-master-LITE\build\win32\RealSpace2\$(Configuration)\cotire\RealSpace2_ORIGINAL_CXX_unity.cxx</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Generating CXX unity source C:\ogz-source-master-LITE\build\win32\RealSpace2\$(Configuration)\cotire\RealSpace2_ORIGINAL_CXX_unity.cxx</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">setlocal
+cd C:\ogz-source-master-LITE\src\RealSpace2
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -DCOTIRE_BUILD_TYPE:STRING=Release -P C:/ogz-source-master-LITE/src/cmake/cotire.cmake unity C:/ogz-source-master-LITE/build/win32/RealSpace2/RealSpace2_ORIGINAL_CXX_cotire.cmake C:/ogz-source-master-LITE/build/win32/RealSpace2/$(Configuration)/cotire/RealSpace2_ORIGINAL_CXX_unity.cxx
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\ogz-source-master-LITE\build\win32\RealSpace2\RealSpace2_ORIGINAL_CXX_cotire.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\ogz-source-master-LITE\build\win32\RealSpace2\$(Configuration)\cotire\RealSpace2_ORIGINAL_CXX_unity.cxx</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">Generating CXX unity source C:\ogz-source-master-LITE\build\win32\RealSpace2\$(Configuration)\cotire\RealSpace2_ORIGINAL_CXX_unity.cxx</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">setlocal
+cd C:\ogz-source-master-LITE\src\RealSpace2
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -DCOTIRE_BUILD_TYPE:STRING=MinSizeRel -P C:/ogz-source-master-LITE/src/cmake/cotire.cmake unity C:/ogz-source-master-LITE/build/win32/RealSpace2/RealSpace2_ORIGINAL_CXX_cotire.cmake C:/ogz-source-master-LITE/build/win32/RealSpace2/$(Configuration)/cotire/RealSpace2_ORIGINAL_CXX_unity.cxx
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">C:\ogz-source-master-LITE\build\win32\RealSpace2\RealSpace2_ORIGINAL_CXX_cotire.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">C:\ogz-source-master-LITE\build\win32\RealSpace2\$(Configuration)\cotire\RealSpace2_ORIGINAL_CXX_unity.cxx</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">Generating CXX unity source C:\ogz-source-master-LITE\build\win32\RealSpace2\$(Configuration)\cotire\RealSpace2_ORIGINAL_CXX_unity.cxx</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">setlocal
+cd C:\ogz-source-master-LITE\src\RealSpace2
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -DCOTIRE_BUILD_TYPE:STRING=RelWithDebInfo -P C:/ogz-source-master-LITE/src/cmake/cotire.cmake unity C:/ogz-source-master-LITE/build/win32/RealSpace2/RealSpace2_ORIGINAL_CXX_cotire.cmake C:/ogz-source-master-LITE/build/win32/RealSpace2/$(Configuration)/cotire/RealSpace2_ORIGINAL_CXX_unity.cxx
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">C:\ogz-source-master-LITE\build\win32\RealSpace2\RealSpace2_ORIGINAL_CXX_cotire.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">C:\ogz-source-master-LITE\build\win32\RealSpace2\$(Configuration)\cotire\RealSpace2_ORIGINAL_CXX_unity.cxx</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\ogz-source-master-LITE\src\RealSpace2\CMakeLists.txt">
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Building Custom Rule C:/ogz-source-master-LITE/src/RealSpace2/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/ogz-source-master-LITE/src -BC:/ogz-source-master-LITE/build/win32 --check-stamp-file C:/ogz-source-master-LITE/build/win32/RealSpace2/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\ogz-source-master-LITE\build\win32\RealSpace2\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Building Custom Rule C:/ogz-source-master-LITE/src/RealSpace2/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/ogz-source-master-LITE/src -BC:/ogz-source-master-LITE/build/win32 --check-stamp-file C:/ogz-source-master-LITE/build/win32/RealSpace2/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\ogz-source-master-LITE\build\win32\RealSpace2\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">Building Custom Rule C:/ogz-source-master-LITE/src/RealSpace2/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/ogz-source-master-LITE/src -BC:/ogz-source-master-LITE/build/win32 --check-stamp-file C:/ogz-source-master-LITE/build/win32/RealSpace2/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">C:\ogz-source-master-LITE\build\win32\RealSpace2\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">Building Custom Rule C:/ogz-source-master-LITE/src/RealSpace2/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/ogz-source-master-LITE/src -BC:/ogz-source-master-LITE/build/win32 --check-stamp-file C:/ogz-source-master-LITE/build/win32/RealSpace2/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">C:\ogz-source-master-LITE\build\win32\RealSpace2\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\AlphaTestingFS.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\AmbientPS.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\AmbientVS.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\BasicRenderFS.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\BasicRenderVS.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\BulletCollision.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\BulletCollisionLibs.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\ColorInvert.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\ColorTypes.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\DeferredPS.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\DeferredVS.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\DepthCopyPS.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\DepthCopyVS.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\EluLoader.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\LightmapGenerator.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\LogMatrix.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\MergeShadowMapsPS.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\MergeShadowMapsVS.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\MeshManager.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\Monochrome.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\PointLightPS.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\PointLightVS.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\PostProcess.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RAStar.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RAniEventInfo.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RAnimation.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RAnimationDef.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RAnimationFile.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RAnimationMgr.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RAnimationNode.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RBaseTexture.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RBoundary.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RBspObject.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RBspObjectDraw.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RBspObjectDrawD3D9.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RBspObjectDrawVulkan.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RCharCloth.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RCloth.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RCollisionDetection.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RCylinder.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RDummyList.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RDynamicLight.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RError.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RFont.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RFrameWork.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RHalfEdgeMesh.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RLenzFlare.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RLightList.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RLine.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RMaterialList.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RMath.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RMesh.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RMeshMgr.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RMeshNode.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RMeshNodeData.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RMeshNodeStringTable.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RMeshUtil.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RMtrl.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RNameSpace.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RNavigationMesh.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RNavigationNode.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\ROcclusionList.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RParticleSystem.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RRoam.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RS2.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RS2D3D9.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RS2Vulkan.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RShaderMgr.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RSolidBsp.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RSphere.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RToken.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RTypes.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RUtil.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RVersions.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RVisualMesh.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RVisualMeshMgr.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RVisualMeshUtil.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RealSpace2.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\Renderer.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\ShaderGlobals.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\ShaderUtil.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\ShadowPS.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\ShadowVS.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\SimpleMesh.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\Sphere.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\TextureLoader.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\VertexTypes.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\VisualizeLinearDepth.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\VulkanMaterial.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\VulkanTextureLoader.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\XMLFileStructs.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\XMLParser.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\rmatrix.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\rplane.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\rquaternion.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\rvector.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\skin.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\vulkan_function_list.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\vulkan_functions.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\vulkandebug.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\vulkandevice.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\vulkanswapchain.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\vulkantools.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\build\win32\RealSpace2\$(Configuration)\cotire\RealSpace2_ORIGINAL_CXX_unity.cxx">
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalOptions) /bigobj</AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(AdditionalOptions) /bigobj</AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">%(AdditionalOptions) /bigobj</AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">%(AdditionalOptions) /bigobj</AdditionalOptions>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="C:\ogz-source-master-LITE\build\win32\ZERO_CHECK.vcxproj">
+      <Project>{5B1216EE-1D01-3B9C-8E8F-ACD32D771E06}</Project>
+      <Name>ZERO_CHECK</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\ogz-source-master-LITE\build\win32\cml\cml.vcxproj">
+      <Project>{65F26DF4-191B-3662-9288-C8D12B6D8C1F}</Project>
+      <Name>cml</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

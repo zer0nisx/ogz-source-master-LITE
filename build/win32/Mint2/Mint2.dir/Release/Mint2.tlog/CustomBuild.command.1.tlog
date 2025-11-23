@@ -1,0 +1,24 @@
+^C:\OGZ-SOURCE-MASTER-LITE\BUILD\WIN32\CMAKEFILES\43B9A91994A8819D5DA6D36EE645FF4F\MINT2_ORIGINAL_CXX_UNITY.CXX.RULE
+setlocal
+cd C:\ogz-source-master-LITE\src\Mint2
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -DCOTIRE_BUILD_TYPE:STRING=Release -P C:/ogz-source-master-LITE/src/cmake/cotire.cmake unity C:/ogz-source-master-LITE/build/win32/Mint2/Mint2_ORIGINAL_CXX_cotire.cmake C:/ogz-source-master-LITE/build/win32/Mint2/Release/cotire/Mint2_ORIGINAL_CXX_unity.cxx
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\OGZ-SOURCE-MASTER-LITE\SRC\MINT2\CMAKELISTS.TXT
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/ogz-source-master-LITE/src -BC:/ogz-source-master-LITE/build/win32 --check-stamp-file C:/ogz-source-master-LITE/build/win32/Mint2/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

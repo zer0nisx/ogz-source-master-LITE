@@ -1,0 +1,31 @@
+{
+	"InstallScripts" : 
+	[
+		"C:/ogz-source-master-LITE/build/win32/cmake_install.cmake",
+		"C:/ogz-source-master-LITE/build/win32/sdk/zlib/cmake_install.cmake",
+		"C:/ogz-source-master-LITE/build/win32/sdk/curl/cmake_install.cmake",
+		"C:/ogz-source-master-LITE/build/win32/sdk/libsodium/cmake_install.cmake",
+		"C:/ogz-source-master-LITE/build/win32/sdk/sqlite/cmake_install.cmake",
+		"C:/ogz-source-master-LITE/build/win32/sdk/rapidxml/cmake_install.cmake",
+		"C:/ogz-source-master-LITE/build/win32/sdk/rapidjson/cmake_install.cmake",
+		"C:/ogz-source-master-LITE/build/win32/sdk/ini/cmake_install.cmake",
+		"C:/ogz-source-master-LITE/build/win32/sdk/bullet/cmake_install.cmake",
+		"C:/ogz-source-master-LITE/build/win32/sdk/portaudio/cmake_install.cmake",
+		"C:/ogz-source-master-LITE/build/win32/sdk/opus/cmake_install.cmake",
+		"C:/ogz-source-master-LITE/build/win32/sdk/imgui/cmake_install.cmake",
+		"C:/ogz-source-master-LITE/build/win32/cml/cmake_install.cmake",
+		"C:/ogz-source-master-LITE/build/win32/launcher/cmake_install.cmake",
+		"C:/ogz-source-master-LITE/build/win32/PatchCreator/cmake_install.cmake",
+		"C:/ogz-source-master-LITE/build/win32/CSCommon/cmake_install.cmake",
+		"C:/ogz-source-master-LITE/build/win32/MDatabase/cmake_install.cmake",
+		"C:/ogz-source-master-LITE/build/win32/RealSpace2/cmake_install.cmake",
+		"C:/ogz-source-master-LITE/build/win32/SafeUDP/cmake_install.cmake",
+		"C:/ogz-source-master-LITE/build/win32/Locator/cmake_install.cmake",
+		"C:/ogz-source-master-LITE/build/win32/MatchServer/cmake_install.cmake",
+		"C:/ogz-source-master-LITE/build/win32/Mint2/cmake_install.cmake",
+		"C:/ogz-source-master-LITE/build/win32/RealSound/cmake_install.cmake",
+		"C:/ogz-source-master-LITE/build/win32/Gunz/cmake_install.cmake",
+		"C:/ogz-source-master-LITE/build/win32/PartsIndexer/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

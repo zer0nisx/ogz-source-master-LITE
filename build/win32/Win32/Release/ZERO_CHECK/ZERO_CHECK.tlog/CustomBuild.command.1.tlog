@@ -1,0 +1,10 @@
+^C:\OGZ-SOURCE-MASTER-LITE\BUILD\WIN32\CMAKEFILES\1D6B407276CC4D5266B767D312210E4E\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/ogz-source-master-LITE/src -BC:/ogz-source-master-LITE/build/win32 --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file C:/ogz-source-master-LITE/build/win32/Project.slnx
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
