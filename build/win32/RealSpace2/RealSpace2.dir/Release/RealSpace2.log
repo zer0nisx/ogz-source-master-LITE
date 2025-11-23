@@ -2,4 +2,4 @@
 C:\ogz-source-master-LITE\src\RealSpace2\Source\LightmapGenerator.cpp(60,24): warning C4244: 'inicializando': conversión de 'double' a 'float'; posible pérdida de datos
   (compilando archivo de origen "Release/cotire/RealSpace2_ORIGINAL_CXX_unity.cxx")
   
-  RealSpace2.vcxproj -> C:\ogz-source-master-LITE\build\win32\lib\Release\RealSpace2.lib
+LINK : fatal error LNK1104: no se puede abrir el archivo 'C:\ogz-source-master-LITE\build\win32\lib\Release\RealSpace2.lib'

@@ -224,10 +224,18 @@ void RShaderMgr::Update()
 	
 	// Update fog constants
 	// Constants: x=1.0, y=FogStart, z=FogEnd, w=1.0/(FogEnd-FogStart)
-	float fogStart = RGetFogNear();
-	float fogEnd = RGetFogFar();
-	float fogRange = fogEnd - fogStart;
-	float fogInvRange = (fogRange > 0.0001f) ? (1.0f / fogRange) : 0.0f;
+	// Si el fog está activo desde BSP, usar los valores, sino desactivar fog en shader
+	float fogStart = 0.0f;
+	float fogEnd = 0.0f;
+	float fogInvRange = 0.0f;
+	
+	if (RGetFog())  // Verificar si el fog está activo (configurado desde BSP)
+	{
+		fogStart = RGetFogNear();
+		fogEnd = RGetFogFar();
+		float fogRange = fogEnd - fogStart;
+		fogInvRange = (fogRange > 0.0001f) ? (1.0f / fogRange) : 0.0f;
+	}
 	
 	float fConst[] = {
 		1.0f, fogStart, fogEnd, fogInvRange
