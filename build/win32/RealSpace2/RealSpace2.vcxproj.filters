@@ -114,6 +114,9 @@
     <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RBspObjectDrawVulkan.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RBufferManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RCharCloth.h">
       <Filter>Header Files</Filter>
     </ClInclude>

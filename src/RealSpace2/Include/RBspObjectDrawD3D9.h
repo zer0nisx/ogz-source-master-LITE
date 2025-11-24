@@ -92,6 +92,12 @@ private:
 	} VBs;
 
 	D3DPtr<IDirect3DIndexBuffer9> IndexBuffer;
+	
+	// Flags para indicar si los buffers vienen del buffer manager
+	struct {
+		bool Positions, TexCoords, Normals, Tangents;
+	} VBsFromManager;
+	bool IndexBufferFromManager;
 
 	D3DPtr<IDirect3DVertexDeclaration9> LitVertexDecl;
 	D3DPtr<IDirect3DVertexDeclaration9> UnlitVertexDecl;

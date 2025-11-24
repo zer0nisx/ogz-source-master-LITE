@@ -10,6 +10,7 @@
 #include "RMeshUtil.h"
 #include "RFont.h"
 #include "RS2.h"
+#include "RBufferManager.h"
 using std::min;
 using std::max;
 #ifdef _USE_GDIPLUS
@@ -117,11 +118,16 @@ void SetVSync(bool b)
 
 void SetDX9Ex(bool b)
 {
+	// Si el valor no cambia, no hacer nada
+	if (g_bDX9Ex == b)
+		return;
+	
 	g_bDX9Ex = b;
 	// Nota: DX9Ex solo se puede activar antes de crear el dispositivo
 	// Si el dispositivo ya está creado, se aplicará en el próximo reset o reinicio
 	if (g_pd3dDevice)
 	{
+		// Solo mostrar warning si realmente se está cambiando el valor
 		mlog("Warning: SetDX9Ex llamado después de crear el dispositivo. Se aplicará en el próximo reset.\n");
 	}
 }
@@ -768,6 +774,13 @@ void RFlip()
 	RBeginScene();
 
 	g_nFrameCount++;
+	
+	// Limpiar buffers no usados del buffer manager cada 300 frames (~5 segundos a 60fps)
+	// Esto previene acumulación de memoria sin afectar el rendimiento
+	if (g_nFrameCount % 300 == 0)
+	{
+		RBufferManager::GetInstance().CleanupUnusedBuffers(g_nFrameCount, 300);
+	}
 	auto currentTime = GetGlobalTimeMS();
 	if (g_dwLastFPSTime + FPS_INTERVAL < currentTime)
 	{

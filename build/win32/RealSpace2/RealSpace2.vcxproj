@@ -410,6 +410,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RBspObjectDraw.h" />
     <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RBspObjectDrawD3D9.h" />
     <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RBspObjectDrawVulkan.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RBufferManager.h" />
     <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RCharCloth.h" />
     <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RCloth.h" />
     <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RCollisionDetection.h" />

@@ -49,7 +49,7 @@ public:
 	void OnRestore();
 	
 	// Estadísticas
-	size_t GetActiveBufferCount() const { return m_ActiveBuffers.size(); }
+	size_t GetActiveBufferCount() const { return m_ActiveVBuffers.size() + m_ActiveIBuffers.size(); }
 	size_t GetTotalBufferMemory() const { return m_TotalMemory; }
 
 private:

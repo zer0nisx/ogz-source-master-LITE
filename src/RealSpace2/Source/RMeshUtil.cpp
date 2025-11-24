@@ -2,6 +2,7 @@
 #include "RMeshUtil.h"
 #include "RealSpace2.h"
 #include "MDebug.h"
+#include "RBufferManager.h"
 
 using namespace RealSpace2;
 
@@ -20,11 +21,21 @@ RIndexBuffer::RIndexBuffer()
 
 	m_bUseSWVertex = false;
 	m_bUseHWVertex = false;
+	m_bFromBufferManager = false;  // Inicializar flag
 }
 
 RIndexBuffer::~RIndexBuffer() 
 {
-	REL(m_ib);
+	// Si el buffer viene del buffer manager, devolverlo al pool en lugar de liberarlo
+	if (m_ib && m_bFromBufferManager)
+	{
+		RBufferManager::GetInstance().ReleaseIndexBuffer(m_ib);
+		m_ib = nullptr;  // El manager maneja la referencia
+	}
+	else
+	{
+		REL(m_ib);  // Liberar directamente si no viene del manager
+	}
 	DEL2(m_pIndex);
 }
 
@@ -66,14 +77,37 @@ void RIndexBuffer::Update(int size,u16* pData)
 bool RIndexBuffer::Create(int size,u16* pData,u32 flag,u32 Usage,D3DPOOL Pool)
 {
 	m_size = size;
+	m_bFromBufferManager = false;  // Resetear flag
 
 	if(flag & USE_VERTEX_HW) m_bUseHWVertex = true;
 	if(flag & USE_VERTEX_SW) m_bUseSWVertex = true;
 
 	if(m_bUseHWVertex) {
-		if (FAILED(RGetDevice()->CreateIndexBuffer(sizeof(u16)*size, Usage, D3DFMT_INDEX16,
-			Pool, &m_ib, 0))) {
-			mlog("RIndexBuffer::Create Error : use soft index buffer\n");
+		// INTEGRACIÓN CON BUFFER MANAGER:
+		// Para buffers estáticos (no dinámicos), usar el buffer manager para reutilización
+		// Para buffers dinámicos, crear directamente (no se benefician tanto del pooling)
+		bool bIsDynamic = (Usage & D3DUSAGE_DYNAMIC) != 0;
+		
+		if (!bIsDynamic && Pool == D3DPOOL_MANAGED)
+		{
+			// Intentar obtener buffer del manager
+			size_t bufferSize = sizeof(u16) * size;
+			m_ib = RBufferManager::GetInstance().GetIndexBuffer(bufferSize, D3DFMT_INDEX16, Usage);
+			
+			if (m_ib)
+			{
+				m_bFromBufferManager = true;  // Marcar que viene del manager
+			}
+		}
+		
+		// Si el manager no tiene buffer disponible o es dinámico, crear directamente
+		if (!m_ib)
+		{
+			if (FAILED(RGetDevice()->CreateIndexBuffer(sizeof(u16)*size, Usage, D3DFMT_INDEX16,
+				Pool, &m_ib, 0))) {
+				mlog("RIndexBuffer::Create Error : use soft index buffer\n");
+				m_bFromBufferManager = false;
+			}
 		}
 	}
 
@@ -121,11 +155,20 @@ void RVertexBuffer::Init() {
 	m_pVert = NULL;
 	m_bUseSWVertex = false;
 	m_bUseHWVertex = false;
+	m_bFromBufferManager = false;  // Inicializar flag
 }
 
 void RVertexBuffer::Clear() {
-
-	REL(m_vb);
+	// Si el buffer viene del buffer manager, devolverlo al pool en lugar de liberarlo
+	if (m_vb && m_bFromBufferManager)
+	{
+		RBufferManager::GetInstance().ReleaseVertexBuffer(m_vb);
+		m_vb = nullptr;  // El manager maneja la referencia
+	}
+	else
+	{
+		REL(m_vb);  // Liberar directamente si no viene del manager
+	}
 	DEL(m_pVert);
 
 	Init();
@@ -146,12 +189,34 @@ bool RVertexBuffer::Create(char* pVertex, u32 fvf, int VertexSize, int VertexCnt
 	m_dwFVF = fvf;
 	m_dwUsage = Usage;
 	m_dwPool = Pool;
+	m_bFromBufferManager = false;  // Resetear flag
 
 	if(flag & USE_VERTEX_SW) m_bUseSWVertex = true;
 	if(flag & USE_VERTEX_HW) m_bUseHWVertex = true;
 
 	if(m_bUseHWVertex) {
-		if( FAILED( RGetDevice()->CreateVertexBuffer( m_nBufferSize , Usage , fvf , Pool ,&m_vb ,0) ) ) {
+		// INTEGRACIÓN CON BUFFER MANAGER:
+		// Para buffers estáticos (no dinámicos), usar el buffer manager para reutilización
+		// Para buffers dinámicos, crear directamente (no se benefician tanto del pooling)
+		bool bIsDynamic = (Usage & D3DUSAGE_DYNAMIC) != 0;
+		
+		if (!bIsDynamic && Pool == D3DPOOL_MANAGED)
+		{
+			// Intentar obtener buffer del manager
+			m_vb = RBufferManager::GetInstance().GetVertexBuffer(m_nBufferSize, fvf, Usage);
+			
+			if (m_vb)
+			{
+				m_bFromBufferManager = true;  // Marcar que viene del manager
+			}
+		}
+		
+		// Si el manager no tiene buffer disponible o es dinámico, crear directamente
+		if (!m_vb)
+		{
+			if( FAILED( RGetDevice()->CreateVertexBuffer( m_nBufferSize , Usage , fvf , Pool ,&m_vb ,0) ) ) {
+				// Error al crear buffer
+			}
 		}
 	}
 

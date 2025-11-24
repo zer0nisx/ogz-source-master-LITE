@@ -52,6 +52,9 @@
     <ClCompile Include="C:\ogz-source-master-LITE\src\RealSpace2\Source\RBspObjectDrawVulkan.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="C:\ogz-source-master-LITE\src\RealSpace2\Source\RBufferManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="C:\ogz-source-master-LITE\src\RealSpace2\Source\RCamera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -316,6 +319,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RBspObjectDrawVulkan.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RBufferManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RCharCloth.h">

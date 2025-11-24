@@ -28,6 +28,7 @@
 #include "BulletCollision.h"
 #include "RVisualMeshMgr.h"
 #include "ShaderGlobals.h"
+#include "RBufferManager.h"
 #include "RShaderMgr.h"
 #include "RBaseTexture.h"
 #endif
@@ -157,6 +158,8 @@ RBspObject::RBspObject(bool PhysOnly)
 {}
 #else
 	, DrawObj{ GetGraphicsAPI(), *this }
+	, m_bBspVertexBufferFromManager(false)
+	, m_bBspIndexBufferFromManager(false)
 {
 	m_MeshList.SetMtrlAutoLoad(true);
 	m_MeshList.SetMapObject(true);
@@ -1065,13 +1068,38 @@ void RBspObject::OptimizeBoundingBox()
 #ifdef _WIN32
 bool RBspObject::CreateIndexBuffer()
 {
-	SAFE_RELEASE(IndexBuffer);
+	// Si el buffer viene del buffer manager, devolverlo al pool
+	if (IndexBuffer && m_bBspIndexBufferFromManager)
+	{
+		RBufferManager::GetInstance().ReleaseIndexBuffer(IndexBuffer.get());
+		IndexBuffer.reset();
+	}
+	else
+	{
+		SAFE_RELEASE(IndexBuffer);
+	}
 
-	HRESULT hr = RGetDevice()->CreateIndexBuffer(sizeof(OcIndices[0]) * OcIndices.size(), D3DUSAGE_WRITEONLY,
-		D3DFMT_INDEX16, D3DPOOL_MANAGED, MakeWriteProxy(IndexBuffer), NULL);
-	if (FAILED(hr)) {
-		mlog("RBspObject::CreateIndexBuffer failed\n");
-		return false;
+	// INTEGRACIÓN CON BUFFER MANAGER: Intentar obtener buffer del pool
+	size_t bufferSize = sizeof(OcIndices[0]) * OcIndices.size();
+	LPDIRECT3DINDEXBUFFER9 pIB = RBufferManager::GetInstance().GetIndexBuffer(
+		bufferSize, D3DFMT_INDEX16, D3DUSAGE_WRITEONLY);
+	
+	if (pIB)
+	{
+		// Usar buffer del manager
+		IndexBuffer.reset(pIB);
+		m_bBspIndexBufferFromManager = true;
+	}
+	else
+	{
+		// Crear nuevo buffer si el manager no tiene uno disponible
+		HRESULT hr = RGetDevice()->CreateIndexBuffer(bufferSize, D3DUSAGE_WRITEONLY,
+			D3DFMT_INDEX16, D3DPOOL_MANAGED, MakeWriteProxy(IndexBuffer), NULL);
+		if (FAILED(hr)) {
+			mlog("RBspObject::CreateIndexBuffer failed\n");
+			return false;
+		}
+		m_bBspIndexBufferFromManager = false;
 	}
 
 	return true;
@@ -2199,14 +2227,39 @@ bool RBspObject::CreateVertexBuffer()
 {
 	if (OcInfo.size() * 3 > 65530 || OcInfo.size() == 0) return false;
 
-	SAFE_RELEASE(VertexBuffer);
+	// Si el buffer viene del buffer manager, devolverlo al pool
+	if (VertexBuffer && m_bBspVertexBufferFromManager)
+	{
+		RBufferManager::GetInstance().ReleaseVertexBuffer(VertexBuffer.get());
+		VertexBuffer.reset();
+	}
+	else
+	{
+		SAFE_RELEASE(VertexBuffer);
+	}
 
-	HRESULT hr = RGetDevice()->CreateVertexBuffer(GetStride() * OcVertices.size(),
-		D3DUSAGE_WRITEONLY, GetFVF(),
-		D3DPOOL_MANAGED, MakeWriteProxy(VertexBuffer),
-		nullptr);
-	_ASSERT(hr == D3D_OK);
-	if (hr != D3D_OK) return false;
+	// INTEGRACIÓN CON BUFFER MANAGER: Intentar obtener buffer del pool
+	size_t bufferSize = GetStride() * OcVertices.size();
+	LPDIRECT3DVERTEXBUFFER9 pVB = RBufferManager::GetInstance().GetVertexBuffer(
+		bufferSize, GetFVF(), D3DUSAGE_WRITEONLY);
+	
+	if (pVB)
+	{
+		// Usar buffer del manager
+		VertexBuffer.reset(pVB);
+		m_bBspVertexBufferFromManager = true;
+	}
+	else
+	{
+		// Crear nuevo buffer si el manager no tiene uno disponible
+		HRESULT hr = RGetDevice()->CreateVertexBuffer(bufferSize,
+			D3DUSAGE_WRITEONLY, GetFVF(),
+			D3DPOOL_MANAGED, MakeWriteProxy(VertexBuffer),
+			nullptr);
+		_ASSERT(hr == D3D_OK);
+		if (hr != D3D_OK) return false;
+		m_bBspVertexBufferFromManager = false;
+	}
 
 	return true;
 }

@@ -86,11 +86,13 @@ HRESULT GetDirectXVersionViaDxDiag(DWORD* pdwDirectXVersionMajor,
 static void ApplyVSyncAndTripleBuffer()
 {
 	// Aplicar configuración de VSync y TripleBuffer
+	// Nota: SetDX9Ex NO se llama aquí porque debe llamarse ANTES de crear el dispositivo
+	// (ya se llama en ApplyInitialConfiguration() antes de RMain())
 	if (RGetDevice())
 	{
 		SetVSync(ZGetConfiguration()->GetVSync());
 		SetTripleBuffer(ZGetConfiguration()->GetTripleBuffer());
-		SetDX9Ex(ZGetConfiguration()->GetDX9Ex());
+		// SetDX9Ex ya se configuró en ApplyInitialConfiguration() antes de crear el dispositivo
 	}
 }
 void _ZChangeGameState(int nIndex)

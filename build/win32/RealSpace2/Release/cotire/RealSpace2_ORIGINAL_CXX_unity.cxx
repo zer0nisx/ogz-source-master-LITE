@@ -18,6 +18,7 @@
 #include "C:\ogz-source-master-LITE\src\RealSpace2\Source\RBspObject.cpp"
 #include "C:\ogz-source-master-LITE\src\RealSpace2\Source\RBspObjectDrawD3D9.cpp"
 #include "C:\ogz-source-master-LITE\src\RealSpace2\Source\RBspObjectDrawVulkan.cpp"
+#include "C:\ogz-source-master-LITE\src\RealSpace2\Source\RBufferManager.cpp"
 #include "C:\ogz-source-master-LITE\src\RealSpace2\Source\RCamera.cpp"
 #include "C:\ogz-source-master-LITE\src\RealSpace2\Source\RCharCloth.cpp"
 #include "C:\ogz-source-master-LITE\src\RealSpace2\Source\RCloth.cpp"

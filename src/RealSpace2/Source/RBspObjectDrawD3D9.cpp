@@ -8,6 +8,7 @@
 #include "ShaderUtil.h"
 #include "RS2.h"
 #include "RUtil.h"
+#include "RBufferManager.h"
 
 _NAMESPACE_REALSPACE2_BEGIN
 
@@ -23,6 +24,13 @@ using IndexType = u32;
 
 RBspObjectDrawD3D9::RBspObjectDrawD3D9(RBspObject& bsp) : bsp{ bsp }, dev{ RGetDevice() }
 {
+	// Inicializar flags del buffer manager
+	VBsFromManager.Positions = false;
+	VBsFromManager.TexCoords = false;
+	VBsFromManager.Normals = false;
+	VBsFromManager.Tangents = false;
+	IndexBufferFromManager = false;
+	
 	CreateShaderStuff();
 
 	if (UsingLighting())
@@ -30,10 +38,38 @@ RBspObjectDrawD3D9::RBspObjectDrawD3D9(RBspObject& bsp) : bsp{ bsp }, dev{ RGetD
 }
 
 RBspObjectDrawD3D9::RBspObjectDrawD3D9(RBspObjectDrawD3D9&&) = default;
-RBspObjectDrawD3D9::~RBspObjectDrawD3D9() = default;
 
-void RBspObjectDrawD3D9::OnInvalidate(){}
-void RBspObjectDrawD3D9::OnRestore(){}
+RBspObjectDrawD3D9::~RBspObjectDrawD3D9()
+{
+	// Liberar buffers al pool si vienen del manager
+	if (VBs.Positions && VBsFromManager.Positions)
+		RBufferManager::GetInstance().ReleaseVertexBuffer(VBs.Positions.get());
+	if (VBs.TexCoords && VBsFromManager.TexCoords)
+		RBufferManager::GetInstance().ReleaseVertexBuffer(VBs.TexCoords.get());
+	if (VBs.Normals && VBsFromManager.Normals)
+		RBufferManager::GetInstance().ReleaseVertexBuffer(VBs.Normals.get());
+	if (VBs.Tangents && VBsFromManager.Tangents)
+		RBufferManager::GetInstance().ReleaseVertexBuffer(VBs.Tangents.get());
+	if (IndexBuffer && IndexBufferFromManager)
+		RBufferManager::GetInstance().ReleaseIndexBuffer(IndexBuffer.get());
+}
+
+void RBspObjectDrawD3D9::OnInvalidate()
+{
+	// Los buffers se invalidan automáticamente con D3DPOOL_MANAGED
+	// Solo necesitamos limpiar referencias
+	VBsFromManager.Positions = false;
+	VBsFromManager.TexCoords = false;
+	VBsFromManager.Normals = false;
+	VBsFromManager.Tangents = false;
+	IndexBufferFromManager = false;
+}
+
+void RBspObjectDrawD3D9::OnRestore()
+{
+	// Los buffers se restauran automáticamente con D3DPOOL_MANAGED
+	// Se recrearán cuando se llame a CreateBuffers()
+}
 
 void RBspObjectDrawD3D9::CreateTextures()
 {
@@ -112,23 +148,58 @@ void RBspObjectDrawD3D9::CreateShaderStuff()
 }
 
 template <typename VertexType>
-bool CreateVB(D3DPtr<IDirect3DVertexBuffer9>& ptr, size_t VertexCount, u32 FVF)
+bool CreateVB(D3DPtr<IDirect3DVertexBuffer9>& ptr, size_t VertexCount, u32 FVF, bool& bFromManager)
 {
-	auto hr = RGetDevice()->CreateVertexBuffer(VertexCount * sizeof(VertexType), 0,
-		FVF, D3DPOOL_MANAGED,
-		MakeWriteProxy(ptr), nullptr);
-	if (FAILED(hr))
+	// INTEGRACIÓN CON BUFFER MANAGER: Intentar obtener buffer del pool
+	size_t bufferSize = VertexCount * sizeof(VertexType);
+	LPDIRECT3DVERTEXBUFFER9 pVB = RBufferManager::GetInstance().GetVertexBuffer(
+		bufferSize, FVF, 0);
+	
+	if (pVB)
 	{
-		MLog("RBspObjectDrawD3D9::Create -- Failed to create vertex buffer\n");
-		return false;
+		// Usar buffer del manager
+		ptr.reset(pVB);
+		bFromManager = true;
+	}
+	else
+	{
+		// Crear nuevo buffer si el manager no tiene uno disponible
+		auto hr = RGetDevice()->CreateVertexBuffer(bufferSize, 0,
+			FVF, D3DPOOL_MANAGED,
+			MakeWriteProxy(ptr), nullptr);
+		if (FAILED(hr))
+		{
+			MLog("RBspObjectDrawD3D9::Create -- Failed to create vertex buffer\n");
+			return false;
+		}
+		bFromManager = false;
 	}
 	return true;
 }
 
 bool RBspObjectDrawD3D9::CreateBuffers()
 {
+	// Liberar buffers anteriores si vienen del manager
+	if (VBs.Positions && VBsFromManager.Positions)
+		RBufferManager::GetInstance().ReleaseVertexBuffer(VBs.Positions.get());
+	if (VBs.TexCoords && VBsFromManager.TexCoords)
+		RBufferManager::GetInstance().ReleaseVertexBuffer(VBs.TexCoords.get());
+	if (VBs.Normals && VBsFromManager.Normals)
+		RBufferManager::GetInstance().ReleaseVertexBuffer(VBs.Normals.get());
+	if (VBs.Tangents && VBsFromManager.Tangents)
+		RBufferManager::GetInstance().ReleaseVertexBuffer(VBs.Tangents.get());
+	if (IndexBuffer && IndexBufferFromManager)
+		RBufferManager::GetInstance().ReleaseIndexBuffer(IndexBuffer.get());
+	
+	// Resetear flags
+	VBsFromManager.Positions = false;
+	VBsFromManager.TexCoords = false;
+	VBsFromManager.Normals = false;
+	VBsFromManager.Tangents = false;
+	IndexBufferFromManager = false;
+	
 #define CREATE_VB(x) if (!CreateVB<decltype(EluObjectData{}.Meshes[0].x[0])>(VBs.x, \
-		State.TotalVertexCount, GetFVF())) return false;
+		State.TotalVertexCount, GetFVF(), VBsFromManager.x)) return false;
 	CREATE_VB(Positions);
 	if (GetRenderer().SupportsDynamicLighting())
 	{
@@ -138,13 +209,29 @@ bool RBspObjectDrawD3D9::CreateBuffers()
 	}
 #undef CREATE_VB
 	
-	auto hr = RGetDevice()->CreateIndexBuffer(State.TotalIndexCount * sizeof(IndexType), 0,
-		GetD3DFormat<IndexType>(), D3DPOOL_MANAGED,
-		MakeWriteProxy(IndexBuffer), nullptr);
-	if (FAILED(hr))
+	// INTEGRACIÓN CON BUFFER MANAGER: Intentar obtener index buffer del pool
+	size_t indexBufferSize = State.TotalIndexCount * sizeof(IndexType);
+	LPDIRECT3DINDEXBUFFER9 pIB = RBufferManager::GetInstance().GetIndexBuffer(
+		indexBufferSize, GetD3DFormat<IndexType>(), 0);
+	
+	if (pIB)
 	{
-		MLog("RBspObjectDrawD3D9::Create -- Failed to create index buffer\n");
-		return false;
+		// Usar buffer del manager
+		IndexBuffer.reset(pIB);
+		IndexBufferFromManager = true;
+	}
+	else
+	{
+		// Crear nuevo buffer si el manager no tiene uno disponible
+		auto hr = RGetDevice()->CreateIndexBuffer(indexBufferSize, 0,
+			GetD3DFormat<IndexType>(), D3DPOOL_MANAGED,
+			MakeWriteProxy(IndexBuffer), nullptr);
+		if (FAILED(hr))
+		{
+			MLog("RBspObjectDrawD3D9::Create -- Failed to create index buffer\n");
+			return false;
+		}
+		IndexBufferFromManager = false;
 	}
 
 	return true;

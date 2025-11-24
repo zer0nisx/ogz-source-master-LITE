@@ -187,6 +187,7 @@ void RBufferManager::ReleaseVertexBuffer(LPDIRECT3DVERTEXBUFFER9 pVB)
 		m_ActiveVBuffers.erase(it);
 	}
 }
+}
 
 void RBufferManager::ReleaseIndexBuffer(LPDIRECT3DINDEXBUFFER9 pIB)
 {
@@ -209,10 +210,14 @@ void RBufferManager::ReleaseIndexBuffer(LPDIRECT3DINDEXBUFFER9 pIB)
 		m_ActiveIBuffers.erase(it);
 	}
 }
+}
 
 void RBufferManager::CleanupUnusedBuffers(DWORD CurrentFrame, DWORD MaxAge)
 {
 	m_CurrentFrame = CurrentFrame;
+	
+	size_t buffersFreed = 0;
+	size_t memoryFreed = 0;
 	
 	// Limpiar buffers no usados del pool
 	for (auto& pair : m_BufferPool)
@@ -226,12 +231,14 @@ void RBufferManager::CleanupUnusedBuffers(DWORD CurrentFrame, DWORD MaxAge)
 				if (it->pVB)
 				{
 					SAFE_RELEASE(it->pVB);
-					m_TotalMemory -= it->Size;
+					memoryFreed += it->Size;
+					buffersFreed++;
 				}
 				if (it->pIB)
 				{
 					SAFE_RELEASE(it->pIB);
-					m_TotalMemory -= it->Size;
+					memoryFreed += it->Size;
+					buffersFreed++;
 				}
 				it = pool.erase(it);
 			}
@@ -241,6 +248,8 @@ void RBufferManager::CleanupUnusedBuffers(DWORD CurrentFrame, DWORD MaxAge)
 			}
 		}
 	}
+	
+	// Limpieza silenciosa (sin logs para evitar spam)
 }
 
 void RBufferManager::OnInvalidate()
@@ -248,9 +257,6 @@ void RBufferManager::OnInvalidate()
 	// Con D3DPOOL_MANAGED, los buffers se invalidan automáticamente
 	// pero DirectX los restaura automáticamente también
 	// Solo necesitamos limpiar referencias, no liberar memoria
-	
-	// Si usáramos D3DPOOL_DEFAULT, necesitaríamos liberar todo:
-	// (pero como usamos D3DPOOL_MANAGED, esto es opcional)
 	
 	// Limpiar referencias del pool (los buffers se restaurarán automáticamente)
 	for (auto& pair : m_BufferPool)

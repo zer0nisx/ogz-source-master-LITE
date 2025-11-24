@@ -388,6 +388,9 @@ public:
 
 	int m_size;
 	LPDIRECT3DINDEXBUFFER9 m_ib;
+	
+	// Flag para indicar si el buffer viene del buffer manager
+	bool m_bFromBufferManager;
 };
 
 class RVertexBuffer final {
@@ -452,6 +455,9 @@ public:
 	D3DPRIMITIVETYPE m_PrimitiveType;
 
 	LPDIRECT3DVERTEXBUFFER9	m_vb;
+	
+	// Flag para indicar si el buffer viene del buffer manager
+	bool			m_bFromBufferManager;
 };
 #endif
 

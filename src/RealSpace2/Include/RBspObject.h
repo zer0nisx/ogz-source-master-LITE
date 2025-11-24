@@ -437,6 +437,10 @@ private:
 	std::vector<BSPVERTEX> OcVertices;
 	std::vector<BSPNORMALVERTEX> OcNormalVertices;
 	std::vector<u16> OcIndices;
+	
+	// Flags para indicar si los buffers vienen del buffer manager
+	bool m_bBspVertexBufferFromManager;
+	bool m_bBspIndexBufferFromManager;
 	std::vector<RSBspNode> OcRoot;
 	std::vector<RPOLYGONINFO> OcInfo;
 
