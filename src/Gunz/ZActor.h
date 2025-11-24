@@ -116,7 +116,7 @@ public:
 
 	inline ZA_ANIM_STATE GetCurrAni();
 	inline void SetFlag(unsigned int nFlag, bool bValue);
-	inline bool CheckFlag(unsigned int nFlag);
+	inline bool CheckFlag(unsigned int nFlag) const;  // CORRECCIÓN: Agregar const para usar en métodos const
 	inline void SetFlags(unsigned int nFlags);
 	inline u32 GetFlags();
 	inline bool IsMyControl();
@@ -167,9 +167,25 @@ public:
 
 	auto& GetLastAttacker() const { return m_pModule_HPAP->GetLastAttacker(); }
 
+	// CORRECCIÓN: Mover miembros públicos que se usan desde otros archivos
 	char m_szOwner[64];
 	float m_fLastBasicInfo;
 	void SetOwner(const char* szOwner) { strcpy_safe(m_szOwner,szOwner); }
+
+	// REFACTORIZACIÓN: Helpers para eliminar código duplicado
+private:
+	// Helpers para flags
+	inline bool IsOnLand() const { return CheckFlag(AF_LAND); }
+	inline void SetOnLand(bool bOnLand) { SetFlag(AF_LAND, bOnLand); }
+	
+	// Helpers para validaciones
+	inline bool HasVMesh() const { return m_pVMesh != nullptr; }
+	
+	// Helpers para cálculos
+	rvector GetSoundPosition() const;
+	static void NormalizeDirection2D(rvector& dir);
+	float GetAngleToTarget(ZObject* pTarget) const;
+	void OnReachGround();
 };
 
 inline void ZActor::SetFlags(unsigned int nFlags)
@@ -186,7 +202,7 @@ inline void ZActor::SetFlag(unsigned int nFlag, bool bValue)
 	else m_nFlags &= ~nFlag;
 }
 
-inline bool ZActor::CheckFlag(unsigned int nFlag)
+inline bool ZActor::CheckFlag(unsigned int nFlag) const  // CORRECCIÓN: Agregar const
 {
 	return ((m_nFlags & nFlag) != 0);
 }
