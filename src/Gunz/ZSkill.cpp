@@ -363,28 +363,58 @@ bool ZSkill::Update(float fElapsed)
 
 	if ((!m_pDesc->RepeatList.empty()) && ((m_nUseNum-1) < (int)m_pDesc->RepeatList.size()))
 	{
-		if (m_RepeatUTimer.Update(fElapsed))
+		// Limitar el número máximo de REPEAT para evitar lag extremo
+		const int MAX_REPEAT_COUNT = 10; // Máximo 10 repeticiones para evitar lag
+		if (m_nUseNum <= MAX_REPEAT_COUNT)
 		{
-			Repeat();
+			if (m_RepeatUTimer.Update(fElapsed))
+			{
+				Repeat();
+			}
+			return true;
 		}
-		return true;
+		else
+		{
+			// Si excede el límite, desactivar el skill
+			m_bEnable = false;
+			return false;
+		}
 	}
 
 	if(g_pGame->GetTime()-m_fLastBeginTime > m_pDesc->nEffectTime*0.001f) {
+		m_bEnable = false;
 		return false;
 	}
 
 	if(g_pGame->GetTime()>m_fNextDamageTime) {
 		m_fNextDamageTime+=DAMAGE_DELAY;
 
-		for(ZObjectManager::iterator i = ZGetObjectManager()->begin();i!=ZGetObjectManager()->end();i++) {
+		// Optimización: Limitar iteración a objetos cercanos al área de efecto
+		// Solo procesar objetos dentro del rango de efecto + margen de seguridad
+		float fMaxRange = m_pDesc->fEffectArea * 100.f + 500.f; // Margen de 500 unidades
+		if (fMaxRange <= 0) fMaxRange = 2000.f; // Default si no hay área definida
+		rvector vEffectCenter = m_TargetPos;
+		
+		// Límite máximo de objetos a procesar por frame para evitar lag
+		const int MAX_OBJECTS_PER_FRAME = 20;
+		int nProcessed = 0;
+		
+		for(ZObjectManager::iterator i = ZGetObjectManager()->begin();i!=ZGetObjectManager()->end() && nProcessed < MAX_OBJECTS_PER_FRAME;i++) {
 			ZObject *pTarget = i->second;
-			if(pTarget->IsDead()) continue;
+			if(!pTarget || pTarget->IsDead()) continue;
+			
+			// Filtrar por distancia antes de hacer cálculos costosos
+			rvector vTargetPos = pTarget->GetPosition();
+			rvector vDiff = vTargetPos - vEffectCenter;
+			float fDistSq = MagnitudeSq(vDiff); // Usar MagnitudeSq para evitar sqrt costoso
+			if(fDistSq > (fMaxRange * fMaxRange)) continue;
+			
+			// Solo hacer CheckRange si está dentro del rango
 			float fDamage = m_pDesc->nModDoT;
-			if(CheckRange(pTarget->GetPosition(),pTarget) && m_pDesc->CheckResist(pTarget,&fDamage)) {
+			if(fDamage > 0 && CheckRange(vTargetPos, pTarget) && m_pDesc->CheckResist(pTarget,&fDamage)) {
 				if(g_pGame->IsAttackable(m_pOwner,pTarget)) {
-					if(fDamage)
-						pTarget->OnDamaged(m_pOwner,m_TargetPos,ZD_MELEE,MWT_KATANA,fDamage,m_pDesc->nModCriticalRate*.01f);
+					pTarget->OnDamaged(m_pOwner,m_TargetPos,ZD_MELEE,MWT_KATANA,fDamage,m_pDesc->nModCriticalRate*.01f);
+					nProcessed++;
 				}
 			}
 		}
@@ -508,10 +538,22 @@ void ZSkill::Use(const MUID& uidTarget, const rvector& targetPos)
 	if (pTargetObject == NULL)
 		return;
 
+	// Verificar que el objeto no esté muerto antes de continuar
+	if (pTargetObject->IsDead())
+		return;
+
 	if ( m_pDesc->bHitCheck)
 	{
 		rvector vMissilePos, vMissileDir;
 		GetMissilePosDir( vMissileDir, vMissilePos, targetPos);
+
+		// Limitar el número de REPEAT para evitar lag extremo (algunos skills tienen 40+ REPEAT)
+		const int MAX_REPEAT_COUNT = 10; // Máximo 10 repeticiones para evitar lag
+		if (m_nUseNum > MAX_REPEAT_COUNT)
+		{
+			m_bEnable = false;
+			return;
+		}
 
 		ZGetGame()->m_WeaponManager.AddMagic( this, vMissilePos, vMissileDir, m_pOwner);
 
@@ -531,27 +573,51 @@ void ZSkill::Use(const MUID& uidTarget, const rvector& targetPos)
 		if ( m_pDesc->bCameraShock)
 		{
 			ZCharacter *pTargetCharacter=ZGetGameInterface()->GetCombatInterface()->GetTargetCharacter();
-			const float fDefaultPower = 500.0f;
-			float fShockRange = m_pDesc->fCameraRange;
-			float fDuration = m_pDesc->fCameraDuration;
-			float fPower= ( fShockRange-Magnitude( pTargetCharacter->GetPosition() + rvector( 0, 0, 50) - targetPos)) / fShockRange;
-			fPower *= m_pDesc->fCameraPower;
-			
-			if ( fPower > 0)
-				ZGetGameInterface()->GetCamera()->Shock( fPower*fDefaultPower, fDuration, rvector( 0.0f, 0.0f, -1.0f));
+			if (pTargetCharacter)
+			{
+				const float fDefaultPower = 500.0f;
+				float fShockRange = m_pDesc->fCameraRange;
+				float fDuration = m_pDesc->fCameraDuration;
+				float fPower= ( fShockRange-Magnitude( pTargetCharacter->GetPosition() + rvector( 0, 0, 50) - targetPos)) / fShockRange;
+				fPower *= m_pDesc->fCameraPower;
+				
+				if ( fPower > 0)
+					ZGetGameInterface()->GetCamera()->Shock( fPower*fDefaultPower, fDuration, rvector( 0.0f, 0.0f, -1.0f));
+			}
 		}
 
-		for ( ZObjectManager::iterator i = ZGetObjectManager()->begin();  i!=ZGetObjectManager()->end();  i++)
+		// Optimización: Limitar iteración a objetos cercanos al área de efecto
+		float fMaxRange = m_pDesc->fEffectArea * 100.f + 500.f; // Margen de 500 unidades
+		if (fMaxRange <= 0) fMaxRange = 2000.f; // Default si no hay área definida
+		rvector vEffectCenter = pTargetObject ? pTargetObject->GetPosition() : targetPos;
+		
+		// Límite máximo de objetos a procesar por skill para evitar lag extremo
+		const int MAX_OBJECTS_PER_SKILL = 30;
+		int nProcessed = 0;
+		
+		for ( ZObjectManager::iterator i = ZGetObjectManager()->begin();  i!=ZGetObjectManager()->end() && nProcessed < MAX_OBJECTS_PER_SKILL;  i++)
 		{
 			ZObject *pObject = i->second;
 
-			if(pObject->IsDead())
+			if(!pObject || pObject->IsDead())
 				continue;
+			
+			// Filtrar por distancia usando MagnitudeSq (más rápido que Magnitude)
+			rvector vObjectPos = pObject->GetPosition();
+			rvector vDiff = vObjectPos - vEffectCenter;
+			float fDistSq = MagnitudeSq(vDiff);
+			if(fDistSq > (fMaxRange * fMaxRange)) continue;
 
 			float fDamage = m_pDesc->nModDamage;
 
-			if ( CheckRange( pTargetObject->GetPosition(), pObject) && m_pDesc->CheckResist( pObject, &fDamage))
+			// Solo procesar si hay daño, curación, root o knockback para evitar cálculos innecesarios
+			bool bHasEffect = (fDamage > 0) || (m_pDesc->nModHeal > 0) || m_pDesc->bModRoot || (m_pDesc->fModKnockback != 0.0f);
+			if (!bHasEffect) continue;
+
+			if ( CheckRange( vObjectPos, pObject) && m_pDesc->CheckResist( pObject, &fDamage))
 			{
+				nProcessed++;
+				
 				if ( g_pGame->IsAttackable( m_pOwner, pObject))
 				{
 					if ( fDamage && (uidTarget == pObject->GetUID()))
@@ -565,24 +631,18 @@ void ZSkill::Use(const MUID& uidTarget, const rvector& targetPos)
 
 				if ( m_pDesc->bModRoot)
 				{
-					if ( pObject)
-					{
-						float fDuration = m_pDesc->nEffectTime * 0.001f;
-						pObject->OnStun( fDuration);
-						ZModule_Movable *pMovableModule = (ZModule_Movable*)pObject->GetModule( ZMID_MOVABLE);
-						if ( pMovableModule)
-							pMovableModule->SetMoveSpeedRatio( 0, fDuration);
-					}
+					float fDuration = m_pDesc->nEffectTime * 0.001f;
+					pObject->OnStun( fDuration);
+					ZModule_Movable *pMovableModule = (ZModule_Movable*)pObject->GetModule( ZMID_MOVABLE);
+					if ( pMovableModule)
+						pMovableModule->SetMoveSpeedRatio( 0, fDuration);
 				}
 
 				if ( m_pDesc->fModKnockback != 0.0f)
 				{
-					if ( pObject)
-					{
-						rvector dir = pObject->GetPosition() - (targetPos + rvector( 0, 0, 80));
-						Normalize( dir);
-						pObject->AddVelocity( m_pDesc->fModKnockback * 7.f * -dir);
-					}
+					rvector dir = vObjectPos - (targetPos + rvector( 0, 0, 80));
+					Normalize( dir);
+					pObject->AddVelocity( m_pDesc->fModKnockback * 7.f * -dir);
 				}
 			}
 		}
@@ -598,26 +658,41 @@ void ZSkill::Use(const MUID& uidTarget, const rvector& targetPos)
 		}
 	}
 
+	// Verificar nuevamente que pTargetObject sea válido antes de crear efectos
+	if (!pTargetObject || pTargetObject->IsDead())
+		return;
+
 	rvector vPos = m_pOwner->GetPosition();
 	rvector vDir = m_pOwner->GetDirection();
 
 	RMeshPartsPosInfoType type = eq_parts_pos_info_etc;
 
-	GetPartsTypePos(pTargetObject, m_pDesc->nCastingEffectType, type,vPos,vDir);
+	// Verificar que pTargetObject sea válido antes de obtener posición de partes
+	if (pTargetObject && !pTargetObject->IsDead())
+	{
+		GetPartsTypePos(pTargetObject, m_pDesc->nCastingEffectType, type,vPos,vDir);
+	}
+	else
+	{
+		// Si no hay target válido, usar posición del owner
+		vPos = m_pOwner->GetPosition() + rvector(0,0,100);
+		vDir = m_pOwner->GetDirection();
+	}
 
 	vPos = vPos + vDir* m_pDesc->vCastingEffectAddPos.x + rvector(0,0,m_pDesc->vCastingEffectAddPos.y);
 
 	if(m_pDesc->szCastingEffect[0]) {
 
-		if(type != eq_parts_pos_info_etc)
+		if(type != eq_parts_pos_info_etc && pTargetObject && !pTargetObject->IsDead())
 			ZGetEffectManager()->AddPartsPosType(m_pDesc->szCastingEffect, pTargetObject->GetUID(),type,m_pDesc->nEffectTime);
 		else 
 			ZGetEffectManager()->Add(m_pDesc->szCastingEffect, vPos,vDir,m_pOwner->GetUID(),m_pDesc->nEffectTime);
 	}
 
-	if(m_pDesc->szCastingEffectSp[0]) {
-
-		ZGetEffectManager()->AddSp(m_pDesc->szCastingEffectSp,m_pDesc->nCastingEffectSpCount,
+	// Limitar efectos especiales para evitar acumulación excesiva
+	const int MAX_SP_EFFECTS_PER_SKILL = 5;
+	if(m_pDesc->szCastingEffectSp[0] && m_nUseNum <= MAX_SP_EFFECTS_PER_SKILL) {
+		ZGetEffectManager()->AddSp(m_pDesc->szCastingEffectSp,min(m_pDesc->nCastingEffectSpCount, MAX_SP_EFFECTS_PER_SKILL),
 			vPos,vDir,m_pOwner->GetUID());
 	}
 

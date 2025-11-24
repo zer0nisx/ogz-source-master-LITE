@@ -11,6 +11,7 @@ public:
 	virtual ~ZModule() = default;
 	void Update(float Elapsed) { if (Active) OnUpdate(Elapsed); }
 	virtual void InitStatus() {}
+	virtual void OnAdd() {}  // Llamado después de agregar el módulo al contenedor
 
 	ZModuleContainer* m_pContainer;
 	bool Active = false;
@@ -30,17 +31,30 @@ public:
 #ifdef _DEBUG
 		auto it = Modules.find(T::ID);
 		if (it != Modules.end())
-			assert(false);
+		{
+			assert(false && "Module already exists");
+			return nullptr;
+		}
 #endif
 
 		auto ret = Modules.emplace(T::ID, std::make_unique<T>());
 
 		if (!ret.second)
+		{
+			// Módulo ya existe o fallo al insertar
+#ifdef _DEBUG
+			_ASSERT(false && "ZModuleContainer::AddModule: Failed to add module (duplicate or insertion failed)");
+#endif
 			return nullptr;
+		}
 
 		auto* Module = static_cast<T*>(ret.first->second.get());
 
 		Module->m_pContainer = this;
+
+		// Llamar OnAdd() después de establecer el contenedor
+		// OnAdd() es virtual y opcional, algunos módulos pueden no implementarlo
+		Module->OnAdd();
 
 		return Module;
 	}

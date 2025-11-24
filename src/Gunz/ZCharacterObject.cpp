@@ -283,6 +283,32 @@ ZC_ENCHANT	ZCharacterObject::GetEnchantType()
 
 void ZCharacterObject::SetGunLight()
 {
+	// OPTIMIZACIÓN: Early exit si no hay luces dinámicas habilitadas o no hay luz activa
+	if (!ZGetConfiguration()->GetVideo()->bDynamicLight || !m_bDynamicLight)
+	{
+		// Solo establecer luz nula si antes había luz activa
+		if (m_bDynamicLight)
+		{
+			m_pVMesh->SetLight(0, nullptr, false);
+			m_bDynamicLight = false;
+		}
+		return;
+	}
+
+	// OPTIMIZACIÓN: Verificar si la luz expiró antes de hacer cálculos costosos
+	float currentTime = GetGlobalTimeMS();
+	float lap = currentTime - m_fTime;
+	m_fTime = currentTime;
+	m_fLightLife -= lap;
+
+	if (m_fLightLife <= 0.0f)
+	{
+		m_bDynamicLight = false;
+		m_fLightLife = 0;
+		m_pVMesh->SetLight(0, nullptr, false);
+		return;
+	}
+
 	constexpr auto CHARACTER_AMBIENT = 0.0;
 	D3DLIGHT9 Light{};
 	rvector pos;
@@ -297,44 +323,23 @@ void ZCharacterObject::SetGunLight()
 	Light.Specular.b = 1.f;
 	Light.Specular.a = 1.f;
 
-	if (ZGetConfiguration()->GetVideo()->bDynamicLight && m_bDynamicLight)
-	{
-		m_vLightColor.x -= 0.03f;
-		m_vLightColor.y -= 0.03f;
-		m_vLightColor.z -= 0.03f;
-		// CORRECCIÓN: Asignar el resultado de max() para evitar warning C4834 [[nodiscard]]
-		// max() devuelve el valor máximo, que debe ser asignado para limitar los valores a no menos de 0.0f
-		m_vLightColor.x = max(m_vLightColor.x, 0.0f);
-		m_vLightColor.y = max(m_vLightColor.y, 0.0f);
-		m_vLightColor.z = max(m_vLightColor.z, 0.0f);
-		Light.Diffuse.r = m_vLightColor.x;
-		Light.Diffuse.g = m_vLightColor.y;
-		Light.Diffuse.b = m_vLightColor.z;
-		Light.Range = g_CharLightList[m_iDLightType].Range;
-
-		float lastTime = m_fTime;
-		m_fTime = GetGlobalTimeMS();
-		float lap = m_fTime - lastTime;
-		m_fLightLife -= lap;
-
-		if (m_fLightLife <= 0.0f)
-		{
-			m_bDynamicLight = false;
-			m_fLightLife = 0;
-		}
-	}
-	else
-	{
-		m_bDynamicLight = false;
-		m_vLightColor.x = 0.0f;
-		m_vLightColor.y = 0.0f;
-		m_vLightColor.z = 0.0f;
-	}
+	// Actualizar color de luz (decaimiento)
+	m_vLightColor.x -= 0.03f;
+	m_vLightColor.y -= 0.03f;
+	m_vLightColor.z -= 0.03f;
+	// CORRECCIÓN: Asignar el resultado de max() para evitar warning C4834 [[nodiscard]]
+	m_vLightColor.x = max(m_vLightColor.x, 0.0f);
+	m_vLightColor.y = max(m_vLightColor.y, 0.0f);
+	m_vLightColor.z = max(m_vLightColor.z, 0.0f);
+	
+	Light.Diffuse.r = m_vLightColor.x;
+	Light.Diffuse.g = m_vLightColor.y;
+	Light.Diffuse.b = m_vLightColor.z;
+	Light.Range = g_CharLightList[m_iDLightType].Range;
 
 	if (IsDoubleGun())
 	{
 		GetWeaponTypePos(weapon_dummy_muzzle_flash, &pos, m_bLeftShot);
-
 		m_bLeftShot = !m_bLeftShot;
 	}
 	else
@@ -366,23 +371,39 @@ void ZCharacterObject::SetGunLight()
 
 static RLIGHT* SetMapLight(const v3& char_pos, RVisualMesh* Mesh, int LightIndex, RLIGHT* FirstLight)
 {
+	// OPTIMIZACIÓN: Early exit si no hay luces en el mapa
+	auto& SunLightList = ZGetGame()->GetWorld()->GetBsp()->GetSunLightList();
+	auto& ObjectLightList = ZGetGame()->GetWorld()->GetBsp()->GetObjectLightList();
+	
+	if (SunLightList.empty() && ObjectLightList.empty())
+	{
+		Mesh->SetLight(LightIndex, nullptr, false);
+		return nullptr;
+	}
+
 	D3DLIGHT9 Light{};
 	RLIGHT* pSelectedLight{};
 	float distance;
 	float SelectedLightDistance = FLT_MAX;
+	const float MAX_LIGHT_DISTANCE = 5000.0f; // OPTIMIZACIÓN: Distancia máxima para considerar una luz
 
 	Light.Specular.r = 1.f;
 	Light.Specular.g = 1.f;
 	Light.Specular.b = 1.f;
 	Light.Specular.a = 1.f;
 
-	auto& LightList = ZGetGame()->GetWorld()->GetBsp()->GetSunLightList();
-	if (!LightList.empty() && !FirstLight)
+	// OPTIMIZACIÓN: Solo buscar luces solares si hay y no es la primera luz
+	if (!SunLightList.empty() && !FirstLight)
 	{
-		for (auto& Light : LightList)
+		for (auto& Light : SunLightList)
 		{
 			auto sunDir = Light.Position - char_pos;
 			distance = MagnitudeSq(sunDir);
+			
+			// OPTIMIZACIÓN: Skip luces muy lejanas
+			if (distance > MAX_LIGHT_DISTANCE * MAX_LIGHT_DISTANCE)
+				continue;
+			
 			Normalize(sunDir);
 			RBSPPICKINFO info;
 			if (ZGetGame()->GetWorld()->GetBsp()->Pick(char_pos, sunDir, &info, RM_FLAG_ADDITIVE))
@@ -408,12 +429,18 @@ static RLIGHT* SetMapLight(const v3& char_pos, RVisualMesh* Mesh, int LightIndex
 		}
 	}
 
+	// OPTIMIZACIÓN: Solo buscar luces de objetos si no hay luz solar seleccionada
 	SelectedLightDistance = FLT_MAX;
-	if (!pSelectedLight)
+	if (!pSelectedLight && !ObjectLightList.empty())
 	{
-		for (auto& Light : ZGetGame()->GetWorld()->GetBsp()->GetObjectLightList())
+		for (auto& Light : ObjectLightList)
 		{
 			float fDist = Magnitude(Light.Position - char_pos);
+			
+			// OPTIMIZACIÓN: Skip luces muy lejanas
+			if (fDist > MAX_LIGHT_DISTANCE)
+				continue;
+			
 			if (SelectedLightDistance <= fDist)
 				continue;
 
@@ -454,8 +481,10 @@ void ZCharacterObject::Draw_SetLight(const rvector& vPosition)
 	RGetDevice()->SetRenderState(D3DRS_AMBIENT, AmbientColor);
 	RGetShaderMgr()->setAmbient(AmbientColor);
 
+	// OPTIMIZACIÓN: Early exit si no hay luces dinámicas habilitadas
 	if (!ZGetConfiguration()->GetVideo()->bDynamicLight)
 	{
+		m_pVMesh->SetLight(0, nullptr, false);
 		m_pVMesh->SetLight(1, nullptr, false);
 		m_pVMesh->SetLight(2, nullptr, false);
 		RGetDevice()->SetRenderState(D3DRS_LIGHTING, FALSE);
@@ -464,6 +493,7 @@ void ZCharacterObject::Draw_SetLight(const rvector& vPosition)
 
 	SetGunLight();
 
+	// OPTIMIZACIÓN: Solo buscar luces del mapa si hay luces disponibles
 	rvector char_pos = vPosition;
 	char_pos.z += 180.f;
 	auto* FirstLight = SetMapLight(char_pos, m_pVMesh, 1, nullptr);

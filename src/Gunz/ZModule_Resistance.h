@@ -9,9 +9,9 @@ class ZModule_Resistance : public ZModule
 	int m_nPR;
 	int m_nLR;
 
-	void OnAdd(void);
-
 public:
+	virtual void OnAdd() override;
+
 	DECLARE_ID(ZMID_RESISTANCE)
 	ZModule_Resistance();
 	virtual ~ZModule_Resistance(void);

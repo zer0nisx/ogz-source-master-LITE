@@ -27,10 +27,8 @@ private:
 	float	m_fRestrictDuration;
 	float	m_fMoveSpeedRatio;
 
-protected:
-	void OnAdd();
-
 public:
+	virtual void OnAdd() override;
 
 	DECLARE_ID(ZMID_MOVABLE)
 	ZModule_Movable();

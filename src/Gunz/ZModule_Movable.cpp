@@ -27,9 +27,12 @@ void ZModule_Movable::InitStatus()
 
 void ZModule_Movable::OnUpdate(float Elapsed)
 {
-	ZObject *pThisObj = MStaticCast(ZObject,m_pContainer);
-	if(!pThisObj->GetInitialized()) return;
-	if(!pThisObj->IsVisible()) return;
+	if (!m_pContainer)
+		return;
+
+	ZObject *pThisObj = MStaticCast(ZObject, m_pContainer);
+	if (!pThisObj || !pThisObj->GetInitialized()) return;
+	if (!pThisObj->IsVisible()) return;
 
 	if(m_bRestrict && g_pGame->GetTime()-m_fRestrictTime > m_fRestrictDuration) {
 		m_bRestrict = false;

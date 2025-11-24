@@ -10,7 +10,13 @@ class ZModule_ElementalDamage : public ZModule {
 public:
 	virtual void OnUpdate(float fElapsed) override final
 	{
-		assert(MIsDerivedFromClass(ZObject, m_pContainer));
+		// Verificar que el contenedor sea válido
+		if (!m_pContainer)
+			return;
+
+		// Verificar que el contenedor sea un ZObject (en release también)
+		if (!MIsDerivedFromClass(ZObject, m_pContainer))
+			return;
 
 		auto* pObj = MStaticCast(ZObject, m_pContainer);
 
@@ -91,6 +97,9 @@ struct ZModule_ColdDamage : public ZModule_ElementalDamage<&ZEffectManager::AddE
 
 	void BeginDamage(float fMoveSpeed, float fDuration)
 	{
+		if (!m_pContainer)
+			return;
+
 		m_fBeginTime = ZGetGame()->GetTime();
 		m_fNextDamageTime = m_fBeginTime + DAMAGE_DELAY;
 		m_fNextEffectTime = m_fBeginTime;
@@ -98,7 +107,8 @@ struct ZModule_ColdDamage : public ZModule_ElementalDamage<&ZEffectManager::AddE
 		m_fDuration = fDuration;
 
 		auto* pMovableModule = static_cast<ZModule_Movable*>(m_pContainer->GetModule(ZMID_MOVABLE));
-		assert(pMovableModule);
+		if (!pMovableModule)
+			return;
 		pMovableModule->SetMoveSpeedRatio(fMoveSpeed, fDuration);
 
 		Active = true;

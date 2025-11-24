@@ -3,6 +3,9 @@
 
 void ZModule_Skills::Init(int nSkills, const int *pSkillIDs)
 {
+	if (!m_pContainer)
+		return;
+
 	m_nSkillCount = min(nSkills,MAX_SKILL);
 
 	for(int i=0;i<m_nSkillCount;i++)
