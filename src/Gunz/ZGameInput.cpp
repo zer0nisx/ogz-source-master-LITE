@@ -72,7 +72,7 @@ bool ZGameInput::OnEvent(MEvent* pEvent)
 	MWidget* pChatWidget = ZGetGameInterface()->GetIDLResource()->FindWidget("CombatChatInput");
 	if ((pChatWidget) && (pChatWidget->IsVisible())) return false;
 	MWidget* p112ConfirmWidget = ZGetGameInterface()->GetIDLResource()->FindWidget("112Confirm");
-	if (p112ConfirmWidget->IsVisible()) return false;
+	if (p112ConfirmWidget && p112ConfirmWidget->IsVisible()) return false;
 
 	if (GetRGMain().OnEvent(pEvent))
 		return true;
@@ -516,8 +516,6 @@ void ZGameInput::Update(float fElapsed)
 
 			if (RIsActive())
 			{
-				ZCamera *pCamera = ZGetGameInterface()->GetCamera();
-
 				pCamera->m_fAngleX += fRotateY;
 				pCamera->m_fAngleZ += fRotateX;
 
@@ -609,7 +607,11 @@ void ZGameInput::Update(float fElapsed)
 
 			GameCheckSequenceKeyCommand();
 		}
-else pMyCharacter->ReleaseButtonState();
+		else
+		{
+			if (pMyCharacter)
+				pMyCharacter->ReleaseButtonState();
+		}
 	}
 }
 
