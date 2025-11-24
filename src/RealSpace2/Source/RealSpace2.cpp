@@ -775,11 +775,12 @@ void RFlip()
 
 	g_nFrameCount++;
 	
-	// Limpiar buffers no usados del buffer manager cada 300 frames (~5 segundos a 60fps)
-	// Esto previene acumulación de memoria sin afectar el rendimiento
-	if (g_nFrameCount % 300 == 0)
+	// Limpiar buffers no usados del buffer manager cada 600 frames (~10 segundos a 60fps)
+	// Intervalo aumentado para reducir overhead, limpieza incremental procesa solo una fracción cada vez
+	// Esto previene acumulación de memoria con mínimo impacto en rendimiento
+	if (g_nFrameCount % 600 == 0)
 	{
-		RBufferManager::GetInstance().CleanupUnusedBuffers(g_nFrameCount, 300);
+		RBufferManager::GetInstance().CleanupUnusedBuffers(g_nFrameCount, 600);
 	}
 	auto currentTime = GetGlobalTimeMS();
 	if (g_dwLastFPSTime + FPS_INTERVAL < currentTime)

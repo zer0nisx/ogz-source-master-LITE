@@ -187,7 +187,6 @@ void RBufferManager::ReleaseVertexBuffer(LPDIRECT3DVERTEXBUFFER9 pVB)
 		m_ActiveVBuffers.erase(it);
 	}
 }
-}
 
 void RBufferManager::ReleaseIndexBuffer(LPDIRECT3DINDEXBUFFER9 pIB)
 {
@@ -210,19 +209,39 @@ void RBufferManager::ReleaseIndexBuffer(LPDIRECT3DINDEXBUFFER9 pIB)
 		m_ActiveIBuffers.erase(it);
 	}
 }
-}
 
 void RBufferManager::CleanupUnusedBuffers(DWORD CurrentFrame, DWORD MaxAge)
 {
 	m_CurrentFrame = CurrentFrame;
 	
+	// OPTIMIZACIÓN: Solo limpiar si hay suficientes buffers en el pool
+	// Esto evita iterar sobre pools pequeños innecesariamente
+	size_t totalPoolSize = 0;
+	for (auto& pair : m_BufferPool)
+		totalPoolSize += pair.second.size();
+	
+	// Si el pool es pequeño (<100 buffers), no vale la pena limpiar frecuentemente
+	// Solo limpiar si hay muchos buffers o si han pasado muchos frames
+	if (totalPoolSize < 100 && (CurrentFrame % (MaxAge * 4)) != 0)
+		return;
+	
 	size_t buffersFreed = 0;
 	size_t memoryFreed = 0;
+	size_t poolsProcessed = 0;
+	const size_t MAX_POOLS_PER_CLEANUP = 50;  // Limitar pools procesados por iteración
 	
-	// Limpiar buffers no usados del pool
+	// Limpiar buffers no usados del pool (procesar solo una fracción cada vez)
 	for (auto& pair : m_BufferPool)
 	{
+		if (poolsProcessed >= MAX_POOLS_PER_CLEANUP)
+			break;  // Limpieza incremental: procesar solo algunos pools por vez
+		
 		auto& pool = pair.second;
+		if (pool.empty())
+			continue;
+		
+		poolsProcessed++;
+		
 		for (auto it = pool.begin(); it != pool.end();)
 		{
 			if (!it->bInUse && (CurrentFrame - it->LastUsedFrame) > MaxAge)
@@ -248,8 +267,6 @@ void RBufferManager::CleanupUnusedBuffers(DWORD CurrentFrame, DWORD MaxAge)
 			}
 		}
 	}
-	
-	// Limpieza silenciosa (sin logs para evitar spam)
 }
 
 void RBufferManager::OnInvalidate()
