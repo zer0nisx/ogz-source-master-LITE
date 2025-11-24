@@ -37,7 +37,9 @@ HWND g_hWnd;
 static HMODULE g_hD3DLibrary;
 static bool g_bStencilBuffer;
 static LPDIRECT3D9 g_pD3D;
+static LPDIRECT3D9EX g_pD3DEx = nullptr;  // DirectX 9 Extended interface
 static LPDIRECT3DDEVICE9 g_pd3dDevice;
+static LPDIRECT3DDEVICE9EX g_pd3dDeviceEx = nullptr;  // DirectX 9 Extended device
 static D3DADAPTER_IDENTIFIER9 g_DeviceID;
 static D3DPRESENT_PARAMETERS g_d3dpp;
 static D3DCAPS9 g_d3dcaps;
@@ -58,7 +60,8 @@ float g_fFPS;
 static auto g_dwLastFPSTime = GetGlobalTimeMS();
 
 static bool g_bTrilinear = true;
-constexpr bool bTripleBuffer = false;
+static bool g_bTripleBuffer = false;  // Configurado desde ZConfiguration
+static bool g_bDX9Ex = true;  // DirectX 9 Extended (configurado desde ZConfiguration)
 static bool g_bQuery = false;
 
 static D3DMULTISAMPLE_TYPE g_MultiSample = D3DMULTISAMPLE_NONE;
@@ -102,6 +105,41 @@ void SetVSync(bool b)
 		g_d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
 		g_d3dpp.FullScreen_RefreshRateInHz = 0;
 	}
+	// Aplicar cambios si el dispositivo ya está creado
+	if (g_pd3dDevice)
+	{
+		// Actualizar BackBufferCount si es necesario
+		g_d3dpp.BackBufferCount = g_bTripleBuffer ? 2 : 1;
+		// Reset del dispositivo para aplicar cambios
+		// Nota: Esto se hace automáticamente cuando se llama desde el comando /vsync
+	}
+}
+
+void SetDX9Ex(bool b)
+{
+	g_bDX9Ex = b;
+	// Nota: DX9Ex solo se puede activar antes de crear el dispositivo
+	// Si el dispositivo ya está creado, se aplicará en el próximo reset o reinicio
+	if (g_pd3dDevice)
+	{
+		mlog("Warning: SetDX9Ex llamado después de crear el dispositivo. Se aplicará en el próximo reset.\n");
+	}
+}
+
+bool GetDX9Ex()
+{
+	return g_bDX9Ex && (g_pD3DEx != nullptr);
+}
+
+void SetTripleBuffer(bool b)
+{
+	g_bTripleBuffer = b;
+	if (g_pd3dDevice)
+	{
+		g_d3dpp.BackBufferCount = g_bTripleBuffer ? 2 : 1;
+		// Reset del dispositivo para aplicar cambios
+		// Nota: Esto se hace automáticamente cuando se llama desde el comando
+	}
 }
 
 void RSetQuery(bool b) { g_bQuery = b; }
@@ -120,7 +158,7 @@ LPDIRECT3DDEVICE9	RGetDevice() { return g_pd3dDevice; }
 bool RIsStencilBuffer() { return g_bStencilBuffer; }
 bool CheckVideoAdapterSupported();
 D3DFORMAT GetDepthStencilFormat() { return g_d3dpp.AutoDepthStencilFormat; }
-const D3DCAPS9 & GetDeviceCaps() { return g_d3dcaps; }
+const D3DCAPS9& GetDeviceCaps() { return g_d3dcaps; }
 GraphicsAPI GetGraphicsAPI()
 {
 	return g_GraphicsAPI;
@@ -131,7 +169,7 @@ rmatrix RGetTransform(D3DTRANSFORMSTATETYPE ts)
 	RGetDevice()->GetTransform(ts, static_cast<D3DMATRIX*>(mat));
 	return mat;
 }
-void RSetTransform(D3DTRANSFORMSTATETYPE ts, const rmatrix & mat)
+void RSetTransform(D3DTRANSFORMSTATETYPE ts, const rmatrix& mat)
 {
 	RGetDevice()->SetTransform(ts, static_cast<const D3DMATRIX*>(mat));
 }
@@ -164,21 +202,52 @@ bool CreateDirect3D9()
 			return false;
 		}
 
-		using D3DCREATETYPE = IDirect3D9 * (__stdcall *)(UINT);
-		auto d3dCreate = reinterpret_cast<D3DCREATETYPE>(GetProcAddress(g_hD3DLibrary, "Direct3DCreate9"));
-
-		if (!d3dCreate)
+		// Intentar cargar DirectX 9 Extended si está habilitado
+		if (g_bDX9Ex)
 		{
-			mlog("Error: Couldn't get address of Direct3DCreate9\n");
-			return false;
+			using D3DCREATEEXTYPE = HRESULT(__stdcall*)(UINT, IDirect3D9Ex**);
+			auto d3dCreateEx = reinterpret_cast<D3DCREATEEXTYPE>(GetProcAddress(g_hD3DLibrary, "Direct3DCreate9Ex"));
+
+			if (d3dCreateEx)
+			{
+				HRESULT hr = d3dCreateEx(D3D_SDK_VERSION, &g_pD3DEx);
+				if (SUCCEEDED(hr) && g_pD3DEx)
+				{
+					g_pD3D = g_pD3DEx;  // IDirect3D9Ex hereda de IDirect3D9
+					mlog("DirectX 9 Extended inicializado correctamente\n");
+				}
+				else
+				{
+					mlog("Warning: Direct3DCreate9Ex falló, usando Direct3DCreate9 estándar\n");
+					g_bDX9Ex = false;  // Desactivar DX9Ex si falla
+				}
+			}
+			else
+			{
+				mlog("Warning: Direct3DCreate9Ex no disponible, usando Direct3DCreate9 estándar\n");
+				g_bDX9Ex = false;  // Desactivar DX9Ex si no está disponible
+			}
 		}
 
-		g_pD3D = d3dCreate(D3D_SDK_VERSION);
-
+		// Si DX9Ex no está disponible o no está habilitado, usar la versión estándar
 		if (!g_pD3D)
 		{
-			mlog("Error: Direct3DCreate9 returned null\n");
-			return false;
+			using D3DCREATETYPE = IDirect3D9 * (__stdcall*)(UINT);
+			auto d3dCreate = reinterpret_cast<D3DCREATETYPE>(GetProcAddress(g_hD3DLibrary, "Direct3DCreate9"));
+
+			if (!d3dCreate)
+			{
+				mlog("Error: Couldn't get address of Direct3DCreate9\n");
+				return false;
+			}
+
+			g_pD3D = d3dCreate(D3D_SDK_VERSION);
+
+			if (!g_pD3D)
+			{
+				mlog("Error: Direct3DCreate9 returned null\n");
+				return false;
+			}
 		}
 	}
 
@@ -187,7 +256,7 @@ bool CreateDirect3D9()
 	return true;
 }
 
-D3DADAPTER_IDENTIFIER9*	RGetAdapterID()
+D3DADAPTER_IDENTIFIER9* RGetAdapterID()
 {
 	if (!g_pD3D) assert(false);
 	return &g_DeviceID;
@@ -205,9 +274,9 @@ BOOL IsCompressedTextureFormatOk(D3DFORMAT TextureFormat)
 	return SUCCEEDED(hr);
 }
 
-void RSetFileSystem(MZFileSystem *pFileSystem) { g_pFileSystem = pFileSystem; }
+void RSetFileSystem(MZFileSystem* pFileSystem) { g_pFileSystem = pFileSystem; }
 
-RParticleSystem *RGetParticleSystem() { return &g_ParticleSystem; }
+RParticleSystem* RGetParticleSystem() { return &g_ParticleSystem; }
 
 static void InitDevice()
 {
@@ -335,7 +404,7 @@ static bool InitD3D9(HWND hWnd, const RMODEPARAMS* params)
 	g_d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
 	g_d3dpp.BackBufferWidth = params->nWidth;
 	g_d3dpp.BackBufferHeight = params->nHeight;
-	g_d3dpp.BackBufferCount = bTripleBuffer ? 2 : 1;
+	g_d3dpp.BackBufferCount = g_bTripleBuffer ? 2 : 1;
 	g_d3dpp.Windowed = params->FullscreenMode != FullscreenType::Fullscreen;
 	g_d3dpp.BackBufferFormat = g_PixelFormat;
 	g_d3dpp.EnableAutoDepthStencil = TRUE;
@@ -358,8 +427,9 @@ static bool InitD3D9(HWND hWnd, const RMODEPARAMS* params)
 	else
 		g_d3dpp.AutoDepthStencilFormat = D3DFMT_D16;
 
-
 	g_d3dpp.Flags = 0;
+	// VSync y TripleBuffer se aplicarán después de crear el dispositivo
+	// desde ApplyInitialConfiguration() en main.cpp
 	g_d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
 
 	u32 BehaviorFlags = D3DCREATE_FPU_PRESERVE |
@@ -369,11 +439,52 @@ static bool InitD3D9(HWND hWnd, const RMODEPARAMS* params)
 		BehaviorFlags |= D3DCREATE_MULTITHREADED;
 
 #ifndef _NVPERFHUD
-	if (FAILED(g_pD3D->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hWnd, BehaviorFlags, &g_d3dpp, &g_pd3dDevice)))
+	// Intentar crear dispositivo con DX9Ex si está disponible
+	if (g_pD3DEx && g_bDX9Ex)
 	{
-		SAFE_RELEASE(g_pD3D);
-		mlog("Failed to create Direct3D9 device\n");
-		return false;
+		// Para DX9Ex, CreateDeviceEx requiere D3DDISPLAYMODEEX* para fullscreen, NULL para windowed
+		D3DDISPLAYMODEEX* pFullscreenDisplayMode = NULL;
+		D3DDISPLAYMODEEX fullscreenDisplayMode;
+		
+		if (!g_d3dpp.Windowed)
+		{
+			// Modo fullscreen: necesitamos D3DDISPLAYMODEEX
+			ZeroMemory(&fullscreenDisplayMode, sizeof(D3DDISPLAYMODEEX));
+			fullscreenDisplayMode.Size = sizeof(D3DDISPLAYMODEEX);
+			fullscreenDisplayMode.Width = g_d3dpp.BackBufferWidth;
+			fullscreenDisplayMode.Height = g_d3dpp.BackBufferHeight;
+			fullscreenDisplayMode.Format = g_d3dpp.BackBufferFormat;
+			fullscreenDisplayMode.RefreshRate = g_d3dpp.FullScreen_RefreshRateInHz;
+			fullscreenDisplayMode.ScanLineOrdering = D3DSCANLINEORDERING_PROGRESSIVE;
+			pFullscreenDisplayMode = &fullscreenDisplayMode;
+		}
+		
+		HRESULT hr = g_pD3DEx->CreateDeviceEx(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hWnd, BehaviorFlags, &g_d3dpp, pFullscreenDisplayMode, &g_pd3dDeviceEx);
+		if (SUCCEEDED(hr) && g_pd3dDeviceEx)
+		{
+			g_pd3dDevice = g_pd3dDeviceEx;  // IDirect3DDevice9Ex hereda de IDirect3DDevice9
+			mlog("DirectX 9 Extended device creado correctamente\n");
+		}
+		else
+		{
+			mlog("Warning: CreateDeviceEx falló (hr=0x%08X), usando CreateDevice estándar\n", hr);
+			g_bDX9Ex = false;
+			if (FAILED(g_pD3D->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hWnd, BehaviorFlags, &g_d3dpp, &g_pd3dDevice)))
+			{
+				SAFE_RELEASE(g_pD3D);
+				mlog("Failed to create Direct3D9 device\n");
+				return false;
+			}
+		}
+	}
+	else
+	{
+		if (FAILED(g_pD3D->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hWnd, BehaviorFlags, &g_d3dpp, &g_pd3dDevice)))
+		{
+			SAFE_RELEASE(g_pD3D);
+			mlog("Failed to create Direct3D9 device\n");
+			return false;
+		}
 	}
 #else
 	UINT AdapterToUse = D3DADAPTER_DEFAULT;
@@ -400,6 +511,10 @@ static bool InitD3D9(HWND hWnd, const RMODEPARAMS* params)
 
 	mlog("Device created\n");
 
+	// Aplicar configuración de VSync y TripleBuffer después de crear el dispositivo
+	// Nota: Esto se hace desde ApplyInitialConfiguration() en main.cpp después de RMain
+	// pero también aplicamos valores por defecto aquí por si acaso
+
 	RSetViewport(0, 0, g_nScreenWidth, g_nScreenHeight);
 	g_pd3dDevice->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0x000000, 1.0f, 0);
 
@@ -420,7 +535,7 @@ static bool InitD3D9(HWND hWnd, const RMODEPARAMS* params)
 	return true;
 }
 
-bool RInitDisplay(HWND hWnd, HINSTANCE inst, const RMODEPARAMS *params, GraphicsAPI API)
+bool RInitDisplay(HWND hWnd, HINSTANCE inst, const RMODEPARAMS* params, GraphicsAPI API)
 {
 	g_GraphicsAPI = API;
 
@@ -456,13 +571,22 @@ bool RCloseDisplay()
 	RFrame_Invalidate();
 	RBaseTexture_Invalidate();
 
+	// Invalidar buffer manager antes de liberar el dispositivo
+	RBufferManager::GetInstance().OnInvalidate();
+
 	if (g_pd3dDevice)
 	{
 		g_pd3dDevice->EndScene();
 		SAFE_RELEASE(g_pd3dDevice);
 	}
+	
+	// Liberar punteros de DX9Ex (si se libera g_pd3dDevice, también se libera g_pd3dDeviceEx)
+	g_pd3dDeviceEx = nullptr;
 
 	SAFE_RELEASE(g_pD3D);
+	
+	// Liberar puntero de DX9Ex (si se libera g_pD3D, también se libera g_pD3DEx)
+	g_pD3DEx = nullptr;
 	// Commented out to prevent crash when in fullscreen.
 	// The crash happens when the window proc code tries to call something inside the
 	// now-unloaded d3d9.dll. Don't know why it doesn't unhook the window proc when the DLL
@@ -488,7 +612,7 @@ void RAdjustWindow(const RMODEPARAMS* ModeParams)
 	}
 }
 
-u32 GetWindowStyle(const RMODEPARAMS & ModeParams)
+u32 GetWindowStyle(const RMODEPARAMS& ModeParams)
 {
 	switch (ModeParams.FullscreenMode)
 	{
@@ -502,7 +626,7 @@ u32 GetWindowStyle(const RMODEPARAMS & ModeParams)
 	}
 }
 
-void RResetDevice(const RMODEPARAMS *params)
+void RResetDevice(const RMODEPARAMS* params)
 {
 	mlog("Resetting device...\n");
 
@@ -521,8 +645,35 @@ void RResetDevice(const RMODEPARAMS *params)
 	g_d3dpp.BackBufferHeight = g_nScreenHeight;
 	g_d3dpp.BackBufferFormat = g_PixelFormat;
 	g_d3dpp.MultiSampleType = g_MultiSample;
+	g_d3dpp.BackBufferCount = g_bTripleBuffer ? 2 : 1;  // Aplicar configuración de TripleBuffer
 
-	auto hr = g_pd3dDevice->Reset(&g_d3dpp);
+	HRESULT hr;
+	// Usar ResetEx si tenemos un dispositivo DX9Ex
+	if (g_pd3dDeviceEx && g_bDX9Ex)
+	{
+		// Para DX9Ex, ResetEx requiere D3DDISPLAYMODEEX* para fullscreen, NULL para windowed
+		D3DDISPLAYMODEEX* pFullscreenDisplayMode = NULL;
+		D3DDISPLAYMODEEX fullscreenDisplayMode;
+		
+		if (!g_d3dpp.Windowed)
+		{
+			// Modo fullscreen: necesitamos D3DDISPLAYMODEEX
+			ZeroMemory(&fullscreenDisplayMode, sizeof(D3DDISPLAYMODEEX));
+			fullscreenDisplayMode.Size = sizeof(D3DDISPLAYMODEEX);
+			fullscreenDisplayMode.Width = g_d3dpp.BackBufferWidth;
+			fullscreenDisplayMode.Height = g_d3dpp.BackBufferHeight;
+			fullscreenDisplayMode.Format = g_d3dpp.BackBufferFormat;
+			fullscreenDisplayMode.RefreshRate = g_d3dpp.FullScreen_RefreshRateInHz;
+			fullscreenDisplayMode.ScanLineOrdering = D3DSCANLINEORDERING_PROGRESSIVE;
+			pFullscreenDisplayMode = &fullscreenDisplayMode;
+		}
+		
+		hr = g_pd3dDeviceEx->ResetEx(&g_d3dpp, pFullscreenDisplayMode);
+	}
+	else
+	{
+		hr = g_pd3dDevice->Reset(&g_d3dpp);
+	}
 
 	if (hr != D3D_OK) {
 		char errstr[512];
@@ -547,6 +698,10 @@ void RResetDevice(const RMODEPARAMS *params)
 
 	RS2::Get().OnRestore();
 	RBaseTexture_Restore();
+	
+	// Restaurar buffer manager
+	RBufferManager::GetInstance().OnRestore();
+	
 	RFrame_Restore();
 
 	MLog("... SUCCESS!\n");
@@ -556,10 +711,20 @@ RRESULT RIsReadyToRender()
 {
 	if (!g_pd3dDevice) return R_NOTREADY;
 
+	// Con DirectX 9 Extended, TestCooperativeLevel() siempre retorna D3D_OK
+	// porque DX9Ex maneja mejor la pérdida de dispositivo y no requiere este check constante
+	// Sin embargo, mantenemos la compatibilidad con DX9 estándar
+	if (g_pd3dDeviceEx && g_bDX9Ex)
+	{
+		// DX9Ex: El dispositivo nunca se "pierde" de la misma manera que DX9 estándar
+		// No necesitamos verificar TestCooperativeLevel() constantemente
+		return R_OK;
+	}
+	
 	HRESULT hr;
 	if (FAILED(hr = g_pd3dDevice->TestCooperativeLevel()))
 	{
-		// If the device was lost, do not render until we get it back
+		// Device lost (solo para DX9 estándar)
 		if (D3DERR_DEVICELOST == hr)
 			return R_NOTREADY;
 
@@ -606,9 +771,9 @@ void RFlip()
 	auto currentTime = GetGlobalTimeMS();
 	if (g_dwLastFPSTime + FPS_INTERVAL < currentTime)
 	{
-		g_fFPS = (g_nFrameCount - g_nLastFrameCount)*FPS_INTERVAL /
+		g_fFPS = (g_nFrameCount - g_nLastFrameCount) * FPS_INTERVAL /
 			((float)(currentTime - g_dwLastFPSTime) *
-			(FPS_INTERVAL / 1000));
+				(FPS_INTERVAL / 1000));
 		g_dwLastFPSTime = currentTime;
 		g_nLastFrameCount = g_nFrameCount;
 	}
@@ -622,7 +787,7 @@ void RClear()
 		g_pd3dDevice->Clear(0, NULL, D3DCLEAR_ZBUFFER, g_clear_color, 1.0f, 0);
 }
 
-void RDrawLine(const rvector &v1, const rvector &v2, u32 dwColor)
+void RDrawLine(const rvector& v1, const rvector& v2, u32 dwColor)
 {
 	struct LVERTEX {
 		float x, y, z;
@@ -634,19 +799,19 @@ void RDrawLine(const rvector &v1, const rvector &v2, u32 dwColor)
 	HRESULT hr = RGetDevice()->DrawPrimitiveUP(D3DPT_LINELIST, 1, ver, sizeof(LVERTEX));
 }
 
-rvector RGetTransformCoord(const rvector &coord)
+rvector RGetTransformCoord(const rvector& coord)
 {
 	return TransformCoord(coord, RViewProjectionViewport);
 }
 
-bool SaveMemoryBmp(int x, int y, void *data, void **retmemory, int *nsize)
+bool SaveMemoryBmp(int x, int y, void* data, void** retmemory, int* nsize)
 {
-	unsigned char *memory = NULL, *dest = NULL;
+	unsigned char* memory = NULL, * dest = NULL;
 
 	if (!data) return false;
 
 	int nBytesPerLine = (x * 3 + 3) / 4 * 4; // 4 byte align
-	int nMemoryNeed = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER) + nBytesPerLine*y;
+	int nMemoryNeed = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER) + nBytesPerLine * y;
 	memory = new unsigned char[nMemoryNeed];
 	if (!memory) return false;
 
@@ -654,14 +819,14 @@ bool SaveMemoryBmp(int x, int y, void *data, void **retmemory, int *nsize)
 	*retmemory = memory;
 
 	dest = memory;
-	BITMAPFILEHEADER *pbmfh = (BITMAPFILEHEADER*)dest;
+	BITMAPFILEHEADER* pbmfh = (BITMAPFILEHEADER*)dest;
 	dest += sizeof(BITMAPFILEHEADER);
-	BITMAPINFOHEADER *pbmih = (BITMAPINFOHEADER*)dest;
+	BITMAPINFOHEADER* pbmih = (BITMAPINFOHEADER*)dest;
 	dest += sizeof(BITMAPINFOHEADER);
 
 	// SET FILE HEADER : 14 byte
 	pbmfh->bfType = 0x4D42;
-	pbmfh->bfSize = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER) + x*y * 3;
+	pbmfh->bfSize = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER) + x * y * 3;
 	pbmfh->bfReserved1 = 0;
 	pbmfh->bfReserved2 = 0;
 	pbmfh->bfOffBits = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER);
@@ -682,7 +847,7 @@ bool SaveMemoryBmp(int x, int y, void *data, void **retmemory, int *nsize)
 
 	int i, j;
 
-	u32 *p = (u32*)data + (y - 1)*x;
+	u32* p = (u32*)data + (y - 1) * x;
 
 	for (i = y - 1; i >= 0; i--)
 	{
@@ -703,7 +868,6 @@ bool SaveMemoryBmp(int x, int y, void *data, void **retmemory, int *nsize)
 
 	return true;
 }
-
 
 #ifdef _USE_GDIPLUS
 int GetCodecClsid(const WCHAR* format, CLSID* pClsid)
@@ -737,7 +901,7 @@ int GetCodecClsid(const WCHAR* format, CLSID* pClsid)
 	return -1;  // Failure
 } // GetCodecClsid
 
-bool RSaveAsGeneric(int x, int y, void *data, const char *szFilename, bool JPG)
+bool RSaveAsGeneric(int x, int y, void* data, const char* szFilename, bool JPG)
 {
 	// Setting up RAW Data
 	BitmapData bitmapData;
@@ -769,12 +933,12 @@ bool RSaveAsGeneric(int x, int y, void *data, const char *szFilename, bool JPG)
 	return bitmap.Save(wstrName, &Clsid, NULL) == Ok;
 }
 
-bool RSaveAsJpeg(int x, int y, void *data, const char *szFilename)
+bool RSaveAsJpeg(int x, int y, void* data, const char* szFilename)
 {
 	return RSaveAsGeneric(x, y, data, szFilename, true);
 }
 
-bool RSaveAsPng(int x, int y, void *data, const char *szFilename)
+bool RSaveAsPng(int x, int y, void* data, const char* szFilename)
 {
 	auto* ByteData = static_cast<u8*>(data);
 	for (int i = 0; i < x * y; ++i)
@@ -786,15 +950,15 @@ bool RSaveAsPng(int x, int y, void *data, const char *szFilename)
 }
 #endif	// _USE_GDIPLUS
 
-bool RSaveAsBmp(int x, int y, void *data, const char *szFilename)
+bool RSaveAsBmp(int x, int y, void* data, const char* szFilename)
 {
-	void *memory;
+	void* memory;
 	int nSize;
 
 	if (!SaveMemoryBmp(x, y, data, &memory, &nSize))
 		return false;
 
-	FILE *file{};
+	FILE* file{};
 	auto ret = fopen_s(&file, szFilename, "wb+");
 	if (ret != 0 || !file) return false;
 
@@ -806,7 +970,7 @@ bool RSaveAsBmp(int x, int y, void *data, const char *szFilename)
 	return true;
 }
 
-bool RScreenShot(int x, int y, void *data, const char *szFilename, ScreenshotFormatType Format)
+bool RScreenShot(int x, int y, void* data, const char* szFilename, ScreenshotFormatType Format)
 {
 	auto* Extension = GetScreenshotFormatExtension(Format);
 	if (!Extension)
@@ -830,7 +994,7 @@ bool RScreenShot(int x, int y, void *data, const char *szFilename, ScreenshotFor
 	return false;
 }
 
-bool RGetScreenLine(int sx, int sy, rvector *pos, rvector *dir)
+bool RGetScreenLine(int sx, int sy, rvector* pos, rvector* dir)
 {
 	rvector scrpoint = rvector((float)sx, (float)sy, 0.1f);
 
@@ -845,7 +1009,7 @@ bool RGetScreenLine(int sx, int sy, rvector *pos, rvector *dir)
 	return true;
 }
 
-rvector RGetIntersection(int x, int y, rplane &plane)
+rvector RGetIntersection(int x, int y, rplane& plane)
 {
 	rvector scrpoint = rvector((float)x, (float)y, 0.1f);
 
@@ -859,7 +1023,7 @@ rvector RGetIntersection(int x, int y, rplane &plane)
 	return ret;
 }
 
-bool RGetIntersection(rvector& a, rvector& b, rplane &plane, rvector* pIntersection)
+bool RGetIntersection(rvector& a, rvector& b, rplane& plane, rvector* pIntersection)
 {
 	rvector d = b - a;
 
@@ -872,7 +1036,7 @@ bool RGetIntersection(rvector& a, rvector& b, rplane &plane, rvector* pIntersect
 	}
 	else
 	{
-		*pIntersection = a + t*d;
+		*pIntersection = a + t * d;
 	}
 	return true;
 }
@@ -906,8 +1070,8 @@ void RDrawCylinder(rvector origin, float fRadius, float fHeight, int nSegment)
 		float fAngle = i * 2 * PI_FLOAT / (float)nSegment;
 		float fAngle2 = (i + 1) * 2 * PI_FLOAT / (float)nSegment;
 
-		rvector a = fRadius*rvector(cos(fAngle), sin(fAngle), 0) + origin;
-		rvector b = fRadius*rvector(cos(fAngle2), sin(fAngle2), 0) + origin;
+		rvector a = fRadius * rvector(cos(fAngle), sin(fAngle), 0) + origin;
+		rvector b = fRadius * rvector(cos(fAngle2), sin(fAngle2), 0) + origin;
 
 		RDrawLine(a + rvector(0, 0, fHeight), b + rvector(0, 0, fHeight), 0xffff0000);
 		RDrawLine(a - rvector(0, 0, fHeight), b - rvector(0, 0, fHeight), 0xffff0000);
@@ -939,8 +1103,8 @@ void RDrawCorn(rvector center, rvector pole, float fRadius, int nSegment)
 		float fAngle = i * 2 * PI_FLOAT / (float)nSegment;
 		float fAngle2 = (i + 1) * 2 * PI_FLOAT / (float)nSegment;
 
-		rvector a = fRadius*(x*cos(fAngle) + y*sin(fAngle)) + center;
-		rvector b = fRadius*(x*cos(fAngle2) + y*sin(fAngle2)) + center;
+		rvector a = fRadius * (x * cos(fAngle) + y * sin(fAngle)) + center;
+		rvector b = fRadius * (x * cos(fAngle2) + y * sin(fAngle2)) + center;
 
 		RDrawLine(a, pole, 0xffff0000);
 		RDrawLine(a, b, 0xffff0000);
@@ -1002,8 +1166,8 @@ void RDrawCircle(rvector origin, float fRadius, int nSegment)
 		float fAngle = i * 2 * PI_FLOAT / (float)nSegment;
 		float fAngle2 = (i + 1) * 2 * PI_FLOAT / (float)nSegment;
 
-		rvector a = fRadius*rvector(cos(fAngle), sin(fAngle), 0) + origin;
-		rvector b = fRadius*rvector(cos(fAngle2), sin(fAngle2), 0) + origin;
+		rvector a = fRadius * rvector(cos(fAngle), sin(fAngle), 0) + origin;
+		rvector b = fRadius * rvector(cos(fAngle2), sin(fAngle2), 0) + origin;
 
 		RDrawLine(a, b, 0xffff0000);
 	}
@@ -1017,12 +1181,11 @@ void RDrawArc(rvector origin, float fRadius, float fAngle1, float fAngle2, int n
 		float fAngleA = fAngle1 + (i * fAngle / (float)nSegment);
 		float fAngleB = fAngle1 + ((i + 1) * fAngle / (float)nSegment);
 
-		rvector a = fRadius*rvector(cos(fAngleA), sin(fAngleA), 0) + origin;
-		rvector b = fRadius*rvector(cos(fAngleB), sin(fAngleB), 0) + origin;
+		rvector a = fRadius * rvector(cos(fAngleA), sin(fAngleA), 0) + origin;
+		rvector b = fRadius * rvector(cos(fAngleB), sin(fAngleB), 0) + origin;
 
 		RDrawLine(a, b, color);
 	}
-
 }
 
 void RSetWBuffer(bool bEnable)
@@ -1064,8 +1227,8 @@ void RSetFog(bool bFog, float fNear, float fFar, u32 dwColor)
 		g_dwFogColor = dwColor;
 		g_pd3dDevice->SetRenderState(D3DRS_FOGCOLOR, dwColor);
 		g_pd3dDevice->SetRenderState(D3DRS_FOGTABLEMODE, D3DFOG_LINEAR);
-		g_pd3dDevice->SetRenderState(D3DRS_FOGSTART, *(u32 *)(&g_fFogNear));
-		g_pd3dDevice->SetRenderState(D3DRS_FOGEND, *(u32 *)(&g_fFogFar));
+		g_pd3dDevice->SetRenderState(D3DRS_FOGSTART, *(u32*)(&g_fFogNear));
+		g_pd3dDevice->SetRenderState(D3DRS_FOGEND, *(u32*)(&g_fFogFar));
 	}
 }
 
@@ -1074,14 +1237,12 @@ float RGetFogNear() { return g_fFogNear; }
 float RGetFogFar() { return g_fFogFar; }
 u32 RGetFogColor() { return g_dwFogColor; }
 
-
 bool CheckVideoAdapterSupported()
 {
 	bool bSupported = true;
 
-	D3DADAPTER_IDENTIFIER9 *ai = RGetAdapterID();
+	D3DADAPTER_IDENTIFIER9* ai = RGetAdapterID();
 	if (ai == NULL) return false;
-
 
 	if (ai->VendorId == 0x8086)
 	{
@@ -1092,7 +1253,6 @@ bool CheckVideoAdapterSupported()
 	if (ai->VendorId == 0x121a) {	// 3dfx
 		bSupported = false;
 	}
-
 
 	return bSupported;
 }

@@ -68,21 +68,31 @@ static DWORD g_dwMainThreadID;
 #define SUPPORT_EXCEPTIONHANDLING
 #endif
 
-RRESULT RenderScene(void *pParam);
+RRESULT RenderScene(void* pParam);
 
 #define RD_STRING_LENGTH 512
 char cstrReleaseDate[512];
 
 ZApplication	g_App;
 MDrawContextR2* g_pDC = NULL;
-MFontR2*		g_pDefFont = NULL;
+MFontR2* g_pDefFont = NULL;
 ZDirectInput	g_DInput;
-ZInput*			g_pInput = NULL;
+ZInput* g_pInput = NULL;
 Mint4Gunz		g_Mint;
 
-HRESULT GetDirectXVersionViaDxDiag( DWORD* pdwDirectXVersionMajor,
-	DWORD* pdwDirectXVersionMinor, TCHAR* pcDirectXVersionLetter );
+HRESULT GetDirectXVersionViaDxDiag(DWORD* pdwDirectXVersionMajor,
+	DWORD* pdwDirectXVersionMinor, TCHAR* pcDirectXVersionLetter);
 
+static void ApplyVSyncAndTripleBuffer()
+{
+	// Aplicar configuración de VSync y TripleBuffer
+	if (RGetDevice())
+	{
+		SetVSync(ZGetConfiguration()->GetVSync());
+		SetTripleBuffer(ZGetConfiguration()->GetTripleBuffer());
+		SetDX9Ex(ZGetConfiguration()->GetDX9Ex());
+	}
+}
 void _ZChangeGameState(int nIndex)
 {
 	GunzState state = GunzState(nIndex);
@@ -93,7 +103,7 @@ void _ZChangeGameState(int nIndex)
 	}
 }
 
-template <int(__stdcall *Function)(LPCTSTR)>
+template <int(__stdcall* Function)(LPCTSTR)>
 static void ForEachFont()
 {
 #ifdef WIN32
@@ -121,7 +131,7 @@ static void RemoveFonts()
 	ForEachFont<RemoveFontResource>();
 }
 
-RRESULT OnCreate(void *pParam)
+RRESULT OnCreate(void* pParam)
 {
 	if (GetRS2().UsingVulkan())
 	{
@@ -142,24 +152,24 @@ RRESULT OnCreate(void *pParam)
 
 	RBspObject::CreateShadeMap("sfx/water_splash.bmp");
 
-	sprintf_safe( cstrReleaseDate, "");
+	sprintf_safe(cstrReleaseDate, "");
 	g_DInput.Create(g_hWnd, FALSE, FALSE);
 	g_pInput = new ZInput(&g_DInput);
 	RSetGammaRamp(Z_VIDEO_GAMMA_VALUE);
 	RSetRenderFlags(RRENDER_CLEAR_BACKBUFFER);
 
-	ZGetInitialLoading()->Initialize(  1, 0, 0, RGetScreenWidth(), RGetScreenHeight(), 0, 0, 1024, 768 );
+	ZGetInitialLoading()->Initialize(1, 0, 0, RGetScreenWidth(), RGetScreenHeight(), 0, 0, 1024, 768);
 
 	mlog("main : ZGetInitialLoading()->Initialize() \n");
 
 	g_pDefFont = new MFontR2;
 
-	if( !g_pDefFont->Create("Default", Z_LOCALE_DEFAULT_FONT, 9, 1.0f) )
+	if (!g_pDefFont->Create("Default", Z_LOCALE_DEFAULT_FONT, 9, 1.0f))
 	{
-		mlog("Fail to Create defualt font : MFontR2 / main.cpp.. onCreate\n" );
+		mlog("Fail to Create defualt font : MFontR2 / main.cpp.. onCreate\n");
 		g_pDefFont->Destroy();
-		SAFE_DELETE( g_pDefFont );
-		g_pDefFont	= NULL;
+		SAFE_DELETE(g_pDefFont);
+		g_pDefFont = NULL;
 	}
 
 	AddFonts();
@@ -167,14 +177,14 @@ RRESULT OnCreate(void *pParam)
 	g_pDC = new MDrawContextR2(RGetDevice());
 
 #ifndef _FASTDEBUG
-	if( ZGetInitialLoading()->IsUseEnable() )
+	if (ZGetInitialLoading()->IsUseEnable())
 	{
-		ZGetInitialLoading()->AddBitmap( 0, "Interface/Default/LOADING/loading_adult.jpg" );
-		ZGetInitialLoading()->AddBitmapBar( "Interface/Default/LOADING/loading.bmp" );
-		ZGetInitialLoading()->SetText( g_pDefFont, 10, 30, cstrReleaseDate );
+		ZGetInitialLoading()->AddBitmap(0, "Interface/Default/LOADING/loading_adult.jpg");
+		ZGetInitialLoading()->AddBitmapBar("Interface/Default/LOADING/loading.bmp");
+		ZGetInitialLoading()->SetText(g_pDefFont, 10, 30, cstrReleaseDate);
 
-		ZGetInitialLoading()->SetPercentage( 0.0f );
-		ZGetInitialLoading()->Draw( MODE_FADEIN, 0 , true );
+		ZGetInitialLoading()->SetPercentage(0.0f);
+		ZGetInitialLoading()->Draw(MODE_FADEIN, 0, true);
 	}
 #endif
 
@@ -184,7 +194,7 @@ RRESULT OnCreate(void *pParam)
 	mlog("main : g_Mint.Initialize() \n");
 
 	ZLoadingProgress appLoading("application");
-	if(!g_App.OnCreate(&appLoading))
+	if (!g_App.OnCreate(&appLoading))
 	{
 		ZGetInitialLoading()->Release();
 		return R_ERROR_LOADING;
@@ -202,10 +212,10 @@ RRESULT OnCreate(void *pParam)
 	ZGetOptionInterface()->Resize(g_ModeParams.nWidth, g_ModeParams.nHeight);
 
 	// Default Key
-	for(int i=0; i<ZACTION_COUNT; i++){
+	for (int i = 0; i < ZACTION_COUNT; i++) {
 		ZACTIONKEYDESCRIPTION& keyDesc = ZGetConfiguration()->GetKeyboard()->ActionKeys[i];
 		g_pInput->RegisterActionKey(i, keyDesc.nVirtualKey);
-		if(keyDesc.nVirtualKeyAlt!=-1)
+		if (keyDesc.nVirtualKeyAlt != -1)
 			g_pInput->RegisterActionKey(i, keyDesc.nVirtualKeyAlt);
 	}
 
@@ -214,23 +224,26 @@ RRESULT OnCreate(void *pParam)
 	ZGetFlashBangEffect()->SetDrawCopyScreen(true);
 
 	ZGetInitialLoading()->SetLoadingStr("Done.");
-	if( ZGetInitialLoading()->IsUseEnable() )
+	if (ZGetInitialLoading()->IsUseEnable())
 	{
 #ifndef _FASTDEBUG
-		ZGetInitialLoading()->SetPercentage( 100.f );
-		ZGetInitialLoading()->Draw( MODE_FADEOUT, 0 ,true  );
+		ZGetInitialLoading()->SetPercentage(100.f);
+		ZGetInitialLoading()->Draw(MODE_FADEOUT, 0, true);
 #endif
 		ZGetInitialLoading()->Release();
 	}
 
 	mlog("main : OnCreate() done\n");
 
+	// Aplicar configuración de VSync y TripleBuffer después de crear el dispositivo
+	ApplyVSyncAndTripleBuffer();
+
 	SetFocus(g_hWnd);
 
 	return R_OK;
 }
 
-RRESULT OnDestroy(void *pParam)
+RRESULT OnDestroy(void* pParam)
 {
 	mlog("main : OnDestroy()\n");
 
@@ -283,7 +296,7 @@ RRESULT OnDestroy(void *pParam)
 	return R_OK;
 }
 
-template <typename T, int (ZConfiguration::*Getter)() const>
+template <typename T, int (ZConfiguration::* Getter)() const>
 struct FPSLimiter
 {
 	T Action;
@@ -321,7 +334,7 @@ struct FPSLimiter
 	}
 };
 
-template <int (ZConfiguration::*Getter)() const, typename T>
+template <int (ZConfiguration::* Getter)() const, typename T>
 constexpr auto MakeFPSLimiter(T&& Action)
 {
 	return FPSLimiter<T, Getter>(std::move(Action));
@@ -329,19 +342,19 @@ constexpr auto MakeFPSLimiter(T&& Action)
 
 auto VisualFPSLimiter = MakeFPSLimiter<&ZConfiguration::GetVisualFPSLimit>(
 	[&](auto nSleep) {
-	return nSleep <= 0;
-});
+		return nSleep <= 0;
+	});
 auto LogicalFPSLimiter = MakeFPSLimiter<&ZConfiguration::GetLogicalFPSLimit>(
 	[&](auto nSleep) {
-	if (nSleep <= 0)
-		return true;
+		if (nSleep <= 0)
+			return true;
 
-	if (nSleep > 250)
-		MLog("Large sleep %d!\n", nSleep);
-	else
-		Sleep(nSleep);
-	return true;
-});
+		if (nSleep > 250)
+			MLog("Large sleep %d!\n", nSleep);
+		else
+			Sleep(nSleep);
+		return true;
+	});
 
 RRESULT OnUpdate(void* pParam)
 {
@@ -357,7 +370,7 @@ RRESULT OnUpdate(void* pParam)
 
 #include "LogMatrix.h"
 
-RRESULT OnRender(void *pParam)
+RRESULT OnRender(void* pParam)
 {
 	auto mainOnRender = MBeginProfile("main::OnRender");
 	if (!RIsActive() && RIsFullscreen())
@@ -368,19 +381,19 @@ RRESULT OnRender(void *pParam)
 
 	g_App.OnDraw();
 
-	if(g_pDefFont &&
+	if (g_pDefFont &&
 		(!ZGetGame() || ZGetGame()->IsShowReplayInfo() || !ZGetGame()->IsReplay())) {
 		char buf[512];
 		size_t y_offset{};
 		auto PrintText = [&](const char* Format, ...)
-		{
-			va_list va;
-			va_start(va, Format);
-			vsprintf_safe(buf, Format, va);
-			va_end(va);
-			g_pDefFont->m_Font.DrawText(MGetWorkspaceWidth() - 200, y_offset, buf);
-			y_offset += 20;
-		};
+			{
+				va_list va;
+				va_start(va, Format);
+				vsprintf_safe(buf, Format, va);
+				va_end(va);
+				g_pDefFont->m_Font.DrawText(MGetWorkspaceWidth() - 200, y_offset, buf);
+				y_offset += 20;
+			};
 
 		if (ZGetConfiguration()->GetVisualFPSLimit() != 0)
 		{
@@ -433,43 +446,46 @@ RRESULT OnRender(void *pParam)
 	return R_OK;
 }
 
-RRESULT OnInvalidate(void *pParam)
+RRESULT OnInvalidate(void* pParam)
 {
-	MBitmapR2::m_dwStateBlock=NULL;
+	MBitmapR2::m_dwStateBlock = NULL;
 
 	g_App.OnInvalidate();
 
 	return R_OK;
 }
 
-RRESULT OnRestore(void *pParam)
+RRESULT OnRestore(void* pParam)
 {
-	for(int i=0; i<MBitmapManager::GetCount(); i++){
+	for (int i = 0; i < MBitmapManager::GetCount(); i++) {
 		MBitmapR2* pBitmap = (MBitmapR2*)MBitmapManager::Get(i);
 		pBitmap->OnLostDevice();
 	}
 
 	g_App.OnRestore();
 
+	// Aplicar configuración de VSync y TripleBuffer después de restaurar el dispositivo
+	ApplyVSyncAndTripleBuffer();
+
 	return R_OK;
 }
 
 // Toggle the process priority boost when the window is activated or deactivated
-RRESULT OnActivate(void *pParam)
+RRESULT OnActivate(void* pParam)
 {
 	if (ZGetGameInterface() && ZGetGameClient() && Z_ETC_BOOST)
 		ZGetGameClient()->PriorityBoost(true);
 	return R_OK;
 }
 
-RRESULT OnDeActivate(void *pParam)
+RRESULT OnDeActivate(void* pParam)
 {
 	if (ZGetGameInterface() && ZGetGameClient())
 		ZGetGameClient()->PriorityBoost(false);
 	return R_OK;
 }
 
-RRESULT OnError(void *pParam)
+RRESULT OnError(void* pParam)
 {
 	mlog("RealSpace::OnError(%d) \n", RGetLastError());
 
@@ -477,7 +493,7 @@ RRESULT OnError(void *pParam)
 	{
 	case RERROR_INVALID_DEVICE:
 	{
-		D3DADAPTER_IDENTIFIER9 *ai = RGetAdapterID();
+		D3DADAPTER_IDENTIFIER9* ai = RGetAdapterID();
 		char szLog[512];
 		ZTransMsg(szLog, MSG_DONOTSUPPORT_GPCARD, 1, ai->Description);
 
@@ -522,36 +538,38 @@ static void ApplyInitialConfiguration()
 {
 	SetModeParams();
 	Mint::GetInstance()->SetStretch(!ZGetConfiguration()->GetInterfaceFix());
+	// Aplicar DX9Ex ANTES de crear el dispositivo (debe ser antes de RInitDisplay)
+	SetDX9Ex(ZGetConfiguration()->GetDX9Ex());
 }
 
 LONG_PTR FAR PASCAL WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	switch (message)
 	{
-		case WM_CREATE:
-			if (strlen(Z_LOCALE_HOMEPAGE_TITLE) > 0)
-			{
-				ShowIExplorer(false, Z_LOCALE_HOMEPAGE_TITLE);
-			}
-			break;
-		case WM_DESTROY:
-			if (strlen(Z_LOCALE_HOMEPAGE_TITLE) > 0)
-			{
-				ShowIExplorer(true, Z_LOCALE_HOMEPAGE_TITLE);
-			}
-			break;
-		case WM_SETCURSOR:
-			if(ZApplication::GetGameInterface())
-				ZApplication::GetGameInterface()->OnResetCursor();
-			return TRUE; // prevent Windows from setting cursor to window class cursor
+	case WM_CREATE:
+		if (strlen(Z_LOCALE_HOMEPAGE_TITLE) > 0)
+		{
+			ShowIExplorer(false, Z_LOCALE_HOMEPAGE_TITLE);
+		}
+		break;
+	case WM_DESTROY:
+		if (strlen(Z_LOCALE_HOMEPAGE_TITLE) > 0)
+		{
+			ShowIExplorer(true, Z_LOCALE_HOMEPAGE_TITLE);
+		}
+		break;
+	case WM_SETCURSOR:
+		if (ZApplication::GetGameInterface())
+			ZApplication::GetGameInterface()->OnResetCursor();
+		return TRUE; // prevent Windows from setting cursor to window class cursor
 
-		case WM_KEYDOWN:
-			{
-				bool b = false;
-			}
+	case WM_KEYDOWN:
+	{
+		bool b = false;
+	}
 	}
 
-	if(Mint::GetInstance()->ProcessEvent(hWnd, message, wParam, lParam)==true)
+	if (Mint::GetInstance()->ProcessEvent(hWnd, message, wParam, lParam) == true)
 		return 0;
 
 	if (message == WM_CHANGE_GAMESTATE)
@@ -591,7 +609,6 @@ static void SetRS2Callbacks()
 	RSetFunction(RF_PREPRESENT, OnPrePresent);
 }
 
-
 #include <signal.h>
 int PASCAL GunzMain(HINSTANCE this_inst, HINSTANCE prev_inst, LPSTR cmdline, int cmdshow)
 {
@@ -602,12 +619,12 @@ int PASCAL GunzMain(HINSTANCE this_inst, HINSTANCE prev_inst, LPSTR cmdline, int
 		const wchar_t* file,
 		unsigned int line,
 		uintptr_t pReserved)
-	{
-		MLog("Invalid parameter detected in function %s.\n"
-			"File: %s, line: %d.\nExpression: %s.\n",
-			function, file, line, expression);
-		assert(false);
-	});
+		{
+			MLog("Invalid parameter detected in function %s.\n"
+				"File: %s, line: %d.\nExpression: %s.\n",
+				function, file, line, expression);
+			assert(false);
+		});
 
 	g_dwMainThreadID = GetCurrentThreadId();
 
@@ -664,14 +681,14 @@ int PASCAL GunzMain(HINSTANCE this_inst, HINSTANCE prev_inst, LPSTR cmdline, int
 	g_App.InitFileSystem();
 
 #if defined(_PUBLISH) && defined(ONLY_LOAD_MRS_FILES)
-	MZFile::SetReadMode( MZIPREADFLAG_MRS2 );
+	MZFile::SetReadMode(MZIPREADFLAG_MRS2);
 #endif
 
 	CreateRGMain();
 
 	ZGetConfiguration()->Load();
 
-	if( !ZApplication::GetInstance()->InitLocale() )
+	if (!ZApplication::GetInstance()->InitLocale())
 	{
 		MLog("Failed to initialize locale, exiting\n");
 		return false;
@@ -686,7 +703,7 @@ int PASCAL GunzMain(HINSTANCE this_inst, HINSTANCE prev_inst, LPSTR cmdline, int
 	if (strstr(cmdline, "/vulkan"))
 		GfxAPI = GraphicsAPI::Vulkan;
 
-	if(!InitializeNotify(ZApplication::GetFileSystem())) {
+	if (!InitializeNotify(ZApplication::GetFileSystem())) {
 		MLog("Failed to load notify.xml\n");
 		return 0;
 	}

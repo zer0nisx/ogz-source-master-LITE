@@ -12,6 +12,7 @@ call:CompilePS VisualizeLinearDepth
 call:CompilePS Monochrome
 call:CompilePS ColorInvert
 call:CompileShader skin /Tvs_3_0
+call:CompileShader MaterialTest/MaterialTest /Tvs_3_0
 goto:eof
 
 :CompileVSPS
@@ -37,5 +38,9 @@ call:CompileShaderOutput %~1 %~1 %~2 %~3 %~4
 goto:eof
 
 :CompileShaderOutput
-%fxc% %~3 %~4 %~5 /FhInclude/%~2.h /Vn%~2Data Source/%~1.hlsl %options%
+if "%~1"=="MaterialTest/MaterialTest" (
+    %fxc% %~3 %~4 %~5 /FhInclude/%~2.h /Vn%~2Data MaterialTest/Shaders/%~1.hlsl %options%
+) else (
+    %fxc% %~3 %~4 %~5 /FhInclude/%~2.h /Vn%~2Data Source/%~1.hlsl %options%
+)
 goto:eof

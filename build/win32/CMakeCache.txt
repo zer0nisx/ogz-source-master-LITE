@@ -244,6 +244,15 @@ Locator_LIB_DEPENDS:STATIC=general;ini;general;cml;general;CSCommon;general;MDat
 //Dependencies for the target
 MatchServer_lib_LIB_DEPENDS:STATIC=general;msvcrt.lib;general;msvcmrt.lib;general;C:\ogz-source-master-LITE\src\sdk\zlib\lib\zlib.lib;general;sodium;general;sqlite3;general;ini;general;cml;general;CSCommon;general;MDatabase;general;RealSpace2;general;SafeUDP;general;Locator;general;legacy_stdio_definitions.lib;
 
+//Value Computed by CMake
+MaterialTest_BINARY_DIR:STATIC=C:/ogz-source-master-LITE/build/win32/RealSpace2/MaterialTest
+
+//Value Computed by CMake
+MaterialTest_IS_TOP_LEVEL:STATIC=OFF
+
+//Value Computed by CMake
+MaterialTest_SOURCE_DIR:STATIC=C:/ogz-source-master-LITE/src/RealSpace2/MaterialTest
+
 //Dependencies for the target
 Mint2_LIB_DEPENDS:STATIC=general;cml;
 
@@ -401,7 +410,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_MT
 CMAKE_MT-ADVANCED:INTERNAL=1
 //number of local generators
-CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=25
+CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=26
 //Platform information initialized
 CMAKE_PLATFORM_INFO_INITIALIZED:INTERNAL=1
 //noop for ranlib

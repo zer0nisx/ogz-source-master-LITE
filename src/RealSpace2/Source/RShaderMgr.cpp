@@ -23,6 +23,18 @@ RShaderMgr::RShaderMgr()
 	mbLight[0] = false;
 	mbLight[1] = false;
 	mbUsingShader = false;
+	
+	// MEJORA: Inicializar explícitamente las luces para evitar valores basura
+	// Esto asegura que los valores de luz se guarden correctamente en memoria
+	for (int i = 0; i < MAX_LIGHT; ++i)
+	{
+		ZeroMemory(&mLight[i], sizeof(D3DLIGHT9));
+		mLight[i].Type = D3DLIGHT_POINT;
+		mLight[i].Range = 0.0f;
+		mLight[i].Attenuation0 = 1.0f;
+		mLight[i].Attenuation1 = 0.0f;
+		mLight[i].Attenuation2 = 0.0f;
+	}
 }
 
 RShaderMgr::~RShaderMgr()
@@ -169,7 +181,11 @@ void RShaderMgr::setLight(int iLignt_, D3DLIGHT9* pLight_)
 {
 	if (!mbUsingShader) return;
 	if (iLignt_ >= MAX_LIGHT) return;
+	if (!pLight_) return;  // MEJORA: Validar puntero para evitar acceso inválido
 
+	// MEJORA: Copiar todos los campos de la luz de forma segura
+	// Esto asegura que los valores se guarden correctamente en memoria
+	mLight[iLignt_].Type = pLight_->Type;
 	mLight[iLignt_].Ambient = pLight_->Ambient;
 	mLight[iLignt_].Diffuse = pLight_->Diffuse;
 	mLight[iLignt_].Specular = pLight_->Specular;
@@ -178,6 +194,10 @@ void RShaderMgr::setLight(int iLignt_, D3DLIGHT9* pLight_)
 	mLight[iLignt_].Attenuation1 = pLight_->Attenuation1;
 	mLight[iLignt_].Attenuation2 = pLight_->Attenuation2;
 	mLight[iLignt_].Position = pLight_->Position;
+	mLight[iLignt_].Direction = pLight_->Direction;  // Aunque no se use, mantener consistencia
+	mLight[iLignt_].Falloff = pLight_->Falloff;
+	mLight[iLignt_].Theta = pLight_->Theta;
+	mLight[iLignt_].Phi = pLight_->Phi;
 }
 
 void RShaderMgr::setAmbient(u32 value_)
@@ -236,7 +256,13 @@ void RShaderMgr::Update()
 	dev->SetVertexShaderConstantF(MATERIAL_POWER, (float*)&mpMtrl->m_power, 1);
 	
 	// Update fog constants
-	// Constants: x=1.0, y=FogStart, z=FogEnd, w=1.0/(FogEnd-FogStart)
+	// Constants: x=LightFlags, y=FogStart, z=FogEnd, w=1.0/(FogEnd-FogStart)
+	// LightFlags: 0.0=none, 1.0=Light0, 2.0=Light1, 3.0=both
+	// MEJORA: Enviar flags de luces activas para early exit en shader
+	float lightFlags = 0.0f;
+	if (mbLight[0]) lightFlags += 1.0f;  // Bit 0: Light0
+	if (mbLight[1]) lightFlags += 2.0f;  // Bit 1: Light1
+	
 	// Si el fog está activo desde BSP, usar los valores, sino desactivar fog en shader
 	float fogStart = 0.0f;
 	float fogEnd = 0.0f;
@@ -251,7 +277,7 @@ void RShaderMgr::Update()
 	}
 	
 	float fConst[] = {
-		1.0f, fogStart, fogEnd, fogInvRange
+		lightFlags, fogStart, fogEnd, fogInvRange
 	};
 	
 	dev->SetVertexShaderConstantF(CONSTANTS, fConst, 1);
@@ -264,9 +290,11 @@ void RShaderMgr::init()
 	v4 constv{ 0, 0, 0, 0 };
 	v4 constvatten{ 0.1f, 0.1f, 0.1f, 0.1f };
 
-	// Constants: x=1.0, y=FogStart, z=FogEnd, w=1.0/(FogEnd-FogStart)
+	// Constants: x=LightFlags, y=FogStart, z=FogEnd, w=1.0/(FogEnd-FogStart)
+	// LightFlags: 0.0=none, 1.0=Light0, 2.0=Light1, 3.0=both
+	// Default: sin luces activas (0.0), sin fog
 	float fConst[] = {
-		1.0f, 0.0f, 1000.0f, 0.001f  // Default: sin fog (FogStart=0, FogEnd=1000, range=1000)
+		0.0f, 0.0f, 1000.0f, 0.001f  // Default: sin luces, sin fog
 	};
 
 	dev->SetVertexShaderConstantF(CONSTANTS, fConst, 1);

@@ -8,14 +8,14 @@
 #include "ZFilePath.h"
 
 ZConfiguration	g_Configuration;
-ZConfiguration* ZGetConfiguration()		{ return &g_Configuration; }
+ZConfiguration* ZGetConfiguration() { return &g_Configuration; }
 
 ZConfiguration::ZConfiguration()
 {
 	Init();
 
-	strcpy_safe( m_szBAReportAddr, "igunz.net");
-	strcpy_safe( m_szBAReportDir, "reports");
+	strcpy_safe(m_szBAReportAddr, "igunz.net");
+	strcpy_safe(m_szBAReportDir, "reports");
 
 	m_nServerCount = 0;
 
@@ -39,29 +39,29 @@ void ZConfiguration::Destroy()
 {
 }
 
-u32 GetVirtKey(const char *key)
+u32 GetVirtKey(const char* key)
 {
-	int n=atoi(key+1);
-	if((key[0]=='f' || key[0]=='F') && n>=1 && n<=12)
-		return VK_F1+n-1;
+	int n = atoi(key + 1);
+	if ((key[0] == 'f' || key[0] == 'F') && n >= 1 && n <= 12)
+		return VK_F1 + n - 1;
 
-	if(key[0]>='a' && key[0]<='z')
-		return 'A'+key[0]-'a';
+	if (key[0] >= 'a' && key[0] <= 'z')
+		return 'A' + key[0] - 'a';
 
 	return key[0];
 }
 
 template<size_t size>
-char *GetKeyName(u32 nVirtKey, char(&out)[size]) {
+char* GetKeyName(u32 nVirtKey, char(&out)[size]) {
 	return GetKeyName(nVirtKey out, size);
 }
 
-char *GetKeyName(u32 nVirtKey, char *out, int maxlen)
+char* GetKeyName(u32 nVirtKey, char* out, int maxlen)
 {
-	if(nVirtKey>=VK_F1 && nVirtKey<=VK_F12)
-		sprintf_safe(out, maxlen, "F%d",nVirtKey-VK_F1+1);
+	if (nVirtKey >= VK_F1 && nVirtKey <= VK_F12)
+		sprintf_safe(out, maxlen, "F%d", nVirtKey - VK_F1 + 1);
 	else
-		sprintf_safe(out, maxlen, "%d",nVirtKey);
+		sprintf_safe(out, maxlen, "%d", nVirtKey);
 
 	return out;
 }
@@ -81,21 +81,21 @@ bool ZConfiguration::Load()
 		return false;
 	}
 
-	if ( !LoadLocale(FILENAME_LOCALE) )
+	if (!LoadLocale(FILENAME_LOCALE))
 	{
-		mlog( "Cannot open %s file.\n", FILENAME_LOCALE);
+		mlog("Cannot open %s file.\n", FILENAME_LOCALE);
 		return false;
 	}
 
-	if ( !LoadGameTypeCfg(FILENAME_GTCFG) )
+	if (!LoadGameTypeCfg(FILENAME_GTCFG))
 	{
-		mlog( "Cannot open %s file.\n", FILENAME_GTCFG);
+		mlog("Cannot open %s file.\n", FILENAME_GTCFG);
 		return false;
 	}
 
 	if (!LoadSystem(FILENAME_SYSTEM))
 	{
-		mlog( "Cannot open %s file.\n", FILENAME_SYSTEM);
+		mlog("Cannot open %s file.\n", FILENAME_SYSTEM);
 		return false;
 	}
 
@@ -108,42 +108,42 @@ bool ZConfiguration::LoadLocale(const char* szFileName)
 	MXmlElement		parentElement, serverElement, bindsElement;
 	MXmlElement		childElement;
 
-	mlog( "Load XML from memory : %s", szFileName);
+	mlog("Load XML from memory : %s", szFileName);
 
-	if( !xmlLocale.LoadFromFile(szFileName, ZApplication::GetFileSystem()))
+	if (!xmlLocale.LoadFromFile(szFileName, ZApplication::GetFileSystem()))
 	{
-		mlog( "- FAIL\n");
+		mlog("- FAIL\n");
 
 		return false;
 	}
-	mlog( "- SUCCESS\n");
+	mlog("- SUCCESS\n");
 
 	parentElement = xmlLocale.GetDocumentElement();
 	int iCount = parentElement.GetChildNodeCount();
 
 	if (!parentElement.IsEmpty())
 	{
-		if( parentElement.FindChildNode(ZTOK_LOCALE, &childElement) )
+		if (parentElement.FindChildNode(ZTOK_LOCALE, &childElement))
 		{
-			char szCountry[ 16 ]	= "";
-			char szLanguage[ 16 ]	= "";
+			char szCountry[16] = "";
+			char szLanguage[16] = "";
 			int nMaxPlayers = 16;
 
-			childElement.GetChildContents( szCountry, ZTOK_LOCALE_COUNTRY );
-			childElement.GetChildContents( szLanguage, ZTOK_LOCALE_LANGUAGE );
-			childElement.GetChildContents( &nMaxPlayers, ZTOK_LOCALE_MAXPLAYERS);
+			childElement.GetChildContents(szCountry, ZTOK_LOCALE_COUNTRY);
+			childElement.GetChildContents(szLanguage, ZTOK_LOCALE_LANGUAGE);
+			childElement.GetChildContents(&nMaxPlayers, ZTOK_LOCALE_MAXPLAYERS);
 
-			if( (0 == szCountry) || (0 == szLanguage) )
+			if ((0 == szCountry) || (0 == szLanguage))
 			{
-				mlog( "config.xml - Country or Language is invalid.\n" );
+				mlog("config.xml - Country or Language is invalid.\n");
 				return false;
 			}
 
-			m_Locale.strCountry		= szCountry;
-			m_Locale.strLanguage	= szLanguage;
-			m_Locale.nMaxPlayers	= nMaxPlayers;
+			m_Locale.strCountry = szCountry;
+			m_Locale.strLanguage = szLanguage;
+			m_Locale.nMaxPlayers = nMaxPlayers;
 
-			mlog( "Country : (%s), Language : (%s)\n", szCountry, szLanguage );
+			mlog("Country : (%s), Language : (%s)\n", szCountry, szLanguage);
 		}
 	}
 	xmlLocale.Destroy();
@@ -151,44 +151,42 @@ bool ZConfiguration::LoadLocale(const char* szFileName)
 	return true;
 }
 
-
 bool ZConfiguration::LoadGameTypeCfg(const char* szFileName)
 {
 	MXmlDocument xmlIniData;
 
-	mlog( "Load XML from memory : %s", szFileName);
+	mlog("Load XML from memory : %s", szFileName);
 
 	if (!xmlIniData.LoadFromFile(szFileName, ZApplication::GetFileSystem()))
 	{
-		mlog( "- FAIL\n");
+		mlog("- FAIL\n");
 
 		return false;
 	}
 
 	mlog("- SUCCESS\n");
 
-
 	MXmlElement rootElement, chrElement, attrElement;
 
-	char szTagName[ 256];
+	char szTagName[256];
 
 	rootElement = xmlIniData.GetDocumentElement();
 
 	int iCount = rootElement.GetChildNodeCount();
 
-	for ( int i = 0; i < iCount; i++)
+	for (int i = 0; i < iCount; i++)
 	{
-		chrElement = rootElement.GetChildNode( i);
-		chrElement.GetTagName( szTagName);
+		chrElement = rootElement.GetChildNode(i);
+		chrElement.GetTagName(szTagName);
 
 		if (szTagName[0] == '#') continue;
 
-		if ( !_stricmp( szTagName, ZTOK_GAME_TYPE))
+		if (!_stricmp(szTagName, ZTOK_GAME_TYPE))
 		{
 			int nID = 0;
-			chrElement.GetAttribute( &nID, "id");
+			chrElement.GetAttribute(&nID, "id");
 
-			m_pGameTypeList->ParseGameTypeList( nID, chrElement);
+			m_pGameTypeList->ParseGameTypeList(nID, chrElement);
 		}
 	}
 
@@ -197,15 +195,15 @@ bool ZConfiguration::LoadGameTypeCfg(const char* szFileName)
 
 bool ZConfiguration::LoadSystem(const char* szFileName)
 {
-	mlog( "Load XML from memory : %s", szFileName);
+	mlog("Load XML from memory : %s", szFileName);
 
 	MXmlDocument xmlConfig;
 	if (!xmlConfig.LoadFromFile(szFileName, ZApplication::GetFileSystem()))
 	{
-		mlog( "- FAIL\n");
+		mlog("- FAIL\n");
 		return false;
 	}
-	mlog( "- SUCCESS\n");
+	mlog("- SUCCESS\n");
 
 	MXmlElement		parentElement = xmlConfig.GetDocumentElement();
 	MXmlElement		serverElement, childElement;
@@ -217,28 +215,28 @@ bool ZConfiguration::LoadSystem(const char* szFileName)
 		m_ServerList.clear();
 
 		m_nServerCount = 0;
-		while ( 1)
+		while (1)
 		{
-			char szText[ 256];
-			sprintf_safe( szText, "%s%d", ZTOK_SERVER, m_nServerCount);
-			if (parentElement.FindChildNode( szText, &serverElement))
+			char szText[256];
+			sprintf_safe(szText, "%s%d", ZTOK_SERVER, m_nServerCount);
+			if (parentElement.FindChildNode(szText, &serverElement))
 			{
-				char szServerIP[ 32];
-				char szName[ 32];
+				char szServerIP[32];
+				char szName[32];
 				int nServerPort;
 				int nServerType;
-				serverElement.GetChildContents( szServerIP,		ZTOK_IP);
-				serverElement.GetChildContents( &nServerPort,	ZTOK_PORT);
-				serverElement.GetChildContents( &nServerType,	ZTOK_TYPE);
-				serverElement.GetChildContents( szName,			ZTOK_NAME);
+				serverElement.GetChildContents(szServerIP, ZTOK_IP);
+				serverElement.GetChildContents(&nServerPort, ZTOK_PORT);
+				serverElement.GetChildContents(&nServerType, ZTOK_TYPE);
+				serverElement.GetChildContents(szName, ZTOK_NAME);
 
-                ZSERVERNODE ServerNode;
-				strcpy_safe( ServerNode.szAddress, szServerIP);
-				strcpy_safe( ServerNode.szName, szName);
+				ZSERVERNODE ServerNode;
+				strcpy_safe(ServerNode.szAddress, szServerIP);
+				strcpy_safe(ServerNode.szName, szName);
 				ServerNode.nPort = nServerPort;
 				ServerNode.nType = nServerType;
 
-				m_ServerList.insert( map<int,ZSERVERNODE>::value_type( m_nServerCount, ServerNode));
+				m_ServerList.insert(map<int, ZSERVERNODE>::value_type(m_nServerCount, ServerNode));
 
 				m_nServerCount++;
 			}
@@ -248,8 +246,8 @@ bool ZConfiguration::LoadSystem(const char* szFileName)
 
 		if (parentElement.FindChildNode(ZTOK_LOCALE_BAREPORT, &childElement))
 		{
-			childElement.GetChildContents( m_szBAReportAddr, ZTOK_ADDR);
-			childElement.GetChildContents( m_szBAReportDir,  ZTOK_DIR);
+			childElement.GetChildContents(m_szBAReportAddr, ZTOK_ADDR);
+			childElement.GetChildContents(m_szBAReportDir, ZTOK_DIR);
 		}
 
 		if (parentElement.FindChildNode(ZTOK_LOCALE_XMLHEADER, &childElement))
@@ -269,22 +267,22 @@ bool ZConfiguration::LoadSystem(const char* szFileName)
 
 		if (parentElement.FindChildNode(ZTOK_LOCALE_IME, &childElement))
 		{
- 			childElement.GetContents(&m_Locale.bIMESupport);
+			childElement.GetContents(&m_Locale.bIMESupport);
 
-			MEvent::SetIMESupport( m_Locale.bIMESupport);
+			MEvent::SetIMESupport(m_Locale.bIMESupport);
 		}
 		if (parentElement.FindChildNode(ZTOK_LOCALE_HOMEPAGE, &childElement))
 		{
-			childElement.GetChildContents( m_Locale.szHomepageUrl,		ZTOK_LOCALE_HOMEPAGE_URL);
-			childElement.GetChildContents( m_Locale.szHomepageTitle,	ZTOK_LOCALE_HOMEPAGE_TITLE);
+			childElement.GetChildContents(m_Locale.szHomepageUrl, ZTOK_LOCALE_HOMEPAGE_URL);
+			childElement.GetChildContents(m_Locale.szHomepageTitle, ZTOK_LOCALE_HOMEPAGE_TITLE);
 		}
 		if (parentElement.FindChildNode(ZTOK_LOCALE_EMBLEM_URL, &childElement))
 		{
-			childElement.GetContents( m_Locale.szEmblemURL);
+			childElement.GetContents(m_Locale.szEmblemURL);
 		}
 		if (parentElement.FindChildNode(ZTOK_LOCALE_CASHSHOP_URL, &childElement))
 		{
-			childElement.GetContents( m_Locale.szCashShopURL);
+			childElement.GetContents(m_Locale.szCashShopURL);
 		}
 		if (parentElement.FindChildNode(ZTOK_LOCATOR_LIST, &childElement))
 		{
@@ -334,26 +332,26 @@ bool ZConfiguration::LoadConfig(const char* szFileName)
 	MXmlElement		parentElement, serverElement, bindsElement;
 	MXmlElement		childElement;
 
-	mlog( "Load Config from file : %s", szFileName );
+	mlog("Load Config from file : %s", szFileName);
 
 	xmlConfig.Create();
 	if (!xmlConfig.LoadFromFile(szFileName))
 	{
-		mlog( "- FAIL\n");
+		mlog("- FAIL\n");
 		xmlConfig.Destroy();
 		return true;
 	}
-	mlog( "- SUCCESS\n");
+	mlog("- SUCCESS\n");
 
 	parentElement = xmlConfig.GetDocumentElement();
 	int iCount = parentElement.GetChildNodeCount();
 
 	if (!parentElement.IsEmpty())
 	{
-		if (parentElement.FindChildNode( ZTOK_SERVER, &serverElement))
+		if (parentElement.FindChildNode(ZTOK_SERVER, &serverElement))
 		{
-			serverElement.GetChildContents( m_szServerIP,	ZTOK_IP);
-			serverElement.GetChildContents( &m_nServerPort,	ZTOK_PORT);
+			serverElement.GetChildContents(m_szServerIP, ZTOK_IP);
+			serverElement.GetChildContents(&m_nServerPort, ZTOK_PORT);
 		}
 		if (parentElement.FindChildNode(ZTOK_VIDEO, &childElement))
 		{
@@ -366,19 +364,22 @@ bool ZConfiguration::LoadConfig(const char* szFileName)
 			m_Video.FullscreenMode = GetFullscreenMode(FullscreenString);
 
 			childElement.GetChildContents(&m_Video.nGamma, ZTOK_VIDEO_GAMMA);
-			childElement.GetChildContents(&m_Video.bReflection,	ZTOK_VIDEO_REFLECTION );
-			childElement.GetChildContents(&m_Video.bLightMap, ZTOK_VIDEO_LIGHTMAP );
-			childElement.GetChildContents(&m_Video.bDynamicLight, ZTOK_VIDEO_DYNAMICLIGHT );
-			childElement.GetChildContents(&m_Video.bShader, ZTOK_VIDEO_SHADER );
-			childElement.GetChildContents(&m_Video.nCharTexLevel, ZTOK_VIDEO_CHARTEXLEVEL );
-			childElement.GetChildContents(&m_Video.nMapTexLevel, ZTOK_VIDEO_MAPTEXLEVEL );
-			childElement.GetChildContents(&m_Video.nEffectLevel, ZTOK_VIDEO_EFFECTLEVEL );
-			childElement.GetChildContents(&m_Video.nTextureFormat, ZTOK_VIDEO_TEXTUREFORMAT );
+			childElement.GetChildContents(&m_Video.bReflection, ZTOK_VIDEO_REFLECTION);
+			childElement.GetChildContents(&m_Video.bLightMap, ZTOK_VIDEO_LIGHTMAP);
+			childElement.GetChildContents(&m_Video.bDynamicLight, ZTOK_VIDEO_DYNAMICLIGHT);
+			childElement.GetChildContents(&m_Video.bShader, ZTOK_VIDEO_SHADER);
+			childElement.GetChildContents(&m_Video.nCharTexLevel, ZTOK_VIDEO_CHARTEXLEVEL);
+			childElement.GetChildContents(&m_Video.nMapTexLevel, ZTOK_VIDEO_MAPTEXLEVEL);
+			childElement.GetChildContents(&m_Video.nEffectLevel, ZTOK_VIDEO_EFFECTLEVEL);
+			childElement.GetChildContents(&m_Video.nTextureFormat, ZTOK_VIDEO_TEXTUREFORMAT);
 			childElement.GetChildContents(&m_Video.bTerrible, ZTOK_VIDEO_HARDWARETNL);
 			childElement.GetChildContents(&VisualFPSLimit, ZTOK_VIDEO_VISUALFPSLIMIT);
 			childElement.GetChildContents(&LogicalFPSLimit, ZTOK_VIDEO_LOGICALFPSLIMIT);
 			childElement.GetChildContents(&bCamFix, ZTOK_VIDEO_CAMFIX);
 			childElement.GetChildContents(&InterfaceFix, ZTOK_VIDEO_INTERFACEFIX);
+			childElement.GetChildContents(&m_Video.bVSync, ZTOK_VIDEO_VSYNC);
+			childElement.GetChildContents(&m_Video.bTripleBuffer, ZTOK_VIDEO_TRIPLEBUFFER);
+			childElement.GetChildContents(&m_Video.bDX9Ex, ZTOK_VIDEO_DX9EX);
 		}
 		if (parentElement.FindChildNode(ZTOK_AUDIO, &childElement))
 		{
@@ -406,7 +407,7 @@ bool ZConfiguration::LoadConfig(const char* szFileName)
 		}
 		if (parentElement.FindChildNode(ZTOK_KEYBOARD, &childElement))
 		{
-			for(int i=0; i<ZACTION_COUNT; i++){
+			for (int i = 0; i < ZACTION_COUNT; i++) {
 				char szItemName[256];
 				strcpy_safe(szItemName, m_Keyboard.ActionKeys[i].szName);
 				_strupr_s(szItemName);
@@ -418,14 +419,14 @@ bool ZConfiguration::LoadConfig(const char* szFileName)
 				MXmlElement actionKeyElement = keyNode;
 
 				int nKey;
-				actionKeyElement.GetAttribute(&nKey,"alt",-1);
-				if(nKey!=-1)
+				actionKeyElement.GetAttribute(&nKey, "alt", -1);
+				if (nKey != -1)
 					m_Keyboard.ActionKeys[i].nVirtualKeyAlt = nKey;
 				actionKeyElement.GetContents(&m_Keyboard.ActionKeys[i].nVirtualKey);
 			}
 		}
 
-		if( parentElement.FindChildNode(ZTOK_MACRO, &childElement) )
+		if (parentElement.FindChildNode(ZTOK_MACRO, &childElement))
 		{
 			childElement.GetChildContents(m_Macro.szMacro[0], ZTOK_MACRO_F1, 255);
 			childElement.GetChildContents(m_Macro.szMacro[1], ZTOK_MACRO_F2, 255);
@@ -477,7 +478,6 @@ bool ZConfiguration::LoadConfig(const char* szFileName)
 			childElement.GetChildContents(&FastWeaponCycle, ZTOK_ETC_FASTWEAPONCYCLE);
 		}
 
-
 		if (parentElement.FindChildNode(ZTOK_CHAT, &childElement))
 		{
 			char buf[1024];
@@ -523,7 +523,8 @@ struct ConfigSection
 	{
 		if (!IsFirst) {
 			Element.AppendText("\n\t\t");
-		} else {
+		}
+		else {
 			IsFirst = false;
 		}
 
@@ -550,7 +551,7 @@ struct ConfigSection
 	}
 };
 
-bool ZConfiguration::SaveToFile(const char *szFileName, const char* szHeader)
+bool ZConfiguration::SaveToFile(const char* szFileName, const char* szHeader)
 {
 	MXmlDocument xmlConfig;
 	xmlConfig.Create();
@@ -563,7 +564,7 @@ bool ZConfiguration::SaveToFile(const char *szFileName, const char* szHeader)
 
 	auto AddIntersectionWhitespace = [&] {
 		RootElement.AppendText("\n\n\t");
-	};
+		};
 
 	// Server
 	{
@@ -604,6 +605,9 @@ bool ZConfiguration::SaveToFile(const char *szFileName, const char* szHeader)
 		Section.Add(ZTOK_VIDEO_LOGICALFPSLIMIT, LogicalFPSLimit);
 		Section.Add(ZTOK_VIDEO_CAMFIX, bCamFix);
 		Section.Add(ZTOK_VIDEO_INTERFACEFIX, InterfaceFix);
+		Section.Add(ZTOK_VIDEO_VSYNC, m_Video.bVSync);
+		Section.Add(ZTOK_VIDEO_TRIPLEBUFFER, m_Video.bTripleBuffer);
+		Section.Add(ZTOK_VIDEO_DX9EX, m_Video.bDX9Ex);
 	}
 
 	AddIntersectionWhitespace();
@@ -740,7 +744,7 @@ void ZConfiguration::Init()
 	m_Video.nColorBits = 32;
 	m_Video.nGamma = 255;
 	m_Video.bReflection = true;
-	m_Video.bLightMap	= true;
+	m_Video.bLightMap = true;
 	m_Video.bDynamicLight = true;
 	m_Video.bShader = true;
 	// 0 = high
@@ -749,19 +753,22 @@ void ZConfiguration::Init()
 	m_Video.nEffectLevel = Z_VIDEO_EFFECT_HIGH;
 	m_Video.nTextureFormat = 1;
 	m_Video.bTerrible = false;
+	m_Video.bVSync = false;  // VSync desactivado por defecto
+	m_Video.bTripleBuffer = false;  // Triple buffering desactivado por defecto
+	m_Video.bDX9Ex = true;  // DirectX 9 Extended desactivado por defecto (requiere Windows Vista+)
 	bCamFix = true;
 	InterfaceFix = false;
 
 	m_Audio.bBGMEnabled = true;
-	m_Audio.fBGMVolume	= 0.3f;
-	m_Audio.bBGMMute	= false;
+	m_Audio.fBGMVolume = 0.3f;
+	m_Audio.bBGMMute = false;
 	m_Audio.bEffectMute = false;
 	m_Audio.fEffectVolume = 0.3f;
-	m_Audio.b3DSound	= true;
-	m_Audio.b8BitSound	= false;
-	m_Audio.bInverse	= false;
-	m_Audio.bHWMixing	= false;
-	m_Audio.bHitSound	= true;
+	m_Audio.b3DSound = true;
+	m_Audio.b8BitSound = false;
+	m_Audio.bInverse = false;
+	m_Audio.bHWMixing = false;
+	m_Audio.bHitSound = true;
 	m_Audio.bNarrationSound = true;
 
 	m_Mouse.fSensitivity = 0.5f;
@@ -802,7 +809,6 @@ void ZConfiguration::Init()
 void ZConfiguration::LoadDefaultKeySetting()
 {
 	static ZACTIONKEYDESCRIPTION DefaultActionKeys[ZACTION_COUNT] = {
-
 		{"Forward",		0x11, -1},	// 'w'
 		{"Back",		0x1f, -1},	// 's'
 		{"Left",		0x1e, -1},	// 'a'
@@ -839,29 +845,28 @@ void ZConfiguration::LoadDefaultKeySetting()
 		{"VoiceChat", 37, -1 },	// 'k'
 		{"Chat", DIK_RETURN, -1},	// 'enter'
 		{"TeamChat", DIK_APOSTROPHE, -1},	// '''
-		// Ãß°¡ by Á¤µ¿¼· @ 2006/3/16
+		// ï¿½ß°ï¿½ by ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ @ 2006/3/16
 	};
 
-	_ASSERT(ZACTION_COUNT==sizeof(DefaultActionKeys)/sizeof(ZACTIONKEYDESCRIPTION));
+	_ASSERT(ZACTION_COUNT == sizeof(DefaultActionKeys) / sizeof(ZACTIONKEYDESCRIPTION));
 
-	memcpy(m_Keyboard.ActionKeys, DefaultActionKeys, sizeof(ZACTIONKEYDESCRIPTION)*ZACTION_COUNT);
+	memcpy(m_Keyboard.ActionKeys, DefaultActionKeys, sizeof(ZACTIONKEYDESCRIPTION) * ZACTION_COUNT);
 }
 
-ZSERVERNODE ZConfiguration::GetServerNode( int nNum) const
+ZSERVERNODE ZConfiguration::GetServerNode(int nNum) const
 {
 	ZSERVERNODE ServerNode;
 
-	map<int,ZSERVERNODE>::const_iterator iterator;
+	map<int, ZSERVERNODE>::const_iterator iterator;
 
-	iterator = m_ServerList.find( nNum);
-	if ( iterator != m_ServerList.end())
+	iterator = m_ServerList.find(nNum);
+	if (iterator != m_ServerList.end())
 	{
 		ServerNode = (*iterator).second;
 	}
 
 	return ServerNode;
 }
-
 
 bool ZConfiguration::ConvertMacroStrings()
 {

@@ -94,6 +94,9 @@ bool SupportsVertexShaderVersion(int Major, int Minor);
 bool SupportsPixelShaderVersion(int Major, int Minor);
 int MaxStreamsSupported();
 void SetVSync(bool b);
+void SetTripleBuffer(bool b);
+void SetDX9Ex(bool b);
+bool GetDX9Ex();  // Verificar si DX9Ex está activo
 GraphicsAPI GetGraphicsAPI();
 
 #ifdef _WIN32

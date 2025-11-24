@@ -202,6 +202,10 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
       <Project>{F2A1CD13-2DC8-391A-BFB9-3DB0A6206247}</Project>
       <Name>MatchServer_lib</Name>
     </ProjectReference>
+    <ProjectReference Include="C:\ogz-source-master-LITE\build\win32\RealSpace2\MaterialTest\MaterialTest.vcxproj">
+      <Project>{A8DBBDE5-5CB7-3041-BF25-771C6AD40592}</Project>
+      <Name>MaterialTest</Name>
+    </ProjectReference>
     <ProjectReference Include="C:\ogz-source-master-LITE\build\win32\Mint2\Mint2.vcxproj">
       <Project>{0DFFEE67-DDAD-3BA5-A00C-E4E66808F621}</Project>
       <Name>Mint2</Name>

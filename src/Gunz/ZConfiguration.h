@@ -40,6 +40,9 @@ struct ZCONFIG_VIDEO
 	int nEffectLevel;
 	int nTextureFormat;
 	bool bTerrible;
+	bool bVSync;
+	bool bTripleBuffer;
+	bool bDX9Ex;  // DirectX 9 Extended (mejor rendimiento en Windows Vista+)
 };
 
 struct ZCONFIG_AUDIO{
@@ -210,6 +213,9 @@ public:
 	float GetFOV() const { return FOV; }
 	bool GetColorInvert() const { return ColorInvert; }
 	bool GetMonochrome() const { return Monochrome; }
+	bool GetVSync() const { return m_Video.bVSync; }
+	bool GetTripleBuffer() const { return m_Video.bTripleBuffer; }
+	bool GetDX9Ex() const { return m_Video.bDX9Ex; }
 
 	bool IsComplete() const			{ return m_bIsComplete; }
 
@@ -322,6 +328,9 @@ ZConfiguration*	ZGetConfiguration();
 #define ZTOK_VIDEO_LOGICALFPSLIMIT "LOGICALFPSLIMIT"
 #define ZTOK_VIDEO_CAMFIX		"CAMFIX"
 #define ZTOK_VIDEO_INTERFACEFIX	"INTERFACEFIX"
+#define ZTOK_VIDEO_VSYNC		"VSYNC"
+#define ZTOK_VIDEO_TRIPLEBUFFER	"TRIPLEBUFFER"
+#define ZTOK_VIDEO_DX9EX		"DX9EX"
 
 #define ZTOK_AUDIO					"AUDIO"
 #define ZTOK_AUDIO_BGM_ENABLED		"BGM_ENABLED"

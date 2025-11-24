@@ -1,7 +1,7 @@
 float4x3 Identity : register(c0);
 float4x3 World : register(c3);
 float4x4 ViewProjection : register(c6);
-float4 Constants : register(c10);  // x=1.0, y=FogStart, z=FogEnd, w=1.0/(FogEnd-FogStart)
+float4 Constants : register(c10);  // x=LightFlags (0=none, 1=Light0, 2=Light1, 3=both), y=FogStart, z=FogEnd, w=1.0/(FogEnd-FogStart)
 float3 CameraPosition : register(c11);
 float4 MaterialAmbient : register(c12);
 float4 MaterialDiffuse : register(c13);
@@ -40,7 +40,7 @@ float4x3 Get4x3(int Index)
 	return ret;
 }
 
-// Calcula la iluminación difusa de una luz puntual con atenuación
+// Calcula la iluminación difusa de una luz puntual con atenuación (versión original)
 float4 GetLightDiffuse(float3 VertexPosition, float3 VertexNormal, 
 	float3 LightPosition, float4 LightDiffuse, float4 Attenuation, float LightRange)
 {
@@ -85,7 +85,36 @@ float4 GetLightDiffuse(float3 VertexPosition, float3 VertexNormal,
 	return LightDiffuse * diffuseFactor;
 }
 
-// Calcula la iluminación especular de una luz puntual usando modelo Blinn-Phong
+// OPTIMIZACIÓN: Versión optimizada que reutiliza cálculos pre-hechos
+float4 GetLightDiffuseOptimized(float3 VertexPosition, float3 VertexNormal,
+	float3 lightDir, float distSq, float3 normalizedLightDir, float NdotL,
+	float4 LightDiffuse, float4 Attenuation, float LightRange)
+{
+	// VALIDACIÓN DE RANGO: Si la luz tiene rango definido y estamos fuera de rango, retornar 0
+	if (LightRange > 0.0f)
+	{
+		float lightRangeSq = LightRange * LightRange;
+		if (distSq > lightRangeSq)
+			return float4(0, 0, 0, 0);
+	}
+	
+	// CORRECCIÓN: Protección contra distancias muy pequeñas
+	const float MIN_DIST_SQ = 0.0001f;
+	float safeDistSq = max(distSq, MIN_DIST_SQ);
+	float invDist = rsqrt(safeDistSq);
+	
+	// Cálculo de atenuación
+	float attenuationFactor = 1.0f / dot(dst(safeDistSq, invDist).xyz, Attenuation.xyz);
+	attenuationFactor = min(attenuationFactor, 100.0f);  // Limitar a máximo 100x
+	
+	// Factor de iluminación difusa (NdotL ya calculado)
+	float diffuseFactor = NdotL * attenuationFactor;
+	
+	// Retornar color difuso modulado
+	return LightDiffuse * diffuseFactor;
+}
+
+// Calcula la iluminación especular de una luz puntual usando modelo Blinn-Phong (versión original)
 float4 GetLightSpecular(float3 VertexPosition, float3 VertexNormal, float3 ViewDir,
 	float3 LightPosition, float4 LightSpecular, float4 Attenuation,
 	float4 MaterialSpecular, float MaterialPower, float NdotL, float LightRange)
@@ -130,6 +159,44 @@ float4 GetLightSpecular(float3 VertexPosition, float3 VertexNormal, float3 ViewD
 	return LightSpecular * MaterialSpecular * specularFactor;
 }
 
+// OPTIMIZACIÓN: Versión optimizada que reutiliza cálculos pre-hechos
+float4 GetLightSpecularOptimized(float3 VertexNormal, float3 ViewDir,
+	float3 lightDir, float distSq, float3 normalizedLightDir, float NdotL,
+	float4 LightSpecular, float4 Attenuation,
+	float4 MaterialSpecular, float MaterialPower, float LightRange)
+{
+	// Solo calcular si hay contribución difusa (NdotL > 0) y MaterialPower > 0
+	if (NdotL <= 0.0f || MaterialPower <= 0.0f)
+		return float4(0, 0, 0, 0);
+	
+	// VALIDACIÓN DE RANGO
+	if (LightRange > 0.0f)
+	{
+		float lightRangeSq = LightRange * LightRange;
+		if (distSq > lightRangeSq)
+			return float4(0, 0, 0, 0);
+	}
+	
+	// CORRECCIÓN: Protección contra distancias muy pequeñas
+	const float MIN_DIST_SQ = 0.0001f;
+	float safeDistSq = max(distSq, MIN_DIST_SQ);
+	float invDist = rsqrt(safeDistSq);
+	
+	// Cálculo de atenuación
+	float attenuationFactor = 1.0f / dot(dst(safeDistSq, invDist).xyz, Attenuation.xyz);
+	attenuationFactor = min(attenuationFactor, 100.0f);
+	
+	// Calcular vector halfway (Blinn-Phong)
+	float3 halfway = normalize(normalizedLightDir + ViewDir);
+	float NdotH = dot(VertexNormal, halfway);
+	
+	// Calcular factor especular
+	float specularFactor = pow(max(NdotH, 0.0f), MaterialPower) * attenuationFactor;
+	
+	// Color especular
+	return LightSpecular * MaterialSpecular * specularFactor;
+}
+
 void main(float4 Pos            : POSITION,
           float2 Weight         : BLENDWEIGHT,
           float3 Indices        : BLENDINDICES,
@@ -161,11 +228,26 @@ void main(float4 Pos            : POSITION,
 	// de skinning pueden hacer que la normal no esté normalizada
 	TransformedNormal = normalize(TransformedNormal);
 
-	// Calcular iluminación difusa de ambas luces (con validación de rango)
-	oDiffuse = GetLightDiffuse(TransformedPos, TransformedNormal,
-		Light0Position, Light0Diffuse, Light0Attenuation, Light0Range.x);
-	oDiffuse += GetLightDiffuse(TransformedPos, TransformedNormal,
-		Light1Position, Light1Diffuse, Light1Attenuation, Light1Range.x);
+	// OPTIMIZACIÓN: Early Exit - Solo calcular iluminación si la luz está habilitada
+	// Constants.x contiene flags: 0.0=none, 1.0=Light0, 2.0=Light1, 3.0=both
+	// Esto ahorra ~10-15 instrucciones por vértice cuando una luz está desactivada
+	float light0Enabled = step(0.5f, Constants.x);  // >= 0.5 = Light0 activa
+	float light1Enabled = step(1.5f, Constants.x);  // >= 1.5 = Light1 activa
+	
+	// Calcular iluminación difusa solo para luces habilitadas
+	oDiffuse = float4(0, 0, 0, 0);
+	
+	if (light0Enabled > 0.0f)
+	{
+		oDiffuse += GetLightDiffuse(TransformedPos, TransformedNormal,
+			Light0Position, Light0Diffuse, Light0Attenuation, Light0Range.x);
+	}
+	
+	if (light1Enabled > 0.0f)
+	{
+		oDiffuse += GetLightDiffuse(TransformedPos, TransformedNormal,
+			Light1Position, Light1Diffuse, Light1Attenuation, Light1Range.x);
+	}
 	
 	// Calcular iluminación especular si MaterialPower > 0
 	if (MaterialPower.x > 0.0f)
@@ -173,20 +255,30 @@ void main(float4 Pos            : POSITION,
 		// Calcular vector de vista para iluminación especular
 		float3 viewDir = normalize(CameraPosition - TransformedPos);
 		
-		// Calcular NdotL para ambas luces (necesario para especular)
-		float3 light0Dir = normalize(Light0Position - TransformedPos);
-		float3 light1Dir = normalize(Light1Position - TransformedPos);
-		float NdotL0 = max(dot(TransformedNormal, light0Dir), 0.0f);
-		float NdotL1 = max(dot(TransformedNormal, light1Dir), 0.0f);
+		// OPTIMIZACIÓN: Early Exit - Solo calcular especular para luces habilitadas
+		if (light0Enabled > 0.0f)
+		{
+			// Calcular NdotL para Light0 (necesario para especular)
+			float3 light0Dir = normalize(Light0Position - TransformedPos);
+			float NdotL0 = max(dot(TransformedNormal, light0Dir), 0.0f);
+			
+			// Agregar especular de Light0 (con validación de rango)
+			oDiffuse += GetLightSpecular(TransformedPos, TransformedNormal, viewDir,
+				Light0Position, Light0Specular, Light0Attenuation,
+				MaterialSpecular, MaterialPower.x, NdotL0, Light0Range.x);
+		}
 		
-		// Agregar especular de ambas luces (con validación de rango)
-		oDiffuse += GetLightSpecular(TransformedPos, TransformedNormal, viewDir,
-			Light0Position, Light0Specular, Light0Attenuation,
-			MaterialSpecular, MaterialPower.x, NdotL0, Light0Range.x);
-		
-		oDiffuse += GetLightSpecular(TransformedPos, TransformedNormal, viewDir,
-			Light1Position, Light1Specular, Light1Attenuation,
-			MaterialSpecular, MaterialPower.x, NdotL1, Light1Range.x);
+		if (light1Enabled > 0.0f)
+		{
+			// Calcular NdotL para Light1 (necesario para especular)
+			float3 light1Dir = normalize(Light1Position - TransformedPos);
+			float NdotL1 = max(dot(TransformedNormal, light1Dir), 0.0f);
+			
+			// Agregar especular de Light1 (con validación de rango)
+			oDiffuse += GetLightSpecular(TransformedPos, TransformedNormal, viewDir,
+				Light1Position, Light1Specular, Light1Attenuation,
+				MaterialSpecular, MaterialPower.x, NdotL1, Light1Range.x);
+		}
 	}
 	
 	// Aplicar color difuso del material

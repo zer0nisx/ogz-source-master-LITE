@@ -15,6 +15,7 @@
 		<BuildDependency Project="MDatabase/MDatabase.vcxproj"/>
 		<BuildDependency Project="MatchServer/MatchServer.vcxproj"/>
 		<BuildDependency Project="MatchServer/MatchServer_lib.vcxproj"/>
+		<BuildDependency Project="RealSpace2/MaterialTest/MaterialTest.vcxproj"/>
 		<BuildDependency Project="Mint2/Mint2.vcxproj"/>
 		<BuildDependency Project="PartsIndexer/PartsIndexer.vcxproj"/>
 		<BuildDependency Project="PatchCreator/PatchCreator.vcxproj"/>
@@ -135,6 +136,11 @@
 		<Build Solution="Release|*" Project="false"/>
 		<Build Solution="MinSizeRel|*" Project="false"/>
 		<Build Solution="RelWithDebInfo|*" Project="false"/>
+	</Project>
+	<Project Path="RealSpace2/MaterialTest/MaterialTest.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="a8dbbde5-5cb7-3041-bf25-771c6ad40592">
+		<BuildDependency Project="RealSpace2/RealSpace2.vcxproj"/>
+		<BuildDependency Project="ZERO_CHECK.vcxproj"/>
+		<BuildDependency Project="cml/cml.vcxproj"/>
 	</Project>
 	<Project Path="Mint2/Mint2.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="0dffee67-ddad-3ba5-a00c-e4e66808f621">
 		<BuildDependency Project="ZERO_CHECK.vcxproj"/>

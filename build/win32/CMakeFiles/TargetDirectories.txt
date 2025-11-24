@@ -55,6 +55,10 @@ C:/ogz-source-master-LITE/build/win32/RealSpace2/CMakeFiles/RealSpace2_ORIGINAL.
 C:/ogz-source-master-LITE/build/win32/RealSpace2/CMakeFiles/RealSpace2.dir
 C:/ogz-source-master-LITE/build/win32/RealSpace2/CMakeFiles/RUN_TESTS.dir
 C:/ogz-source-master-LITE/build/win32/RealSpace2/CMakeFiles/INSTALL.dir
+C:/ogz-source-master-LITE/build/win32/RealSpace2/MaterialTest/CMakeFiles/MaterialTest.dir
+C:/ogz-source-master-LITE/build/win32/RealSpace2/MaterialTest/CMakeFiles/RUN_TESTS.dir
+C:/ogz-source-master-LITE/build/win32/RealSpace2/MaterialTest/CMakeFiles/INSTALL.dir
+C:/ogz-source-master-LITE/build/win32/RealSpace2/MaterialTest/CMakeFiles/ALL_BUILD.dir
 C:/ogz-source-master-LITE/build/win32/SafeUDP/CMakeFiles/SafeUDP_ORIGINAL.dir
 C:/ogz-source-master-LITE/build/win32/SafeUDP/CMakeFiles/SafeUDP.dir
 C:/ogz-source-master-LITE/build/win32/SafeUDP/CMakeFiles/RUN_TESTS.dir
