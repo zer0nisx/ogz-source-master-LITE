@@ -91,7 +91,7 @@ bool ZQuest::Load()
 		mlog("Error while Read m_DropTable %s", FILENAME_ZNPC_DESC);
 		return false;
 	}
-	
+
 	if (!m_NPCCatalogue.ReadXml(ZApplication::GetFileSystem(), FILENAME_ZNPC_DESC))
 	{
 		mlog("Error while Read Item Descriptor %s", FILENAME_ZNPC_DESC);
@@ -113,7 +113,7 @@ bool ZQuest::Load()
 	}
 	AniFrameInfo::m_pEventFunc = [](const RAniEventInfo& Info, v3 Pos) {
 		ZGetSoundEngine()->PlaySound(Info.Filename, Pos, false);
-	};
+		};
 
 	m_bLoaded = true;
 	return true;
@@ -139,12 +139,10 @@ void ZQuest::OnGameCreate()
 {
 	if (!ZGetGameTypeManager()->IsQuestDerived(ZGetGameClient()->GetMatchStageSetting()->GetGameType())) return;
 
-
 	// ���⼭ npc.xml �� ����Ʈ�� �ʿ��� ������ �д´�. ���� �̹� ������ �о����ٸ� ���� �ʴ´�.
 	// ������ ZQuest::OnDestroyOnce()�� ���������� ȣ������ ����.
 	OnCreateOnce();
 	Create();
-
 }
 
 void ZQuest::OnGameDestroy()
@@ -152,38 +150,34 @@ void ZQuest::OnGameDestroy()
 	if (!ZGetGameTypeManager()->IsQuestDerived(ZGetGameClient()->GetMatchStageSetting()->GetGameType())) return;
 
 	Destroy();
-
 }
-
 
 void ZQuest::OnGameUpdate(float fElapsed)
 {
 	if (!ZGetGameTypeManager()->IsQuestDerived(ZGetGameClient()->GetMatchStageSetting()->GetGameType())) return;
 
 	UpdateNavMeshWeight(fElapsed);
-
 }
-
 
 #else
 
-	void ZQuest::OnGameCreate() {}
-	void ZQuest::OnGameDestroy() {} 
-	void ZQuest::OnGameUpdate(float fElapsed) {} 
-	bool ZQuest::OnCreate(){return true;}
-	void ZQuest::OnDestroy() {}
+void ZQuest::OnGameCreate() {}
+void ZQuest::OnGameDestroy() {}
+void ZQuest::OnGameUpdate(float fElapsed) {}
+bool ZQuest::OnCreate() { return true; }
+void ZQuest::OnDestroy() {}
 #endif
 
 void ZQuest::UpdateNavMeshWeight(float fDelta)
 {
 	if ((ZGetGame()->GetTime() - m_fLastWeightTime) >= 1.0f)
 	{
-		RNavigationMesh* pNavMesh = ZGetGame()->GetWorld()->GetBsp()->GetNavigationMesh();		
+		RNavigationMesh* pNavMesh = ZGetGame()->GetWorld()->GetBsp()->GetNavigationMesh();
 		if (pNavMesh != NULL)
 		{
 			pNavMesh->ClearAllNodeWeight();
 			ZNPCObjectMap* pNPCObjectMap = ZGetObjectManager()->GetNPCObjectMap();
-			for(ZNPCObjectMap::iterator i = pNPCObjectMap->begin();i!=pNPCObjectMap->end();i++)
+			for (ZNPCObjectMap::iterator i = pNPCObjectMap->begin(); i != pNPCObjectMap->end(); i++)
 			{
 				ZObject* pNPCObject = i->second;
 				RNavigationNode* pNode = pNavMesh->FindClosestNode(pNPCObject->GetPosition());
@@ -196,15 +190,14 @@ void ZQuest::UpdateNavMeshWeight(float fDelta)
 		}
 		m_fLastWeightTime = ZGetGame()->GetTime();
 	}
-
 }
 
 bool ZQuest::OnCommand(MCommand* pCommand)
 {
 	switch (pCommand->GetID())
 	{
-		HANDLE_COMMAND(MC_QUEST_GAME_INFO					,OnQuestGameInfo);
-		HANDLE_COMMAND(MC_MATCH_RESPONSE_MONSTER_BIBLE_INFO ,OnSetMonsterBibleInfo);
+		HANDLE_COMMAND(MC_QUEST_GAME_INFO, OnQuestGameInfo);
+		HANDLE_COMMAND(MC_MATCH_RESPONSE_MONSTER_BIBLE_INFO, OnSetMonsterBibleInfo);
 	}
 
 	return false;
@@ -214,43 +207,40 @@ bool ZQuest::OnGameCommand(MCommand* pCommand)
 {
 	switch (pCommand->GetID())
 	{
-		HANDLE_COMMAND(MC_QUEST_NPC_LOCAL_SPAWN						,OnNPCSpawn);
-		HANDLE_COMMAND(MC_QUEST_NPC_SPAWN							,OnNPCSpawn);
-		HANDLE_COMMAND(MC_QUEST_NPC_DEAD							,OnNPCDead);
-		HANDLE_COMMAND(MC_QUEST_PEER_NPC_DEAD						,OnPeerNPCDead);
-		HANDLE_COMMAND(MC_QUEST_ENTRUST_NPC_CONTROL					,OnEntrustNPCControl);
-		HANDLE_COMMAND(MC_QUEST_PEER_NPC_BASICINFO					,OnPeerNPCBasicInfo);
-		HANDLE_COMMAND(MC_QUEST_PEER_NPC_HPINFO						,OnPeerNPCHPInfo);
-		HANDLE_COMMAND(MC_QUEST_PEER_NPC_ATTACK_MELEE				,OnPeerNPCAttackMelee);
-		HANDLE_COMMAND(MC_QUEST_PEER_NPC_ATTACK_RANGE				,OnPeerNPCAttackRange);
-		HANDLE_COMMAND(MC_QUEST_PEER_NPC_SKILL_START				,OnPeerNPCSkillStart);
-		HANDLE_COMMAND(MC_QUEST_PEER_NPC_SKILL_EXECUTE				,OnPeerNPCSkillExecute);
+		HANDLE_COMMAND(MC_QUEST_NPC_LOCAL_SPAWN, OnNPCSpawn);
+		HANDLE_COMMAND(MC_QUEST_NPC_SPAWN, OnNPCSpawn);
+		HANDLE_COMMAND(MC_QUEST_NPC_DEAD, OnNPCDead);
+		HANDLE_COMMAND(MC_QUEST_PEER_NPC_DEAD, OnPeerNPCDead);
+		HANDLE_COMMAND(MC_QUEST_ENTRUST_NPC_CONTROL, OnEntrustNPCControl);
+		HANDLE_COMMAND(MC_QUEST_PEER_NPC_BASICINFO, OnPeerNPCBasicInfo);
+		HANDLE_COMMAND(MC_QUEST_PEER_NPC_HPINFO, OnPeerNPCHPInfo);
+		HANDLE_COMMAND(MC_QUEST_PEER_NPC_ATTACK_MELEE, OnPeerNPCAttackMelee);
+		HANDLE_COMMAND(MC_QUEST_PEER_NPC_ATTACK_RANGE, OnPeerNPCAttackRange);
+		HANDLE_COMMAND(MC_QUEST_PEER_NPC_SKILL_START, OnPeerNPCSkillStart);
+		HANDLE_COMMAND(MC_QUEST_PEER_NPC_SKILL_EXECUTE, OnPeerNPCSkillExecute);
 
-		HANDLE_COMMAND(MC_QUEST_REFRESH_PLAYER_STATUS				,OnRefreshPlayerStatus);
-		HANDLE_COMMAND(MC_QUEST_NPC_ALL_CLEAR						,OnClearAllNPC);
-		HANDLE_COMMAND(MC_QUEST_ROUND_START							,OnQuestRoundStart);
-		HANDLE_COMMAND(MC_MATCH_QUEST_PLAYER_DEAD					,OnQuestPlayerDead);
-		HANDLE_COMMAND(MC_QUEST_COMBAT_STATE						,OnQuestCombatState);
-		HANDLE_COMMAND(MC_QUEST_MOVETO_PORTAL						,OnMovetoPortal);
-		HANDLE_COMMAND(MC_QUEST_READYTO_NEWSECTOR					,OnReadyToNewSector);
-		HANDLE_COMMAND(MC_QUEST_SECTOR_START						,OnSectorStart);
-		HANDLE_COMMAND(MC_QUEST_OBTAIN_QUESTITEM					,OnObtainQuestItem);
-		HANDLE_COMMAND(MC_QUEST_OBTAIN_ZITEM						,OnObtainZItem);
-		HANDLE_COMMAND(MC_QUEST_SECTOR_BONUS						,OnSectorBonus);
+		HANDLE_COMMAND(MC_QUEST_REFRESH_PLAYER_STATUS, OnRefreshPlayerStatus);
+		HANDLE_COMMAND(MC_QUEST_NPC_ALL_CLEAR, OnClearAllNPC);
+		HANDLE_COMMAND(MC_QUEST_ROUND_START, OnQuestRoundStart);
+		HANDLE_COMMAND(MC_MATCH_QUEST_PLAYER_DEAD, OnQuestPlayerDead);
+		HANDLE_COMMAND(MC_QUEST_COMBAT_STATE, OnQuestCombatState);
+		HANDLE_COMMAND(MC_QUEST_MOVETO_PORTAL, OnMovetoPortal);
+		HANDLE_COMMAND(MC_QUEST_READYTO_NEWSECTOR, OnReadyToNewSector);
+		HANDLE_COMMAND(MC_QUEST_SECTOR_START, OnSectorStart);
+		HANDLE_COMMAND(MC_QUEST_OBTAIN_QUESTITEM, OnObtainQuestItem);
+		HANDLE_COMMAND(MC_QUEST_OBTAIN_ZITEM, OnObtainZItem);
+		HANDLE_COMMAND(MC_QUEST_SECTOR_BONUS, OnSectorBonus);
 
-		HANDLE_COMMAND(MC_QUEST_COMPLETED							,OnQuestCompleted);
-		HANDLE_COMMAND(MC_QUEST_FAILED								,OnQuestFailed);
-	
-		HANDLE_COMMAND(MC_QUEST_PING								,OnQuestPing);
+		HANDLE_COMMAND(MC_QUEST_COMPLETED, OnQuestCompleted);
+		HANDLE_COMMAND(MC_QUEST_FAILED, OnQuestFailed);
+
+		HANDLE_COMMAND(MC_QUEST_PING, OnQuestPing);
 
 #ifdef _QUEST_ITEM
-		HANDLE_COMMAND(MC_MATCH_USER_REWARD_QUEST					,OnRewardQuest);
-		HANDLE_COMMAND(MC_MATCH_NEW_MONSTER_INFO					,OnNewMonsterInfo );
+		HANDLE_COMMAND(MC_MATCH_USER_REWARD_QUEST, OnRewardQuest);
+		HANDLE_COMMAND(MC_MATCH_NEW_MONSTER_INFO, OnNewMonsterInfo);
 #endif
-		
-		
 	}
-
 
 	return false;
 }
@@ -262,11 +252,10 @@ bool ZQuest::OnNPCSpawn(MCommand* pCommand)
 	MUID uidChar, uidNPC;
 	unsigned char nNPCType, nPositionIndex;
 
-	pCommand->GetParameter(&uidChar,			0, MPT_UID);
-	pCommand->GetParameter(&uidNPC,				1, MPT_UID);
-	pCommand->GetParameter(&nNPCType,			2, MPT_UCHAR);
-	pCommand->GetParameter(&nPositionIndex,		3, MPT_UCHAR);
-
+	pCommand->GetParameter(&uidChar, 0, MPT_UID);
+	pCommand->GetParameter(&uidNPC, 1, MPT_UID);
+	pCommand->GetParameter(&nNPCType, 2, MPT_UCHAR);
+	pCommand->GetParameter(&nPositionIndex, 3, MPT_UCHAR);
 
 	MQUEST_NPC NPCType = MQUEST_NPC(nNPCType);
 
@@ -286,16 +275,14 @@ bool ZQuest::OnNPCSpawn(MCommand* pCommand)
 
 	ZMapSpawnData* pSpawnData = pMSM->GetSpawnData(nSpawnType, nPositionIndex);
 
-	rvector NPCPos = rvector(0,0,0);
-	rvector NPCDir = rvector(1,0,0);
+	rvector NPCPos = rvector(0, 0, 0);
+	rvector NPCDir = rvector(1, 0, 0);
 
 	if (pSpawnData)
 	{
 		NPCPos = pSpawnData->m_Pos;
 		NPCDir = pSpawnData->m_Dir;
 	}
-	
-	
 
 	// ���� ���ҽ� �ε��� �������� �ε� - �̷����� �׽�Ʈ���� ������Ѵ�.
 //	if (ZIsLaunchDevelop())
@@ -320,13 +307,12 @@ bool ZQuest::OnNPCSpawn(MCommand* pCommand)
 		pNewActor->SetDirection(NPCDir);
 		bool bMyControl = (uidChar == ZGetGameClient()->GetPlayerUID());
 		pNewActor->SetMyControl(bMyControl);
-		
-		ZCharacter *pOwner = ZGetCharacterManager()->Find(uidChar);
-		if(pOwner)
+
+		ZCharacter* pOwner = ZGetCharacterManager()->Find(uidChar);
+		if (pOwner)
 			pNewActor->SetOwner(pOwner->GetUserName());
 
-		if(pNewActor->m_pVMesh) {
-		
+		if (pNewActor->m_pVMesh) {
 			D3DCOLORVALUE color;
 
 			color.r = pNPCInfo->vColor.x;
@@ -340,17 +326,12 @@ bool ZQuest::OnNPCSpawn(MCommand* pCommand)
 		ZGetObjectManager()->Add(pNewActor);
 		ZGetEffectManager()->AddReBirthEffect(NPCPos);
 
-
 		// ���� ������ NPC�� �����ϸ� �ڵ������� boss ���
 		if ((pNPCInfo->nGrade == NPC_GRADE_BOSS) || (pNPCInfo->nGrade == NPC_GRADE_LEGENDARY))
 		{
 			m_GameInfo.GetBosses().push_back(uidNPC);
 		}
 	}
-
-	
-	
-
 
 	return true;
 }
@@ -359,8 +340,8 @@ bool ZQuest::OnNPCDead(MCommand* pCommand)
 {
 	MUID uidPlayer, uidNPC;
 
-	pCommand->GetParameter(&uidPlayer,	0, MPT_UID);
-	pCommand->GetParameter(&uidNPC,		1, MPT_UID);
+	pCommand->GetParameter(&uidPlayer, 0, MPT_UID);
+	pCommand->GetParameter(&uidNPC, 1, MPT_UID);
 
 	ZActor* pActor = ZGetObjectManager()->GetNPCObject(uidNPC);
 	if (pActor)
@@ -398,11 +379,9 @@ bool ZQuest::OnQuestGroupLoad(MCommand* pCommand)
 	ZGetNpcMeshMgr()->CheckUnUsed();// ��� �����ϴ°ɷ� üũ�ϰ�
 
 	if( pGroup ) {
-
 		MNPCList::iterator it;
 
 		for( it = pGroup->m_NpcList.begin();it!=pGroup->m_NpcList.end();++it) {
-
 			ZGetNpcMeshMgr()->Load( (char*)(*it).c_str() );
 		}
 	}
@@ -425,18 +404,17 @@ bool ZQuest::OnQuestGroupClear(MCommand* pCommand)
 bool ZQuest::OnEntrustNPCControl(MCommand* pCommand)
 {
 	MUID uidChar, uidNPC;
-	pCommand->GetParameter(&uidChar,	0, MPT_UID);
-	pCommand->GetParameter(&uidNPC,		1, MPT_UID);
+	pCommand->GetParameter(&uidChar, 0, MPT_UID);
+	pCommand->GetParameter(&uidNPC, 1, MPT_UID);
 
 	ZActor* pNPC = ZGetObjectManager()->GetNPCObject(uidNPC);
 	if (pNPC)
 	{
-		// uidChar�� ���÷��̾� UID�̸� �ش� NPC�� ���� �����ϴ� ���̴�.
 		bool bMyControl = (uidChar == ZGetGameClient()->GetPlayerUID());
 		pNPC->SetMyControl(bMyControl);
 
-		ZCharacter *pOwner = ZGetCharacterManager()->Find(uidChar);
-		if(pOwner)
+		ZCharacter* pOwner = ZGetCharacterManager()->Find(uidChar);
+		if (pOwner)
 			pNPC->SetOwner(pOwner->GetUserName());
 	}
 
@@ -446,93 +424,26 @@ bool ZQuest::OnEntrustNPCControl(MCommand* pCommand)
 bool ZQuest::OnPeerNPCBasicInfo(MCommand* pCommand)
 {
 	MCommandParameter* pParam = pCommand->GetParameter(0);
-	if(pParam->GetType()!=MPT_BLOB) return false;
+	if (pParam->GetType() != MPT_BLOB) return false;
 
-	ZACTOR_BASICINFO* ppbi= (ZACTOR_BASICINFO*)pParam->GetPointer();
-	
+	ZACTOR_BASICINFO* ppbi = (ZACTOR_BASICINFO*)pParam->GetPointer();
+
 	ZBasicInfo bi;
-	bi.position = rvector(ppbi->posx,ppbi->posy,ppbi->posz);
-	bi.velocity = rvector(ppbi->velx,ppbi->vely,ppbi->velz);
-	bi.direction = 1.f/32000.f * rvector(ppbi->dirx,ppbi->diry,ppbi->dirz);
-	
+	bi.position = rvector(ppbi->posx, ppbi->posy, ppbi->posz);
+	bi.velocity = rvector(ppbi->velx, ppbi->vely, ppbi->velz);
+	bi.direction = 1.f / 32000.f * rvector(ppbi->dirx, ppbi->diry, ppbi->dirz);
+
 	ZActor* pActor = ZGetObjectManager()->GetNPCObject(ppbi->uidNPC);
 	if (pActor)
 	{
 		pActor->InputBasicInfo(&bi, ppbi->anistate);
 	}
 
-
-/*
-	// ĳ������ ����ð��� ������Ʈ�Ѵ�
-	// ĳ������ ����ð� ����ġ
-	float fCurrentLocalTime = pActor->m_fTimeOffset + GetTime();
-
-	// ĳ���Ͱ� ������ �ð��� ���� ������ �ð��� 3�� �̻� ���̰� ���� ���� �˰��ִ� �ð��� ��ģ��.
-	float fTimeError = ppbi->fTime - fCurrentLocalTime;
-	if(fabs(fTimeError)>3.f) {
-		pCharacter->m_fTimeOffset = ppbi->fTime - GetTime();
-		pCharacter->m_fAccumulatedTimeError = 0;
-		pCharacter->m_nTimeErrorCount = 0;
-	}else
-	{
-		// ���̰� 3�� �̳��̰� �����ð� ���ߴٰ� ����(������ ��)�� �����Ѵ�
-		pCharacter->m_fAccumulatedTimeError += fTimeError;
-		pCharacter->m_nTimeErrorCount ++;
-		if(pCharacter->m_nTimeErrorCount > 10) {
-			pCharacter->m_fTimeOffset += .5f*pCharacter->m_fAccumulatedTimeError/10.f;
-			pCharacter->m_fAccumulatedTimeError = 0;
-			pCharacter->m_nTimeErrorCount = 0;
-		}
-	}
-
-	// ����ð��� ������ ������ �����ð����� ���.
-	pCharacter->m_fLastReceivedTime = GetTime();
-*/
-
-/*
-	// ���߿� ������ ���� histroy �� �����Ѵ�.
-	if(bAddHistory)
-	{
-		ZBasicInfoItem *pitem=new ZBasicInfoItem;
-		CopyMemory(&pitem->info, &bi, sizeof(ZBasicInfo));
-
-		pitem->fReceivedTime=GetTime();
-
-		pitem->fSendTime= ppbi->fTime - pCharacter->m_fTimeOffset;	// �� �������� ��ȯ
-		
-		pCharacter->m_BasicHistory.push_back(pitem);
-
-		while(pCharacter->m_BasicHistory.size()>CHARACTER_HISTROY_COUNT)
-		{
-			delete *pCharacter->m_BasicHistory.begin();
-			pCharacter->m_BasicHistory.erase(pCharacter->m_BasicHistory.begin());
-		}
-	}
-
-	if(bUpdate)
-	{
-		// ���÷��̶��� �����ϰ� �� ĳ���ʹ� ����̳� �ӵ������ ������Ʈ �� �ʿ䰡 ����.
-		if(!IsReplay() && pCharacter->IsHero()) return;
-
-
-		((ZNetCharacter*)(pCharacter))->SetNetPosition(bi.position, bi.velocity, bi.direction);
-
-		pCharacter->SetAnimationLower((ZC_STATE_LOWER)ppbi->lowerstate);
-		pCharacter->SetAnimationUpper((ZC_STATE_UPPER)ppbi->upperstate);
-
-		// ����ִ� ���Ⱑ �ٸ��� �ٲ��ش�
-		if(pCharacter->GetItems()->GetSelectedWeaponParts()!=ppbi->selweapon) {
-			pCharacter->ChangeWeapon((MMatchCharItemParts)ppbi->selweapon);
-		}
-	}
-*/
-
 	return true;
 }
 
 bool ZQuest::OnPeerNPCHPInfo(MCommand* pCommand)
 {
-
 	return true;
 }
 
@@ -545,9 +456,9 @@ bool ZQuest::OnPrePeerNPCAttackMelee(MCommand* pCommand)	// ������ �
 bool ZQuest::OnPeerNPCAttackMelee(MCommand* pCommand)
 {
 	MUID uidOwner;
-	pCommand->GetParameter(&uidOwner,	0, MPT_UID);
+	pCommand->GetParameter(&uidOwner, 0, MPT_UID);
 
-	ZGetGame()->OnPeerShot_Melee(uidOwner,ZGetGame()->GetTime());
+	ZGetGame()->OnPeerShot_Melee(uidOwner, ZGetGame()->GetTime());
 
 	return true;
 }
@@ -555,24 +466,23 @@ bool ZQuest::OnPeerNPCAttackMelee(MCommand* pCommand)
 bool ZQuest::OnPeerNPCAttackRange(MCommand* pCommand)
 {
 	MUID uidOwner;
-	pCommand->GetParameter(&uidOwner,	0, MPT_UID);
+	pCommand->GetParameter(&uidOwner, 0, MPT_UID);
 
 	MCommandParameter* pParam = pCommand->GetParameter(1);
-	if(pParam->GetType()!=MPT_BLOB) return false;	// ������ �ִ�
+	if (pParam->GetType() != MPT_BLOB) return false;	// ������ �ִ�
 
-	ZPACKEDSHOTINFO *pinfo =(ZPACKEDSHOTINFO*)pParam->GetPointer();
-	rvector pos = rvector(pinfo->posx,pinfo->posy,pinfo->posz);
-	rvector to = rvector(pinfo->tox,pinfo->toy,pinfo->toz);
-
+	ZPACKEDSHOTINFO* pinfo = (ZPACKEDSHOTINFO*)pParam->GetPointer();
+	rvector pos = rvector(pinfo->posx, pinfo->posy, pinfo->posz);
+	rvector to = rvector(pinfo->tox, pinfo->toy, pinfo->toz);
 
 	// rocket �׽�Ʈ�� �־�ô�.
 	ZObject* pOwner = ZGetGame()->m_ObjectManager.GetObject(uidOwner);
 	MMatchItemDesc* pDesc = NULL;
 
-	if(pOwner==NULL) return false; // ���� ġƮŰ�� �����...
+	if (pOwner == NULL) return false; // ���� ġƮŰ�� �����...
 
-	if( pOwner->GetItems() )
-		if( pOwner->GetItems()->GetSelectedWeapon() )
+	if (pOwner->GetItems())
+		if (pOwner->GetItems()->GetSelectedWeapon())
 			pDesc = pOwner->GetItems()->GetSelectedWeapon()->GetDesc();
 	if (pDesc)
 	{
@@ -580,7 +490,7 @@ bool ZQuest::OnPeerNPCAttackRange(MCommand* pCommand)
 		{
 			rvector dir = to - pos;
 			Normalize(dir);
-			ZGetGame()->m_WeaponManager.AddRocket(pos,dir,pOwner);
+			ZGetGame()->m_WeaponManager.AddRocket(pos, dir, pOwner);
 			ZApplication::GetSoundEngine()->PlaySEFire(pDesc, pos.x, pos.y, pos.z, false);
 
 			return true;
@@ -598,12 +508,10 @@ bool ZQuest::OnPeerNPCAttackRange(MCommand* pCommand)
 			ZGetGame()->m_WeaponManager.AddMagic(&skill, pos, dir, pOwner);
 			return true;
 		}
-
 	}
 
-	ZGetGame()->OnPeerShot_Range((MMatchCharItemParts)pinfo->sel_type,pOwner,
-		ZGetGame()->GetTime(),pos,to, reinterpret<u32>(ZGetGame()->GetTime()));
-	
+	ZGetGame()->OnPeerShot_Range((MMatchCharItemParts)pinfo->sel_type, pOwner,
+		ZGetGame()->GetTime(), pos, to, reinterpret<u32>(ZGetGame()->GetTime()));
 
 	return true;
 }
@@ -612,7 +520,7 @@ bool ZQuest::OnRefreshPlayerStatus(MCommand* pCommand)
 {
 	// ��� hide�� ����
 	bool bAdminHide = false;
-	if (ZGetMyInfo()->IsAdminGrade()) 
+	if (ZGetMyInfo()->IsAdminGrade())
 	{
 		MMatchObjCache* pCache = ZGetGameClient()->FindObjCache(ZGetMyUID());
 		if (pCache && pCache->CheckFlag(MTD_PlayerFlags_AdminHide))
@@ -631,15 +539,12 @@ bool ZQuest::OnRefreshPlayerStatus(MCommand* pCommand)
 		}
 	}
 
-
 	// �ǿ� �Ѿ��� ä���
-	for(ZCharacterManager::iterator i = ZGetCharacterManager()->begin();i!=ZGetCharacterManager()->end();i++)
+	for (ZCharacterManager::iterator i = ZGetCharacterManager()->begin(); i != ZGetCharacterManager()->end(); i++)
 	{
 		ZCharacter* pCharacter = i->second;
 		if (!pCharacter->IsAdminHide())	pCharacter->InitStatus();
 	}
-
-
 
 	ZGetGame()->CancelSuicide();
 
@@ -656,7 +561,7 @@ bool ZQuest::OnClearAllNPC(MCommand* pCommand)
 bool ZQuest::OnQuestRoundStart(MCommand* pCommand)
 {
 	unsigned char nRound;
-	pCommand->GetParameter(&nRound,		0, MPT_UCHAR);
+	pCommand->GetParameter(&nRound, 0, MPT_UCHAR);
 
 	ZGetScreenEffectManager()->AddRoundStart(int(nRound));
 
@@ -669,11 +574,11 @@ bool ZQuest::OnQuestRoundStart(MCommand* pCommand)
 bool ZQuest::OnQuestPlayerDead(MCommand* pCommand)
 {
 	MUID uidVictim;
-	pCommand->GetParameter(&uidVictim,		0, MPT_UID);
+	pCommand->GetParameter(&uidVictim, 0, MPT_UID);
 
 	ZCharacter* pVictim = ZGetCharacterManager()->Find(uidVictim);
 
-	if(pVictim)
+	if (pVictim)
 	{
 		if (pVictim != ZGetGame()->m_pMyCharacter)
 		{
@@ -686,24 +591,20 @@ bool ZQuest::OnQuestPlayerDead(MCommand* pCommand)
 		if (pVictimCS->nLife > 0) pVictimCS->nLife--;
 	}
 
-
 	//ZGetGame()->OnPeerDieMessage(pVictim, pAttacker);
-	
 
 	return true;
 }
 
-
 bool ZQuest::OnQuestGameInfo(MCommand* pCommand)
 {
 	MCommandParameter* pParam = pCommand->GetParameter(0);
-	if(pParam->GetType()!=MPT_BLOB) return false;
+	if (pParam->GetType() != MPT_BLOB) return false;
 	void* pBlob = pParam->GetPointer();
 
-	MTD_QuestGameInfo* pQuestGameInfo= (MTD_QuestGameInfo*)MGetBlobArrayElement(pBlob, 0);
-	
-	m_GameInfo.Init(pQuestGameInfo);
+	MTD_QuestGameInfo* pQuestGameInfo = (MTD_QuestGameInfo*)MGetBlobArrayElement(pBlob, 0);
 
+	m_GameInfo.Init(pQuestGameInfo);
 
 	return true;
 }
@@ -711,7 +612,7 @@ bool ZQuest::OnQuestGameInfo(MCommand* pCommand)
 bool ZQuest::OnQuestCombatState(MCommand* pCommand)
 {
 	char nState;
-	pCommand->GetParameter(&nState,		0, MPT_CHAR);
+	pCommand->GetParameter(&nState, 0, MPT_CHAR);
 
 	MQuestCombatState nCombatState = MQuestCombatState(nState);
 
@@ -720,48 +621,47 @@ bool ZQuest::OnQuestCombatState(MCommand* pCommand)
 	switch (nCombatState)
 	{
 	case MQUEST_COMBAT_PREPARE:
-		{
-		}
-		break;
+	{
+	}
+	break;
 	case MQUEST_COMBAT_PLAY:
-		{
-		}
-		break;
+	{
+	}
+	break;
 	case MQUEST_COMBAT_COMPLETED:
+	{
+		// ������ ���ʹ� ���� ��ũ�� ����.
+		if (!m_GameInfo.IsCurrSectorLastSector())
 		{
-			// ������ ���ʹ� ���� ��ũ�� ����.
-			if (!m_GameInfo.IsCurrSectorLastSector())
+			if (g_pGame)
 			{
-				if (g_pGame)
-				{
-					rvector portal_pos;
-					int nCurrSectorIndex = m_GameInfo.GetCurrSectorIndex();
-					int nLinkIndex = m_GameInfo.GetMapSectorLink(nCurrSectorIndex);
-					portal_pos = g_pGame->GetMapDesc()->GetQuestSectorLink(nLinkIndex);
-					ZGetWorldItemManager()->AddQuestPortal(portal_pos);
-					m_GameInfo.SetPortalPos(portal_pos);
+				rvector portal_pos;
+				int nCurrSectorIndex = m_GameInfo.GetCurrSectorIndex();
+				int nLinkIndex = m_GameInfo.GetMapSectorLink(nCurrSectorIndex);
+				portal_pos = g_pGame->GetMapDesc()->GetQuestSectorLink(nLinkIndex);
+				ZGetWorldItemManager()->AddQuestPortal(portal_pos);
+				m_GameInfo.SetPortalPos(portal_pos);
 
-					ZChatOutput(MCOLOR(ZCOLOR_CHAT_SYSTEM_GAME), ZMsg(MSG_GAME_OPEN_PORTAL));
+				ZChatOutput(MCOLOR(ZCOLOR_CHAT_SYSTEM_GAME), ZMsg(MSG_GAME_OPEN_PORTAL));
 
-					m_tRemainedTime = GetGlobalTimeMS() + PORTAL_MOVING_TIME;
-					m_bIsRoundClear = true;
-				}
+				m_tRemainedTime = GetGlobalTimeMS() + PORTAL_MOVING_TIME;
+				m_bIsRoundClear = true;
 			}
 		}
-		break;
+	}
+	break;
 	};
 
 	return true;
 }
-
 
 bool ZQuest::OnMovetoPortal(MCommand* pCommand)
 {
 	char nCurrSectorIndex;
 	MUID uidPlayer;
 
-	pCommand->GetParameter(&nCurrSectorIndex,		0, MPT_CHAR);
-	pCommand->GetParameter(&uidPlayer,				1, MPT_UID);
+	pCommand->GetParameter(&nCurrSectorIndex, 0, MPT_CHAR);
+	pCommand->GetParameter(&uidPlayer, 1, MPT_UID);
 
 	// ��Ż�� �̵��� ����� �ڽ��̸� ���⼭ ������ ���� ���ͷ� �̵�
 	if (uidPlayer == ZGetGameClient()->GetPlayerUID())
@@ -778,14 +678,13 @@ bool ZQuest::OnMovetoPortal(MCommand* pCommand)
 	else
 	{
 		// �ش� �÷��̾� �̵�
-		ZCharacter *pChar = ZGetCharacterManager()->Find(uidPlayer);
-		if(pChar && m_CharactersGone.find(ZGetGameClient()->GetPlayerUID())==m_CharactersGone.end()) {
+		ZCharacter* pChar = ZGetCharacterManager()->Find(uidPlayer);
+		if (pChar && m_CharactersGone.find(ZGetGameClient()->GetPlayerUID()) == m_CharactersGone.end()) {
 			// ���� ���� �̵����� ���� ��� �ش��÷��̾ �Ⱥ��̰� �����
 			pChar->SetVisible(false);
 			ZGetEffectManager()->AddReBirthEffect(pChar->GetPosition());
 		}
 	}
-
 
 	return true;
 }
@@ -793,14 +692,14 @@ bool ZQuest::OnMovetoPortal(MCommand* pCommand)
 bool ZQuest::OnReadyToNewSector(MCommand* pCommand)
 {
 	MUID uidPlayer;
-	pCommand->GetParameter(&uidPlayer,	0, MPT_UID);
+	pCommand->GetParameter(&uidPlayer, 0, MPT_UID);
 
 	m_CharactersGone.insert(uidPlayer);
 
-	ZCharacter *pChar = ZGetCharacterManager()->Find(uidPlayer);
+	ZCharacter* pChar = ZGetCharacterManager()->Find(uidPlayer);
 
 	// ���� ������ �ϰ� �ִ� ĳ���Ͱ� �̵��ϸ� �ٸ� ĳ���ͷ� �ٲ۴�
-	if(ZGetCombatInterface()->GetObserver()->GetTargetCharacter()==pChar) {
+	if (ZGetCombatInterface()->GetObserver()->GetTargetCharacter() == pChar) {
 		ZGetCombatInterface()->GetObserver()->ChangeToNextTarget();
 	}
 
@@ -811,18 +710,17 @@ bool ZQuest::OnReadyToNewSector(MCommand* pCommand)
 	{
 		// �ش� �÷��̾� �̵�
 
-		ZCharacter *pChar = ZGetCharacterManager()->Find(uidPlayer);
-		if(pChar && m_CharactersGone.find(ZGetGameClient()->GetPlayerUID())!=m_CharactersGone.end()) {
-
+		ZCharacter* pChar = ZGetCharacterManager()->Find(uidPlayer);
+		if (pChar && m_CharactersGone.find(ZGetGameClient()->GetPlayerUID()) != m_CharactersGone.end()) {
 			// ���� �̹� �̵��� ��� �ش��÷��̾ ���̰� �����
 //			pChar->SetVisible(true);
 
 			// �̹��� �̵��� ĳ������ ��ġ
 			int nPosIndex = ZGetCharacterManager()->GetCharacterIndex(pChar->GetUID(), false);
-			if (nPosIndex < 0) nPosIndex=0;
-			else if (nPosIndex >= MAX_QUSET_PLAYER_COUNT) nPosIndex = MAX_QUSET_PLAYER_COUNT-1;
+			if (nPosIndex < 0) nPosIndex = 0;
+			else if (nPosIndex >= MAX_QUSET_PLAYER_COUNT) nPosIndex = MAX_QUSET_PLAYER_COUNT - 1;
 			ZMapSpawnData* pSpawnData = ZGetWorld()->GetDesc()->GetSpawnManager()->GetSoloData(nPosIndex);
-			if(pSpawnData) {
+			if (pSpawnData) {
 				pChar->SetPosition(pSpawnData->m_Pos);
 				pChar->SetDirection(pSpawnData->m_Dir);
 				ZGetEffectManager()->AddReBirthEffect(pSpawnData->m_Pos);
@@ -832,7 +730,6 @@ bool ZQuest::OnReadyToNewSector(MCommand* pCommand)
 				_ASSERT(0);
 			}
 		}
-
 	}
 
 	return true;
@@ -841,7 +738,7 @@ bool ZQuest::OnReadyToNewSector(MCommand* pCommand)
 bool ZQuest::OnSectorStart(MCommand* pCommand)
 {
 	char nSectorIndex;
-	pCommand->GetParameter(&nSectorIndex,	0, MPT_CHAR);
+	pCommand->GetParameter(&nSectorIndex, 0, MPT_CHAR);
 
 	m_bIsRoundClear = false;
 	ZGetQuest()->GetGameInfo()->ClearNPCKilled();
@@ -851,12 +748,12 @@ bool ZQuest::OnSectorStart(MCommand* pCommand)
 	{
 		// ���ο� ���ͷ� �̵�
 		m_GameInfo.OnMovetoNewSector((int)nSectorIndex);
-		
+
 		MoveToNextSector();
 	}
 
 	// ��� ������� �����ش�.
-	for(ZCharacterManager::iterator i = ZGetCharacterManager()->begin();i!=ZGetCharacterManager()->end();i++)
+	for (ZCharacterManager::iterator i = ZGetCharacterManager()->begin(); i != ZGetCharacterManager()->end(); i++)
 	{
 		i->second->SetVisible(true);
 	}
@@ -878,7 +775,7 @@ bool ZQuest::OnQuestCompleted(MCommand* pCommand)
 	m_bIsQuestComplete = true;
 
 	MCommandParameter* pParam = pCommand->GetParameter(0);
-	if(pParam->GetType()!=MPT_BLOB) return false;
+	if (pParam->GetType() != MPT_BLOB) return false;
 
 	void* pBlob = pParam->GetPointer();
 	int nBlobSize = MGetBlobArrayCount(pBlob);
@@ -887,10 +784,8 @@ bool ZQuest::OnQuestCompleted(MCommand* pCommand)
 	{
 		MTD_QuestReward* pQuestRewardNode = (MTD_QuestReward*)MGetBlobArrayElement(pBlob, i);
 
-
 		// ���⼭ ���� ������ �� ���� �����ؼ� ȭ�鿡 �����ָ� �˴ϴ�. - bird
 	}
-
 
 	// ����������� ��� ���ش�.
 	//ZGetWorldItemManager()->Reset(true);
@@ -913,7 +808,7 @@ bool ZQuest::OnQuestFailed(MCommand* pCommand)
 bool ZQuest::OnObtainQuestItem(MCommand* pCommand)
 {
 	u32 nQuestItemID;
-	pCommand->GetParameter(&nQuestItemID,	0, MPT_UINT);
+	pCommand->GetParameter(&nQuestItemID, 0, MPT_UINT);
 
 	m_GameInfo.IncreaseObtainQuestItem();
 
@@ -921,12 +816,11 @@ bool ZQuest::OnObtainQuestItem(MCommand* pCommand)
 	MQuestItemDesc* pQuestItemDesc = GetQuestItemDescMgr().FindQItemDesc((int)nQuestItemID);
 	if (pQuestItemDesc)
 	{
-		char szMsg[ 128];
-		ZTransMsg( szMsg, MSG_GAME_GET_QUEST_ITEM, 1, pQuestItemDesc->m_szQuestItemName);
-		ZChatOutput( MCOLOR(ZCOLOR_CHAT_SYSTEM_GAME), szMsg);
+		char szMsg[128];
+		ZTransMsg(szMsg, MSG_GAME_GET_QUEST_ITEM, 1, pQuestItemDesc->m_szQuestItemName);
+		ZChatOutput(MCOLOR(ZCOLOR_CHAT_SYSTEM_GAME), szMsg);
 	}
 #endif
-
 
 	return true;
 }
@@ -934,7 +828,7 @@ bool ZQuest::OnObtainQuestItem(MCommand* pCommand)
 bool ZQuest::OnObtainZItem(MCommand* pCommand)
 {
 	u32 nItemID;
-	pCommand->GetParameter(&nItemID,	0, MPT_UINT);
+	pCommand->GetParameter(&nItemID, 0, MPT_UINT);
 
 	m_GameInfo.IncreaseObtainQuestItem();
 
@@ -942,12 +836,11 @@ bool ZQuest::OnObtainZItem(MCommand* pCommand)
 	MMatchItemDesc* pItemDesc = MGetMatchItemDescMgr()->GetItemDesc(nItemID);
 	if (pItemDesc)
 	{
-		char szMsg[ 128];
-		ZTransMsg( szMsg, MSG_GAME_GET_QUEST_ITEM, 1, pItemDesc->m_szName);
-		ZChatOutput( MCOLOR(ZCOLOR_CHAT_SYSTEM_GAME), szMsg);
+		char szMsg[128];
+		ZTransMsg(szMsg, MSG_GAME_GET_QUEST_ITEM, 1, pItemDesc->m_szName);
+		ZChatOutput(MCOLOR(ZCOLOR_CHAT_SYSTEM_GAME), szMsg);
 	}
 #endif
-
 
 	return true;
 }
@@ -957,7 +850,7 @@ void ZQuest::LoadNPCMeshes()
 {
 #ifdef _DEBUG
 	// ȥ�ڼ� AI �׽�Ʈ�� ���
-	if ((ZApplication::GetInstance()->GetLaunchMode() == ZApplication::ZLAUNCH_MODE_STANDALONE_QUEST) || 
+	if ((ZApplication::GetInstance()->GetLaunchMode() == ZApplication::ZLAUNCH_MODE_STANDALONE_QUEST) ||
 		(ZApplication::GetInstance()->GetLaunchMode() == ZApplication::ZLAUNCH_MODE_STANDALONE_AI))
 	{
 		ZGetNpcMeshMgr()->LoadAll();
@@ -967,7 +860,7 @@ void ZQuest::LoadNPCMeshes()
 	}
 #endif
 
-	if (!m_GameInfo.IsInited()) 
+	if (!m_GameInfo.IsInited())
 	{
 		mlog("not inialized Quest Game Info\n");
 		_ASSERT(0);
@@ -983,7 +876,7 @@ void ZQuest::LoadNPCMeshes()
 
 	ZGetNpcMeshMgr()->ReloadAllAnimation();// ���� ���� ���ϸ��̼��� �ִٸ� �ε�
 }
-	
+
 void ZQuest::LoadNPCSounds()
 {
 	if (!m_GameInfo.IsInited())
@@ -994,7 +887,6 @@ void ZQuest::LoadNPCSounds()
 
 	ZSoundEngine* pSE = ZApplication::GetSoundEngine();
 	if (pSE == NULL) return;
-
 
 	for (int i = 0; i < m_GameInfo.GetNPCInfoCount(); i++)
 	{
@@ -1008,17 +900,17 @@ void ZQuest::LoadNPCSounds()
 
 void ZQuest::MoveToNextSector()
 {
-	ZCharacter *pMyChar = ZGetGame()->m_pMyCharacter;
+	ZCharacter* pMyChar = ZGetGame()->m_pMyCharacter;
 	pMyChar->InitStatus();
 
 	// ���ο� ����� �̵�!!
 	ZGetWorldManager()->SetCurrent(m_GameInfo.GetCurrSectorIndex());
 	// �̹��� �̵��� ĳ������ ��ġ
 	int nPosIndex = ZGetCharacterManager()->GetCharacterIndex(pMyChar->GetUID(), false);
-	if (nPosIndex < 0) nPosIndex=0;
+	if (nPosIndex < 0) nPosIndex = 0;
 	ZMapSpawnData* pSpawnData = ZGetWorld()->GetDesc()->GetSpawnManager()->GetSoloData(nPosIndex);
 	// �� ��ǥ�� �̵�
-	if (pSpawnData!=NULL && pMyChar!=NULL)
+	if (pSpawnData != NULL && pMyChar != NULL)
 	{
 		pMyChar->SetPosition(pSpawnData->m_Pos);
 		pMyChar->SetDirection(pSpawnData->m_Dir);
@@ -1026,7 +918,7 @@ void ZQuest::MoveToNextSector()
 	}
 
 	// �ƹ��� �������� �ʴ´�.
-	for(ZCharacterManager::iterator i = ZGetCharacterManager()->begin();i!=ZGetCharacterManager()->end();i++)
+	for (ZCharacterManager::iterator i = ZGetCharacterManager()->begin(); i != ZGetCharacterManager()->end(); i++)
 	{
 		i->second->SetVisible(false);
 	}
@@ -1041,20 +933,20 @@ void ZQuest::MoveToNextSector()
 }
 
 #ifdef _QUEST_ITEM
-bool ZQuest::OnRewardQuest( MCommand* pCmd )
+bool ZQuest::OnRewardQuest(MCommand* pCmd)
 {
-	if( 0 == pCmd )
+	if (0 == pCmd)
 		return false;
-	
+
 	int nXP, nBP;
 
-	pCmd->GetParameter( &nXP, 0, MPT_INT );
-	pCmd->GetParameter( &nBP, 1, MPT_INT );
-	MCommandParameter* pParam1 = pCmd->GetParameter( 2 );
-	MCommandParameter* pParam2 = pCmd->GetParameter( 3 );
+	pCmd->GetParameter(&nXP, 0, MPT_INT);
+	pCmd->GetParameter(&nBP, 1, MPT_INT);
+	MCommandParameter* pParam1 = pCmd->GetParameter(2);
+	MCommandParameter* pParam2 = pCmd->GetParameter(3);
 
-	GetMyObtainQuestItemList( nXP, nBP, pParam1->GetPointer(), pParam2->GetPointer() );
-	
+	GetMyObtainQuestItemList(nXP, nBP, pParam1->GetPointer(), pParam2->GetPointer());
+
 	return true;
 }
 
@@ -1062,80 +954,79 @@ bool ZQuest::OnRewardQuest( MCommand* pCmd )
 class ObtainItemListBoxItem : public MListItem
 {
 protected:
-	MBitmap*			m_pBitmap;
-	char				m_szName[ 128];
+	MBitmap* m_pBitmap;
+	char				m_szName[128];
 
 public:
-	ObtainItemListBoxItem( MBitmap* pBitmap, const char* szName)
+	ObtainItemListBoxItem(MBitmap* pBitmap, const char* szName)
 	{
 		m_pBitmap = pBitmap;
-		strcpy_safe( m_szName, szName);
+		strcpy_safe(m_szName, szName);
 	}
-	virtual const char* GetString( void)
+	virtual const char* GetString(void)
 	{
 		return m_szName;
 	}
-	virtual const char* GetString( int i)
+	virtual const char* GetString(int i)
 	{
-		if ( i == 1)
+		if (i == 1)
 			return m_szName;
 
 		return NULL;
 	}
-	virtual MBitmap* GetBitmap( int i)
+	virtual MBitmap* GetBitmap(int i)
 	{
-		if ( i == 0)
+		if (i == 0)
 			return m_pBitmap;
 
 		return NULL;
 	}
 };
-void ZQuest::GetMyObtainQuestItemList( int nRewardXP, int nRewardBP, void* pMyObtainQuestItemListBlob, void* pMyObtainZItemListBlob )
+void ZQuest::GetMyObtainQuestItemList(int nRewardXP, int nRewardBP, void* pMyObtainQuestItemListBlob, void* pMyObtainZItemListBlob)
 {
 	m_nRewardXP = nRewardXP;
 	m_nRewardBP = nRewardBP;
 
-	if (( 0 == pMyObtainQuestItemListBlob ) || ( 0 == pMyObtainZItemListBlob )) return;
+	if ((0 == pMyObtainQuestItemListBlob) || (0 == pMyObtainZItemListBlob)) return;
 
 	int							i;
 	int							nQuestItemCount;
-	MTD_QuestItemNode*			pQuestItemNode;
-	ZMyQuestItemNode*			pNewQuestItem;
+	MTD_QuestItemNode* pQuestItemNode;
+	ZMyQuestItemNode* pNewQuestItem;
 	ZMyQuestItemMap::iterator	itQItem;
-	ZMyInfo*					pMyInfo;
+	ZMyInfo* pMyInfo;
 
 	pMyInfo = ZGetMyInfo();
-	MListBox* pListBox = (MListBox*)ZGetGameInterface()->GetIDLResource()->FindWidget( "QuestResult_ItemListbox");
-	if ( pListBox)
+	MListBox* pListBox = (MListBox*)ZGetGameInterface()->GetIDLResource()->FindWidget("QuestResult_ItemListbox");
+	if (pListBox)
 		pListBox->RemoveAll();
 
 	// ����Ʈ ������ -----------------
-	nQuestItemCount = MGetBlobArrayCount( pMyObtainQuestItemListBlob );
+	nQuestItemCount = MGetBlobArrayCount(pMyObtainQuestItemListBlob);
 
-	for( i = 0; i < nQuestItemCount; ++i )
+	for (i = 0; i < nQuestItemCount; ++i)
 	{
-		pQuestItemNode = reinterpret_cast< MTD_QuestItemNode* >( MGetBlobArrayElement(pMyObtainQuestItemListBlob, i) );
+		pQuestItemNode = reinterpret_cast<MTD_QuestItemNode*>(MGetBlobArrayElement(pMyObtainQuestItemListBlob, i));
 
 		// ����Ʈ �ڽ� ������Ʈ
-		if ( pListBox && (pQuestItemNode->m_nCount > 0))
+		if (pListBox && (pQuestItemNode->m_nCount > 0))
 		{
-			MQuestItemDesc* pQuestItemDesc = GetQuestItemDescMgr().FindQItemDesc( pQuestItemNode->m_nItemID);
-			char szNum[ 10];
-			sprintf_safe( szNum, "%d", pQuestItemNode->m_nCount);
-			char szMsg[ 128];
-			ZTransMsg( szMsg, MSG_GAME_GET_QUEST_ITEM2, 2, pQuestItemDesc->m_szQuestItemName, szNum);
-			pListBox->Add( new ObtainItemListBoxItem( ZGetGameInterface()->GetQuestItemIcon( pQuestItemNode->m_nItemID, true), szMsg));
+			MQuestItemDesc* pQuestItemDesc = GetQuestItemDescMgr().FindQItemDesc(pQuestItemNode->m_nItemID);
+			char szNum[10];
+			sprintf_safe(szNum, "%d", pQuestItemNode->m_nCount);
+			char szMsg[128];
+			ZTransMsg(szMsg, MSG_GAME_GET_QUEST_ITEM2, 2, pQuestItemDesc->m_szQuestItemName, szNum);
+			pListBox->Add(new ObtainItemListBoxItem(ZGetGameInterface()->GetQuestItemIcon(pQuestItemNode->m_nItemID, true), szMsg));
 		}
 
-
-		itQItem = pMyInfo->GetItemList()->GetQuestItemMap().find( pQuestItemNode->m_nItemID );
-		if( pMyInfo->GetItemList()->GetQuestItemMap().end() != itQItem )
+		itQItem = pMyInfo->GetItemList()->GetQuestItemMap().find(pQuestItemNode->m_nItemID);
+		if (pMyInfo->GetItemList()->GetQuestItemMap().end() != itQItem)
 		{
 			// �ɸ����� ������ �ִ� ����Ʈ �����ۿ� �߰�.
-			if( 0 != pQuestItemNode->m_nCount )
+			if (0 != pQuestItemNode->m_nCount)
 			{
 				// ������ �ִ�ġ�� �ʰ����� �ʾƼ� ���������� �߰��� �Ǿ��� ���.
-				itQItem->second->Increase( pQuestItemNode->m_nCount );
+				itQItem->second->Increase(pQuestItemNode->m_nCount);
 			}
 			else
 			{
@@ -1148,47 +1039,45 @@ void ZQuest::GetMyObtainQuestItemList( int nRewardXP, int nRewardBP, void* pMyOb
 			// ���� ��ϵǴ� �������� �ʱ�ȭ�� ���ְ� ����� ����� ��.
 
 			pNewQuestItem = new ZMyQuestItemNode;
-			if( 0 == pNewQuestItem )
+			if (0 == pNewQuestItem)
 			{
 				continue;
 			}
 
-			pNewQuestItem->Create( pQuestItemNode->m_nItemID, 
-								   pQuestItemNode->m_nCount, 
-								   GetQuestItemDescMgr().FindQItemDesc(pQuestItemNode->m_nItemID) );
+			pNewQuestItem->Create(pQuestItemNode->m_nItemID,
+				pQuestItemNode->m_nCount,
+				GetQuestItemDescMgr().FindQItemDesc(pQuestItemNode->m_nItemID));
 
-			pMyInfo->GetItemList()->GetQuestItemMap().Add( pNewQuestItem->GetItemID(), pNewQuestItem );
+			pMyInfo->GetItemList()->GetQuestItemMap().Add(pNewQuestItem->GetItemID(), pNewQuestItem);
 		}
 	}
 
 	// �Ϲ� ������ -----------------
-	int nZItemCount = MGetBlobArrayCount( pMyObtainZItemListBlob );
+	int nZItemCount = MGetBlobArrayCount(pMyObtainZItemListBlob);
 	for (int i = 0; i < nZItemCount; i++)
 	{
-		MTD_QuestZItemNode* pZItemNode = (MTD_QuestZItemNode*)( MGetBlobArrayElement(pMyObtainZItemListBlob, i) );
+		MTD_QuestZItemNode* pZItemNode = (MTD_QuestZItemNode*)(MGetBlobArrayElement(pMyObtainZItemListBlob, i));
 
 		// ����Ʈ �ڽ� ������Ʈ
-		if ( pListBox )
+		if (pListBox)
 		{
 			MMatchItemDesc* pItemDesc = MGetMatchItemDescMgr()->GetItemDesc(pZItemNode->m_nItemID);
 
-			char szMsg[ 128];
-			ZTransMsg( szMsg, MSG_GAME_GET_QUEST_ITEM2, 2, pItemDesc->m_szName, "1");
-			pListBox->Add( new ObtainItemListBoxItem( GetItemIconBitmap( pItemDesc, true), szMsg));
+			char szMsg[128];
+			ZTransMsg(szMsg, MSG_GAME_GET_QUEST_ITEM2, 2, pItemDesc->m_szName, "1");
+			pListBox->Add(new ObtainItemListBoxItem(GetItemIconBitmap(pItemDesc, true), szMsg));
 		}
 	}
-
 }
 
-
-bool ZQuest::OnNewMonsterInfo( MCommand* pCmd )
+bool ZQuest::OnNewMonsterInfo(MCommand* pCmd)
 {
 	char nMonIndex;
 
-	if( 0 == pCmd )
+	if (0 == pCmd)
 		return false;
 
-	pCmd->GetParameter( &nMonIndex, 0, MPT_CHAR );
+	pCmd->GetParameter(&nMonIndex, 0, MPT_CHAR);
 	return true;
 }
 
@@ -1196,20 +1085,20 @@ bool ZQuest::OnNewMonsterInfo( MCommand* pCmd )
 
 bool ZQuest::OnPeerNPCSkillStart(MCommand* pCommand)
 {
-	MUID uidOwner,uidTarget;
+	MUID uidOwner, uidTarget;
 	int nSkill;
 	rvector targetPos;
-	pCommand->GetParameter(&uidOwner,	0, MPT_UID);
-	pCommand->GetParameter(&nSkill,		1, MPT_INT);
-	pCommand->GetParameter(&uidTarget,	2, MPT_UID);
-	pCommand->GetParameter(&targetPos,	3, MPT_POS);
+	pCommand->GetParameter(&uidOwner, 0, MPT_UID);
+	pCommand->GetParameter(&nSkill, 1, MPT_INT);
+	pCommand->GetParameter(&uidTarget, 2, MPT_UID);
+	pCommand->GetParameter(&targetPos, 3, MPT_POS);
 
 	ZActor* pActor = ZGetObjectManager()->GetNPCObject(uidOwner);
 	if (pActor)
 	{
-		ZModule_Skills *pmod = (ZModule_Skills *)pActor->GetModule(ZMID_SKILLS);
+		ZModule_Skills* pmod = (ZModule_Skills*)pActor->GetModule(ZMID_SKILLS);
 		if (pmod)
-			pmod->PreExcute(nSkill,uidTarget,targetPos);
+			pmod->PreExcute(nSkill, uidTarget, targetPos);
 	}
 
 	return true;
@@ -1217,46 +1106,45 @@ bool ZQuest::OnPeerNPCSkillStart(MCommand* pCommand)
 
 bool ZQuest::OnPeerNPCSkillExecute(MCommand* pCommand)
 {
-	MUID uidOwner,uidTarget;
+	MUID uidOwner, uidTarget;
 	int nSkill;
 	rvector targetPos;
-	pCommand->GetParameter(&uidOwner,	0, MPT_UID);
-	pCommand->GetParameter(&nSkill,		1, MPT_INT);
-	pCommand->GetParameter(&uidTarget,	2, MPT_UID);
-	pCommand->GetParameter(&targetPos,	3, MPT_POS);
+	pCommand->GetParameter(&uidOwner, 0, MPT_UID);
+	pCommand->GetParameter(&nSkill, 1, MPT_INT);
+	pCommand->GetParameter(&uidTarget, 2, MPT_UID);
+	pCommand->GetParameter(&targetPos, 3, MPT_POS);
 
 	ZActor* pActor = ZGetObjectManager()->GetNPCObject(uidOwner);
 	if (pActor)
 	{
-		ZModule_Skills *pmod = (ZModule_Skills *)pActor->GetModule(ZMID_SKILLS);
+		ZModule_Skills* pmod = (ZModule_Skills*)pActor->GetModule(ZMID_SKILLS);
 		if (pmod)
-			pmod->Excute(nSkill,uidTarget,targetPos);
+			pmod->Excute(nSkill, uidTarget, targetPos);
 	}
 
 	return true;
 }
 
-
-bool ZQuest::OnSetMonsterBibleInfo( MCommand* pCmd )
+bool ZQuest::OnSetMonsterBibleInfo(MCommand* pCmd)
 {
-	if( 0 == pCmd )
+	if (0 == pCmd)
 		return false;
 
 	MUID				uid;
-	MCommandParameter*	pParam;
-	void*				pMonBibleInfoBlob;
-	MQuestMonsterBible*	pMonBible;
+	MCommandParameter* pParam;
+	void* pMonBibleInfoBlob;
+	MQuestMonsterBible* pMonBible;
 
-	pCmd->GetParameter( &uid, 0, MPT_UID );
+	pCmd->GetParameter(&uid, 0, MPT_UID);
 
-	if( uid != ZGetGameClient()->GetPlayerUID() )
+	if (uid != ZGetGameClient()->GetPlayerUID())
 	{
 		return false;
 	}
 
-	pParam				= pCmd->GetParameter(1);
-	pMonBibleInfoBlob	= pParam->GetPointer();
-	pMonBible			= reinterpret_cast< MQuestMonsterBible* >( MGetBlobArrayElement(pMonBibleInfoBlob, 0) );
+	pParam = pCmd->GetParameter(1);
+	pMonBibleInfoBlob = pParam->GetPointer();
+	pMonBible = reinterpret_cast<MQuestMonsterBible*>(MGetBlobArrayElement(pMonBibleInfoBlob, 0));
 
 	return true;
 }
@@ -1265,8 +1153,8 @@ bool ZQuest::OnPeerNPCDead(MCommand* pCommand)
 {
 	MUID uidKiller, uidNPC;
 
-	pCommand->GetParameter(&uidKiller,	0, MPT_UID);
-	pCommand->GetParameter(&uidNPC,		1, MPT_UID);
+	pCommand->GetParameter(&uidKiller, 0, MPT_UID);
+	pCommand->GetParameter(&uidNPC, 1, MPT_UID);
 
 	ZActor* pActor = ZGetObjectManager()->GetNPCObject(uidNPC);
 	if (pActor)
@@ -1290,15 +1178,13 @@ bool ZQuest::OnSectorBonus(MCommand* pCommand)
 {
 	MUID uidPlayer;
 	u32 nExpValue = 0;
-	pCommand->GetParameter(&uidPlayer,	0, MPT_UID);
-	pCommand->GetParameter(&nExpValue,	1, MPT_UINT);
-
+	pCommand->GetParameter(&uidPlayer, 0, MPT_UID);
+	pCommand->GetParameter(&nExpValue, 1, MPT_UINT);
 
 	int nAddedXP = GetExpFromTransData(nExpValue);
 	int nExpPercent = GetExpPercentFromTransData(nExpValue);
 
-
-	if(ZGetCharacterManager()->Find(uidPlayer) == g_pGame->m_pMyCharacter)
+	if (ZGetCharacterManager()->Find(uidPlayer) == g_pGame->m_pMyCharacter)
 	{
 		ZGetScreenEffectManager()->AddExpEffect(nAddedXP);
 		ZGetMyInfo()->SetLevelPercent(nExpPercent);
@@ -1308,11 +1194,10 @@ bool ZQuest::OnSectorBonus(MCommand* pCommand)
 	return true;
 }
 
-
 bool ZQuest::OnQuestPing(MCommand* pCommand)
 {
 	u32 TimeStamp;
-	pCommand->GetParameter(&TimeStamp,	0, MPT_UINT);
+	pCommand->GetParameter(&TimeStamp, 0, MPT_UINT);
 	ZPostQuestPong(TimeStamp);
 
 	return true;

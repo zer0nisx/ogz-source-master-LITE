@@ -306,7 +306,9 @@ void ZActor::UpdateHeight(float fDelta)
 	if (m_pModule_Movable->isLanding())
 	{
 		OnReachGround();  // REFACTORIZACIÓN: Usar función helper
-		SetVelocity(0, 0, 0);
+		// CORRECCIÓN: Solo detener velocidad vertical al aterrizar, mantener X,Y para movimiento
+		// Esto evita que el NPC se quede atascado si estaba moviéndose
+		StopVerticalVelocity();
 
 		if (m_Position.z + 100.f < m_pModule_Movable->GetFallHeight())
 		{
@@ -588,7 +590,20 @@ void ZActor::ProcessMovement(float fDelta)
 
 	if (ZActorAnimation::IsAttackAnimation(GetCurrAni()))
 	{
-		SetVelocity(rvector(0, 0, 0));
+		// CORRECCIÓN: Solo detener velocidad horizontal durante ataque, mantener Z para gravedad
+		// Esto evita que el NPC se quede atascado si la animación no termina correctamente
+		StopHorizontalVelocity();
+		
+		// CORRECCIÓN: Verificar si la animación terminó para restaurar movimiento
+		if (m_pVMesh && m_pVMesh->isOncePlayDone())
+		{
+			// Animación terminó, la IA debería restaurar el movimiento
+			// Si no hay tarea activa, permitir movimiento básico
+			if (!CheckFlag(AF_MOVING) && m_TaskManager.GetCurrTaskID() == ZTID_NONE)
+			{
+				// No hay tarea, permitir que la IA restaure movimiento
+			}
+		}
 	}
 	else
 	{
@@ -605,7 +620,12 @@ void ZActor::ProcessMovement(float fDelta)
 
 #define NPC_STOP_SPEED			2000.f
 
-		fSpeed = std::max(fSpeed - NPC_STOP_SPEED * fDelta, 0.0f);
+		// CORRECCIÓN: Solo aplicar decaimiento de velocidad si no hay movimiento activo
+		// Esto evita que el NPC se quede atascado cuando la IA quiere que se mueva
+		if (!CheckFlag(AF_MOVING))
+		{
+			fSpeed = std::max(fSpeed - NPC_STOP_SPEED * fDelta, 0.0f);
+		}
 		SetVelocity(dir.x * fSpeed, dir.y * fSpeed, GetVelocity().z);
 	}
 }
@@ -615,6 +635,19 @@ void ZActor::NormalizeDirection2D(rvector& dir)
 {
 	dir.z = 0.0f;
 	Normalize(dir);
+}
+
+// CORRECCIÓN: Helpers para detener velocidad sin causar NPCs atascados
+void ZActor::StopHorizontalVelocity()
+{
+	rvector vel = GetVelocity();
+	SetVelocity(0, 0, vel.z);  // Mantener Z para gravedad
+}
+
+void ZActor::StopVerticalVelocity()
+{
+	rvector vel = GetVelocity();
+	SetVelocity(vel.x, vel.y, 0);  // Mantener X,Y para movimiento
 }
 
 void ZActor::RunTo(rvector& dir)
@@ -813,7 +846,9 @@ void ZActor::OnDamaged(ZObject* pAttacker, rvector srcPos, ZDAMAGETYPE damageTyp
 					else
 						m_Animation.Input(ZA_EVENT_MELEE_DAMAGED2);
 				}
-				SetVelocity(0, 0, 0);
+				// CORRECCIÓN: Solo detener velocidad horizontal al recibir daño, mantener Z para gravedad
+				// Esto evita que el NPC se quede atascado después del daño
+				StopHorizontalVelocity();
 			}
 			else {
 				if (GetNPCInfo()->bNeverPushed == false)

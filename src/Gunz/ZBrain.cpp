@@ -115,10 +115,10 @@ void ZBrain::Think(float fDelta)
 {
 	m_Behavior.Run(fDelta);
 
-	// ±Ê√£±‚
+	// ÔøΩÔøΩ√£ÔøΩÔøΩ
 	ProcessBuildPath(fDelta);
 
-	// ∞¯∞›
+	// ÔøΩÔøΩÔøΩÔøΩ
 	ProcessAttack(fDelta);
 
 
@@ -150,7 +150,7 @@ void ZBrain::ProcessAttack(float fDelta)
 		DefaultAttack(nNpcAttackType);
 	}
 
-	// Ω∫≈≥¿Ã ªÁøÎ∞°¥…«œ∏È Ω∫≈≥¿ª æ¥¥Ÿ
+	// ÔøΩÔøΩ≈≥ÔøΩÔøΩ ÔøΩÔøΩÎ∞°ÔøΩÔøΩÔøΩœ∏ÔøΩ ÔøΩÔøΩ≈≥ÔøΩÔøΩ ÔøΩÔøΩÔøΩÔøΩ
 	if(nNpcAttackType==NPC_ATTACK_NONE) {
 		int nSkill;
 		MUID uidTarget;
@@ -163,12 +163,19 @@ void ZBrain::ProcessAttack(float fDelta)
 	}
 }
 
-void ZBrain::UseSkill(int nSkill, MUID& uidTarget, rvector& vTargetPos)
+// REFACTORIZACI√ìN: Helper para verificar si una tarea bloquea el uso de skills
+bool ZBrain::IsTaskBlockingSkill() const
 {
 	ZTASK_ID nTaskID = m_pBody->m_TaskManager.GetCurrTaskID();
-	if ((nTaskID == ZTID_NONE) || 
-		(nTaskID == ZTID_SKILL) ||
-		(nTaskID == ZTID_ROTATE_TO_DIR)) return;
+	return (nTaskID != ZTID_NONE) && 
+	       (nTaskID != ZTID_SKILL) &&
+	       (nTaskID != ZTID_ROTATE_TO_DIR);
+}
+
+void ZBrain::UseSkill(int nSkill, MUID& uidTarget, rvector& vTargetPos)
+{
+	// REFACTORIZACI√ìN: Usar helper en lugar de c√≥digo duplicado
+	if (IsTaskBlockingSkill()) return;
 
 #ifdef _DEBUG
 	mlog("Use Skill(id=%d, skill=%d)\n", m_pBody->GetUID().Low, nSkill);
@@ -203,7 +210,7 @@ void ZBrain::DefaultAttack(MQUEST_NPC_ATTACK nNpcAttackType)
 			if (pTarget)
 			{
 				ZRangeWeaponHitDice dice;
-				dice.BuildSourcePosition(m_pBody->GetPosition());		// √—±∏ ¿ßƒ°∏¶ ¡§»Æ»˜ æÀæ∆æﬂ «œ¥¬µ
+				dice.BuildSourcePosition(m_pBody->GetPosition());		// ÔøΩ—±ÔøΩ ÔøΩÔøΩƒ°ÔøΩÔøΩ ÔøΩÔøΩ»ÆÔøΩÔøΩ ÔøΩÀæ∆æÔøΩ ÔøΩœ¥¬µÔøΩ
 				dice.BuildTargetPosition(pTarget->GetPosition());
 				dice.BuildTargetBounds(pTarget->GetCollRadius(), pTarget->GetCollHeight());
 				float fTargetSpeed = Magnitude(pTarget->GetVelocity());
@@ -220,22 +227,29 @@ void ZBrain::DefaultAttack(MQUEST_NPC_ATTACK nNpcAttackType)
 	}
 }
 
+// REFACTORIZACI√ìN: Helper para verificar si una tarea bloquea el pathfinding
+bool ZBrain::IsTaskBlockingPathFinding() const
+{
+	ZTASK_ID nTaskID = m_pBody->m_TaskManager.GetCurrTaskID();
+	return (nTaskID == ZTID_ATTACK_MELEE) || 
+	       (nTaskID == ZTID_ATTACK_RANGE) || 
+	       (nTaskID == ZTID_ROTATE_TO_DIR) ||
+	       (nTaskID == ZTID_SKILL);
+}
+
 void ZBrain::ProcessBuildPath(float fDelta)
 {
 	if (!m_PathFindingTimer.Update(fDelta)) return;
 	
-	ZTASK_ID nTaskID = m_pBody->m_TaskManager.GetCurrTaskID();
-	if ((nTaskID == ZTID_ATTACK_MELEE) || 
-		(nTaskID == ZTID_ATTACK_RANGE) || 
-		(nTaskID == ZTID_ROTATE_TO_DIR) ||
-		(nTaskID == ZTID_SKILL)) return;
+	// REFACTORIZACI√ìN: Usar helper en lugar de c√≥digo duplicado
+	if (IsTaskBlockingPathFinding()) return;
 
 	FindTarget();
 
 	ZObject* pTarget = GetTarget();
 	if (pTarget)
 	{
-		// ø¯∞≈∏Æ ∏ø¿œ ∞ÊøÏ ∞¯∞›∞°¥…«œ∏È ¥Ÿ∞°∞°¡ˆ æ ∞Ì πŸ∂Û∏∏ ∫ª¥Ÿ.
+		// ÔøΩÔøΩÔøΩ≈∏ÔøΩ ÔøΩÔøΩÔøΩÔøΩ ÔøΩÔøΩÔøΩ ÔøΩÔøΩÔøΩ›∞ÔøΩÔøΩÔøΩÔøΩœ∏ÔøΩ ÔøΩŸ∞ÔøΩÔøΩÔøΩÔøΩÔøΩ ÔøΩ ∞ÔøΩ ÔøΩŸ∂ÔøΩ ÔøΩÔøΩÔøΩÔøΩ.
 		if (m_pBody->GetNPCInfo()->nNPCAttackTypes & NPC_ATTACK_RANGE)
 		{
 			if (CheckAttackable() == NPC_ATTACK_RANGE)
@@ -253,7 +267,7 @@ void ZBrain::ProcessBuildPath(float fDelta)
 	}
 	else
 	{
-		// æ¯¿∏∏È ¡ˆ±›¿∫ ±◊≥… ∞°∏∏»˜ ¿÷¿⁄.
+		// ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ ÔøΩ◊≥ÔøΩ ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ ÔøΩÔøΩÔøΩÔøΩ.
 		m_pBody->m_TaskManager.Clear();
 		m_pBody->Stop();
 	}
@@ -412,7 +426,7 @@ void ZBrain::PushPathTask()
 ZObject* ZBrain::GetTarget()
 {
 #ifdef _DEBUG
-	// »•¿⁄º≠ AI ≈◊Ω∫∆Æ«“ ∞ÊøÏ
+	// »•ÔøΩ⁄ºÔøΩ AI ÔøΩ◊ΩÔøΩ∆ÆÔøΩÔøΩ ÔøΩÔøΩÔøΩ
 	if ((ZApplication::GetInstance()->GetLaunchMode() == ZApplication::ZLAUNCH_MODE_STANDALONE_QUEST) || 
 		(ZApplication::GetInstance()->GetLaunchMode() == ZApplication::ZLAUNCH_MODE_STANDALONE_AI))
 	{
@@ -436,7 +450,7 @@ MQUEST_NPC_ATTACK ZBrain::CheckAttackable()
 	ZObject* pTarget = GetTarget();
 	if ((pTarget == NULL) || (pTarget->IsDead())) return NPC_ATTACK_NONE;
 
-	// ¿œ¥‹ ±Ÿ¡¢ ∞¯∞›¿Ã ∞°¥…«œ∏È ±Ÿ¡¢ ∞¯∞›
+	// ÔøΩœ¥ÔøΩ ÔøΩÔøΩÔøΩÔøΩ ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ ÔøΩÔøΩÔøΩÔøΩÔøΩœ∏ÔøΩ ÔøΩÔøΩÔøΩÔøΩ ÔøΩÔøΩÔøΩÔøΩ
 	if (m_pBody->GetNPCInfo()->nNPCAttackTypes & NPC_ATTACK_MELEE)
 	{
 		if (m_pBody->CanAttackMelee(pTarget)) return NPC_ATTACK_MELEE;
@@ -457,16 +471,21 @@ bool ZBrain::CheckSkillUsable(int *pnSkill, MUID *puidTarget, rvector *pTargetPo
 		if (puidTarget) (*puidTarget) = MUID(0,0);
 		if (pTargetPosition) (*pTargetPosition) = rvector(0.0f,0.0f,0.0f);
 
+		// OPTIMIZACI√ìN: Cachear posici√≥n del cuerpo una vez
+		rvector bodyPos = m_pBody->GetPosition();
+		// OPTIMIZACI√ìN: Distancia m√°xima para considerar un objetivo aliado
+		const float MAX_ALLY_DISTANCE_SQ = 30000.0f * 30000.0f; // 30000 unidades al cuadrado
+
 		for(int i=0;i<pmod->GetSkillCount();i++) {
 			
 			ZSkill *pSkill = pmod->GetSkill(i);
 
-			if(!pSkill->IsReady()) continue; // ƒ≈∏¿”√º≈©
+			if(!pSkill->IsReady()) continue; // ÔøΩÔøΩ≈∏ÔøΩÔøΩ√º≈©
 
 			ZSkillDesc *pDesc = pmod->GetSkill(i)->GetDesc();
-			if(pDesc->IsAlliedTarget()) {	// ¥ÎªÛ¿Ã æ∆±∫¿Œ∞ÊøÏ
+			if(pDesc->IsAlliedTarget()) {	// ÔøΩÔøΩÔøΩÔøΩÔøΩ ÔøΩ∆±ÔøΩÔøΩŒ∞ÔøΩÔøΩ
 
-				// »ø∞˙∞° ¿÷¥¬ ¥ÎªÛ¡ﬂ ∞°±Ó¿Ã ¿÷¥¬ ∞… √£¥¬¥Ÿ.
+				// »øÔøΩÔøΩÔøΩÔøΩ ÔøΩ÷¥ÔøΩ ÔøΩÔøΩÔøΩÔøΩÔøΩ ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ ÔøΩ÷¥ÔøΩ ÔøΩÔøΩ √£ÔøΩ¬¥ÔøΩ.
 				float fDist = FLT_MAX;
 				ZObject *pAlliedTarget = NULL;
 
@@ -475,8 +494,8 @@ bool ZBrain::CheckSkillUsable(int *pnSkill, MUID *puidTarget, rvector *pTargetPo
 				{
 					ZObject *pObject = itor->second;
 					if(pObject->IsDead()) continue;
-					if(ZGetGame()->IsAttackable(m_pBody,pObject)) continue;	// ¿˚¿Ã∏È ≥—æÓ∞£¥Ÿ
-					if (pObject == m_pBody) continue;	// ¿⁄±‚¿⁄Ω≈¿Ã∏È ≥—æÓ∞£¥Ÿ.
+					if(ZGetGame()->IsAttackable(m_pBody,pObject)) continue;	// ÔøΩÔøΩÔøΩÃ∏ÔøΩ ÔøΩ—æÓ∞£ÔøΩÔøΩ
+					if (pObject == m_pBody) continue;	// ÔøΩ⁄±ÔøΩÔøΩ⁄ΩÔøΩÔøΩÃ∏ÔøΩ ÔøΩ—æÓ∞£ÔøΩÔøΩ.
 
 					float dist = MagnitudeSq(pObject->GetPosition() - m_pBody->GetPosition());
 					if (pSkill->IsUsable(pObject) && dist < fDist )
@@ -486,7 +505,7 @@ bool ZBrain::CheckSkillUsable(int *pnSkill, MUID *puidTarget, rvector *pTargetPo
 					}
 				}	
 
-				// ∏∏æ‡ ¥ÎªÛ¿Ã æ¯¿∏∏È ¿⁄±‚ ¿⁄Ω≈«—≈◊∂Ûµµ Ω∫≈≥¿ª ∞«¥Ÿ.
+				// ÔøΩÔøΩÔøΩÔøΩ ÔøΩÔøΩÔøΩÔøΩÔøΩ ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ ÔøΩ⁄±ÔøΩ ÔøΩ⁄ΩÔøΩÔøΩÔøΩÔøΩ◊∂ÔøΩ ÔøΩÔøΩ≈≥ÔøΩÔøΩ ÔøΩ«¥ÔøΩ.
 				if ((pAlliedTarget == NULL) && (pSkill->IsUsable(m_pBody)))
 				{
 					pAlliedTarget = m_pBody;
@@ -499,7 +518,7 @@ bool ZBrain::CheckSkillUsable(int *pnSkill, MUID *puidTarget, rvector *pTargetPo
 					if(pTargetPosition) *pTargetPosition = pAlliedTarget->GetCenterPos();
 					return true;
 				}
-			}else {							// ¿˚±∫¿Ã ¥ÎªÛ¿Ã¥Ÿ
+			}else {							// ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ ÔøΩÔøΩÔøΩÔøΩÃ¥ÔøΩ
 
 				ZObject* pTarget = GetTarget();
 				if (pTarget == NULL) continue;
@@ -515,6 +534,7 @@ bool ZBrain::CheckSkillUsable(int *pnSkill, MUID *puidTarget, rvector *pTargetPo
 
 				const DWORD dwPickPassFlag=RM_FLAG_ADDITIVE | RM_FLAG_HIDE | RM_FLAG_PASSROCKET | RM_FLAG_PASSBULLET;
 
+				// OPTIMIZACI√ìN: Pick es costoso, solo hacerlo si IsUsable pas√≥
 				if (ZApplication::GetGame()->Pick(m_pBody, pos, dir, &pickinfo, dwPickPassFlag))
 				{
 					if (pickinfo.pObject)
@@ -538,47 +558,62 @@ bool ZBrain::FindTarget()
 {
 	MUID uidTarget = MUID(0,0);
 	float fDist = FLT_MAX;
+	
+	// OPTIMIZACI√ìN: Distancia m√°xima para considerar un objetivo (evitar buscar objetivos muy lejanos)
+	const float MAX_TARGET_DISTANCE_SQ = 50000.0f * 50000.0f; // 50000 unidades al cuadrado
 
 	ZCharacter* pTempCharacter = NULL;
+	rvector bodyPos = m_pBody->GetPosition();
 
 	for (ZCharacterManager::iterator itor = ZGetCharacterManager()->begin();
 		itor != ZGetCharacterManager()->end(); ++itor)
 	{
 		ZCharacter* pCharacter = (*itor).second;
 
+		// OPTIMIZACI√ìN: Early exits para mejor rendimiento
 		if (pCharacter->IsDead()) continue;
 		
 		if (pCharacter->LostConnection())
 			continue;
 
+		// OPTIMIZACI√ìN: Calcular distancia primero (m√°s barato que CheckEnableTargetting)
+		rvector charPos = pCharacter->GetPosition();
+		rvector diff = charPos - bodyPos;
+		float distSq = MagnitudeSq(diff);
+		
+		// OPTIMIZACI√ìN: Skip objetivos muy lejanos
+		if (distSq > MAX_TARGET_DISTANCE_SQ)
+			continue;
+
 		if (!CheckEnableTargetting(pCharacter)) 
 		{
-			pTempCharacter = pCharacter;
+			// Guardar como objetivo temporal si est√° m√°s cerca
+			if (distSq < fDist)
+			{
+				pTempCharacter = pCharacter;
+				fDist = distSq;
+			}
 			continue;
 		}
 
-		float dist = MagnitudeSq(pCharacter->GetPosition() - m_pBody->GetPosition());
-		if (dist < fDist)
+		// OPTIMIZACI√ìN: Ya calculamos distSq arriba, reutilizar
+		if (distSq < fDist)
 		{
-			fDist = dist;
+			fDist = distSq;
 			uidTarget = pCharacter->GetUID();
 		}
 	}	
 
 	m_uidTarget = uidTarget;
 
+	// CORRECCI√ìN: Si no encontramos objetivo v√°lido pero hay uno temporal, usarlo
 	if ((uidTarget == MUID(0,0)) && (pTempCharacter != NULL))
 	{
 		m_uidTarget = pTempCharacter->GetUID();
-	}
-
-
-	if (uidTarget != MUID(0,0))
-	{
 		return true;
 	}
 
-	return false;
+	return (uidTarget != MUID(0,0));
 }
 
 bool ZBrain::CheckEnableTargetting(ZCharacter* pCharacter)

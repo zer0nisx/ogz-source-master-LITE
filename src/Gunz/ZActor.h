@@ -186,6 +186,10 @@ private:
 	static void NormalizeDirection2D(rvector& dir);
 	float GetAngleToTarget(ZObject* pTarget) const;
 	void OnReachGround();
+	
+	// CORRECCIÓN: Helpers para detener velocidad sin causar NPCs atascados
+	void StopHorizontalVelocity();  // Detiene X,Y, mantiene Z (gravedad)
+	void StopVerticalVelocity();    // Detiene Z, mantiene X,Y (movimiento)
 };
 
 inline void ZActor::SetFlags(unsigned int nFlags)

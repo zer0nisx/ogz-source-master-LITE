@@ -48,6 +48,10 @@ protected:
 	float MakeDefaultAttackCoolTime();
 
 	virtual bool CheckEnableTargetting(ZCharacter* pCharacter);
+	
+	// REFACTORIZACIÓN: Helper para eliminar código duplicado de verificación de tareas
+	bool IsTaskBlockingPathFinding() const;
+	bool IsTaskBlockingSkill() const;
 public:
 	ZBrain();
 	virtual ~ZBrain();
