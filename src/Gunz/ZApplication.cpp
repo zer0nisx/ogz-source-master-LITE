@@ -38,8 +38,8 @@
 #include "ZProfiler.h"
 #endif
 
-ZApplication*	ZApplication::m_pInstance;
-MZFileSystem	ZApplication::m_FileSystem;    
+ZApplication* ZApplication::m_pInstance;
+MZFileSystem	ZApplication::m_FileSystem;
 ZSoundEngine	ZApplication::m_SoundEngine;
 RMeshMgr		ZApplication::m_NPCMeshMgr;
 RMeshMgr		ZApplication::m_MeshMgr;
@@ -54,13 +54,12 @@ MCommandLogFrame* m_pLogFrame;
 ZApplication::ZApplication()
 	: Time(timeGetTime())
 {
-	_ASSERT(m_pInstance==NULL);
+	_ASSERT(m_pInstance == NULL);
 
 	m_nTimerRes = 0;
 	m_pInstance = this;
 
-
-	m_pGameInterface=NULL;
+	m_pGameInterface = NULL;
 
 	m_nInitialState = GUNZ_LOGIN;
 
@@ -79,11 +78,11 @@ ZApplication::~ZApplication()
 	m_pInstance = NULL;
 }
 
-bool GetNextName(char *szBuffer, int nBufferCount, const char *szSource)
+bool GetNextName(char* szBuffer, int nBufferCount, const char* szSource)
 {
-	while(*szSource==' ' || *szSource=='\t') szSource++;
+	while (*szSource == ' ' || *szSource == '\t') szSource++;
 
-	const char *end=NULL;
+	const char* end = NULL;
 	if (szSource[0] == '"')
 	{
 		end = strchr(szSource + 1, '"');
@@ -92,22 +91,22 @@ bool GetNextName(char *szBuffer, int nBufferCount, const char *szSource)
 	}
 	else
 	{
-		end=strchr(szSource,' ');
-		if(NULL==end) end=strchr(szSource,'\t');
+		end = strchr(szSource, ' ');
+		if (NULL == end) end = strchr(szSource, '\t');
 	}
 
-	if(end)
+	if (end)
 	{
-		int nCount=end-szSource;
-		if(nCount==0 || nCount>=nBufferCount) return false;
+		int nCount = end - szSource;
+		if (nCount == 0 || nCount >= nBufferCount) return false;
 
 		strncpy_safe(szBuffer, nBufferCount, szSource, nCount);
-		szBuffer[nCount]=0;
+		szBuffer[nCount] = 0;
 	}
 	else
 	{
-		int nCount=(int)strlen(szSource);
-		if(nCount==0 || nCount>=nBufferCount) return false;
+		int nCount = (int)strlen(szSource);
+		if (nCount == 0 || nCount >= nBufferCount) return false;
 
 		strcpy_safe(szBuffer, nBufferCount, szSource);
 	}
@@ -119,7 +118,7 @@ bool ZApplication::ParseArguments(const char* pszArgs)
 {
 	m_szCmdLine = pszArgs;
 
-	if(pszArgs[0]=='"') 
+	if (pszArgs[0] == '"')
 	{
 		m_szFileName = pszArgs + 1;
 		if (m_szFileName[m_szFileName.length() - 1] == '"')
@@ -140,25 +139,25 @@ bool ZApplication::ParseArguments(const char* pszArgs)
 		AssetsDir = buffer;
 	}
 
-	if(_stricmp(m_szFileName.c_str() + m_szFileName.length() - strlen(GUNZ_REC_FILE_EXT),
-		GUNZ_REC_FILE_EXT) == 0){
+	if (_stricmp(m_szFileName.c_str() + m_szFileName.length() - strlen(GUNZ_REC_FILE_EXT),
+		GUNZ_REC_FILE_EXT) == 0) {
 		SetLaunchMode(ZLAUNCH_MODE_STANDALONE_REPLAY);
 		m_nInitialState = GUNZ_GAME;
 		return true;
 	}
 
 	// TODO: Figure out whatever this affects
-	if ( pszArgs[0] == '/')
+	if (pszArgs[0] == '/')
 	{
 #ifndef _PUBLISH
-		if ( strstr( pszArgs, "launchdevelop") != NULL)
+		if (strstr(pszArgs, "launchdevelop") != NULL)
 		{
-			SetLaunchMode( ZLAUNCH_MODE_STANDALONE_DEVELOP);
+			SetLaunchMode(ZLAUNCH_MODE_STANDALONE_DEVELOP);
 			m_bLaunchDevelop = true;
 
 			return true;
-		} 
-		else if ( strstr( pszArgs, "launch") != NULL)
+		}
+		else if (strstr(pszArgs, "launch") != NULL)
 		{
 			SetLaunchMode(ZLAUNCH_MODE_STANDALONE);
 			return true;
@@ -169,7 +168,7 @@ bool ZApplication::ParseArguments(const char* pszArgs)
 #ifndef _PUBLISH
 	{
 		SetLaunchMode(ZLAUNCH_MODE_STANDALONE_DEVELOP);
-		m_bLaunchDevelop=true;
+		m_bLaunchDevelop = true;
 		return true;
 	}
 #endif
@@ -191,17 +190,16 @@ void ZApplication::CheckSound()
 	RAnimationMgr* pAniMgr = NULL;
 	RAnimation* pAni = NULL;
 
-	for(int i=0;i<size;i++) {
+	for (int i = 0; i < size; i++) {
 		pMesh = m_MeshMgr.GetFast(i);
-		if(pMesh) {
+		if (pMesh) {
 			pAniMgr = &pMesh->m_ani_mgr;
-			if(pAniMgr){
+			if (pAniMgr) {
 				ani_size = pAniMgr->m_id_last;
-				for(int j=0;j<ani_size;j++) {
+				for (int j = 0; j < ani_size; j++) {
 					pAni = pAniMgr->m_node_table[j];
-					if(pAni) {
-
-						if(m_SoundEngine.isPlayAbleMtrl(pAni->m_sound_name)==false) {
+					if (pAni) {
+						if (m_SoundEngine.isPlayAbleMtrl(pAni->m_sound_name) == false) {
 							MLog("ClearSoundFile %s %s\n", pAni->GetName(), pAni->m_sound_name);
 							pAni->ClearSoundFile();
 						}
@@ -228,9 +226,9 @@ void RegisterForbidKey()
 	ZActionKey::RegisterForbidKey(0x42);// f8
 }
 
-void ZProgressCallBack(void *pUserParam,float fProgress)
+void ZProgressCallBack(void* pUserParam, float fProgress)
 {
-	ZLoadingProgress *pLoadingProgress = (ZLoadingProgress*)pUserParam;
+	ZLoadingProgress* pLoadingProgress = (ZLoadingProgress*)pUserParam;
 	pLoadingProgress->UpdateAndDraw(fProgress);
 }
 
@@ -245,7 +243,6 @@ namespace RealSpace2
 	extern bool DynamicResourceLoading;
 }
 
-
 #ifdef TIMESCALE
 unsigned long long GetGlobalTimeMSOverride()
 {
@@ -256,7 +253,7 @@ unsigned long long GetGlobalTimeMSOverride()
 }
 #endif
 
-bool ZApplication::OnCreate(ZLoadingProgress *pLoadingProgress)
+bool ZApplication::OnCreate(ZLoadingProgress* pLoadingProgress)
 {
 	MInitProfile();
 
@@ -266,7 +263,7 @@ bool ZApplication::OnCreate(ZLoadingProgress *pLoadingProgress)
 
 	TIMECAPS tc;
 
-	mlog("ZApplication::OnCreate : begin\n");
+	mlog("[INIT] Iniciando aplicación...\n");
 
 	ZLoadingProgress InitialLoading("Initializing", pLoadingProgress, 0.05f);
 	InitialLoading.UpdateAndDraw(0);
@@ -276,27 +273,25 @@ bool ZApplication::OnCreate(ZLoadingProgress *pLoadingProgress)
 	//ListSoundDevices();
 
 	[&]
-	{
-		if (!IsDynamicResourceLoad())
-			return;
-
-		auto Fail = [&]()
 		{
-			MLog("Failed to load parts index! Turning off dynamic resource loading\n");
-			RealSpace2::DynamicResourceLoading = false;
-		};
+			if (!IsDynamicResourceLoad())
+				return;
 
-		auto ret = ReadMZFile("system/parts_index.xml");
-		if (!ret.first)
-			return Fail();
+			auto Fail = [&]()
+				{
+					MLog("Failed to load parts index! Turning off dynamic resource loading\n");
+					RealSpace2::DynamicResourceLoading = false;
+				};
 
-		if (!GetMeshManager()->LoadParts(ret.second))
-			return Fail();
-	}();
+			auto ret = ReadMZFile("system/parts_index.xml");
+			if (!ret.first)
+				return Fail();
+
+			if (!GetMeshManager()->LoadParts(ret.second))
+				return Fail();
+		}();
 
 	__BP(2000, "ZApplication::OnCreate");
-
-	GetRGMain().OnAppCreate();
 
 	InitialLoading.UpdateAndDraw(1);
 
@@ -310,19 +305,32 @@ bool ZApplication::OnCreate(ZLoadingProgress *pLoadingProgress)
 	if (ZApplication::GetInstance()->GetLaunchMode() == ZApplication::ZLAUNCH_MODE_NETMARBLE)
 		m_nInitialState = GUNZ_NETMARBLELOGIN;
 
-	DWORD _begin_time,_end_time;
-#define BEGIN_ { _begin_time = GetGlobalTimeMS(); }
-#define END_(x) { _end_time = GetGlobalTimeMS(); float f_time = (_end_time - _begin_time) / 1000.f; \
-	mlog("\n-------------------> %s : %f \n\n", x,f_time ); }
+	// Cronómetro de alta precisión usando QueryPerformanceCounter
+	LARGE_INTEGER _perf_freq;
+	QueryPerformanceFrequency(&_perf_freq);
+	double _perf_freq_d = double(_perf_freq.QuadPart);
 
-	__BP(2001,"m_SoundEngine.Create");
+	LARGE_INTEGER _begin_time, _end_time;
+#define BEGIN_ { QueryPerformanceCounter(&_begin_time); }
+#define END_(x) { \
+		QueryPerformanceCounter(&_end_time); \
+		double _elapsed_ticks = double(_end_time.QuadPart - _begin_time.QuadPart); \
+		double _elapsed_seconds = _elapsed_ticks / _perf_freq_d; \
+		mlog("[LOAD] %-28s %7.3fs\n", x, _elapsed_seconds); \
+	}
+
+	BEGIN_;
+	GetRGMain().OnAppCreate();
+	END_("RGMain Initialize");
+
+	__BP(2001, "m_SoundEngine.Create");
 
 	ZLoadingProgress soundLoading("Sound", pLoadingProgress, 0.12f);
 	BEGIN_;
 #ifdef _BIRDSOUND
 	m_SoundEngine.Create(RealSpace2::g_hWnd, 44100, Z_AUDIO_HWMIXING, GetFileSystem());
 #else
-	m_SoundEngine.Create(RealSpace2::g_hWnd, Z_AUDIO_HWMIXING, &soundLoading );
+	m_SoundEngine.Create(RealSpace2::g_hWnd, Z_AUDIO_HWMIXING, &soundLoading);
 #endif
 	END_("Sound Engine Create");
 	soundLoading.UpdateAndDraw(1.f);
@@ -331,28 +339,24 @@ bool ZApplication::OnCreate(ZLoadingProgress *pLoadingProgress)
 
 	RegisterForbidKey();
 
-	__BP(2002,"m_pInterface->OnCreate()");
+	__BP(2002, "m_pInterface->OnCreate()");
 
-	ZLoadingProgress giLoading("GameInterface",pLoadingProgress,.35f);
+	ZLoadingProgress giLoading("GameInterface", pLoadingProgress, .35f);
 
 	BEGIN_;
 	m_pGameInterface = new ZGameInterface("GameInterface",
 		Mint::GetInstance()->GetMainFrame(), Mint::GetInstance()->GetMainFrame());
 	m_pGameInterface->m_nInitialState = m_nInitialState;
-	if(!m_pGameInterface->OnCreate(&giLoading))
+	if (!m_pGameInterface->OnCreate(&giLoading))
 	{
 		mlog("Failed: ZGameInterface OnCreate\n");
 		SAFE_DELETE(m_pGameInterface);
 		return false;
 	}
 
-	m_pGameInterface->SetBounds(0,0,MGetWorkspaceWidth(),MGetWorkspaceHeight());
+	m_pGameInterface->SetBounds(0, 0, MGetWorkspaceWidth(), MGetWorkspaceHeight());
 	END_("GameInterface Create");
-	mlog("ZApplication::OnCreate : GameInterface Created\n");
-
 	giLoading.UpdateAndDraw(1.f);
-
-	mlog("ZApplication::OnCreate : m_pInterface->OnCreate() \n");
 
 	__EP(2002);
 
@@ -360,18 +364,16 @@ bool ZApplication::OnCreate(ZLoadingProgress *pLoadingProgress)
 	goto BirdGo;
 #endif
 
-	__BP(2003,"Character Loading");
+	__BP(2003, "Character Loading");
 
-	ZLoadingProgress meshLoading("Mesh",pLoadingProgress,.41f);
+	ZLoadingProgress meshLoading("Mesh", pLoadingProgress, .41f);
 	BEGIN_;
 
-	if(m_MeshMgr.LoadXmlList("model/character.xml",ZProgressCallBack,&meshLoading)==-1)
+	if (m_MeshMgr.LoadXmlList("model/character.xml", ZProgressCallBack, &meshLoading) == -1)
 		return false;
 
 	SetAnimationMgr(MMS_MALE, &m_MeshMgr.Get("heroman1")->m_ani_mgr);
 	SetAnimationMgr(MMS_FEMALE, &m_MeshMgr.Get("herowoman1")->m_ani_mgr);
-
-	mlog("ZApplication::OnCreate : m_MeshMgr.LoadXmlList(character.xml) \n");
 
 	END_("Character Loading");
 	meshLoading.UpdateAndDraw(1.f);
@@ -380,8 +382,13 @@ bool ZApplication::OnCreate(ZLoadingProgress *pLoadingProgress)
 
 	__BP(1985, "Quest NPC loading");
 #ifdef _QUEST
-	if(m_NPCMeshMgr.LoadXmlList("model/npc.xml") == -1)
+	BEGIN_;
+	if (m_NPCMeshMgr.LoadXmlList("model/npc.xml") == -1)
 		return false;
+	END_("NPC Loading");
+#else
+	BEGIN_;
+	END_("NPC Loading (skipped)");
 #endif
 	__EP(1985);
 
@@ -390,18 +397,18 @@ bool ZApplication::OnCreate(ZLoadingProgress *pLoadingProgress)
 	CheckSound();
 	__EP(1986);*/
 
-	__BP(2004,"WeaponMesh Loading");
+	__BP(2004, "WeaponMesh Loading");
 
 	BEGIN_;
 
-	if(m_WeaponMeshMgr.LoadXmlList("model/weapon.xml") == -1)
+	if (m_WeaponMeshMgr.LoadXmlList("model/weapon.xml") == -1)
 		return false;
 
 	END_("WeaponMesh Loading");
 
 	__EP(2004);
 
-	__BP(2005,"Worlditem Loading");
+	__BP(2005, "Worlditem Loading");
 
 	ZLoadingProgress etcLoading("etc", pLoadingProgress, .02f);
 	BEGIN_;
@@ -410,81 +417,86 @@ bool ZApplication::OnCreate(ZLoadingProgress *pLoadingProgress)
 	m_MeshMgr.LoadXmlList("system/worlditem.xml");
 #endif
 
-	mlog("ZApplication::OnCreate : m_WeaponMeshMgr.LoadXmlList(weapon.xml) \n");
-
 	END_("Worlditem Loading");
 	__EP(2005);
 
 #ifdef _BIRDTEST
-BirdGo:
+	BirdGo :
 #endif
 
-	__BP(2006,"ETC .. XML");
+	__BP(2006, "ETC .. XML");
 
 	BEGIN_;
 	CreateConsole(ZGetGameClient()->GetCommandManager());
-
-	mlog("ZApplication::OnCreate : CreateConsole \n");
+	END_("Console Create");
 
 	m_pLogFrame = new MCommandLogFrame("Command Log", Mint::GetInstance()->GetMainFrame(),
 		Mint::GetInstance()->GetMainFrame());
-	int nHeight = MGetWorkspaceHeight()/3;
-	m_pLogFrame->SetBounds(0, MGetWorkspaceHeight()-nHeight-1, MGetWorkspaceWidth()-1, nHeight);
+	int nHeight = MGetWorkspaceHeight() / 3;
+	m_pLogFrame->SetBounds(0, MGetWorkspaceHeight() - nHeight - 1, MGetWorkspaceWidth() - 1, nHeight);
 	m_pLogFrame->Show(false);
 
 	m_pGameInterface->SetFocusEnable(true);
 	m_pGameInterface->SetFocus();
 	m_pGameInterface->Show(true);
 
+	BEGIN_;
 	if (!MGetMatchItemDescMgr()->ReadXml(GetFileSystem(), FILENAME_ZITEM_DESC))
 	{
 		MLog("Error while Read Item Descriptor %s\n", FILENAME_ZITEM_DESC);
 	}
-	mlog("ZApplication::OnCreate : MGetMatchItemDescMgr()->ReadXml \n");
+	END_("Item Descriptor XML");
 
+	BEGIN_;
 	if (!MGetMatchItemEffectDescMgr()->ReadXml(GetFileSystem(), FILENAME_ZITEMEFFECT_DESC))
 	{
 		MLog("Error while Read Item Descriptor %s\n", FILENAME_ZITEMEFFECT_DESC);
 	}
-	mlog("ZApplication::OnCreate : MGetMatchItemEffectDescMgr()->ReadXml \n");
+	END_("Item Effect Descriptor XML");
 
+	BEGIN_;
 	if (!MGetMatchWorldItemDescMgr()->ReadXml(GetFileSystem(), "system/worlditem.xml"))
 	{
 		MLog("Error while Read Item Descriptor %s\n", "system/worlditem.xml");
 	}
-	mlog("ZApplication::OnCreate : MGetMatchWorldItemDescMgr()->ReadXml \n");
+	END_("World Item Descriptor XML");
 
+	BEGIN_;
 	if (!ZGetChannelRuleMgr()->ReadXml(GetFileSystem(), "system/channelrule.xml"))
 	{
 		MLog("Error while Read Item Descriptor %s\n", "system/channelrule.xml");
 	}
-	mlog("ZApplication::OnCreate : ZGetChannelRuleMgr()->ReadXml \n");
+	END_("Channel Rule XML");
 
+	BEGIN_;
 	if (!MGetChattingFilter()->LoadFromFile(GetFileSystem(), "system/abuse.txt"))
 	{
 		MLog("Error while Read Abuse Filter %s\n", "system/abuse.xml");
 	}
+	END_("Chatting Filter");
 
 #ifdef _QUEST_ITEM
-	if( !GetQuestItemDescMgr().ReadXml(GetFileSystem(), FILENAME_QUESTITEM_DESC) )
+	BEGIN_;
+	if (!GetQuestItemDescMgr().ReadXml(GetFileSystem(), FILENAME_QUESTITEM_DESC))
 	{
-		MLog( "Error while read quest item descrition xml file.\n" );
+		MLog("Error while read quest item descrition xml file.\n");
 	}
+	END_("Quest Item Descriptor XML");
 #endif
 
-	mlog("ZApplication::OnCreate : MGetChattingFilter()->Create \n");
-
-	if(!m_SkillManager.Create()) {
+	BEGIN_;
+	if (!m_SkillManager.Create()) {
 		MLog("Error while create skill manager\n");
 	}
-
-	END_("ETC ..");
+	END_("Skill Manager Create");
 
 #ifndef _BIRDTEST
 	etcLoading.UpdateAndDraw(1.f);
 #endif
 
+	BEGIN_;
 	ZGetEmblemInterface()->Create();
+	END_("Emblem Interface Create");
 
 	__EP(2006);
 
@@ -529,7 +541,7 @@ void ZApplication::OnDestroy()
 		m_nTimerRes = 0;
 	}
 
-	RGetParticleSystem()->Destroy();		
+	RGetParticleSystem()->Destroy();
 
 	mlog("ZApplication::OnDestroy done \n");
 }
@@ -566,7 +578,7 @@ static void UpdateVulkan(float ElapsedTime)
 
 	auto GetKey = [](auto Key) {
 		return (GetAsyncKeyState(Key) & 0x8000) != 0;
-	};
+		};
 
 	if (GetKey('W'))
 		Direction += Forward;
@@ -589,20 +601,20 @@ void ZApplication::OnUpdate()
 	auto prof = MBeginProfile("ZApplication::OnUpdate");
 
 	[&]
-	{
-		static u64 LastRealTime = timeGetTime();
-		auto CurRealTime = timeGetTime();
-		if (Timescale == 1.f)
 		{
-			Time += CurRealTime - LastRealTime;
-		}
-		else
-		{
-			auto Delta = double(CurRealTime - LastRealTime);
-			Time += Delta * Timescale;
-		}
-		LastRealTime = CurRealTime;
-	}();
+			static u64 LastRealTime = timeGetTime();
+			auto CurRealTime = timeGetTime();
+			if (Timescale == 1.f)
+			{
+				Time += CurRealTime - LastRealTime;
+			}
+			else
+			{
+				auto Delta = double(CurRealTime - LastRealTime);
+				Time += Delta * Timescale;
+			}
+			LastRealTime = CurRealTime;
+		}();
 
 	auto ElapsedTime = m_Timer.UpdateFrame();
 
@@ -617,11 +629,11 @@ void ZApplication::OnUpdate()
 
 	GetRGMain().OnUpdate(ElapsedTime);
 
-	__BP(1,"ZApplication::OnUpdate::m_pInterface->Update");
+	__BP(1, "ZApplication::OnUpdate::m_pInterface->Update");
 	if (m_pGameInterface) m_pGameInterface->Update(ElapsedTime);
 	__EP(1);
 
-	__BP(2,"ZApplication::OnUpdate::SoundEngineRun");
+	__BP(2, "ZApplication::OnUpdate::SoundEngineRun");
 
 #ifdef _BIRDSOUND
 	m_SoundEngine.Update();
@@ -639,17 +651,17 @@ void ZApplication::OnUpdate()
 	}
 }
 
-bool g_bProfile=false;
+bool g_bProfile = false;
 
 #define PROFILE_FILENAME	"profile.txt"
 
 bool ZApplication::OnDraw()
 {
 	static bool currentprofile = false;
-	if(g_bProfile && !currentprofile)
+	if (g_bProfile && !currentprofile)
 	{
 		currentprofile = true;
-        MInitProfile();
+		MInitProfile();
 	}
 
 	if (!g_bProfile && currentprofile)
@@ -691,19 +703,19 @@ ZApplication* ZApplication::GetInstance(void)
 ZGameInterface* ZApplication::GetGameInterface(void)
 {
 	ZApplication* pApp = GetInstance();
-	if(pApp==NULL) return NULL;
+	if (pApp == NULL) return NULL;
 	return pApp->m_pGameInterface;
 }
 ZStageInterface* ZApplication::GetStageInterface(void)
 {
 	ZApplication* pApp = GetInstance();
-	if(pApp==NULL) return NULL;
+	if (pApp == NULL) return NULL;
 	return &pApp->m_StageInterface;
 }
 ZOptionInterface* ZApplication::GetOptionInterface(void)
 {
 	ZApplication* pApp = GetInstance();
-	if(pApp==NULL) return NULL;
+	if (pApp == NULL) return NULL;
 	return &pApp->m_OptionInterface;
 }
 MZFileSystem* ZApplication::GetFileSystem(void)
@@ -734,7 +746,7 @@ ZSoundEngine* ZApplication::GetSoundEngine(void)
 void ZApplication::OnInvalidate()
 {
 	RGetShaderMgr()->OnInvalidate();
-	if(m_pGameInterface)
+	if (m_pGameInterface)
 		m_pGameInterface->OnInvalidate();
 
 	if (IsRGMainAlive())
@@ -743,9 +755,9 @@ void ZApplication::OnInvalidate()
 
 void ZApplication::OnRestore()
 {
-	if(m_pGameInterface)
+	if (m_pGameInterface)
 		m_pGameInterface->OnRestore();
-	if( ZGetConfiguration()->GetVideo()->bShader )
+	if (ZGetConfiguration()->GetVideo()->bShader)
 	{
 		RMesh::mHardwareAccellated = true;
 		RGetShaderMgr()->SetEnable();
@@ -757,7 +769,7 @@ void ZApplication::OnRestore()
 
 void ZApplication::Exit()
 {
-	PostMessage(g_hWnd,WM_CLOSE,0,0);
+	PostMessage(g_hWnd, WM_CLOSE, 0, 0);
 }
 
 #define ZTOKEN_GAME				"game"
@@ -769,7 +781,7 @@ void ZApplication::Exit()
 
 void ZApplication::PreCheckArguments()
 {
-	if(strstr(m_szCmdLine.c_str(), ZTOKEN_FAST_LOADING)) {
+	if (strstr(m_szCmdLine.c_str(), ZTOKEN_FAST_LOADING)) {
 		RMesh::SetPartsMeshLoadingSkip(1);
 	}
 }
@@ -778,11 +790,11 @@ void ZApplication::ParseStandAloneArguments(const char* pszArgs)
 {
 	char buffer[256];
 
-	const char *str;
-	str=strstr(pszArgs, ZTOKEN_GAME);
-	if ( str != NULL) {
+	const char* str;
+	str = strstr(pszArgs, ZTOKEN_GAME);
+	if (str != NULL) {
 		ZApplication::GetInstance()->m_nInitialState = GUNZ_GAME;
-		if(GetNextName(buffer,sizeof(buffer),str+strlen(ZTOKEN_GAME)))
+		if (GetNextName(buffer, sizeof(buffer), str + strlen(ZTOKEN_GAME)))
 		{
 			m_szFileName = buffer;
 			CreateTestGame(buffer);
@@ -791,8 +803,8 @@ void ZApplication::ParseStandAloneArguments(const char* pszArgs)
 		}
 	}
 
-	str=strstr(pszArgs, ZTOKEN_GAME_CHARDUMMY);
-	if ( str != NULL) {
+	str = strstr(pszArgs, ZTOKEN_GAME_CHARDUMMY);
+	if (str != NULL) {
 		ZApplication::GetInstance()->m_nInitialState = GUNZ_GAME;
 		char szTemp[256], szMap[256];
 		int nDummyCount = 0, nShotEnable = 0;
@@ -810,37 +822,36 @@ void ZApplication::ParseStandAloneArguments(const char* pszArgs)
 		return;
 	}
 
-	str=strstr(pszArgs, ZTOKEN_QUEST);
-	if ( str != NULL) {
+	str = strstr(pszArgs, ZTOKEN_QUEST);
+	if (str != NULL) {
 		SetLaunchMode(ZLAUNCH_MODE_STANDALONE_QUEST);
 		return;
 	}
 
 #ifndef _PUBLISH
 
-	#ifdef _QUEST
-		str=strstr(pszArgs, ZTOKEN_GAME_AI);
-		if ( str != NULL) {
-			SetLaunchMode(ZLAUNCH_MODE_STANDALONE_AI);
+#ifdef _QUEST
+	str = strstr(pszArgs, ZTOKEN_GAME_AI);
+	if (str != NULL) {
+		SetLaunchMode(ZLAUNCH_MODE_STANDALONE_AI);
 
-			ZApplication::GetInstance()->m_nInitialState = GUNZ_GAME;
-			char szTemp[256], szMap[256];
-			sscanf_s(str, "%s %s", szTemp, sizeof(szTemp), szMap, sizeof(szMap));
+		ZApplication::GetInstance()->m_nInitialState = GUNZ_GAME;
+		char szTemp[256], szMap[256];
+		sscanf_s(str, "%s %s", szTemp, sizeof(szTemp), szMap, sizeof(szMap));
 
-			ZGetGameClient()->GetMatchStageSetting()->SetGameType(MMATCH_GAMETYPE_QUEST);
-			
-			CreateTestGame(szMap, 0, false, true, 0);
-			return;
-		}
-	#endif
+		ZGetGameClient()->GetMatchStageSetting()->SetGameType(MMATCH_GAMETYPE_QUEST);
 
+		CreateTestGame(szMap, 0, false, true, 0);
+		return;
+	}
 #endif
 
+#endif
 }
 
 void ZApplication::SetInitialState()
 {
-	if(GetLaunchMode()==ZLAUNCH_MODE_STANDALONE_REPLAY) {
+	if (GetLaunchMode() == ZLAUNCH_MODE_STANDALONE_REPLAY) {
 		CreateReplayGame(m_szFileName.c_str());
 		return;
 	}
@@ -849,7 +860,6 @@ void ZApplication::SetInitialState()
 
 	ZGetGameInterface()->SetState(m_nInitialState);
 }
-
 
 bool ZApplication::InitLocale()
 {
