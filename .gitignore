@@ -1,3 +1,7 @@
 *.tlog
 /build
 *.pdb
+build/win32/Gunz/Gunz_lib.dir/Release/Gunz_lib_ORIGINAL_CXX_unity.obj
+build/win32/lib/Release/Gunz_lib.lib
+build/win32/lib/Release/Gunz_lib.pdb
+build/win32/bin/Release/Gunz.pdb
