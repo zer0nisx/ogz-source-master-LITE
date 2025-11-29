@@ -15,9 +15,9 @@
 #include "ZInput.h"
 #include "ZPickInfo.h"
 #include "ZScreenEffectManager.h"
-#include "RBspObject.h"		// OPTIMIZACIÓN: Necesario para RLIGHT y GetObjectLightList()
-#include "ZConfiguration.h"	// OPTIMIZACIÓN: Necesario para ZGetConfiguration()
-#include "RealSpace2.h"		// OPTIMIZACIÓN: Necesario para RGetDevice() y RGetShaderMgr()
+#include "RBspObject.h"
+#include "ZConfiguration.h"
+#include "RealSpace2.h"
 
 MImplementRTTI(ZActor, ZCharacterObjectHistory);
 
@@ -42,6 +42,8 @@ m_pModule_Skills(NULL), m_fSpeed(0.0f), m_pBrain(NULL)
 	m_fDelayTime = 0.0f;
 	m_fTC = 1.0f;
 	m_nQL = 0;
+
+	m_bReserveStandUp = false;
 
 	SetFlag(AF_LAND, true);
 
@@ -109,10 +111,8 @@ bool ZActor::IsDieAnimationDone()
 
 void ZActor::OnDraw()
 {
-	// REFACTORIZACIÓN: Usar HasVMesh() en lugar de check directo
 	if (!HasVMesh()) return;
 
-	// CORRECCIÓN: Activar iluminación para NPCs (necesario para que se vean correctamente)
 	Draw_SetLight(m_Position);
 
 	if (IsDieAnimationDone())
@@ -132,6 +132,26 @@ void ZActor::OnDraw()
 	}
 
 	m_pVMesh->Render();
+
+	// DEBUG: Dibujar hitbox y ruta si está habilitado
+	// Funciona tanto en Debug como Release si GetShowDebugInfo() está activado
+	// TEMPORAL: También activar si estamos en modo debug o si la configuración lo permite
+	bool bShowDebug = false;
+	if (ZGetConfiguration())
+	{
+		bShowDebug = ZGetConfiguration()->GetShowDebugInfo();
+	}
+	// TEMPORAL: Siempre mostrar en builds de debug para facilitar el desarrollo
+	#ifdef _DEBUG
+	bShowDebug = true;
+	#endif
+	
+	if (bShowDebug)
+	{
+		DrawDebugHitbox();
+		if (m_pBrain)
+			m_pBrain->DrawDebugPath();
+	}
 }
 
 void ZActor::TestControl(float fDelta)
@@ -159,15 +179,12 @@ void ZActor::TestControl(float fDelta)
 
 void ZActor::OnUpdate(float fDelta)
 {
-	// OPTIMIZACIÓN: Early exit si no está inicializado o no es visible
 	if (!m_bInitialized || !IsVisible()) return;
 
-	// OPTIMIZACIÓN: Solo actualizar visibilidad si cambió (evitar llamadas innecesarias)
 	if (m_pVMesh && m_pVMesh->GetVisibility() != 1.f) {
 		m_pVMesh->SetVisibility(1.f);
 	}
 
-	// REFACTORIZACIÓN: Usar IsMyControl() en lugar de CheckFlag(AF_MY_CONTROL)
 	if (IsMyControl())
 	{
 		m_TaskManager.Run(fDelta);
@@ -175,7 +192,6 @@ void ZActor::OnUpdate(float fDelta)
 
 		ProcessNetwork(fDelta);
 
-		// for test - bird
 		if (m_bTestControl)
 		{
 			TestControl(fDelta);
@@ -183,14 +199,13 @@ void ZActor::OnUpdate(float fDelta)
 		else
 		{
 			__BP(60, "ZActor::OnUpdate::ProcessAI");
-			// OPTIMIZACIÓN: Solo procesar IA si es necesario (no está muerto)
 			if (isThinkAble() && !IsDead())
 				ProcessAI(fDelta);
 			__EP(60);
 		}
 
 		ProcessMovement(fDelta);
-		UpdateHeight(fDelta);  // REFACTORIZACIÓN: Mover aquí para evitar segundo check
+		UpdateHeight(fDelta);
 	}
 
 	ProcessMotion(fDelta);
@@ -244,15 +259,80 @@ void ZActor::InitFromNPCType(MQUEST_NPC nNPCType, float fTC, int nQL)
 		}
 	}
 
-	m_pBrain = ZBrain::CreateBrain(nNPCType);
-	m_pBrain->Init(this);
+		m_pBrain = ZBrain::CreateBrain(nNPCType);
+		m_pBrain->Init(this);
 
-	_ASSERT(m_pNPCInfo != NULL);
+		_ASSERT(m_pNPCInfo != NULL);
+	}
+
+void ZActor::DrawDebugHitbox()
+{
+	// DEBUG: Dibujar hitbox del NPC (cilindro wireframe)
+	if (!IsVisible() || IsDead())
+		return;
+
+	float fRadius = GetCollRadius();
+	float fHeight = GetCollHeight();
+	rvector pos = GetPosition();
+
+	// Configurar estados de renderizado
+	RGetDevice()->SetTexture(0, NULL);
+	RGetDevice()->SetTexture(1, NULL);
+	RGetDevice()->SetRenderState(D3DRS_LIGHTING, FALSE);
+	RGetDevice()->SetRenderState(D3DRS_ZENABLE, TRUE);
+	RGetDevice()->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
+	RGetDevice()->SetFVF(D3DFVF_XYZ | D3DFVF_DIFFUSE);
+
+	rmatrix identity;
+	GetIdentityMatrix(identity);
+	RSetTransform(D3DTS_WORLD, identity);
+
+	// Color para la hitbox: Cian semitransparente
+	const DWORD HITBOX_COLOR = 0x8000FFFF;
+	const int CIRCLE_SEGMENTS = 16;  // Número de segmentos para el círculo
+
+	// Dibujar círculo superior
+	rvector topCenter = pos + rvector(0, 0, fHeight);
+	for (int i = 0; i < CIRCLE_SEGMENTS; i++)
+	{
+		float angle1 = (float(i) / CIRCLE_SEGMENTS) * 2.0f * 3.14159f;
+		float angle2 = (float(i + 1) / CIRCLE_SEGMENTS) * 2.0f * 3.14159f;
+		
+		rvector p1 = topCenter + rvector(cosf(angle1) * fRadius, sinf(angle1) * fRadius, 0);
+		rvector p2 = topCenter + rvector(cosf(angle2) * fRadius, sinf(angle2) * fRadius, 0);
+		RDrawLine(p1, p2, HITBOX_COLOR);
+	}
+
+	// Dibujar círculo inferior
+	rvector bottomCenter = pos;
+	for (int i = 0; i < CIRCLE_SEGMENTS; i++)
+	{
+		float angle1 = (float(i) / CIRCLE_SEGMENTS) * 2.0f * 3.14159f;
+		float angle2 = (float(i + 1) / CIRCLE_SEGMENTS) * 2.0f * 3.14159f;
+		
+		rvector p1 = bottomCenter + rvector(cosf(angle1) * fRadius, sinf(angle1) * fRadius, 0);
+		rvector p2 = bottomCenter + rvector(cosf(angle2) * fRadius, sinf(angle2) * fRadius, 0);
+		RDrawLine(p1, p2, HITBOX_COLOR);
+	}
+
+	// Dibujar líneas verticales conectando los círculos (4 líneas principales)
+	for (int i = 0; i < 4; i++)
+	{
+		float angle = (float(i) / 4.0f) * 2.0f * 3.14159f;
+		rvector offset = rvector(cosf(angle) * fRadius, sinf(angle) * fRadius, 0);
+		rvector bottom = bottomCenter + offset;
+		rvector top = topCenter + offset;
+		RDrawLine(bottom, top, HITBOX_COLOR);
+	}
+
+	// Dibujar línea central vertical (opcional, para referencia)
+	RDrawLine(pos, pos + rvector(0, 0, fHeight), 0x40FFFFFF);
+
+	RGetDevice()->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
 }
 
 void ZActor::InitMesh(char* szMeshName, MQUEST_NPC nNPCType)
 {
-	// for test
 	RMesh* pMesh;
 
 	pMesh = ZGetNpcMeshMgr()->Get(szMeshName);
@@ -277,7 +357,6 @@ void ZActor::InitMesh(char* szMeshName, MQUEST_NPC nNPCType)
 	pVMesh->m_FrameInfo[0].m_pAniIdEventSet = ZGetAniEventMgr()->GetAniIDEventSet((int)nNPCType);
 }
 
-// REFACTORIZACIÓN: Helper para eliminar código duplicado de aterrizaje
 void ZActor::OnReachGround()
 {
 	SetFlag(AF_LAND, true);
@@ -288,16 +367,37 @@ void ZActor::UpdateHeight(float fDelta)
 {
 	if (GetDistToFloor() > 10.f || GetVelocity().z > 0.1f)
 	{
-		SetOnLand(false);  // REFACTORIZACIÓN: Usar helper
+		SetOnLand(false);
 	}
 	else {
-		if (!IsOnLand())  // REFACTORIZACIÓN: Usar helper
+		if (!IsOnLand())
 		{
-			OnReachGround();  // REFACTORIZACIÓN: Usar función helper
+			OnReachGround();
 		}
 	}
 
-	if (!IsOnLand())  // REFACTORIZACIÓN: Usar helper
+	if ((m_Animation.GetCurrState() == ZA_ANIM_BLAST_DROP) || (m_Animation.GetCurrState() == ZA_ANIM_BLAST_DAGGER_DROP))
+	{
+		if (m_bReserveStandUp)
+		{
+			if (timeGetTime() > m_dwStandUp)
+			{
+				m_bReserveStandUp = false;
+				m_Animation.Input(ZA_EVENT_STANDUP);
+			}
+		}
+		else
+		{
+			m_bReserveStandUp = true;
+			m_dwStandUp = timeGetTime() + RandomNumber(100, 2500);
+		}
+	}
+	else
+	{
+		m_bReserveStandUp = false;
+	}
+
+	if (!IsOnLand())
 		m_pModule_Movable->UpdateGravity(fDelta);
 
 	bool bJumpUp = (GetVelocity().z > 0.0f);
@@ -305,9 +405,7 @@ void ZActor::UpdateHeight(float fDelta)
 
 	if (m_pModule_Movable->isLanding())
 	{
-		OnReachGround();  // REFACTORIZACIÓN: Usar función helper
-		// CORRECCIÓN: Solo detener velocidad vertical al aterrizar, mantener X,Y para movimiento
-		// Esto evita que el NPC se quede atascado si estaba moviéndose
+		OnReachGround();
 		StopVerticalVelocity();
 
 		if (m_Position.z + 100.f < m_pModule_Movable->GetFallHeight())
@@ -359,7 +457,6 @@ void ZActor::UpdateHeight(float fDelta)
 
 void ZActor::UpdatePosition(float fDelta)
 {
-	// REFACTORIZACIÓN: Usar IsMyControl() en lugar de CheckFlag(AF_MY_CONTROL)
 	if (IsMyControl())
 	{
 		if ((CheckFlag(AF_BLAST) == true) && (GetCurrAni() == ZA_ANIM_BLAST) && (GetVelocity().z < 0.0f))
@@ -382,7 +479,6 @@ void ZActor::UpdatePosition(float fDelta)
 
 void ZActor::OnBlast(rvector& dir)
 {
-	// REFACTORIZACIÓN: Usar IsMyControl() en lugar de CheckFlag(AF_MY_CONTROL)
 	if (!IsMyControl()) return;
 
 	if (m_pNPCInfo->bNeverBlasted) return;
@@ -403,7 +499,6 @@ void ZActor::OnBlast(rvector& dir)
 
 void ZActor::OnBlastDagger(rvector& dir, rvector& pos)
 {
-	// REFACTORIZACIÓN: Usar IsMyControl() en lugar de CheckFlag(AF_MY_CONTROL)
 	if (!IsMyControl()) return;
 
 	if (m_pNPCInfo->bNeverBlasted) return;
@@ -432,7 +527,7 @@ void ZActor::OnBlastDagger(rvector& dir, rvector& pos)
 
 void ZActor::ProcessAI(float fDelta)
 {
-	if (!IsDead())  // REFACTORIZACIÓN: Usar IsDead() en lugar de CheckFlag(AF_DEAD)
+	if (!IsDead())
 	{
 		if (m_pBrain) m_pBrain->Think(fDelta);
 	}
@@ -513,18 +608,14 @@ void ZActor::InputBasicInfo(ZBasicInfo* pni, BYTE anistate)
 
 bool ZActor::ProcessMotion(float fDelta)
 {
-	// REFACTORIZACIÓN: Usar HasVMesh() en lugar de check directo
 	if (!HasVMesh()) return false;
 
 	m_pVMesh->Frame();
 
 	rvector pos = m_Position;
 	rvector dir = m_Direction;
-	NormalizeDirection2D(dir);  // REFACTORIZACIÓN: Usar helper
+	NormalizeDirection2D(dir);
 
-	// OPTIMIZACIÓN: Eliminar primera llamada innecesaria a MakeWorldMatrix()
-	// La primera llamada (línea 517 original) se sobrescribía inmediatamente
-	// También eliminamos la variable MeshPosition que nunca se usaba
 	rmatrix world;
 	MakeWorldMatrix(&world, pos, dir, rvector(0, 0, 1));
 	m_pVMesh->SetWorldMatrix(world);
@@ -544,14 +635,19 @@ bool ZActor::ProcessMotion(float fDelta)
 void ZActor::ProcessMovement(float fDelta)
 {
 	bool bMoving = CheckFlag(AF_MOVING);
-	bool bLand = IsOnLand();  // REFACTORIZACIÓN: Usar helper
+	bool bLand = IsOnLand();
 
-	if (CheckFlag(AF_MOVING) && IsOnLand() &&  // REFACTORIZACIÓN: Usar helper
+	// CORRECCIÓN: Detener movimiento horizontal si está en el aire
+	if (!IsOnLand() && CheckFlag(AF_MOVING))
+	{
+		SetFlag(AF_MOVING, false);
+		StopHorizontalVelocity();
+	}
+
+	if (CheckFlag(AF_MOVING) && IsOnLand() &&
 		((GetCurrAni() == ZA_ANIM_WALK) || (GetCurrAni() == ZA_ANIM_RUN)))
 	{
 		float fSpeed = m_fSpeed;
-		// REFACTORIZACIÓN: Eliminar línea redundante (línea 541 original)
-
 		const float fAccel = 10000.f;
 
 		AddVelocity(m_Direction * fAccel * fDelta);
@@ -590,23 +686,42 @@ void ZActor::ProcessMovement(float fDelta)
 
 	if (ZActorAnimation::IsAttackAnimation(GetCurrAni()))
 	{
-		// CORRECCIÓN: Solo detener velocidad horizontal durante ataque, mantener Z para gravedad
-		// Esto evita que el NPC se quede atascado si la animación no termina correctamente
 		StopHorizontalVelocity();
-		
-		// CORRECCIÓN: Verificar si la animación terminó para restaurar movimiento
+
 		if (m_pVMesh && m_pVMesh->isOncePlayDone())
 		{
-			// Animación terminó, la IA debería restaurar el movimiento
-			// Si no hay tarea activa, permitir movimiento básico
 			if (!CheckFlag(AF_MOVING) && m_TaskManager.GetCurrTaskID() == ZTID_NONE)
 			{
-				// No hay tarea, permitir que la IA restaure movimiento
 			}
 		}
 	}
 	else
 	{
+		// CORRECCIÓN: Si está en el aire, detener gradualmente la velocidad horizontal
+		if (!IsOnLand())
+		{
+			rvector dir = rvector(GetVelocity().x, GetVelocity().y, 0);
+			float fSpeed = Magnitude(dir);
+			
+			if (fSpeed > 0.0f)
+			{
+				// Detener gradualmente la velocidad horizontal en el aire
+				float fStopSpeed = 2000.f * fDelta;
+				fSpeed = std::max(fSpeed - fStopSpeed, 0.0f);
+				
+				if (fSpeed > 0.0f)
+				{
+					Normalize(dir);
+					SetVelocity(dir.x * fSpeed, dir.y * fSpeed, GetVelocity().z);
+				}
+				else
+				{
+					StopHorizontalVelocity();
+				}
+			}
+			return;
+		}
+
 		rvector dir = rvector(GetVelocity().x, GetVelocity().y, 0);
 		float fSpeed = Magnitude(dir);
 		Normalize(dir);
@@ -620,8 +735,6 @@ void ZActor::ProcessMovement(float fDelta)
 
 #define NPC_STOP_SPEED			2000.f
 
-		// CORRECCIÓN: Solo aplicar decaimiento de velocidad si no hay movimiento activo
-		// Esto evita que el NPC se quede atascado cuando la IA quiere que se mueva
 		if (!CheckFlag(AF_MOVING))
 		{
 			fSpeed = std::max(fSpeed - NPC_STOP_SPEED * fDelta, 0.0f);
@@ -630,29 +743,42 @@ void ZActor::ProcessMovement(float fDelta)
 	}
 }
 
-// REFACTORIZACIÓN: Helper para normalizar dirección 2D
 void ZActor::NormalizeDirection2D(rvector& dir)
 {
 	dir.z = 0.0f;
 	Normalize(dir);
 }
 
-// CORRECCIÓN: Helpers para detener velocidad sin causar NPCs atascados
 void ZActor::StopHorizontalVelocity()
 {
 	rvector vel = GetVelocity();
-	SetVelocity(0, 0, vel.z);  // Mantener Z para gravedad
+	SetVelocity(0, 0, vel.z);
 }
 
 void ZActor::StopVerticalVelocity()
 {
 	rvector vel = GetVelocity();
-	SetVelocity(vel.x, vel.y, 0);  // Mantener X,Y para movimiento
+	SetVelocity(vel.x, vel.y, 0);
+}
+
+void ZActor::OnNeglect(int nNum)
+{
+	if (nNum == 1)
+		m_Animation.Input(ZA_EVENT_NEGLECT1);
+	else if (nNum == 2)
+		m_Animation.Input(ZA_EVENT_NEGLECT2);
 }
 
 void ZActor::RunTo(rvector& dir)
 {
-	NormalizeDirection2D(dir);  // REFACTORIZACIÓN: Usar helper
+	// CORRECCIÓN: No permitir movimiento si no está en el suelo
+	if (!IsOnLand())
+	{
+		SetFlag(AF_MOVING, false);
+		return;
+	}
+
+	NormalizeDirection2D(dir);
 
 	SetDirection(dir);
 
@@ -664,7 +790,6 @@ void ZActor::RunTo(rvector& dir)
 
 bool ZActor::IsDead()
 {
-	// REFACTORIZACIÓN: Usar IsMyControl() en lugar de CheckFlag(AF_MY_CONTROL)
 	if (IsMyControl())
 		return CheckFlag(AF_DEAD);
 
@@ -797,7 +922,6 @@ void ZActor::OnDamaged(ZObject* pAttacker, rvector srcPos, ZDAMAGETYPE damageTyp
 			bMyKill = (pAttacker == g_pGame->m_pMyCharacter);
 		}
 
-		// REFACTORIZACIÓN: Usar GetSoundPosition() helper
 		rvector pos_sound = GetSoundPosition();
 		ZApplication::GetSoundEngine()->PlayNPCSound(m_pNPCInfo->nID, NPC_SOUND_WOUND, pos_sound, bMyKill);
 		SetFlag(AF_SOUND_WOUNDED, true);
@@ -816,7 +940,6 @@ void ZActor::OnDamaged(ZObject* pAttacker, rvector srcPos, ZDAMAGETYPE damageTyp
 		m_nDamageCount++;
 	}
 
-	// REFACTORIZACIÓN: Usar IsMyControl() en lugar de CheckFlag(AF_MY_CONTROL)
 	if (IsMyControl())
 	{
 		bool bSkipDamagedAnimation = false;
@@ -846,12 +969,10 @@ void ZActor::OnDamaged(ZObject* pAttacker, rvector srcPos, ZDAMAGETYPE damageTyp
 					else
 						m_Animation.Input(ZA_EVENT_MELEE_DAMAGED2);
 				}
-				// CORRECCIÓN: Solo detener velocidad horizontal al recibir daño, mantener Z para gravedad
-				// Esto evita que el NPC se quede atascado después del daño
 				StopHorizontalVelocity();
 			}
 			else {
-				if (GetNPCInfo()->bNeverPushed == false)
+				if (IsNeverPushed() == false)
 				{
 					if (m_nDamageCount >= 5)
 					{
@@ -868,17 +989,8 @@ void ZActor::OnDamaged(ZObject* pAttacker, rvector srcPos, ZDAMAGETYPE damageTyp
 
 void ZActor::OnKnockback(const rvector& dir, float fForce)
 {
-	// NOTA: Validación de control local del NPC
-	// Solo aplica knockback si este NPC está bajo control local del cliente.
-	// Esto es necesario porque en un sistema cliente-servidor, solo el cliente que controla
-	// el NPC debe aplicar efectos físicos para evitar inconsistencias.
-	// REFACTORIZACIÓN: Usar IsMyControl() en lugar de CheckFlag(AF_MY_CONTROL)
 	if (!IsMyControl()) return;
 
-	// NOTA: Esta implementación ya está correcta y no requiere correcciones.
-	// - No tiene el problema del filtro IsHero() (llama directamente a ZCharacterObject)
-	// - Ya usa el límite correcto MAX_KNOCKBACK_VELOCITY (1700) vía ZCharacterObject::OnKnockback
-	// - El factor NPC_KNOCKBACK_FACTOR es 1.0, aplicando knockback normal a los NPCs
 #define NPC_KNOCKBACK_FACTOR	1.0f
 
 	ZCharacterObject::OnKnockback(dir, NPC_KNOCKBACK_FACTOR * fForce);
@@ -886,7 +998,6 @@ void ZActor::OnKnockback(const rvector& dir, float fForce)
 
 void ZActor::CheckDead(float fDelta)
 {
-	// REFACTORIZACIÓN: Usar IsMyControl() en lugar de CheckFlag(AF_MY_CONTROL)
 	if (!IsMyControl()) return;
 
 	if (!CheckFlag(AF_DEAD))
@@ -911,7 +1022,7 @@ void ZActor::CheckDead(float fDelta)
 				MUID uidAttacker = GetLastAttacker();
 				if (uidAttacker == MUID(0, 0))
 				{
-					uidAttacker = ZGetGameClient()->GetPlayerUID();
+					uidAttacker = ZGetMyUID();
 				}
 
 				ZPostQuestRequestNPCDead(uidAttacker, GetUID(), GetPosition());
@@ -951,7 +1062,6 @@ bool ZActor::IsCollideable()
 
 bool ZActor::isThinkAble()
 {
-	// REFACTORIZACIÓN: Usar IsMyControl() en lugar de CheckFlag(AF_MY_CONTROL)
 	if (!IsMyControl())		return false;
 	if (CheckFlag(AF_BLAST_DAGGER))	return false;
 
@@ -966,7 +1076,6 @@ void ZActor::OnPeerDie(MUID& uidKiller)
 {
 	bool bMyKill = (ZGetGameClient()->GetPlayerUID() == uidKiller);
 
-	// REFACTORIZACIÓN: Usar GetSoundPosition() helper
 	rvector pos_sound = GetSoundPosition();
 	ZApplication::GetSoundEngine()->PlayNPCSound(m_pNPCInfo->nID, NPC_SOUND_DEATH, pos_sound, bMyKill);
 }
@@ -981,7 +1090,6 @@ void ZActor::OnTaskFinished(ZTASK_ID nLastID)
 	if (m_pBrain) m_pBrain->OnBody_OnTaskFinished(nLastID);
 }
 
-// REFACTORIZACIÓN: Helper para calcular ángulo a objetivo (elimina código duplicado)
 rvector ZActor::GetSoundPosition() const
 {
 	rvector pos = GetPosition();
@@ -999,7 +1107,6 @@ float ZActor::GetAngleToTarget(ZObject* pTarget) const
 
 bool ZActor::CanSee(ZObject* pTarget)
 {
-	// REFACTORIZACIÓN: Usar GetAngleToTarget() helper
 	float angle = GetAngleToTarget(pTarget);
 	if (angle <= m_pNPCInfo->fViewAngle) return true;
 
@@ -1043,14 +1150,13 @@ bool ZActor::CanAttackMelee(ZObject* pTarget, ZSkillDesc* pSkillDesc)
 	{
 		rvector Pos = GetPosition();
 		rvector Dir = GetDirection();
-		NormalizeDirection2D(Dir);  // REFACTORIZACIÓN: Usar helper
+		NormalizeDirection2D(Dir);
 
 		float fDist = Magnitude(Pos - pTarget->GetPosition());
 		float fColMinRange = pSkillDesc->fEffectAreaMin * 100.0f;
 		float fColMaxRange = pSkillDesc->fEffectArea * 100.0f;
 		if ((fDist < fColMaxRange + pTarget->GetCollRadius()) && (fDist >= fColMinRange))
 		{
-			// REFACTORIZACIÓN: Usar GetAngleToTarget() helper
 			float angle = GetAngleToTarget(pTarget);
 			if (angle <= pSkillDesc->fEffectAngle) return true;
 		}

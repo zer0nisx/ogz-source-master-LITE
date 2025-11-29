@@ -25,7 +25,7 @@ public:
 class RNavigationMesh
 {
 public:
-	// --- Å¸ÀÔ Á¤ÀÇ -------------
+	// --- Å¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ -------------
 	typedef	std::vector<RNavigationNode*> RNodeArray;
 private:
 	// --- data ------------------
@@ -38,6 +38,11 @@ private:
 	int					m_nFaceCount;
 	rvector*			m_vertices;
 	RNavFace*			m_faces;
+
+	// MEJORA: CachÃ© para FindClosestNode
+	mutable RNavigationNode*	m_pLastFoundNode;
+	mutable rvector			m_LastSearchPoint;
+	static const float		CACHE_DISTANCE_THRESHOLD;
 
 
 	void AddNode(int nID, const rvector& PointA, const rvector& PointB, const rvector& PointC);
@@ -71,11 +76,11 @@ public:
 	int GetNodeCount()			{ return (int)m_NodeArray.size(); }
 	std::list<rvector>&	GetWaypointList() { return m_WaypointList; }
 
-	// Å×½ºÆ®¿ë ------------------
+	// ï¿½×½ï¿½Æ®ï¿½ï¿½ ------------------
 	void Render();
 	void RenderLinks();
 
-	// exporter¿¡¼­ »ç¿ë ---------
+	// exporterï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ---------
 	inline void InitVertices(int vert_count);
 	inline void InitFaces(int face_count);
 	inline void SetVertex(int index, rvector& v);

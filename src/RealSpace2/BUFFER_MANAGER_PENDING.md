@@ -66,3 +66,5 @@
 
 Estos son buffers grandes que se crean al cargar mapas, por lo que se beneficiarían mucho del pooling.
 
+
+

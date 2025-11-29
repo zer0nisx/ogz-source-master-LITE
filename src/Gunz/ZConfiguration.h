@@ -140,6 +140,27 @@ struct ZCONFIG_CHAT
 	u32 BackgroundColor = 0x80000000;
 };
 
+#ifdef VOICECHAT
+struct ZCONFIG_VOICECHAT
+{
+	float fInputVolume = 1.0f;        // Volumen de entrada (0.0 - 2.0)
+	float fOutputVolume = 1.0f;       // Volumen de salida (0.0 - 2.0)
+	float fMasterVolume = 1.0f;       // Volumen maestro (0.0 - 2.0)
+	int nBitrate = 16000;             // Bitrate Opus (6000-510000)
+	bool bVoiceActivation = false;    // Activación por voz (VAD)
+	float fVoiceActivationThreshold = 0.01f; // Umbral VAD
+	bool bEchoCancellation = true;    // Cancelación de eco (FEC)
+	bool bNoiseSuppression = true;    // Supresión de ruido (DTX)
+	bool bAutomaticGainControl = true; // Control automático de ganancia
+	int nInputDevice = -1;            // Dispositivo de entrada (-1 = default)
+	int nOutputDevice = -1;           // Dispositivo de salida (-1 = default)
+	bool bTeamOnly = false;          // Solo equipo en modo team play
+	bool bSpatialAudio = true;        // Audio 3D posicional
+	float fMaxDistance = 5000.0f;     // Distancia máxima audio 3D
+	float fMinDistance = 100.0f;      // Distancia mínima audio 3D
+};
+#endif
+
 class ZLocatorList;
 class ZGameTypeList;
 class ZLocale;
@@ -198,6 +219,9 @@ public:
 	ZCONFIG_MACRO* GetMacro()		{ return &m_Macro; }
 	ZCONFIG_LOCALE* GetLocale()		{ return &m_Locale; }
 	ZCONFIG_CHAT* GetChat()			{ return &m_Chat; }
+#ifdef VOICECHAT
+	ZCONFIG_VOICECHAT* GetVoiceChat() { return &m_VoiceChat; }
+#endif
 
 	int GetVisualFPSLimit() const { return VisualFPSLimit; }
 	int GetLogicalFPSLimit() const { return LogicalFPSLimit; }
@@ -237,6 +261,9 @@ private:
 	ZCONFIG_ETC			m_Etc;
 	ZCONFIG_LOCALE		m_Locale;
 	ZCONFIG_CHAT		m_Chat;
+#ifdef VOICECHAT
+	ZCONFIG_VOICECHAT	m_VoiceChat;
+#endif
 	char				m_szBAReportAddr[256];
 	char				m_szBAReportDir[256];
 	char				m_szInterfaceSkinName[256];
@@ -391,6 +418,25 @@ ZConfiguration*	ZGetConfiguration();
 #define ZTOK_CHAT_BOLDFONT			"BOLDFONT"
 #define ZTOK_CHAT_FONTSIZE			"FONTSIZE"
 #define ZTOK_CHAT_BACKGROUNDCOLOR	"BACKGROUNDCOLOR"
+
+#ifdef VOICECHAT
+#define ZTOK_VOICECHAT					"VOICECHAT"
+#define ZTOK_VOICECHAT_INPUTVOLUME		"INPUTVOLUME"
+#define ZTOK_VOICECHAT_OUTPUTVOLUME		"OUTPUTVOLUME"
+#define ZTOK_VOICECHAT_MASTERVOLUME		"MASTERVOLUME"
+#define ZTOK_VOICECHAT_BITRATE			"BITRATE"
+#define ZTOK_VOICECHAT_VOICEACTIVATION	"VOICEACTIVATION"
+#define ZTOK_VOICECHAT_VOICEACTIVATIONTHRESHOLD "VOICEACTIVATIONTHRESHOLD"
+#define ZTOK_VOICECHAT_ECHOCANCELLATION	"ECHOCANCELLATION"
+#define ZTOK_VOICECHAT_NOISESUPPRESSION	"NOISESUPPRESSION"
+#define ZTOK_VOICECHAT_AUTOMATICGAINCONTROL "AUTOMATICGAINCONTROL"
+#define ZTOK_VOICECHAT_INPUTDEVICE		"INPUTDEVICE"
+#define ZTOK_VOICECHAT_OUTPUTDEVICE		"OUTPUTDEVICE"
+#define ZTOK_VOICECHAT_TEAMONLY			"TEAMONLY"
+#define ZTOK_VOICECHAT_SPATIALAUDIO		"SPATIALAUDIO"
+#define ZTOK_VOICECHAT_MAXDISTANCE		"MAXDISTANCE"
+#define ZTOK_VOICECHAT_MINDISTANCE		"MINDISTANCE"
+#endif
 
 #define ZTOK_LOCALE					"LOCALE"
 #define ZTOK_LOCALE_COUNTRY			"COUNTRY"

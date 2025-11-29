@@ -674,6 +674,8 @@ bool ZQuest::OnMovetoPortal(MCommand* pCommand)
 
 		// �� ���ο� ���ͷ� �Դٰ� �޽����� ������.
 		ZPostQuestReadyToNewSector(ZGetGameClient()->GetPlayerUID());
+
+		ZGetGame()->ExceptCharacterFromNpcTargetting(ZGetGameInterface()->GetMyCharacter());
 	}
 	else
 	{
@@ -683,6 +685,8 @@ bool ZQuest::OnMovetoPortal(MCommand* pCommand)
 			// ���� ���� �̵����� ���� ��� �ش��÷��̾ �Ⱥ��̰� �����
 			pChar->SetVisible(false);
 			ZGetEffectManager()->AddReBirthEffect(pChar->GetPosition());
+
+			ZGetGame()->ExceptCharacterFromNpcTargetting(pChar);
 		}
 	}
 
@@ -757,6 +761,8 @@ bool ZQuest::OnSectorStart(MCommand* pCommand)
 	{
 		i->second->SetVisible(true);
 	}
+
+	ZGetGame()->ClearListExceptionFromNpcTargetting();
 
 	ZGetWorldItemManager()->Reset();
 	m_CharactersGone.clear();

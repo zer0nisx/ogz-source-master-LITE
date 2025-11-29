@@ -19,7 +19,7 @@ public:
 	void DeleteState(int nStateID);
 	void DeleteAll();
 	int StateTransition(int nInput);
-	int GetCurrStateID()		{ return m_nCurrState; }
+	int GetCurrStateID() const		{ return m_nCurrState; }
 	ZState* GetState(int nStateID);
 	ZState* GetCurrState();
 	void SetState(int nStateID) { m_nCurrState = nStateID; }

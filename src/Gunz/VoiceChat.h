@@ -10,6 +10,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
+#include <queue>
 #include "opus.h"
 #include "portaudio.h"
 
@@ -57,6 +58,9 @@ private:
 	bool CanPlay = false;
 
 	bool Recording = false;
+#ifdef WAVEIN
+	bool bThreadRunning = true;
+#endif
 
 #ifdef WAVEIN
 	static constexpr int NumBuffers = 2;

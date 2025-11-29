@@ -111,6 +111,38 @@ void ZOptionInterface::SetListeners()
 
 		return true;
 	});
+
+#ifdef VOICECHAT
+	Listen("VoiceChatInputVolumeSlider", [this](MWidget* Widget, const char* Message) {
+		if (!MWidget::IsMsg(Message, MLIST_VALUE_CHANGED))
+			return false;
+
+		auto* Slider = static_cast<MSlider*>(Widget);
+		float Value = (float)Slider->GetValue() / (float)DEFAULT_SLIDER_MAX;
+		ZGetConfiguration()->GetVoiceChat()->fInputVolume = Value;
+		return true;
+	});
+
+	Listen("VoiceChatOutputVolumeSlider", [this](MWidget* Widget, const char* Message) {
+		if (!MWidget::IsMsg(Message, MLIST_VALUE_CHANGED))
+			return false;
+
+		auto* Slider = static_cast<MSlider*>(Widget);
+		float Value = (float)Slider->GetValue() / (float)DEFAULT_SLIDER_MAX;
+		ZGetConfiguration()->GetVoiceChat()->fOutputVolume = Value;
+		return true;
+	});
+
+	Listen("VoiceChatMasterVolumeSlider", [this](MWidget* Widget, const char* Message) {
+		if (!MWidget::IsMsg(Message, MLIST_VALUE_CHANGED))
+			return false;
+
+		auto* Slider = static_cast<MSlider*>(Widget);
+		float Value = (float)Slider->GetValue() / (float)DEFAULT_SLIDER_MAX;
+		ZGetConfiguration()->GetVoiceChat()->fMasterVolume = Value;
+		return true;
+	});
+#endif
 }
 
 void ZOptionInterface::InitInterfaceOption(void)
@@ -155,6 +187,29 @@ void ZOptionInterface::InitInterfaceOption(void)
 		pWidget->SetMinMax(0, DEFAULT_SLIDER_MAX);
 		pWidget->SetValue(Z_AUDIO_EFFECT_VOLUME*DEFAULT_SLIDER_MAX);
 	}
+
+#ifdef VOICECHAT
+	pWidget = (MSlider*)pResource->FindWidget("VoiceChatInputVolumeSlider");
+	if(pWidget)
+	{
+		pWidget->SetMinMax(0, DEFAULT_SLIDER_MAX);
+		pWidget->SetValue(ZGetConfiguration()->GetVoiceChat()->fInputVolume * DEFAULT_SLIDER_MAX);
+	}
+
+	pWidget = (MSlider*)pResource->FindWidget("VoiceChatOutputVolumeSlider");
+	if(pWidget)
+	{
+		pWidget->SetMinMax(0, DEFAULT_SLIDER_MAX);
+		pWidget->SetValue(ZGetConfiguration()->GetVoiceChat()->fOutputVolume * DEFAULT_SLIDER_MAX);
+	}
+
+	pWidget = (MSlider*)pResource->FindWidget("VoiceChatMasterVolumeSlider");
+	if(pWidget)
+	{
+		pWidget->SetMinMax(0, DEFAULT_SLIDER_MAX);
+		pWidget->SetValue(ZGetConfiguration()->GetVoiceChat()->fMasterVolume * DEFAULT_SLIDER_MAX);
+	}
+#endif
 
 	pWidget = (MSlider*)pResource->FindWidget("VideoGamma");
 	if(pWidget)
@@ -591,6 +646,26 @@ bool ZOptionInterface::SaveInterfaceOption(void)
 
 			ZGetSoundEngine()->SetEffectVolume(Z_AUDIO_EFFECT_VOLUME);
 		}
+
+#ifdef VOICECHAT
+		pWidget = (MSlider*)pResource->FindWidget("VoiceChatInputVolumeSlider");
+		if(pWidget)
+		{
+			ZGetConfiguration()->GetVoiceChat()->fInputVolume = (float)((MSlider*)pWidget)->GetValue() / (float)DEFAULT_SLIDER_MAX;
+		}
+
+		pWidget = (MSlider*)pResource->FindWidget("VoiceChatOutputVolumeSlider");
+		if(pWidget)
+		{
+			ZGetConfiguration()->GetVoiceChat()->fOutputVolume = (float)((MSlider*)pWidget)->GetValue() / (float)DEFAULT_SLIDER_MAX;
+		}
+
+		pWidget = (MSlider*)pResource->FindWidget("VoiceChatMasterVolumeSlider");
+		if(pWidget)
+		{
+			ZGetConfiguration()->GetVoiceChat()->fMasterVolume = (float)((MSlider*)pWidget)->GetValue() / (float)DEFAULT_SLIDER_MAX;
+		}
+#endif
 
 	}
 

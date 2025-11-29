@@ -37,14 +37,14 @@ MQuestNPCCatalogue::MQuestNPCCatalogue()
 	m_GlobalAIValue.m_fAttack_ShakingRatio = 0.0f;
 	m_GlobalAIValue.m_fPathFinding_ShakingRatio = 0.0f;
 	m_GlobalAIValue.m_fSpeed_ShakingRatio = 0.0f;
-	for (int i=0;i<NPC_INTELLIGENCE_STEPS;i++)
+	for (int i = 0; i < NPC_INTELLIGENCE_STEPS; i++)
 		m_GlobalAIValue.m_fPathFindingUpdateTime[i] = 1;
-	for (int i=0;i<NPC_AGILITY_STEPS;i++)
+	for (int i = 0; i < NPC_AGILITY_STEPS; i++)
 		m_GlobalAIValue.m_fPathFindingUpdateTime[i] = 1;
 }
 
-MQuestNPCCatalogue::~MQuestNPCCatalogue() 
-{ 
+MQuestNPCCatalogue::~MQuestNPCCatalogue()
+{
 	Clear();
 }
 
@@ -60,12 +60,12 @@ MQuestNPCInfo* MQuestNPCCatalogue::GetInfo(MQUEST_NPC nNpc)
 	return NULL;
 }
 
-MQuestNPCInfo* MQuestNPCCatalogue::GetPageInfo( int nPage)
+MQuestNPCInfo* MQuestNPCCatalogue::GetPageInfo(int nPage)
 {
 	int nCount = 0;
-	for ( iterator itor = begin();  itor != end();  itor++)
+	for (iterator itor = begin(); itor != end(); itor++)
 	{
-		if ( nCount++ == nPage)
+		if (nCount++ == nPage)
 			return (*itor).second;
 	}
 
@@ -84,22 +84,20 @@ void MQuestNPCCatalogue::Insert(MQuestNPCInfo* pNPCInfo)
 	insert(value_type(nID, pNPCInfo));
 }
 
-
-MQuestNPCInfo* MQuestNPCCatalogue::GetIndexInfo( int nIndex )
+MQuestNPCInfo* MQuestNPCCatalogue::GetIndexInfo(int nIndex)
 {
-	map< int, MQUEST_NPC >::iterator it = m_MonsterBibleCatalogue.find( nIndex );
-	if( m_MonsterBibleCatalogue.end() == it )
+	map< int, MQUEST_NPC >::iterator it = m_MonsterBibleCatalogue.find(nIndex);
+	if (m_MonsterBibleCatalogue.end() == it)
 		return 0;
 
-	return GetInfo( it->second );
+	return GetInfo(it->second);
 }
-
 
 //////////////////////////////////////////////////////
 #define MTOK_NPC						"NPC"
 #define MTOK_NPC_AI_VALUE				"AI_VALUE"
 
-// ±âº»Á¤º¸
+// ï¿½âº»ï¿½ï¿½ï¿½ï¿½
 #define	MTOK_NPC_AI_SHAKING							"SHAKING"
 #define	MTOK_NPC_AI_SHAKING_ATTR_PATHFINDING_UPDATE	"pathfinding_update"
 #define	MTOK_NPC_AI_SHAKING_ATTR_ATTACK_UPDATE		"attack_update"
@@ -108,7 +106,6 @@ MQuestNPCInfo* MQuestNPCCatalogue::GetIndexInfo( int nIndex )
 #define	MTOK_NPC_AI_AGILITY							"AGILITY"
 #define	MTOK_NPC_AI_TIME							"TIME"
 #define	MTOK_NPC_AI_ATTR_STEP						"step"
-
 
 #define MTOK_NPC_TAG_COLLISION			"COLLISION"
 #define MTOK_NPC_TAG_ATTACK				"ATTACK"
@@ -145,7 +142,8 @@ MQuestNPCInfo* MQuestNPCCatalogue::GetIndexInfo( int nIndex )
 #define MTOK_NPC_ATTR_PICK				"pick"
 #define MTOK_NPC_ATTR_ANGLE				"angle"
 #define MTOK_NPC_ATTR_TREMBLE			"tremble"
-
+#define MTOK_NPC_ATTR_OFFENSETYPE		"offensetype"
+#define MTOK_NPC_ATTR_FRIENDLY			"friendly"
 
 #define MTOK_NPC_ATTR_NEVER_BLASTED			"never_blasted"
 #define MTOK_NPC_ATTR_NEVER_DAMAGED_MELEE	"never_damaged_melee"
@@ -158,7 +156,6 @@ MQuestNPCInfo* MQuestNPCCatalogue::GetIndexInfo( int nIndex )
 #define MTOK_NPC_ATTR_ATTACK				"attack"
 #define MTOK_NPC_ATTR_DEATH					"death"
 #define MTOK_NPC_ATTR_WOUND					"wound"
-
 
 bool MQuestNPCCatalogue::ReadXml(const char* szFileName)
 {
@@ -180,7 +177,6 @@ bool MQuestNPCCatalogue::ReadXml(const char* szFileName)
 	int iCount = rootElement.GetChildNodeCount();
 
 	for (int i = 0; i < iCount; i++) {
-
 		chrElement = rootElement.GetChildNode(i);
 		chrElement.GetTagName(szTagName);
 
@@ -203,7 +199,7 @@ bool MQuestNPCCatalogue::ReadXml(const char* szFileName)
 bool MQuestNPCCatalogue::ReadXml(MZFileSystem* pFileSystem, const char* szFileName)
 {
 	MXmlDocument xmlIniData;
-	if(!xmlIniData.LoadFromFile(szFileName, pFileSystem)) {
+	if (!xmlIniData.LoadFromFile(szFileName, pFileSystem)) {
 		return false;
 	}
 
@@ -214,7 +210,6 @@ bool MQuestNPCCatalogue::ReadXml(MZFileSystem* pFileSystem, const char* szFileNa
 	int iCount = rootElement.GetChildNodeCount();
 
 	for (int i = 0; i < iCount; i++) {
-
 		chrElement = rootElement.GetChildNode(i);
 		chrElement.GetTagName(szTagName);
 
@@ -236,7 +231,7 @@ bool MQuestNPCCatalogue::ReadXml(MZFileSystem* pFileSystem, const char* szFileNa
 
 void MQuestNPCCatalogue::ParseNPC(MXmlElement& element)
 {
-	char szTemp[256]="";
+	char szTemp[256] = "";
 	int n = 0;
 	char szAttrValue[256];
 	char szAttrName[64];
@@ -245,7 +240,7 @@ void MQuestNPCCatalogue::ParseNPC(MXmlElement& element)
 	MQuestNPCInfo* pNPCInfo = new MQuestNPCInfo();
 	pNPCInfo->SetDefault();
 
-	// NPC ÅÂ±× ¼Ó¼º°ª --------------------
+	// NPC ï¿½Â±ï¿½ ï¿½Ó¼ï¿½ï¿½ï¿½ --------------------
 	int nAttrCount = element.GetAttributeCount();
 	for (int i = 0; i < nAttrCount; i++)
 	{
@@ -268,10 +263,10 @@ void MQuestNPCCatalogue::ParseNPC(MXmlElement& element)
 		}
 		else if (!_stricmp(szAttrName, MTOK_NPC_ATTR_GRADE))
 		{
-			if(!_stricmp(szAttrValue,		"veteran"))		pNPCInfo->nGrade = NPC_GRADE_VETERAN;
-			else if(!_stricmp(szAttrValue,	"elite"))		pNPCInfo->nGrade = NPC_GRADE_ELITE;
-			else if(!_stricmp(szAttrValue,	"boss"))		pNPCInfo->nGrade = NPC_GRADE_BOSS;
-			else if(!_stricmp(szAttrValue,	"legendary"))	pNPCInfo->nGrade = NPC_GRADE_LEGENDARY;
+			if (!_stricmp(szAttrValue, "veteran"))		pNPCInfo->nGrade = NPC_GRADE_VETERAN;
+			else if (!_stricmp(szAttrValue, "elite"))		pNPCInfo->nGrade = NPC_GRADE_ELITE;
+			else if (!_stricmp(szAttrValue, "boss"))		pNPCInfo->nGrade = NPC_GRADE_BOSS;
+			else if (!_stricmp(szAttrValue, "legendary"))	pNPCInfo->nGrade = NPC_GRADE_LEGENDARY;
 			else											pNPCInfo->nGrade = NPC_GRADE_REGULAR;
 		}
 		else if (!_stricmp(szAttrName, MTOK_NPC_ATTR_MAXHP))
@@ -292,7 +287,7 @@ void MQuestNPCCatalogue::ParseNPC(MXmlElement& element)
 		}
 		else if (!_stricmp(szAttrName, MTOK_NPC_ATTR_SCALE))
 		{
-			sscanf(szAttrValue,"%f %f %f",&pNPCInfo->vScale.x,&pNPCInfo->vScale.y,&pNPCInfo->vScale.z);
+			sscanf(szAttrValue, "%f %f %f", &pNPCInfo->vScale.x, &pNPCInfo->vScale.y, &pNPCInfo->vScale.z);
 		}
 		else if (!_stricmp(szAttrName, MTOK_NPC_ATTR_DC))
 		{
@@ -307,8 +302,19 @@ void MQuestNPCCatalogue::ParseNPC(MXmlElement& element)
 		{
 			pNPCInfo->fDyingTime = (float)atof(szAttrValue);
 		}
+		else if (!_stricmp(szAttrName, MTOK_NPC_ATTR_OFFENSETYPE))
+		{
+			pNPCInfo->nOffenseType = atoi(szAttrValue);
+		}
+		else if (!_stricmp(szAttrName, MTOK_NPC_ATTR_FRIENDLY))
+		{
+			// MEJORA: Manejar explÃ­citamente "true" y "false" para ser consistente con otros atributos booleanos
+			if (!_stricmp(szAttrValue, "true"))
+				pNPCInfo->bFriendly = true;
+			else
+				pNPCInfo->bFriendly = false;
+		}
 	}
-
 
 	int iChildCount = element.GetChildNodeCount();
 	MXmlElement chrElement;
@@ -318,7 +324,7 @@ void MQuestNPCCatalogue::ParseNPC(MXmlElement& element)
 		chrElement.GetTagName(szTagName);
 		if (szTagName[0] == '#') continue;
 
-		// COLLISION ÅÂ±× --------------------
+		// COLLISION ï¿½Â±ï¿½ --------------------
 		if (!_stricmp(szTagName, MTOK_NPC_TAG_COLLISION))
 		{
 			int nAttrCount = chrElement.GetAttributeCount();
@@ -335,7 +341,7 @@ void MQuestNPCCatalogue::ParseNPC(MXmlElement& element)
 				}
 				else if (!_stricmp(szAttrName, MTOK_NPC_ATTR_PICK))
 				{
-					if(!_stricmp(szAttrValue, "true")) pNPCInfo->bColPick = true;
+					if (!_stricmp(szAttrValue, "true")) pNPCInfo->bColPick = true;
 				}
 				else if (!_stricmp(szAttrName, MTOK_NPC_ATTR_TREMBLE))
 				{
@@ -343,7 +349,7 @@ void MQuestNPCCatalogue::ParseNPC(MXmlElement& element)
 				}
 			}
 		}
-		// ATTACK ÅÂ±× -----------------------
+		// ATTACK ï¿½Â±ï¿½ -----------------------
 		else if (!_stricmp(szTagName, MTOK_NPC_TAG_ATTACK))
 		{
 			int nAttrCount = chrElement.GetAttributeCount();
@@ -352,9 +358,9 @@ void MQuestNPCCatalogue::ParseNPC(MXmlElement& element)
 				chrElement.GetAttribute(i, szAttrName, szAttrValue);
 				if (!_stricmp(szAttrName, MTOK_NPC_ATTR_TYPE))
 				{
-					if(!_stricmp(szAttrValue,		"melee"))   pNPCInfo->nNPCAttackTypes = NPC_ATTACK_MELEE;
-					else if(!_stricmp(szAttrValue,	"range"))   pNPCInfo->nNPCAttackTypes = NPC_ATTACK_RANGE;
-					else if(!_stricmp(szAttrValue,	"magic"))   pNPCInfo->nNPCAttackTypes = NPC_ATTACK_MAGIC;
+					if (!_stricmp(szAttrValue, "melee"))   pNPCInfo->nNPCAttackTypes = NPC_ATTACK_MELEE;
+					else if (!_stricmp(szAttrValue, "range"))   pNPCInfo->nNPCAttackTypes = NPC_ATTACK_RANGE;
+					else if (!_stricmp(szAttrValue, "magic"))   pNPCInfo->nNPCAttackTypes = NPC_ATTACK_MAGIC;
 					else										pNPCInfo->nNPCAttackTypes = NPC_ATTACK_NONE;
 				}
 				else if (!_stricmp(szAttrName, MTOK_NPC_ATTR_RANGE))
@@ -381,7 +387,7 @@ void MQuestNPCCatalogue::ParseNPC(MXmlElement& element)
 				}
 			}
 		}
-		// SPEED ÅÂ±× ------------------------
+		// SPEED ï¿½Â±ï¿½ ------------------------
 		else if (!_stricmp(szTagName, MTOK_NPC_TAG_SPEED))
 		{
 			int nAttrCount = chrElement.GetAttributeCount();
@@ -398,7 +404,7 @@ void MQuestNPCCatalogue::ParseNPC(MXmlElement& element)
 				}
 			}
 		}
-		// FLAG ÅÂ±× -------------------------
+		// FLAG ï¿½Â±ï¿½ -------------------------
 		else if (!_stricmp(szTagName, MTOK_NPC_TAG_FLAG))
 		{
 			int nAttrCount = chrElement.GetAttributeCount();
@@ -407,32 +413,32 @@ void MQuestNPCCatalogue::ParseNPC(MXmlElement& element)
 				chrElement.GetAttribute(i, szAttrName, szAttrValue);
 				if (!_stricmp(szAttrName, MTOK_NPC_ATTR_NEVER_BLASTED))
 				{
-					if(!_stricmp(szAttrValue, "true"))	pNPCInfo->bNeverBlasted = true;
+					if (!_stricmp(szAttrValue, "true"))	pNPCInfo->bNeverBlasted = true;
 					else								pNPCInfo->bNeverBlasted = false;
 				}
 				else if (!_stricmp(szAttrName, MTOK_NPC_ATTR_NEVER_DAMAGED_MELEE))
 				{
-					if(!_stricmp(szAttrValue, "true"))	pNPCInfo->bMeleeWeaponNeverDamaged = true;
+					if (!_stricmp(szAttrValue, "true"))	pNPCInfo->bMeleeWeaponNeverDamaged = true;
 					else								pNPCInfo->bMeleeWeaponNeverDamaged = false;
 				}
 				else if (!_stricmp(szAttrName, MTOK_NPC_ATTR_NEVER_DAMAGED_RANGE))
 				{
-					if(!_stricmp(szAttrValue, "true"))	pNPCInfo->bRangeWeaponNeverDamaged = true;
+					if (!_stricmp(szAttrValue, "true"))	pNPCInfo->bRangeWeaponNeverDamaged = true;
 					else								pNPCInfo->bRangeWeaponNeverDamaged = false;
 				}
 				else if (!_stricmp(szAttrName, MTOK_NPC_ATTR_SHADOW))
 				{
-					if(!_stricmp(szAttrValue, "true"))	pNPCInfo->bShadow = true;
+					if (!_stricmp(szAttrValue, "true"))	pNPCInfo->bShadow = true;
 					else								pNPCInfo->bShadow = false;
 				}
 				else if (!_stricmp(szAttrName, MTOK_NPC_ATTR_NEVER_PUSHED))
 				{
-					if(!_stricmp(szAttrValue, "true"))	pNPCInfo->bNeverPushed = true;
+					if (!_stricmp(szAttrValue, "true"))	pNPCInfo->bNeverPushed = true;
 					else								pNPCInfo->bNeverPushed = false;
 				}
 				else if (!_stricmp(szAttrName, MTOK_NPC_ATTR_NEVER_ATTACK_CANCEL))
 				{
-					if(!_stricmp(szAttrValue, "true"))	pNPCInfo->bNeverAttackCancel = true;
+					if (!_stricmp(szAttrValue, "true"))	pNPCInfo->bNeverAttackCancel = true;
 					else								pNPCInfo->bNeverAttackCancel = false;
 				}
 			}
@@ -440,16 +446,16 @@ void MQuestNPCCatalogue::ParseNPC(MXmlElement& element)
 		else if (!_stricmp(szTagName, MTOK_NPC_TAG_SKILL))
 		{
 			int nSkillID;
-			chrElement.GetAttribute(&nSkillID,MTOK_NPC_ATTR_ID,0);
-			_ASSERT(pNPCInfo->nSkills<MAX_SKILL);
-			if(pNPCInfo->nSkills<MAX_SKILL)
+			chrElement.GetAttribute(&nSkillID, MTOK_NPC_ATTR_ID, 0);
+			_ASSERT(pNPCInfo->nSkills < MAX_SKILL);
+			if (pNPCInfo->nSkills < MAX_SKILL)
 			{
-				pNPCInfo->nSkillIDs[pNPCInfo->nSkills++]=nSkillID;
-				// ±â¼úÀÌ ÇÏ³ª¶óµµ ÀÖÀ¸¸é ÇÃ·¡±× Ã¼Å©ÇØµÐ´Ù
-				pNPCInfo->nNPCAttackTypes|=NPC_ATTACK_MAGIC;
+				pNPCInfo->nSkillIDs[pNPCInfo->nSkills++] = nSkillID;
+				// ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ï³ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½ï¿½ Ã¼Å©ï¿½ØµÐ´ï¿½
+				pNPCInfo->nNPCAttackTypes |= NPC_ATTACK_MAGIC;
 			}
 		}
-		// SOUND ÅÂ±× --------------------
+		// SOUND ï¿½Â±ï¿½ --------------------
 		if (!_stricmp(szTagName, MTOK_NPC_TAG_SOUND))
 		{
 			int nAttrCount = chrElement.GetAttributeCount();
@@ -470,7 +476,7 @@ void MQuestNPCCatalogue::ParseNPC(MXmlElement& element)
 				}
 			}
 		}
-		// DROP ÅÂ±× -------------------------
+		// DROP ï¿½Â±ï¿½ -------------------------
 		else if (!_stricmp(szTagName, MTOK_NPC_TAG_DROP))
 		{
 			int nAttrCount = chrElement.GetAttributeCount();
@@ -485,12 +491,12 @@ void MQuestNPCCatalogue::ParseNPC(MXmlElement& element)
 		}
 	}
 
-	Insert( pNPCInfo );
+	Insert(pNPCInfo);
 }
 
 void MQuestNPCCatalogue::ParseGlobalAIValue(MXmlElement& element)
 {
-	char szTemp[256]="";
+	char szTemp[256] = "";
 	int n = 0;
 	char szAttrValue[256];
 	char szAttrName[64];
@@ -504,7 +510,7 @@ void MQuestNPCCatalogue::ParseGlobalAIValue(MXmlElement& element)
 		chrElement.GetTagName(szTagName);
 		if (szTagName[0] == '#') continue;
 
-		// SHAKING ÅÂ±× --------------------
+		// SHAKING ï¿½Â±ï¿½ --------------------
 		if (!_stricmp(szTagName, MTOK_NPC_AI_SHAKING))
 		{
 			int nAttrCount = chrElement.GetAttributeCount();
@@ -525,7 +531,7 @@ void MQuestNPCCatalogue::ParseGlobalAIValue(MXmlElement& element)
 				}
 			}
 		}
-		// INTELLIGENCE ÅÂ±× -----------------------
+		// INTELLIGENCE ï¿½Â±ï¿½ -----------------------
 		else if (!_stricmp(szTagName, MTOK_NPC_AI_INTELLIGENCE))
 		{
 			int nChild = chrElement.GetChildNodeCount();
@@ -553,7 +559,7 @@ void MQuestNPCCatalogue::ParseGlobalAIValue(MXmlElement& element)
 				}
 			}
 		}
-		// AGILITY ÅÂ±× -----------------------
+		// AGILITY ï¿½Â±ï¿½ -----------------------
 		else if (!_stricmp(szTagName, MTOK_NPC_AI_AGILITY))
 		{
 			int nChild = chrElement.GetChildNodeCount();
@@ -582,8 +588,6 @@ void MQuestNPCCatalogue::ParseGlobalAIValue(MXmlElement& element)
 			}
 		}
 	}
-
-
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -601,11 +605,10 @@ void MQuestNPCSetCatalogue::Clear()
 
 MQuestNPCSetCatalogue::MQuestNPCSetCatalogue()
 {
-
 }
 
-MQuestNPCSetCatalogue::~MQuestNPCSetCatalogue() 
-{ 
+MQuestNPCSetCatalogue::~MQuestNPCSetCatalogue()
+{
 	Clear();
 }
 
@@ -688,7 +691,6 @@ bool MQuestNPCSetCatalogue::ReadXml(const char* szFileName)
 	int iCount = rootElement.GetChildNodeCount();
 
 	for (int i = 0; i < iCount; i++) {
-
 		chrElement = rootElement.GetChildNode(i);
 		chrElement.GetTagName(szTagName);
 
@@ -707,7 +709,7 @@ bool MQuestNPCSetCatalogue::ReadXml(const char* szFileName)
 bool MQuestNPCSetCatalogue::ReadXml(MZFileSystem* pFileSystem, const char* szFileName)
 {
 	MXmlDocument xmlIniData;
-	if(!xmlIniData.LoadFromFile(szFileName, pFileSystem)) {
+	if (!xmlIniData.LoadFromFile(szFileName, pFileSystem)) {
 		return false;
 	}
 
@@ -718,7 +720,6 @@ bool MQuestNPCSetCatalogue::ReadXml(MZFileSystem* pFileSystem, const char* szFil
 	int iCount = rootElement.GetChildNodeCount();
 
 	for (int i = 0; i < iCount; i++) {
-
 		chrElement = rootElement.GetChildNode(i);
 		chrElement.GetTagName(szTagName);
 
@@ -736,7 +737,7 @@ bool MQuestNPCSetCatalogue::ReadXml(MZFileSystem* pFileSystem, const char* szFil
 
 void MQuestNPCSetCatalogue::ParseNPCSet(MXmlElement& element)
 {
-	char szTemp[256]="";
+	char szTemp[256] = "";
 	int n = 0;
 	char szAttrValue[256];
 	char szAttrName[64];
@@ -761,7 +762,6 @@ void MQuestNPCSetCatalogue::ParseNPCSet(MXmlElement& element)
 			pNPCSetInfo->nBaseNPC = MQUEST_NPC(atoi(szAttrValue));
 		}
 	}
-
 
 	int iChildCount = element.GetChildNodeCount();
 	MXmlElement chrElement;

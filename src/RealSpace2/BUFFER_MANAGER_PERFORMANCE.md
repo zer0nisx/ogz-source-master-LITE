@@ -156,3 +156,5 @@ Cargar 10 personajes idénticos:
 - Ajustar parámetros de limpieza si es necesario
 - Considerar optimizaciones futuras según uso real
 
+
+

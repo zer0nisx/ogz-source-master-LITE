@@ -189,14 +189,17 @@ void RNavigationNode::MapVectorHeightToNode(rvector& MotionPoint) const
 {
 	// ax + by + cz + d = 0
 	// cz = -(ax+by+d)
-	// z = -(ax+by+d)/b
-	if (m_Plane.c)
+	// z = -(ax+by+d)/c
+	// CORRECCIÓN: Protección contra división por cero y planos horizontales
+	const float EPSILON = 0.0001f;
+	if (fabs(m_Plane.c) > EPSILON)
 	{
-		MotionPoint.z = ( -(m_Plane.a*MotionPoint.x + m_Plane.b*MotionPoint.y+m_Plane.d)/m_Plane.c);
+		MotionPoint.z = -(m_Plane.a * MotionPoint.x + m_Plane.b * MotionPoint.y + m_Plane.d) / m_Plane.c;
 	}
 	else
 	{
-		MotionPoint.z = 0.0f;
+		// Plano casi horizontal - usar altura promedio de los vértices
+		MotionPoint.z = (m_Vertex[VERT_A].z + m_Vertex[VERT_B].z + m_Vertex[VERT_C].z) / 3.0f;
 	}
 }
 

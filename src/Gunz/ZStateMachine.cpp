@@ -45,13 +45,11 @@ void ZStateMachine::AddState(ZState* pState)
 
 void ZStateMachine::DeleteState(int nStateID)
 {
-	for (map<int, ZState*>::iterator itor = m_StateMap.begin(); itor != m_StateMap.end(); ++itor)
+	map<int, ZState*>::iterator itor = m_StateMap.find(nStateID);
+	if (itor != m_StateMap.end())
 	{
-		if (((*itor).second)->GetStateID() == nStateID)
-		{
-			delete (*itor).second;
-			return;
-		}
+		delete (*itor).second;
+		m_StateMap.erase(itor);  // CORRECCIÓN: Eliminar del map después de borrar
 	}
 }
 

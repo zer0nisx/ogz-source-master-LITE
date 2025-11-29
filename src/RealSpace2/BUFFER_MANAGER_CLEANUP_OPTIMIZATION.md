@@ -84,3 +84,5 @@ Pool grande (3368 buffers):
 
 El overhead es tan bajo que no afectará el rendimiento del juego, y previene acumulación de memoria a largo plazo.
 
+
+

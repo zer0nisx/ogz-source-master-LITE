@@ -121,14 +121,66 @@ VoiceChat::VoiceChat()
 
 VoiceChat::~VoiceChat()
 {
+	// Stop recording if active
+	if (Recording)
+		StopRecording();
+
+	// Close all playback streams
+	for (auto& pair : MicStreams)
+	{
+		if (pair.second.Stream)
+		{
+			Pa_StopStream(pair.second.Stream);
+			Pa_CloseStream(pair.second.Stream);
+		}
+	}
+	MicStreams.clear();
+
 #ifdef WAVEIN
-	waveInClose(WaveIn);
-#else
-	if(pOpusEncoder)
+	// Stop the thread
+	if (thr.joinable())
+	{
+		bThreadRunning = false;
+		PostThreadMessage(GetThreadId(thr.native_handle()), WM_QUIT, 0, 0);
+		thr.join();
+	}
+	
+	// Close wave input (only if it was successfully opened)
+	if (CanRecord)
+	{
+		waveInReset(WaveIn);
+		waveInStop(WaveIn);
+		waveInClose(WaveIn);
+	}
+	
+	if (pOpusEncoder)
 		opus_encoder_destroy(pOpusEncoder);
-	if(pOpusDecoder)
+#else
+	// Close input stream
+	if (InputStream)
+	{
+		Pa_StopStream(InputStream);
+		Pa_CloseStream(InputStream);
+		InputStream = nullptr;
+	}
+	
+	if (pOpusEncoder)
+		opus_encoder_destroy(pOpusEncoder);
+	if (pOpusDecoder)
 		opus_decoder_destroy(pOpusDecoder);
 #endif
+
+	// Terminate PortAudio
+	if (CanPlay || CanRecord || CanDecode)
+	{
+		PaError error = Pa_Terminate();
+		if (error != paNoError)
+		{
+			MLog("Pa_Terminate failed with error code %d: %s\n", error, Pa_GetErrorText(error));
+		}
+	}
+
+	Instance = nullptr;
 }
 
 void VoiceChat::StartRecording()
@@ -266,6 +318,13 @@ void VoiceChat::OnDestroyCharacter(ZCharacter * Char)
 	if (it == MicStreams.end())
 		return;
 
+	// Close the stream before erasing
+	if (it->second.Stream)
+	{
+		Pa_StopStream(it->second.Stream);
+		Pa_CloseStream(it->second.Stream);
+	}
+
 	MicStreams.erase(it);
 }
 
@@ -289,7 +348,7 @@ void VoiceChat::ThreadLoop()
 {
 	MSG msg;
 
-	while (GetMessage(&msg, NULL, MM_WIM_DATA, MM_WIM_DATA) == 1)
+	while (bThreadRunning && GetMessage(&msg, NULL, MM_WIM_DATA, MM_WIM_DATA) == 1)
 	{
 		WAVEHDR &wavehdr = *LPWAVEHDR(msg.lParam);
 
@@ -398,6 +457,14 @@ void VoiceChat::OnCreateDevice()
 	auto Success = SpeakerBitmap.Create("SpeakerIcon", RGetDevice(), "Interface/default/SpeakerIcon.png");
 	if (!Success)
 		MLog("Failed to create speaker icon texture\n");
+}
+
+void VoiceChat::OnReset()
+{
+	// Recreate the speaker bitmap after device reset
+	auto Success = SpeakerBitmap.Create("SpeakerIcon", RGetDevice(), "Interface/default/SpeakerIcon.png");
+	if (!Success)
+		MLog("Failed to recreate speaker icon texture after reset\n");
 }
 
 void VoiceChat::OnDraw(MDrawContext* pDC)

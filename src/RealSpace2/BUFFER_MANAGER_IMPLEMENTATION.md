@@ -105,3 +105,5 @@ El buffer manager NO se usa cuando:
 - El buffer manager es thread-safe para acceso desde un solo thread (típico en juegos)
 - Compatible con el código existente (no rompe nada si no se usa)
 
+
+

@@ -113,3 +113,5 @@ Aunque no veas logs de reutilización aún, el sistema ya está:
 
 **Beneficio inmediato**: El pool está listo, la reutilización ocurrirá automáticamente cuando sea posible.
 
+
+

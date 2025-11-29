@@ -5,12 +5,17 @@
 #include "RVersions.h"
 #include "RMath.h"
 
+// MEJORA: Definir umbral de distancia para cachÃ©
+const float RNavigationMesh::CACHE_DISTANCE_THRESHOLD = 50.0f;
+
 RNavigationMesh::RNavigationMesh()
 {
 	m_nVertCount = 0;
 	m_nFaceCount = 0;
 	m_vertices = NULL;
 	m_faces = NULL;
+	m_pLastFoundNode = NULL;
+	m_LastSearchPoint = rvector(0, 0, 0);
 }
 
 RNavigationMesh::~RNavigationMesh()
@@ -27,6 +32,10 @@ void RNavigationMesh::Clear()
 	m_nFaceCount = 0;
 	m_vertices = NULL;
 	m_faces = NULL;
+
+	// MEJORA: Limpiar cachÃ© al limpiar el mesh
+	m_pLastFoundNode = NULL;
+	m_LastSearchPoint = rvector(0, 0, 0);
 
 	ClearNodes();
 }
@@ -62,8 +71,8 @@ void RNavigationMesh::MakeNodes()
 		rvector temp = m_vertices[m_faces[i].v3];
 
 		_ASSERT( (*vp[0] != *vp[1]) && (*vp[1] != *vp[2]) && (*vp[2] != *vp[1]) );
-		AddNode(i, *vp[0], *vp[1], *vp[2]);		// ¹Ý½Ã°è¹æÇâ
-		//AddNode(i, *vp[0], *vp[2], *vp[1]);		// ½Ã°è¹æÇâ
+		AddNode(i, *vp[0], *vp[1], *vp[2]);		// ï¿½Ý½Ã°ï¿½ï¿½ï¿½ï¿½
+		//AddNode(i, *vp[0], *vp[2], *vp[1]);		// ï¿½Ã°ï¿½ï¿½ï¿½ï¿½
 	}
 }
 
@@ -96,6 +105,20 @@ void RNavigationMesh::LinkNodes()
 
 RNavigationNode* RNavigationMesh::FindClosestNode(const rvector& point) const
 {
+	// MEJORA: Verificar cachÃ© primero
+	if (m_pLastFoundNode != NULL)
+	{
+		float cacheDistSq = MagnitudeSq(point - m_LastSearchPoint);
+		if (cacheDistSq < CACHE_DISTANCE_THRESHOLD * CACHE_DISTANCE_THRESHOLD)
+		{
+			// Verificar si el punto sigue dentro del nodo en cachÃ©
+			if (m_pLastFoundNode->IsPointInNodeColumn(point))
+			{
+				return m_pLastFoundNode;
+			}
+		}
+	}
+
 	float ClosestDistance = FLT_MAX;
 	float ClosestHeight = FLT_MAX;
 	bool bFoundHomeNode = false;
@@ -112,7 +135,7 @@ RNavigationNode* RNavigationMesh::FindClosestNode(const rvector& point) const
 			rvector NewPosition(point);
 			pNode->MapVectorHeightToNode(NewPosition);
 
-			// °¡Àå °¡±î¿î ³ôÀÌÀÇ ³ëµå¸¦ Ã£´Â´Ù.
+			// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½å¸¦ Ã£ï¿½Â´ï¿½.
 			ThisDistance = fabs(NewPosition.z - point.z);
 
 			if (bFoundHomeNode)
@@ -161,12 +184,14 @@ RNavigationNode* RNavigationMesh::FindClosestNode(const rvector& point) const
 		}
 	}
 	
-
+	// MEJORA: Actualizar cachÃ© con el resultado
+	if (pClosestNode != NULL)
+	{
+		m_pLastFoundNode = pClosestNode;
+		m_LastSearchPoint = point;
+	}
 
 	return pClosestNode;
-
-
-
 }
 
 #ifdef _WIN32
@@ -331,10 +356,22 @@ bool RNavigationMesh::BuildNavigationPath(RNavigationNode* pStartNode,
 	m_pGoalNode = pEndNode;
 
 	bool ret = m_AStar.Search(pStartNode, pEndNode);
-	if (ret == false) return false;
+	if (ret == false) 
+	{
+		#ifdef _DEBUG
+		OutputDebugString("RNavigationMesh::BuildNavigationPath - A* search failed\n");
+		#endif
+		return false;
+	}
 
 	m_WaypointList.clear();
-	m_WaypointList.push_back(EndPos);
+	// MEJORA: Validar altura del waypoint final usando el nodo
+	rvector validatedEndPos = EndPos;
+	if (pEndNode)
+	{
+		validatedEndPos = SnapPointToNode(pEndNode, EndPos);
+	}
+	m_WaypointList.push_back(validatedEndPos);
 
 
 	RNavigationNode* pVantageNode = NULL;
@@ -365,9 +402,11 @@ bool RNavigationMesh::BuildNavigationPath(RNavigationNode* pStartNode,
 		else
 		{
 			_ASSERT(pLastNode != NULL);
-			m_WaypointList.push_back(lastPos);
+			// MEJORA: Validar altura del waypoint usando el nodo
+			rvector validatedLastPos = SnapPointToNode(pLastNode, lastPos);
+			m_WaypointList.push_back(validatedLastPos);
 			pVantageNode = pLastNode;
-			vantagePos = lastPos;
+			vantagePos = validatedLastPos;
 			bPushed = true;
 		}
 	}
@@ -376,14 +415,23 @@ bool RNavigationMesh::BuildNavigationPath(RNavigationNode* pStartNode,
 	{
 		if (!LineOfSightTest(pVantageNode, vantagePos, pStartNode, StartPos))
 		{
-			m_WaypointList.push_back(lastPos);
+			// MEJORA: Validar altura del waypoint usando el nodo
+			if (pLastNode)
+			{
+				rvector validatedLastPos = SnapPointToNode(pLastNode, lastPos);
+				m_WaypointList.push_back(validatedLastPos);
+			}
+			else
+			{
+				m_WaypointList.push_back(lastPos);
+			}
 		}
 	}
 
 	//m_WaypointList.push_back(StartPos);
 
 
-	// ¼ø¼­¸¦ µÚ¹Ù²Û´Ù.
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ú¹Ù²Û´ï¿½.
 	m_WaypointList.reverse();
 
 	return ret;
@@ -392,10 +440,22 @@ bool RNavigationMesh::BuildNavigationPath(RNavigationNode* pStartNode,
 bool RNavigationMesh::BuildNavigationPath(const rvector& vStartPos, const rvector& vGoalPos)
 {
 	RNavigationNode* pStartNode = FindClosestNode(vStartPos);
-	if (pStartNode == NULL) return false;
+	if (pStartNode == NULL) 
+	{
+		#ifdef _DEBUG
+		OutputDebugString("RNavigationMesh::BuildNavigationPath - No start node found\n");
+		#endif
+		return false;
+	}
 
 	RNavigationNode* pGoalNode = FindClosestNode(vGoalPos);
-	if (pGoalNode==NULL) return false;
+	if (pGoalNode == NULL) 
+	{
+		#ifdef _DEBUG
+		OutputDebugString("RNavigationMesh::BuildNavigationPath - No goal node found\n");
+		#endif
+		return false;
+	}
 
 	return BuildNavigationPath(pStartNode, vStartPos, pGoalNode, vGoalPos);
 }

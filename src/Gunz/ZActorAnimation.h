@@ -3,32 +3,32 @@
 
 #include "ZStateMachine.h"
 
-//! ¿¡´Ï¸ÞÀÌ¼Ç ¼¼Æ®
+//! ï¿½ï¿½ï¿½Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½Æ®
 enum ZA_ANIM_STATE {
 
 	ZA_ANIM_NONE = 0,
-	ZA_ANIM_IDLE,				// Á¤Áö
-	ZA_ANIM_WALK,				// °È±â
-	ZA_ANIM_RUN,				// ¶Ù±â
-	ZA_ANIM_ATTACK_MELEE,		// ±ÙÁ¢ °ø°Ý
-	ZA_ANIM_ATTACK_RANGE,		// ¿ø°Å¸® °ø°Ý
-	ZA_ANIM_RANGE_DAMAGED,		// ¿ø°Å¸® ÇÇ°Ý
-	ZA_ANIM_MELEE_DAMAGED1,		// ¿ø°Å¸® ÇÇ°Ý
-	ZA_ANIM_MELEE_DAMAGED2,		// ¿ø°Å¸® ÇÇ°Ý
-	ZA_ANIM_LIGHTNING_DAMAGED,	// ¶óÀÌÆ®´× µ¥¹ÌÁö
-	ZC_ANIM_DAMAGED_DOWN,		// ´Ù¿î
-	ZC_ANIM_STAND,				// ÀÏ¾î¼­±â
+	ZA_ANIM_IDLE,				// ï¿½ï¿½ï¿½ï¿½
+	ZA_ANIM_WALK,				// ï¿½È±ï¿½
+	ZA_ANIM_RUN,				// ï¿½Ù±ï¿½
+	ZA_ANIM_ATTACK_MELEE,		// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+	ZA_ANIM_ATTACK_RANGE,		// ï¿½ï¿½ï¿½Å¸ï¿½ ï¿½ï¿½ï¿½ï¿½
+	ZA_ANIM_RANGE_DAMAGED,		// ï¿½ï¿½ï¿½Å¸ï¿½ ï¿½Ç°ï¿½
+	ZA_ANIM_MELEE_DAMAGED1,		// ï¿½ï¿½ï¿½Å¸ï¿½ ï¿½Ç°ï¿½
+	ZA_ANIM_MELEE_DAMAGED2,		// ï¿½ï¿½ï¿½Å¸ï¿½ ï¿½Ç°ï¿½
+	ZA_ANIM_LIGHTNING_DAMAGED,	// ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	ZC_ANIM_DAMAGED_DOWN,		// ï¿½Ù¿ï¿½
+	ZC_ANIM_STAND,				// ï¿½Ï¾î¼­ï¿½ï¿½
 
-	ZA_ANIM_BLAST,				// ³¯¶ó°¡±â
-	ZA_ANIM_BLAST_FALL,			// ¶³¾îÁö±â
-	ZA_ANIM_BLAST_DROP,			// ¶¥¿¡ ºÎµúÈ÷±â
+	ZA_ANIM_BLAST,				// ï¿½ï¿½ï¿½ó°¡±ï¿½
+	ZA_ANIM_BLAST_FALL,			// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	ZA_ANIM_BLAST_DROP,			// ï¿½ï¿½ï¿½ï¿½ ï¿½Îµï¿½ï¿½ï¿½ï¿½ï¿½
 	ZA_ANIM_DIE,
 
-	ZA_ANIM_BLAST_DAGGER,		// ´Ü°ËÂî¸£±â¿¡ ³¯¶ó°¡´Â
-	ZA_ANIM_BLAST_DAGGER_DROP,	// ´Ü°ËÂî¸£±â¿¡ ³Ñ¾îÁö´Â
+	ZA_ANIM_BLAST_DAGGER,		// ï¿½Ü°ï¿½ï¿½î¸£ï¿½â¿¡ ï¿½ï¿½ï¿½ó°¡´ï¿½
+	ZA_ANIM_BLAST_DAGGER_DROP,	// ï¿½Ü°ï¿½ï¿½î¸£ï¿½â¿¡ ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½
 
-	ZA_ANIM_SPECIAL1,			// ½ºÅ³ÀÌ³ª ¸¶¹ý
-	ZA_ANIM_SPECIAL2,			// ½ºÅ³ÀÌ³ª ¸¶¹ý
+	ZA_ANIM_SPECIAL1,			// ï¿½ï¿½Å³ï¿½Ì³ï¿½ ï¿½ï¿½ï¿½ï¿½
+	ZA_ANIM_SPECIAL2,			// ï¿½ï¿½Å³ï¿½Ì³ï¿½ ï¿½ï¿½ï¿½ï¿½
 	ZA_ANIM_SPECIAL3,
 	ZA_ANIM_SPECIAL4,
 
@@ -40,7 +40,7 @@ enum ZA_ANIM_INPUT {
 	ZA_INPUT_NONE = 0,
 	ZA_INPUT_WALK,				// a
 	ZA_INPUT_RUN,				// b
-	ZA_INPUT_ROTATE,			// ¹æÇâÀ» ¹Ù²Ù·Á ÇÑ´Ù.
+	ZA_INPUT_ROTATE,			// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù²Ù·ï¿½ ï¿½Ñ´ï¿½.
 	ZA_INPUT_WALK_DONE,
 	ZA_INPUT_ATTACK_MELEE,		// c
 	ZA_INPUT_ATTACK_RANGE,		// d
@@ -63,6 +63,11 @@ enum ZA_ANIM_INPUT {
 	ZA_EVENT_SPECIAL2,
 	ZA_EVENT_SPECIAL3,
 	ZA_EVENT_SPECIAL4,
+	
+	// SUMMER-SOURCE: Eventos para sistema de neglect y standup
+	ZA_EVENT_NEGLECT1,			// NPC inactivo tipo 1
+	ZA_EVENT_NEGLECT2,			// NPC inactivo tipo 2
+	ZA_EVENT_STANDUP,			// Levantarse despuÃ©s de caer
 
 	// anim event
 	ZA_ANIM_DONE,				// k
@@ -75,8 +80,8 @@ class ZActor;
 class ZActorAnimation
 {
 protected:
-	//! ¿¡´Ï¸ÞÀÌ¼Ç Á¤º¸
-	static struct ANIMATION_INFO {		// ZCharacterÀÇ ZANIMATIONINFO¿¡¼­ °¡Á®¿È
+	//! ï¿½ï¿½ï¿½Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½ï¿½ï¿½
+	static struct ANIMATION_INFO {		// ZCharacterï¿½ï¿½ ZANIMATIONINFOï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		int		nID;
 		char*	szName;
 		bool	bEnableCancel;
@@ -85,8 +90,8 @@ protected:
 	} m_AnimationTable[ZA_ANIM_END];
 
 	ZActor*					m_pBody;
-	ZStateMachine			m_AniFSM;				///< ¾Ö´Ï¸ÞÀÌ¼Ç »óÅÂ±â°è
-	ZA_ANIM_STATE			m_nCurrState;			///< ÇöÀç ¾Ö´Ï¸ÞÀÌ¼Ç »óÅÂ
+	ZStateMachine			m_AniFSM;				///< ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½ï¿½Â±ï¿½ï¿½
+	ZA_ANIM_STATE			m_nCurrState;			///< ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½ï¿½ï¿½
 
 	void InitAnimationStates();
 public:
@@ -95,7 +100,7 @@ public:
 	void Init(ZActor* pBody);
 	void Set(ZA_ANIM_STATE nAnim, bool bReset=false);
 	bool Input(ZA_ANIM_INPUT nInput);
-	void ForceAniState(int nAnimState);				///< ¾Ö´Ï¸ÞÀÌ¼Ç »óÅÂ¸¦ °­Á¦·Î ¹Ù²Û´Ù. 
+	void ForceAniState(int nAnimState);				///< ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½ï¿½Â¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù²Û´ï¿½. 
 
 	ZA_ANIM_STATE GetCurrState() { return m_nCurrState; }
 	static bool IsAttackAnimation(ZA_ANIM_STATE nAnimState);

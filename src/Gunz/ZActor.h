@@ -24,18 +24,17 @@ _USING_NAMESPACE_REALSPACE2
 
 enum ZACTOR_FLAG
 {
-	AF_NONE				= 0,
-	AF_LAND				= 0x1,
-	AF_BLAST			= 0x2,
-	AF_MOVING			= 0x4,
-	AF_DEAD				= 0x8,
-	AF_REQUESTED_DEAD	= 0x10,
-	AF_BLAST_DAGGER		= 0x20,
+	AF_NONE = 0,
+	AF_LAND = 0x1,
+	AF_BLAST = 0x2,
+	AF_MOVING = 0x4,
+	AF_DEAD = 0x8,
+	AF_REQUESTED_DEAD = 0x10,
+	AF_BLAST_DAGGER = 0x20,
 
-	AF_MY_CONTROL		= 0x100,
+	AF_MY_CONTROL = 0x100,
 
-
-	AF_SOUND_WOUNDED	= 0x1000,
+	AF_SOUND_WOUNDED = 0x1000,
 };
 
 struct MQuestNPCInfo;
@@ -54,15 +53,18 @@ protected:
 	float					m_fTC;
 	int						m_nQL;
 	MMatchItemDesc			m_ItemDesc;
-	MQuestNPCInfo*			m_pNPCInfo;
+	MQuestNPCInfo* m_pNPCInfo;
 	ZActorAnimation			m_Animation;
-	ZBrain*					m_pBrain;
+	ZBrain* m_pBrain;
 	ZTaskManager			m_TaskManager;
 	float					m_TempBackupTime;
 	float					m_fSpeed;
 	int						m_nDamageCount;
+	bool					m_bReserveStandUp;  // SUMMER-SOURCE: Reserva para levantarse después de estar en el suelo
+	DWORD					m_dwStandUp;       // SUMMER-SOURCE: Tiempo para levantarse
 private:
 	void InitFromNPCType(MQUEST_NPC nNPCType, float fTC, int nQL);
+	void DrawDebugHitbox();
 	void InitMesh(char* szMeshName, MQUEST_NPC nNPCType);
 	void OnTaskFinished(ZTASK_ID nLastID);
 	static void OnTaskFinishedCallback(ZActor* pActor, ZTASK_ID nLastID);
@@ -71,13 +73,13 @@ private:
 protected:
 	enum ZACTOR_LASTTIME
 	{
-		ACTOR_LASTTIME_HPINFO		= 0,
+		ACTOR_LASTTIME_HPINFO = 0,
 		ACTOR_LASTTIME_BASICINFO,
 		ACTOR_LASTTIME_MAX
 	};
 	u32	m_nLastTime[ACTOR_LASTTIME_MAX];
 
-	ZModule_Skills			*m_pModule_Skills;
+	ZModule_Skills* m_pModule_Skills;
 
 	rvector				m_vAddBlastVel;
 	float				m_fAddBlastVelTime;
@@ -129,32 +131,36 @@ public:
 	inline int GetActualMaxAP();
 
 	void RunTo(rvector& dir);
-	void Stop(bool bWithAniStop=true);
+	void Stop(bool bWithAniStop = true);
 	void RotateTo(const rvector& dir);
+	void OnNeglect(int nNum);  // SUMMER-SOURCE: Sistema de neglect para NPCs inactivos
 
-	virtual void OnBlast(rvector &dir) override;
-	virtual void OnBlastDagger(rvector &dir,rvector& pos) override;
+	virtual void OnBlast(rvector& dir) override;
+	virtual void OnBlastDagger(rvector& dir, rvector& pos) override;
 	virtual bool IsCollideable() override;
 	virtual bool IsAttackable() override;
 	virtual void Attack_Melee();
 	virtual void Attack_Range(rvector& dir);
 	virtual void Skill(int nSkill);
 
+	bool IsNeverPushed() { if (m_pNPCInfo) return m_pNPCInfo->bNeverPushed; return false; }
+	float GetCollideRadius() { if (m_pNPCInfo) return m_pNPCInfo->fCollRadius; return false; }
+
 	bool isThinkAble();
 
-	ZBrain* GetBrain()					{ return m_pBrain; }
-	MQuestNPCInfo* GetNPCInfo()			{ return m_pNPCInfo; }
-	ZTaskManager* GetTaskManager()		{ return &m_TaskManager; }
-	
+	ZBrain* GetBrain() { return m_pBrain; }
+	MQuestNPCInfo* GetNPCInfo() { return m_pNPCInfo; }
+	ZTaskManager* GetTaskManager() { return &m_TaskManager; }
+
 	virtual ZOBJECTHITTEST HitTest(const rvector& origin, const rvector& to,
-		float fTime, rvector *pOutPos = NULL) override;
+		float fTime, rvector* pOutPos = NULL) override;
 
 	virtual bool IsDead() override;
 
 	virtual MMatchTeam GetTeamID() const override { return MMT_BLUE; }
 
 	virtual void OnDamaged(ZObject* pAttacker, rvector srcPos, ZDAMAGETYPE damageType,
-		MMatchWeaponType weaponType, float fDamage, float fPiercingRatio=1.f, int nMeleeType=-1) override;
+		MMatchWeaponType weaponType, float fDamage, float fPiercingRatio = 1.f, int nMeleeType = -1) override;
 
 	virtual void OnKnockback(const rvector& dir, float fForce) override;
 	virtual void OnDie() override;
@@ -163,30 +169,31 @@ public:
 	bool IsDieAnimationDone();
 	bool CanSee(ZObject* pTarget);
 	bool CanAttackRange(ZObject* pTarget);
-	bool CanAttackMelee(ZObject* pTarget, ZSkillDesc *pSkillDesc=NULL);
+	bool CanAttackMelee(ZObject* pTarget, ZSkillDesc* pSkillDesc = NULL);
 
 	auto& GetLastAttacker() const { return m_pModule_HPAP->GetLastAttacker(); }
 
 	// CORRECCIÓN: Mover miembros públicos que se usan desde otros archivos
 	char m_szOwner[64];
 	float m_fLastBasicInfo;
-	void SetOwner(const char* szOwner) { strcpy_safe(m_szOwner,szOwner); }
+	void SetOwner(const char* szOwner) { strcpy_safe(m_szOwner, szOwner); }
 
-	// REFACTORIZACIÓN: Helpers para eliminar código duplicado
-private:
 	// Helpers para flags
 	inline bool IsOnLand() const { return CheckFlag(AF_LAND); }
 	inline void SetOnLand(bool bOnLand) { SetFlag(AF_LAND, bOnLand); }
-	
+
+	// REFACTORIZACIÓN: Helpers para eliminar código duplicado
+private:
+
 	// Helpers para validaciones
 	inline bool HasVMesh() const { return m_pVMesh != nullptr; }
-	
+
 	// Helpers para cálculos
 	rvector GetSoundPosition() const;
 	static void NormalizeDirection2D(rvector& dir);
 	float GetAngleToTarget(ZObject* pTarget) const;
 	void OnReachGround();
-	
+
 	// CORRECCIÓN: Helpers para detener velocidad sin causar NPCs atascados
 	void StopHorizontalVelocity();  // Detiene X,Y, mantiene Z (gravedad)
 	void StopVerticalVelocity();    // Detiene Z, mantiene X,Y (movimiento)
@@ -211,29 +218,29 @@ inline bool ZActor::CheckFlag(unsigned int nFlag) const  // CORRECCIÓN: Agregar
 	return ((m_nFlags & nFlag) != 0);
 }
 
-inline u32 ZActor::GetFlags() 
-{ 
-	return m_nFlags; 
+inline u32 ZActor::GetFlags()
+{
+	return m_nFlags;
 }
 
 inline ZA_ANIM_STATE ZActor::GetCurrAni()
-{ 
+{
 	return m_Animation.GetCurrState();
 }
 
-inline int ZActor::GetHP()	
-{ 
-	return m_pModule_HPAP->GetHP(); 
+inline int ZActor::GetHP()
+{
+	return m_pModule_HPAP->GetHP();
 }
 
-inline int ZActor::GetAP()	
+inline int ZActor::GetAP()
 {
-	return m_pModule_HPAP->GetAP(); 
+	return m_pModule_HPAP->GetAP();
 }
 
 inline float ZActor::GetTC()
-{ 
-	return m_fTC; 
+{
+	return m_fTC;
 }
 
 inline int ZActor::GetQL()

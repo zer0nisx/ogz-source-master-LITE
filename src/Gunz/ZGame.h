@@ -18,6 +18,7 @@
 #include "ZWorld.h"
 #include "ZGameAction.h"
 #include <utility>
+#include <set>
 #include "ZGameDraw.h"
 #include "BasicInfo.h"
 #include "function_view.h"
@@ -52,16 +53,16 @@ struct ZPICKINFO;
 
 struct ZObserverCommandItem {
 	float fTime;
-	MCommand *pCommand;
+	MCommand* pCommand;
 };
 
 class ZObserverCommandList : public std::list<ZObserverCommandItem*> {
 public:
 	~ZObserverCommandList() { Destroy(); }
 	void Destroy() {
-		while(!empty())
+		while (!empty())
 		{
-			ZObserverCommandItem *pItem=*begin();
+			ZObserverCommandItem* pItem = *begin();
 			delete pItem->pCommand;
 			delete pItem;
 			erase(begin());
@@ -109,10 +110,10 @@ public:
 	ZGame();
 	~ZGame();
 
-	bool Create(MZFileSystem *pfs, ZLoadingProgress *pLoading);
+	bool Create(MZFileSystem* pfs, ZLoadingProgress* pLoading);
 
 	void Draw();
-	void Draw(MDrawContextR2 &dc);
+	void Draw(MDrawContextR2& dc);
 	void Update(float fElapsed);
 	void Destroy();
 
@@ -131,9 +132,9 @@ public:
 	void ShowReplayInfo(bool bShow);
 
 	void OnExplosionGrenade(MUID uidOwner, rvector pos, float fDamage, float fRange, float fMinDamage, float fKnockBack, MMatchTeam nTeamID);
-	void OnExplosionMagic(ZWeaponMagic *pWeapon, MUID uidOwner, rvector pos, float fMinDamage, float fKnockBack, MMatchTeam nTeamID, bool bSkipNpc);
-	void OnExplosionMagicNonSplash(ZWeaponMagic *pWeapon, MUID uidOwner, MUID uidTarget, rvector pos, float fKnockBack);
-	void OnReloadComplete(ZCharacter *pCharacter);
+	void OnExplosionMagic(ZWeaponMagic* pWeapon, MUID uidOwner, rvector pos, float fMinDamage, float fKnockBack, MMatchTeam nTeamID, bool bSkipNpc);
+	void OnExplosionMagicNonSplash(ZWeaponMagic* pWeapon, MUID uidOwner, MUID uidTarget, rvector pos, float fKnockBack);
+	void OnReloadComplete(ZCharacter* pCharacter);
 	void OnPeerShotSp(const MUID& uid, float fShotTime, const rvector& pos, const rvector& dir, int type, MMatchCharItemParts sel_type);
 	void OnChangeWeapon(const MUID& uid, MMatchCharItemParts parts);
 
@@ -142,7 +143,7 @@ public:
 	void CheckMyCharDead(float fElapsed);
 
 	void CheckStylishAction(ZCharacter* pCharacter);
-	void CheckCombo(ZCharacter *pOwnerCharacter, ZObject *pHitObject, bool bPlaySound);
+	void CheckCombo(ZCharacter* pOwnerCharacter, ZObject* pHitObject, bool bPlaySound);
 	void UpdateCombo(bool bShot = false);
 
 	void PostBasicInfo();
@@ -153,7 +154,7 @@ public:
 	void PostSyncReport();
 
 	int  SelectSlashEffectMotion(ZCharacter* pCharacter);
-	bool CheckWall(ZObject* pObj1, ZObject* pObj2);
+	bool CheckWall(ZObject* pObj1, ZObject* pObj2, bool bCoherentToPeer = false);
 
 	void InitRound();
 	void AddEffectRoundState(MMATCH_ROUNDSTATE nRoundState, int nArg);
@@ -201,14 +202,14 @@ public:
 
 	MDataChecker* GetDataChecker() { return &m_DataChecker; }
 
-	rvector GetFloor(rvector pos, rplane *pimpactplane = NULL);
+	rvector GetFloor(rvector pos, rplane* pimpactplane = NULL);
 
-	bool Pick(ZObject *pOwnerObject, const rvector &origin, const rvector &dir, ZPICKINFO *pickinfo,
+	bool Pick(ZObject* pOwnerObject, const rvector& origin, const rvector& dir, ZPICKINFO* pickinfo,
 		DWORD dwPassFlag = RM_FLAG_ADDITIVE | RM_FLAG_HIDE, bool bMyChar = false);
-	bool PickTo(ZObject *pOwnerObject, const rvector &origin, const rvector &to, ZPICKINFO *pickinfo,
+	bool PickTo(ZObject* pOwnerObject, const rvector& origin, const rvector& to, ZPICKINFO* pickinfo,
 		DWORD dwPassFlag = RM_FLAG_ADDITIVE | RM_FLAG_HIDE, bool bMyChar = false);
-	bool PickHistory(ZObject *pOwnerObject, float fTime, const rvector &origin, const rvector &to,
-		ZPICKINFO *pickinfo, DWORD dwPassFlag, bool bMyChar = false);
+	bool PickHistory(ZObject* pOwnerObject, float fTime, const rvector& origin, const rvector& to,
+		ZPICKINFO* pickinfo, DWORD dwPassFlag, bool bMyChar = false);
 	bool ObjectColTest(ZObject* pOwner, const rvector& origin, const rvector& to, float fRadius,
 		ZObject** poutTarget);
 
@@ -226,7 +227,12 @@ public:
 	bool GetUserNameColor(MUID uid, MCOLOR& color, char(&sp_name)[size]) {
 		return GetUserNameColor(uid, color, sp_name, size);
 	}
-	bool IsAttackable(ZObject *pAttacker, ZObject *pTarget);
+	bool IsAttackable(ZObject* pAttacker, ZObject* pTarget);
+
+	// SUMMER-SOURCE: Métodos para manejar personajes exentos de ser objetivos de NPCs
+	void ExceptCharacterFromNpcTargetting(const ZCharacter* pChar) { m_setCharacterExceptFromNpcTarget.insert(pChar); }
+	void ClearListExceptionFromNpcTargetting() { m_setCharacterExceptFromNpcTarget.clear(); }
+	bool IsExceptedFromNpcTargetting(const ZCharacter* pChar) { return m_setCharacterExceptFromNpcTarget.find(pChar) != m_setCharacterExceptFromNpcTarget.end(); }
 
 	void OnPeerShot(const MUID& uid, float fShotTime, rvector& pos, rvector& to, MMatchCharItemParts sel_type);
 
@@ -235,11 +241,11 @@ public:
 	void OnPeerShot_Melee(const MUID& uidOwner, float fShotTime);
 	void OnPeerShot_Range(MMatchCharItemParts sel_type, ZObject* pOwner, float fShotTime,
 		rvector pos, rvector to, u32 seed);
-	void OnPeerShot_Shotgun(ZItem *pItem, ZCharacter* pOwnerCharacter, float fShotTime,
+	void OnPeerShot_Shotgun(ZItem* pItem, ZCharacter* pOwnerCharacter, float fShotTime,
 		rvector& pos, rvector& to, u32 seed);
 
-	void OnPeerSlash(ZCharacter *pOwner, const rvector &pos, const rvector &dir, int Type);
-	void OnPeerMassive(ZCharacter *pOwner, const rvector &pos, const rvector &dir);
+	void OnPeerSlash(ZCharacter* pOwner, const rvector& pos, const rvector& dir, int Type);
+	void OnPeerMassive(ZCharacter* pOwner, const rvector& pos, const rvector& dir);
 
 	void OnPeerChat(const MUID& Sender, MMatchTeam Team, const char* Message);
 
@@ -249,15 +255,15 @@ public:
 
 	ZObserverCommandList* GetReplayCommandList() { return &m_ReplayCommandList; }
 
-	RParticles			*m_pParticles{};
+	RParticles* m_pParticles{};
 
-	ZMyCharacter*		m_pMyCharacter{};
+	ZMyCharacter* m_pMyCharacter{};
 	ZCharacterManager	m_CharacterManager;
 	ZObjectManager		m_ObjectManager;
 
 	RVisualMeshMgr		m_VisualMeshMgr;
 
-	ZEffectManager*		m_pEffectManager;
+	ZEffectManager* m_pEffectManager;
 	ZWeaponMgr			m_WeaponManager;
 
 	int					m_render_poly_cnt{};
@@ -265,8 +271,11 @@ public:
 	ZHelpScreen	m_HelpScreen;
 
 protected:
+	// SUMMER-SOURCE: Set de personajes exentos de ser objetivos de NPCs
+	std::set<const ZCharacter*>	m_setCharacterExceptFromNpcTarget;
+
 	int	m_nGunzReplayNumber;
-	ZFile *m_pReplayFile;
+	ZFile* m_pReplayFile;
 	bool m_bReplaying;
 	bool m_bShowReplayInfo;
 
@@ -288,14 +297,14 @@ protected:
 	ZObserverCommandList m_DelayedCommandList;
 
 	void CheckKillSound(ZCharacter* pAttacker);
-	
+
 	void OnReserveObserver();
 	void DrawDebugInfo();
 
 	void OnStageEnterBattle(MCmdEnterBattleParam nParam, MTD_PeerListNode* pPeerNode);
 	void OnStageLeaveBattle(const MUID& uidChar, const MUID& uidStage);
 	void OnPeerList(const MUID& uidStage, void* pBlob, int nCount);
-	void OnAddPeer(const MUID& uidChar, DWORD dwIP, const int nPort =	
+	void OnAddPeer(const MUID& uidChar, DWORD dwIP, const int nPort =
 		MATCHCLIENT_DEFAULT_UDP_PORT, MTD_PeerListNode* pNode = NULL);
 	void OnGameRoundState(const MUID& uidStage, int nRound, int nRoundState, int nArg);
 
@@ -303,29 +312,29 @@ protected:
 	void OnEventUpdateJjang(const MUID& uidChar, bool bJjang);
 
 	void OnPeerDead(const MUID& uidAttacker, const u32 nAttackerArg,
-					const MUID& uidVictim, const u32 nVictimArg);
+		const MUID& uidVictim, const u32 nVictimArg);
 	void OnReceiveTeamBonus(const MUID& uidChar, const u32 nExpArg);
 	void OnPeerDie(const MUID& uidVictim, const MUID& uidAttacker);
 	void OnPeerDieMessage(ZCharacter* pVictim, ZCharacter* pAttacker);
-	void OnChangeParts(const MUID& uid,int partstype,int PartsID);
-	void OnDamage(const MUID& uid, const MUID& tuid,int damage);
+	void OnChangeParts(const MUID& uid, int partstype, int PartsID);
+	void OnDamage(const MUID& uid, const MUID& tuid, int damage);
 	void OnPeerReload(const MUID& uid);
-	void OnPeerSpMotion(const MUID& uid,int nMotionType);
+	void OnPeerSpMotion(const MUID& uid, int nMotionType);
 	void OnPeerChangeCharacter(const MUID& uid);
 	void OnPeerSpawn(const MUID& uid, const rvector& pos, const rvector& dir);
 
 	void OnSetObserver(const MUID& uid);
 
-	void OnPeerBasicInfo(MCommand *pCommand, bool bAddHistory = true, bool bUpdate = true);
-	void OnPeerNewBasicInfo(MCommand *pCommand, bool bAddHistory = true, bool bUpdate = true);
-	void OnPeerHPInfo(MCommand *pCommand);
-	void OnPeerHPAPInfo(MCommand *pCommand);
-	void OnPeerPing(MCommand *pCommand);
-	void OnPeerPong(MCommand *pCommand);
-	void OnPeerOpened(MCommand *pCommand);
+	void OnPeerBasicInfo(MCommand* pCommand, bool bAddHistory = true, bool bUpdate = true);
+	void OnPeerNewBasicInfo(MCommand* pCommand, bool bAddHistory = true, bool bUpdate = true);
+	void OnPeerHPInfo(MCommand* pCommand);
+	void OnPeerHPAPInfo(MCommand* pCommand);
+	void OnPeerPing(MCommand* pCommand);
+	void OnPeerPong(MCommand* pCommand);
+	void OnPeerOpened(MCommand* pCommand);
 	void OnPeerDash(MCommand* pCommand);
-		
-	bool FilterDelayedCommand(MCommand *pCommand);
+
+	bool FilterDelayedCommand(MCommand* pCommand);
 	void ProcessDelayedCommand();
 
 	void OnLocalOptainSpecialWorldItem(MCommand* pCommand);
@@ -378,8 +387,8 @@ extern float g_fFarZ;
 float GetFOV();
 void SetFOV(float);
 
-ZCharacterManager*	ZGetCharacterManager();
-ZObjectManager*		ZGetObjectManager();
+ZCharacterManager* ZGetCharacterManager();
+ZObjectManager* ZGetObjectManager();
 bool IsMyCharacter(ZObject* pObject);
 bool GetUserGradeIDColor(MMatchUserGradeID gid, MCOLOR& UserNameColor, char* sp_name, size_t maxlen);
 template <size_t size>

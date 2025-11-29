@@ -4,28 +4,41 @@
 
 #include "ZStateMachine.h"
 
-/// AI°¡ ÇÏ´Â ÀÏ
+/// AI Ï´
 enum ZBEHAVIOR_STATE
 {
-	ZBEHAVIOR_STATE_IDLE			=0,				///< °¡¸¸È÷ ÀÖ´Â´Ù.
-	ZBEHAVIOR_STATE_PATROL,							///< ¼øÂû
-	ZBEHAVIOR_STATE_ATTACK,							///< °ø°Ý
-	ZBEHAVIOR_STATE_RETREAT,						///< µµ¸Á
-	ZBEHAVIOR_STATE_SCRIPT,							///< ½ºÅ©¸³Æ®
+	ZBEHAVIOR_STATE_IDLE			=0,				///< Ö´Â´.
+	ZBEHAVIOR_STATE_PATROL,							///<
+	ZBEHAVIOR_STATE_ATTACK,							///<
+	ZBEHAVIOR_STATE_RETREAT,						///<
+	ZBEHAVIOR_STATE_SCRIPT,							///<Å©Æ®
 	ZBEHAVIOR_STATE_END
 };
 
 enum ZBEHAVIOR_INPUT 
 {
 	ZBEHAVIOR_INPUT_NONE = 0,
-	ZBEHAVIOR_INPUT_ATTACKED,						///< °ø°Ý´çÇÔ
+	ZBEHAVIOR_INPUT_ATTACKED,						///< Recibe daÃ±o
+	ZBEHAVIOR_INPUT_TARGET_FOUND,					///< Encuentra objetivo
+	ZBEHAVIOR_INPUT_TARGET_LOST,					///< Pierde objetivo
+	ZBEHAVIOR_INPUT_TARGET_IN_RANGE,				///< Objetivo en rango de ataque
+	ZBEHAVIOR_INPUT_TARGET_OUT_RANGE,				///< Objetivo fuera de rango
+	ZBEHAVIOR_INPUT_LOW_HEALTH,						///< Salud baja (retreat)
+	ZBEHAVIOR_INPUT_PATH_BLOCKED,					///< Camino bloqueado
 
 	ZBEHAVIOR_INPUT_END
 };
 
+// SUMMER-SOURCE: Tipo de ofensiva del NPC
+enum ZOFFENSETYPE
+{
+	ZOFFENSETYPE_MELEE		= 1,					// ê·¼ì ‘ ê³µê²©íƒ€ìž…
+	ZOFFENSETYPE_RANGE		= 2,					// ì›ê±°ë¦¬ ê³µê²©íƒ€ìž…
+};
+
 class ZBrain;
 
-/// Behavior State Ãß»ó Å¬·¡½º
+/// Behavior State ß» Å¬
 class ZBehaviorState : public ZState
 {
 protected:
@@ -50,6 +63,9 @@ private:
 	ZStateMachine		m_FSM;
 	ZBehaviorState*		m_pCurrState;
 	ZBrain*				m_pBrain;
+	// SUMMER-SOURCE: Tipo de ofensiva y comportamiento friendly
+	ZOFFENSETYPE		m_nOffecseType;
+	bool				m_bFriendly;
 	void ChangeBehavior(ZBEHAVIOR_STATE nState);
 public:
 	ZBehavior();
@@ -58,6 +74,12 @@ public:
 	void Run(float fDelta);
 	bool Input(ZBEHAVIOR_INPUT nInput);
 	void ForceState(ZBEHAVIOR_STATE nState);
+	int GetCurrStateID() const { return m_FSM.GetCurrStateID(); }  // Para verificar estado actual
+	// SUMMER-SOURCE: MÃ©todos para obtener y establecer tipo de ofensiva y comportamiento friendly
+	ZOFFENSETYPE GetOffenseType()						{ return m_nOffecseType;	}
+	void SetOffenseType( ZOFFENSETYPE nType)			{ m_nOffecseType = nType;	}
+	bool IsFriendly()									{ return m_bFriendly;		}
+	void SetFriendly( bool bFriendly)					{ m_bFriendly = bFriendly;	}
 };
 
 

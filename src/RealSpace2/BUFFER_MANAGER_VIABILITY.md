@@ -169,3 +169,5 @@ bool RVertexBuffer::Create(...)
 
 **Siguiente paso**: Modificar `RVertexBuffer` y `RIndexBuffer` para usar el buffer manager internamente.
 
+
+

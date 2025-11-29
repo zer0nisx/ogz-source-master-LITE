@@ -477,7 +477,26 @@ bool ZConfiguration::LoadConfig(const char* szFileName)
 
 			childElement.GetChildContents(&FastWeaponCycle, ZTOK_ETC_FASTWEAPONCYCLE);
 		}
-
+#ifdef VOICECHAT
+		if (parentElement.FindChildNode(ZTOK_VOICECHAT, &childElement))
+		{
+			childElement.GetChildContents(&m_VoiceChat.fInputVolume, ZTOK_VOICECHAT_INPUTVOLUME);
+			childElement.GetChildContents(&m_VoiceChat.fOutputVolume, ZTOK_VOICECHAT_OUTPUTVOLUME);
+			childElement.GetChildContents(&m_VoiceChat.fMasterVolume, ZTOK_VOICECHAT_MASTERVOLUME);
+			childElement.GetChildContents(&m_VoiceChat.nBitrate, ZTOK_VOICECHAT_BITRATE);
+			childElement.GetChildContents(&m_VoiceChat.bVoiceActivation, ZTOK_VOICECHAT_VOICEACTIVATION);
+			childElement.GetChildContents(&m_VoiceChat.fVoiceActivationThreshold, ZTOK_VOICECHAT_VOICEACTIVATIONTHRESHOLD);
+			childElement.GetChildContents(&m_VoiceChat.bEchoCancellation, ZTOK_VOICECHAT_ECHOCANCELLATION);
+			childElement.GetChildContents(&m_VoiceChat.bNoiseSuppression, ZTOK_VOICECHAT_NOISESUPPRESSION);
+			childElement.GetChildContents(&m_VoiceChat.bAutomaticGainControl, ZTOK_VOICECHAT_AUTOMATICGAINCONTROL);
+			childElement.GetChildContents(&m_VoiceChat.nInputDevice, ZTOK_VOICECHAT_INPUTDEVICE);
+			childElement.GetChildContents(&m_VoiceChat.nOutputDevice, ZTOK_VOICECHAT_OUTPUTDEVICE);
+			childElement.GetChildContents(&m_VoiceChat.bTeamOnly, ZTOK_VOICECHAT_TEAMONLY);
+			childElement.GetChildContents(&m_VoiceChat.bSpatialAudio, ZTOK_VOICECHAT_SPATIALAUDIO);
+			childElement.GetChildContents(&m_VoiceChat.fMaxDistance, ZTOK_VOICECHAT_MAXDISTANCE);
+			childElement.GetChildContents(&m_VoiceChat.fMinDistance, ZTOK_VOICECHAT_MINDISTANCE);
+		}
+#endif
 		if (parentElement.FindChildNode(ZTOK_CHAT, &childElement))
 		{
 			char buf[1024];
@@ -725,6 +744,30 @@ bool ZConfiguration::SaveToFile(const char* szFileName, const char* szHeader)
 		Section.AddHex(ZTOK_CHAT_BACKGROUNDCOLOR, GetChat()->BackgroundColor);
 	}
 
+#ifdef VOICECHAT
+	AddIntersectionWhitespace();
+
+	// VoiceChat
+	{
+		auto Section = ConfigSection(RootElement, ZTOK_VOICECHAT);
+		Section.Add(ZTOK_VOICECHAT_INPUTVOLUME, m_VoiceChat.fInputVolume);
+		Section.Add(ZTOK_VOICECHAT_OUTPUTVOLUME, m_VoiceChat.fOutputVolume);
+		Section.Add(ZTOK_VOICECHAT_MASTERVOLUME, m_VoiceChat.fMasterVolume);
+		Section.Add(ZTOK_VOICECHAT_BITRATE, m_VoiceChat.nBitrate);
+		Section.Add(ZTOK_VOICECHAT_VOICEACTIVATION, m_VoiceChat.bVoiceActivation);
+		Section.Add(ZTOK_VOICECHAT_VOICEACTIVATIONTHRESHOLD, m_VoiceChat.fVoiceActivationThreshold);
+		Section.Add(ZTOK_VOICECHAT_ECHOCANCELLATION, m_VoiceChat.bEchoCancellation);
+		Section.Add(ZTOK_VOICECHAT_NOISESUPPRESSION, m_VoiceChat.bNoiseSuppression);
+		Section.Add(ZTOK_VOICECHAT_AUTOMATICGAINCONTROL, m_VoiceChat.bAutomaticGainControl);
+		Section.Add(ZTOK_VOICECHAT_INPUTDEVICE, m_VoiceChat.nInputDevice);
+		Section.Add(ZTOK_VOICECHAT_OUTPUTDEVICE, m_VoiceChat.nOutputDevice);
+		Section.Add(ZTOK_VOICECHAT_TEAMONLY, m_VoiceChat.bTeamOnly);
+		Section.Add(ZTOK_VOICECHAT_SPATIALAUDIO, m_VoiceChat.bSpatialAudio);
+		Section.Add(ZTOK_VOICECHAT_MAXDISTANCE, m_VoiceChat.fMaxDistance);
+		Section.Add(ZTOK_VOICECHAT_MINDISTANCE, m_VoiceChat.fMinDistance);
+	}
+#endif
+
 	RootElement.AppendText("\n");
 
 	return xmlConfig.SaveToFile(szFileName);
@@ -776,6 +819,24 @@ void ZConfiguration::Init()
 
 	m_Joystick.fSensitivity = 0.5f;
 	m_Joystick.bInvert = false;
+
+#ifdef VOICECHAT
+	m_VoiceChat.fInputVolume = 1.0f;
+	m_VoiceChat.fOutputVolume = 1.0f;
+	m_VoiceChat.fMasterVolume = 1.0f;
+	m_VoiceChat.nBitrate = 16000;
+	m_VoiceChat.bVoiceActivation = false;
+	m_VoiceChat.fVoiceActivationThreshold = 0.01f;
+	m_VoiceChat.bEchoCancellation = true;
+	m_VoiceChat.bNoiseSuppression = true;
+	m_VoiceChat.bAutomaticGainControl = true;
+	m_VoiceChat.nInputDevice = -1;
+	m_VoiceChat.nOutputDevice = -1;
+	m_VoiceChat.bTeamOnly = false;
+	m_VoiceChat.bSpatialAudio = true;
+	m_VoiceChat.fMaxDistance = 5000.0f;
+	m_VoiceChat.fMinDistance = 100.0f;
+#endif
 
 	for (int i = 0; i < int(std::size(m_Macro.szMacro)); ++i)
 		sprintf_safe(m_Macro.szMacro[i], "STR:CONFIG_MACRO_F%d", i + 1);

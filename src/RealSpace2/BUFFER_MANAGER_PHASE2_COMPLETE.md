@@ -96,3 +96,5 @@ Los siguientes lugares **NO** se modificaron porque usan buffers dinámicos que 
 - Transparente para el código existente
 - Listo para testing y optimización
 
+
+

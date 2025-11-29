@@ -5,33 +5,33 @@
 
 enum MQUEST_NPC
 {
-	NPC_NONE					= 0,	
-	NPC_GOBLIN					= 11,
-	NPC_GOBLIN_GUNNER			= 12,
-	NPC_GOBLIN_WIZARD			= 13,
-	NPC_GOBLIN_COMMANDER		= 14,
-	NPC_GOBLIN_CHIEF			= 15,
-	NPC_GOBLIN_KING				= 16,
+	NPC_NONE = 0,
+	NPC_GOBLIN = 11,
+	NPC_GOBLIN_GUNNER = 12,
+	NPC_GOBLIN_WIZARD = 13,
+	NPC_GOBLIN_COMMANDER = 14,
+	NPC_GOBLIN_CHIEF = 15,
+	NPC_GOBLIN_KING = 16,
 
-	NPC_PALMPOA					= 21,
-	NPC_PALMPOA_COMMANDER		= 22,
-	NPC_PALMPOW					= 23,
-	NPC_CURSED_PALMPOW			= 24,
-	NPC_PALMPOW_BABY			= 25,
+	NPC_PALMPOA = 21,
+	NPC_PALMPOA_COMMANDER = 22,
+	NPC_PALMPOW = 23,
+	NPC_CURSED_PALMPOW = 24,
+	NPC_PALMPOW_BABY = 25,
 
-	NPC_SKELETON				= 31,
-	NPC_SKELETON_MAGE			= 32,
-	NPC_SKELETON_COMMANDER		= 33,
-	NPC_GIANT_SKELETON			= 34,
-	NPC_THE_UNHOLY				= 35,
-	NPC_LICH					= 36,
+	NPC_SKELETON = 31,
+	NPC_SKELETON_MAGE = 32,
+	NPC_SKELETON_COMMANDER = 33,
+	NPC_GIANT_SKELETON = 34,
+	NPC_THE_UNHOLY = 35,
+	NPC_LICH = 36,
 
-	NPC_KOBOLD					= 41,
-	NPC_KOBOLD_SHAMAN			= 42,
-	NPC_KOBOLD_COMMANDER		= 43,
-	NPC_KOBOLD_KING				= 44,
-	NPC_BROKEN_GOLEM			= 45,
-	NPC_SCRIDER					= 46,
+	NPC_KOBOLD = 41,
+	NPC_KOBOLD_SHAMAN = 42,
+	NPC_KOBOLD_COMMANDER = 43,
+	NPC_KOBOLD_KING = 44,
+	NPC_BROKEN_GOLEM = 45,
+	NPC_SCRIDER = 46,
 };
 
 enum MQUEST_NPC_GRADE
@@ -46,15 +46,14 @@ enum MQUEST_NPC_GRADE
 
 enum MQUEST_NPC_ATTACK
 {
-	NPC_ATTACK_NONE			= 0,
-	NPC_ATTACK_MELEE		= 0x1,
-	NPC_ATTACK_RANGE		= 0x2,
-	NPC_ATTACK_MAGIC		= 0x4,
+	NPC_ATTACK_NONE = 0,
+	NPC_ATTACK_MELEE = 0x1,
+	NPC_ATTACK_RANGE = 0x2,
+	NPC_ATTACK_MAGIC = 0x4,
 };
 
 enum MQUEST_NPC_BEHAVIOR
 {
-
 };
 
 enum MQUEST_NPC_SOUND
@@ -89,6 +88,8 @@ struct MQuestNPCInfo
 	u32	nWeaponItemID;
 	float				fDyingTime;
 	float				fTremble;
+	int					nOffenseType;
+	bool				bFriendly;
 
 	char				szSoundName[NPC_SOUND_END][128];
 
@@ -103,7 +104,7 @@ struct MQuestNPCInfo
 	float				fViewAngle;
 	float				fViewDistance;
 	float				fViewDistance360;
-	
+
 	bool				bNeverBlasted;
 	bool				bMeleeWeaponNeverDamaged;
 	bool				bRangeWeaponNeverDamaged;
@@ -119,61 +120,62 @@ struct MQuestNPCInfo
 
 	void SetDefault()
 	{
-		nID					= NPC_GOBLIN;
-		nGrade				= NPC_GRADE_REGULAR;
+		nID = NPC_GOBLIN;
+		nGrade = NPC_GRADE_REGULAR;
 		strcpy_safe(szName, "Noname");
-		szDesc[0]			= 0;
-		nNPCAttackTypes		= NPC_ATTACK_MELEE;
-		fSpeed				= 300.0f;
-		fWeight				= 1.0f;
-		nMaxHP				= 100;
-		nMaxAP				= 0;
-		nDC					= 5;
-		szMeshName[0]		= 0;
-		nWeaponDamage		= 5;
-		fRotateSpeed		= 6.28318f;
-		fCollRadius			= 35.0f;
-		fCollHeight			= 180.0f;
-		bColPick			= false;
-		vScale				= MVector(1.0f,1.0f,1.0f);
-		vColor				= MVector(0.6f,0.6f,0.6f);
-		nSpawnWeight		= 100;
-		nWeaponItemID		= 300000;
-		fTremble			= 30.0f;
-		
-		nIntelligence		= 3;
-		nAgility			= 3;
-		fDyingTime			= 5.0f;
+		szDesc[0] = 0;
+		nNPCAttackTypes = NPC_ATTACK_MELEE;
+		fSpeed = 300.0f;
+		fWeight = 1.0f;
+		nMaxHP = 100;
+		nMaxAP = 0;
+		nDC = 5;
+		szMeshName[0] = 0;
+		nWeaponDamage = 5;
+		fRotateSpeed = 6.28318f;
+		fCollRadius = 35.0f;
+		fCollHeight = 180.0f;
+		bColPick = false;
+		vScale = MVector(1.0f, 1.0f, 1.0f);
+		vColor = MVector(0.6f, 0.6f, 0.6f);
+		nSpawnWeight = 100;
+		nWeaponItemID = 300000;
+		fTremble = 30.0f;
 
-		fAttackRange		= 130.0f;
-		fAttackRangeAngle	= 1.570796f;
-		fAttackHitRate		= 1.0f;
-		fAttackCoolTime		= 0.0f;
+		nIntelligence = 3;
+		nAgility = 3;
+		fDyingTime = 5.0f;
+
+		fAttackRange = 130.0f;
+		fAttackRangeAngle = 1.570796f;
+		fAttackHitRate = 1.0f;
+		fAttackCoolTime = 0.0f;
 		fCollisionCheckSpeed = 0.0f;
 
+		fViewAngle = 3.14159f;
+		fViewDistance = 800.0f;
+		fViewDistance360 = 800.0f;
 
-		fViewAngle			= 3.14159f;
-		fViewDistance		= 800.0f;
-		fViewDistance360	= 800.0f;
+		bNeverBlasted = false;
+		bMeleeWeaponNeverDamaged = false;
+		bRangeWeaponNeverDamaged = false;
+		bShadow = true;
+		bNeverPushed = false;
+		bNeverAttackCancel = false;
 
-		bNeverBlasted				= false;
-		bMeleeWeaponNeverDamaged	= false;
-		bRangeWeaponNeverDamaged	= false;
-		bShadow						= true;
-		bNeverPushed				= false;
-		bNeverAttackCancel			= false;
+		nSkills = 0;
 
-		nSkills				= 0;
+		nDropTableID = 0;
+		szDropTableName[0] = 0;
 
-		nDropTableID		= 0;
-		szDropTableName[0]	= 0;
+		nOffenseType = 1;
+		bFriendly = false;
 
 		for (int i = 0; i < NPC_SOUND_END; i++) szSoundName[i][0] = 0;
 	}
 
 	MQuestNPCSpawnType GetSpawnType();
 };
-
 
 #define NPC_INTELLIGENCE_STEPS		5
 #define NPC_AGILITY_STEPS			5
@@ -205,14 +207,14 @@ public:
 	MQuestNPCCatalogue();
 	~MQuestNPCCatalogue();
 
-	MQuestNPCInfo* GetIndexInfo( int nIndex );
+	MQuestNPCInfo* GetIndexInfo(int nIndex);
 
 	bool ReadXml(const char* szFileName);
-	bool ReadXml(class MZFileSystem* pFileSystem,const char* szFileName);
+	bool ReadXml(class MZFileSystem* pFileSystem, const char* szFileName);
 	void Clear();
 
 	MQuestNPCInfo* GetInfo(MQUEST_NPC nNpc);
-	MQuestNPCInfo* GetPageInfo( int nPage);
+	MQuestNPCInfo* GetPageInfo(int nPage);
 
 	MQuestNPCGlobalAIValue* GetGlobalAIValue() { return &m_GlobalAIValue; }
 };
@@ -254,7 +256,7 @@ public:
 	~MQuestNPCSetCatalogue();
 
 	bool ReadXml(const char* szFileName);
-	bool ReadXml(MZFileSystem* pFileSystem,const char* szFileName);	
+	bool ReadXml(MZFileSystem* pFileSystem, const char* szFileName);
 
 	MQuestNPCSetInfo* GetInfo(int nID);
 	MQuestNPCSetInfo* GetInfo(const char* szName);

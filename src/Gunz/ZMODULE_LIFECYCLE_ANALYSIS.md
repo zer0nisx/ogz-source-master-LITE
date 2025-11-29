@@ -204,3 +204,5 @@ El sistema de módulos está bien diseñado con `std::unique_ptr` para gestión 
 
 El ciclo de vida es correcto, pero necesita mejoras en validaciones y manejo de errores.
 
+
+

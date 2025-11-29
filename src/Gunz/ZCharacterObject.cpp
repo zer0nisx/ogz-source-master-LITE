@@ -77,16 +77,15 @@ ZCharacterObject::ZCharacterObject()
 #undef ADD_MODULE
 }
 
-
 void ZCharacterObject::CreateShadow()
 {
 	Shadow.emplace();
 }
 
-bool ZCharacterObject::GetWeaponTypePos(WeaponDummyType type,rvector* pos,bool bLeft)
+bool ZCharacterObject::GetWeaponTypePos(WeaponDummyType type, rvector* pos, bool bLeft)
 {
-	if(m_pVMesh && pos) {
-		return m_pVMesh->GetWeaponDummyPos(type,pos,bLeft);
+	if (m_pVMesh && pos) {
+		return m_pVMesh->GetWeaponDummyPos(type, pos, bLeft);
 	}
 	return false;
 }
@@ -96,125 +95,122 @@ void ZCharacterObject::UpdateEnchant()
 	ZC_ENCHANT etype = GetEnchantType();
 	REnchantType retype = REnchantType_None;
 
-		 if(etype==ZC_ENCHANT_FIRE)			retype = REnchantType_Fire;
-	else if(etype==ZC_ENCHANT_COLD)			retype = REnchantType_Cold;
-	else if(etype==ZC_ENCHANT_LIGHTNING)	retype = REnchantType_Lightning;
-	else if(etype==ZC_ENCHANT_POISON)		retype = REnchantType_Poison;
+	if (etype == ZC_ENCHANT_FIRE)			retype = REnchantType_Fire;
+	else if (etype == ZC_ENCHANT_COLD)			retype = REnchantType_Cold;
+	else if (etype == ZC_ENCHANT_LIGHTNING)	retype = REnchantType_Lightning;
+	else if (etype == ZC_ENCHANT_POISON)		retype = REnchantType_Poison;
 	else									retype = REnchantType_None;
-	
-	if(m_pVMesh) {
+
+	if (m_pVMesh) {
 		m_pVMesh->SetEnChantType(retype);
 	}
 }
 
-void ZCharacterObject::DrawEnchantSub(ZC_ENCHANT etype,rvector& pos)
+void ZCharacterObject::DrawEnchantSub(ZC_ENCHANT etype, rvector& pos)
 {
-	if(etype==ZC_ENCHANT_FIRE)
-		ZGetEffectManager()->AddTrackFire( pos );
-	else if(etype==ZC_ENCHANT_COLD)
-		ZGetEffectManager()->AddTrackCold( pos );
-	else if(etype==ZC_ENCHANT_POISON)
-		ZGetEffectManager()->AddTrackPoison( pos );
+	if (etype == ZC_ENCHANT_FIRE)
+		ZGetEffectManager()->AddTrackFire(pos);
+	else if (etype == ZC_ENCHANT_COLD)
+		ZGetEffectManager()->AddTrackCold(pos);
+	else if (etype == ZC_ENCHANT_POISON)
+		ZGetEffectManager()->AddTrackPoison(pos);
 }
 
-void ZCharacterObject::EnChantMovingEffect(rvector* pOutPos,int cnt,ZC_ENCHANT etype,bool bDoubleWeapon)
+void ZCharacterObject::EnChantMovingEffect(rvector* pOutPos, int cnt, ZC_ENCHANT etype, bool bDoubleWeapon)
 {
-	int nRand = (GetEffectLevel()+1) * 3;
+	int nRand = (GetEffectLevel() + 1) * 3;
 
 	if (g_pGame->GetGameTimer()->GetUpdateCount() % nRand == 0) {
-
-		if(cnt==0) { 
-			m_pVMesh->GetWeaponPos( pOutPos ); 	
+		if (cnt == 0) {
+			m_pVMesh->GetWeaponPos(pOutPos);
 		}
 
-		float asf = (rand()%10)/10.f;
-		rvector pos = pOutPos[0] + (pOutPos[1]-pOutPos[0]) * asf;
+		float asf = (rand() % 10) / 10.f;
+		rvector pos = pOutPos[0] + (pOutPos[1] - pOutPos[0]) * asf;
 
-		DrawEnchantSub( etype , pos );
+		DrawEnchantSub(etype, pos);
 
-		if(bDoubleWeapon)
+		if (bDoubleWeapon)
 		{
-			if(cnt==0) {
-				m_pVMesh->GetWeaponPos( &pOutPos[2] ,true);
+			if (cnt == 0) {
+				m_pVMesh->GetWeaponPos(&pOutPos[2], true);
 			}
 
-			float asf = (rand()%10)/10.f;
-			rvector pos = pOutPos[2] + (pOutPos[3]-pOutPos[2]) * asf;
+			float asf = (rand() % 10) / 10.f;
+			rvector pos = pOutPos[2] + (pOutPos[3] - pOutPos[2]) * asf;
 
-			DrawEnchantSub( etype , pos );
+			DrawEnchantSub(etype, pos);
 		}
 	}
 }
 
-void ZCharacterObject::EnChantSlashEffect(rvector* pOutPos,int cnt,ZC_ENCHANT etype,bool bDoubleWeapon)
+void ZCharacterObject::EnChantSlashEffect(rvector* pOutPos, int cnt, ZC_ENCHANT etype, bool bDoubleWeapon)
 {
-	if(cnt==0) {
-		m_pVMesh->GetWeaponPos( pOutPos );
+	if (cnt == 0) {
+		m_pVMesh->GetWeaponPos(pOutPos);
 	}
 
-	float asf = (3 + rand()%3)/10.f;
-	rvector pos = pOutPos[0] + (pOutPos[1]-pOutPos[0]) * asf;
+	float asf = (3 + rand() % 3) / 10.f;
+	rvector pos = pOutPos[0] + (pOutPos[1] - pOutPos[0]) * asf;
 
-	DrawEnchantSub( etype , pos );
+	DrawEnchantSub(etype, pos);
 
-	if(bDoubleWeapon)
+	if (bDoubleWeapon)
 	{
-		if(cnt==0) {
-			m_pVMesh->GetWeaponPos( &pOutPos[2] ,true);
+		if (cnt == 0) {
+			m_pVMesh->GetWeaponPos(&pOutPos[2], true);
 		}
 
-		float asf = (3 + rand()%3)/10.f;
-		rvector pos = pOutPos[2] + (pOutPos[3]-pOutPos[2]) * asf;
+		float asf = (3 + rand() % 3) / 10.f;
+		rvector pos = pOutPos[2] + (pOutPos[3] - pOutPos[2]) * asf;
 
-		DrawEnchantSub( etype , pos );
+		DrawEnchantSub(etype, pos);
 	}
 }
 
-void ZCharacterObject::EnChantWeaponEffect(ZC_ENCHANT etype,int nLevel)
+void ZCharacterObject::EnChantWeaponEffect(ZC_ENCHANT etype, int nLevel)
 {
 	float fSwordSize = m_pVMesh->GetWeaponSize();
 
 	fSwordSize -= 35.f;
 
-	ZEffectWeaponEnchant* pEWE = NULL; 
+	ZEffectWeaponEnchant* pEWE = NULL;
 
-	if( etype != ZC_ENCHANT_NONE )
-		pEWE = ZGetEffectManager()->GetWeaponEnchant( etype );
+	if (etype != ZC_ENCHANT_NONE)
+		pEWE = ZGetEffectManager()->GetWeaponEnchant(etype);
 
-	if(pEWE) {
-
+	if (pEWE) {
 		float fSIze = fSwordSize / 100.f;
 
 		float fVolSize = 1.f;
 
-			 if(nLevel==0) fVolSize = 0.6f;
-		else if(nLevel==1) fVolSize = 0.75f;
-		else if(nLevel==2) fVolSize = 1.0f;
+		if (nLevel == 0) fVolSize = 0.6f;
+		else if (nLevel == 1) fVolSize = 0.75f;
+		else if (nLevel == 2) fVolSize = 1.0f;
 		else			   fVolSize = 1.25f;
 
-		rvector vScale = rvector(0.7f*fSIze*fVolSize,0.7f*fSIze*fVolSize,1.1f*fSIze);
-		pEWE->SetUid( m_UID );
+		rvector vScale = rvector(0.7f * fSIze * fVolSize, 0.7f * fSIze * fVolSize, 1.1f * fSIze);
+		pEWE->SetUid(m_UID);
 		pEWE->SetAlignType(1);
 		pEWE->SetScale(vScale);
 		pEWE->Draw(GetGlobalTimeMS());
 	}
 }
 
-void ZCharacterObject::DrawEnchant(ZC_STATE_LOWER AniState_Lower,bool bCharged)
+void ZCharacterObject::DrawEnchant(ZC_STATE_LOWER AniState_Lower, bool bCharged)
 {
 	ZItem* pItem = GetItems()->GetSelectedWeapon();
 
-	if(!pItem || !pItem->GetDesc()) {
+	if (!pItem || !pItem->GetDesc()) {
 		return;
 	}
 
 	MMatchItemDesc* pDesc = pItem->GetDesc();
 
-	if (pDesc->m_nType != MMIT_MELEE) 
+	if (pDesc->m_nType != MMIT_MELEE)
 		return;
 
-	if(m_pVMesh) {
-
+	if (m_pVMesh) {
 		static rvector pOutPos[8];
 
 		bool bDoubleWeapon = m_pVMesh->IsDoubleWeapon();
@@ -223,31 +219,30 @@ void ZCharacterObject::DrawEnchant(ZC_STATE_LOWER AniState_Lower,bool bCharged)
 
 		bool bSlash = false;
 
-		if( (AniState_Lower == ZC_STATE_SLASH) ||
+		if ((AniState_Lower == ZC_STATE_SLASH) ||
 			(AniState_Lower == ZC_STATE_JUMP_SLASH1) ||
-			(AniState_Lower == ZC_STATE_JUMP_SLASH2) )
+			(AniState_Lower == ZC_STATE_JUMP_SLASH2))
 			bSlash = true;
 
 		ZC_ENCHANT etype = GetEnchantType();
 
 		MMatchItemDesc* pENDesc = GetEnchantItemDesc();
-		if(pENDesc) {
-
+		if (pENDesc) {
 			int nEFLevel = pENDesc->m_nEffectLevel;
 
-			if( (nEFLevel > 2) || ((nEFLevel > 1) && bCharged ) )
+			if ((nEFLevel > 2) || ((nEFLevel > 1) && bCharged))
 			{
-				EnChantMovingEffect(pOutPos,cnt,etype,bDoubleWeapon);
+				EnChantMovingEffect(pOutPos, cnt, etype, bDoubleWeapon);
 			}
 
-			if( bSlash )
-			{ 
-				EnChantSlashEffect(pOutPos,cnt,etype,bDoubleWeapon);
+			if (bSlash)
+			{
+				EnChantSlashEffect(pOutPos, cnt, etype, bDoubleWeapon);
 			}
 
-			if( (nEFLevel > 1) || bCharged )
+			if ((nEFLevel > 1) || bCharged)
 			{
-				EnChantWeaponEffect(etype,nEFLevel);
+				EnChantWeaponEffect(etype, nEFLevel);
 			}
 		}
 	}
@@ -255,10 +250,10 @@ void ZCharacterObject::DrawEnchant(ZC_STATE_LOWER AniState_Lower,bool bCharged)
 
 MMatchItemDesc* ZCharacterObject::GetEnchantItemDesc()
 {
-	for(int i=MMCIP_CUSTOM1;i<=MMCIP_CUSTOM2;i++) {
-		ZItem *pItem = m_Items.GetItem((MMatchCharItemParts)i);
+	for (int i = MMCIP_CUSTOM1; i <= MMCIP_CUSTOM2; i++) {
+		ZItem* pItem = m_Items.GetItem((MMatchCharItemParts)i);
 		MMatchItemDesc* pDesc = pItem->GetDesc();
-		if(pDesc && pDesc->IsEnchantItem() ) return pDesc;
+		if (pDesc && pDesc->IsEnchantItem()) return pDesc;
 	}
 
 	return NULL;
@@ -267,14 +262,14 @@ MMatchItemDesc* ZCharacterObject::GetEnchantItemDesc()
 ZC_ENCHANT	ZCharacterObject::GetEnchantType()
 {
 	MMatchItemDesc* pDesc = GetEnchantItemDesc();
-	if(pDesc)
+	if (pDesc)
 	{
-		switch(pDesc->m_nWeaponType)
+		switch (pDesc->m_nWeaponType)
 		{
-			case MWT_ENCHANT_FIRE : return ZC_ENCHANT_FIRE;
-			case MWT_ENCHANT_COLD : return ZC_ENCHANT_COLD;
-			case MWT_ENCHANT_LIGHTNING: return ZC_ENCHANT_LIGHTNING;
-			case MWT_ENCHANT_POISON: return ZC_ENCHANT_POISON;
+		case MWT_ENCHANT_FIRE: return ZC_ENCHANT_FIRE;
+		case MWT_ENCHANT_COLD: return ZC_ENCHANT_COLD;
+		case MWT_ENCHANT_LIGHTNING: return ZC_ENCHANT_LIGHTNING;
+		case MWT_ENCHANT_POISON: return ZC_ENCHANT_POISON;
 		}
 	}
 
@@ -331,7 +326,7 @@ void ZCharacterObject::SetGunLight()
 	m_vLightColor.x = max(m_vLightColor.x, 0.0f);
 	m_vLightColor.y = max(m_vLightColor.y, 0.0f);
 	m_vLightColor.z = max(m_vLightColor.z, 0.0f);
-	
+
 	Light.Diffuse.r = m_vLightColor.x;
 	Light.Diffuse.g = m_vLightColor.y;
 	Light.Diffuse.b = m_vLightColor.z;
@@ -374,7 +369,7 @@ static RLIGHT* SetMapLight(const v3& char_pos, RVisualMesh* Mesh, int LightIndex
 	// OPTIMIZACIÓN: Early exit si no hay luces en el mapa
 	auto& SunLightList = ZGetGame()->GetWorld()->GetBsp()->GetSunLightList();
 	auto& ObjectLightList = ZGetGame()->GetWorld()->GetBsp()->GetObjectLightList();
-	
+
 	if (SunLightList.empty() && ObjectLightList.empty())
 	{
 		Mesh->SetLight(LightIndex, nullptr, false);
@@ -399,11 +394,11 @@ static RLIGHT* SetMapLight(const v3& char_pos, RVisualMesh* Mesh, int LightIndex
 		{
 			auto sunDir = Light.Position - char_pos;
 			distance = MagnitudeSq(sunDir);
-			
+
 			// OPTIMIZACIÓN: Skip luces muy lejanas
 			if (distance > MAX_LIGHT_DISTANCE * MAX_LIGHT_DISTANCE)
 				continue;
-			
+
 			Normalize(sunDir);
 			RBSPPICKINFO info;
 			if (ZGetGame()->GetWorld()->GetBsp()->Pick(char_pos, sunDir, &info, RM_FLAG_ADDITIVE))
@@ -436,11 +431,11 @@ static RLIGHT* SetMapLight(const v3& char_pos, RVisualMesh* Mesh, int LightIndex
 		for (auto& Light : ObjectLightList)
 		{
 			float fDist = Magnitude(Light.Position - char_pos);
-			
+
 			// OPTIMIZACIÓN: Skip luces muy lejanas
 			if (fDist > MAX_LIGHT_DISTANCE)
 				continue;
-			
+
 			if (SelectedLightDistance <= fDist)
 				continue;
 
@@ -507,16 +502,16 @@ void ZCharacterObject::DrawShadow()
 {
 	__BP(28, "ZCharacter::Draw::Shadow");
 
-	if(!Shadow.has_value()) return;
+	if (!Shadow.has_value()) return;
 
-	if(!IsDead())
+	if (!IsDead())
 	{
 		float fSize = ZShadow::DefaultSize;
-		
-		ZActor* pActor = MDynamicCast(ZActor,this);
 
-		if(pActor) { 
-			fSize = pActor->GetNPCInfo()->fCollRadius * 3.0f;
+		ZActor* pActor = MDynamicCast(ZActor, this);
+
+		if (pActor) {
+			fSize = pActor->GetCollideRadius() * 3.0f;
 		}
 
 		if (Shadow.value().SetMatrices(*m_pVMesh, *ZGetGame()->GetWorld()->GetBsp(), fSize))
@@ -526,36 +521,34 @@ void ZCharacterObject::DrawShadow()
 	__EP(28);
 }
 
-
-bool ZCharacterObject::IsDoubleGun() { 
-
-	if(m_pVMesh) {
-		if(m_pVMesh->m_SelectWeaponMotionType==eq_wd_pistol) {
+bool ZCharacterObject::IsDoubleGun() {
+	if (m_pVMesh) {
+		if (m_pVMesh->m_SelectWeaponMotionType == eq_wd_pistol) {
 			return true;
-		} else if(m_pVMesh->m_SelectWeaponMotionType==eq_wd_smg) {
+		}
+		else if (m_pVMesh->m_SelectWeaponMotionType == eq_wd_smg) {
 			return true;
 		}
 	}
 	return false;
 }
 
-int ZCharacterObject::GetWeapondummyPos(rvector* v ) 
+int ZCharacterObject::GetWeapondummyPos(rvector* v)
 {
-	if(!v) return 3;
+	if (!v) return 3;
 
 	int size = 3;
 
-	if(!GetWeaponTypePos(weapon_dummy_muzzle_flash,&v[0],false)) {	}
-	if(!GetWeaponTypePos(weapon_dummy_cartridge01,&v[1],false)) { v[1]=v[0]; }
-	if(!GetWeaponTypePos(weapon_dummy_cartridge02,&v[2],false)) { v[2]=v[0]; }
+	if (!GetWeaponTypePos(weapon_dummy_muzzle_flash, &v[0], false)) {}
+	if (!GetWeaponTypePos(weapon_dummy_cartridge01, &v[1], false)) { v[1] = v[0]; }
+	if (!GetWeaponTypePos(weapon_dummy_cartridge02, &v[2], false)) { v[2] = v[0]; }
 
-	if( IsDoubleGun() ) {
-
+	if (IsDoubleGun()) {
 		size = 6;
 
-		if(!GetWeaponTypePos(weapon_dummy_muzzle_flash,&v[3],true)) { }
-		if(!GetWeaponTypePos(weapon_dummy_cartridge01,&v[4],true))  { v[4]=v[3]; }
-		if(!GetWeaponTypePos(weapon_dummy_cartridge02,&v[5],true))  { v[5]=v[4]; }
+		if (!GetWeaponTypePos(weapon_dummy_muzzle_flash, &v[3], true)) {}
+		if (!GetWeaponTypePos(weapon_dummy_cartridge01, &v[4], true)) { v[4] = v[3]; }
+		if (!GetWeaponTypePos(weapon_dummy_cartridge02, &v[5], true)) { v[5] = v[4]; }
 	}
 
 	return size;
@@ -563,8 +556,7 @@ int ZCharacterObject::GetWeapondummyPos(rvector* v )
 
 bool ZCharacterObject::GetCurrentWeaponDirection(rvector* dir)
 {
-	if(m_pVMesh && dir) {
-
+	if (m_pVMesh && dir) {
 		rmatrix* mat = &m_pVMesh->m_WeaponDummyMatrix[weapon_dummy_muzzle_flash];
 
 		dir->x = mat->_21;
@@ -575,7 +567,6 @@ bool ZCharacterObject::GetCurrentWeaponDirection(rvector* dir)
 	}
 	return false;
 }
-
 
 #define MAX_KNOCKBACK_VELOCITY		1700.f
 
@@ -597,7 +588,7 @@ void ZCharacterObject::OnKnockback(const rvector& dir, float fForce)
 	float cosAng1 = DotProduct(dir1, dir2);
 	float fMaxValue = m_fTremblePower;
 
-	if (cosAng1 < 0.f)	{
+	if (cosAng1 < 0.f) {
 		fMaxValue = -fMaxValue;
 	}
 	Tremble(fMaxValue, 50, 100);
@@ -631,34 +622,34 @@ void ZCharacterObjectHistory::EmptyHistory()
 	m_BasicHistory.clear();
 }
 
-bool ZCharacterObjectHistory::GetHistory(rvector *pos, rvector *direction, float fTime, rvector* camerapos)
+bool ZCharacterObjectHistory::GetHistory(rvector* pos, rvector* direction, float fTime, rvector* camerapos)
 {
 	if (GetVisualMesh() == NULL)
 		return false;
 
 	auto SetReturnValues = [&](const rvector& Pos, const rvector& Dir)
-	{
-		if (isnan(Pos.x) || isnan(Pos.y) || isnan(Pos.z))
-			return false;
+		{
+			if (isnan(Pos.x) || isnan(Pos.y) || isnan(Pos.z))
+				return false;
 
-		if (isnan(Dir.x) || isnan(Dir.y) || isnan(Dir.z))
-			return false;
+			if (isnan(Dir.x) || isnan(Dir.y) || isnan(Dir.z))
+				return false;
 
-		if (pos)
-			*pos = Pos;
-		if (direction)
-			*direction = Dir;
-		if (camerapos)
-			*camerapos = Dir;
+			if (pos)
+				*pos = Pos;
+			if (direction)
+				*direction = Dir;
+			if (camerapos)
+				*camerapos = Dir;
 
-		return true;
-	};
+			return true;
+		};
 
 	if (m_BasicHistory.size() > 1)
 	{
 		auto hi = m_BasicHistory.end();
 
-		ZBasicInfoItem *bi = NULL, *binext = NULL;
+		ZBasicInfoItem* bi = NULL, * binext = NULL;
 
 		do {
 			hi--;
@@ -669,7 +660,7 @@ bool ZCharacterObjectHistory::GetHistory(rvector *pos, rvector *direction, float
 		if (fTime < bi->fSendTime)
 			return false;
 
-		ZBasicInfoItem *pnext;
+		ZBasicInfoItem* pnext;
 		ZBasicInfoItem next;
 
 		if (!binext)
@@ -702,7 +693,7 @@ bool ZCharacterObjectHistory::GetHistory(rvector *pos, rvector *direction, float
 	return false;
 }
 
-void ZCharacterObjectHistory::AddToHistory(const ZBasicInfoItem & Item)
+void ZCharacterObjectHistory::AddToHistory(const ZBasicInfoItem& Item)
 {
 	m_BasicHistory.push_back(Item);
 
