@@ -643,14 +643,62 @@ int ZEffectManager::DeleteSameType(ZEffectAniMesh* pNew)
 
 void ZEffectManager::Add(ZEffect* pNew)
 {
-	if (pNew == NULL) return;
+	if (pNew == NULL) {
+		mlog("ZEffectManager::Add - Attempted to add NULL effect, ignoring\n");
+		return;
+	}
 
 #define MAX_WATER_DEEP 150
 
 	rvector	src_pos = pNew->GetSortPos();
 
 	_ASSERT(pNew->GetDrawMode() < ZEDM_COUNT);
-	m_Effects[pNew->GetDrawMode()].insert(m_Effects[pNew->GetDrawMode()].end(), pNew);
+	
+	int mode = pNew->GetDrawMode();
+	
+	// Verificar límite por modo para prevenir degradación de rendimiento
+	if (m_Effects[mode].size() >= MAX_EFFECTS_PER_MODE) {
+		mlog("Warning: Too many effects in mode %d (%d/%d), removing oldest effect\n", 
+			mode, (int)m_Effects[mode].size(), MAX_EFFECTS_PER_MODE);
+		
+		// Eliminar el efecto más antiguo (primero en la lista)
+		if (!m_Effects[mode].empty()) {
+			ZEffect* pOldest = m_Effects[mode].front();
+			m_Effects[mode].pop_front();
+			
+#ifndef _PUBLISH
+			g_EffectValidator.Erase(pOldest);
+#endif
+			delete pOldest;
+		}
+	}
+	
+	// Verificar límite total de efectos
+	int totalEffects = 0;
+	for (int d = 0; d < ZEDM_COUNT; d++) {
+		totalEffects += (int)m_Effects[d].size();
+	}
+	
+	if (totalEffects >= MAX_TOTAL_EFFECTS) {
+		mlog("Warning: Too many total effects (%d/%d), removing oldest from any mode\n", 
+			totalEffects, MAX_TOTAL_EFFECTS);
+		
+		// Eliminar el efecto más antiguo de cualquier modo
+		for (int d = 0; d < ZEDM_COUNT; d++) {
+			if (!m_Effects[d].empty()) {
+				ZEffect* pOldest = m_Effects[d].front();
+				m_Effects[d].pop_front();
+				
+#ifndef _PUBLISH
+				g_EffectValidator.Erase(pOldest);
+#endif
+				delete pOldest;
+				break;
+			}
+		}
+	}
+	
+	m_Effects[mode].insert(m_Effects[mode].end(), pNew);
 
 #ifndef _PUBLISH
 	g_EffectValidator.Add(pNew);
@@ -1029,11 +1077,19 @@ void ZEffectManager::AddLevelUpEffect(ZObject* pObj)
 	rvector dir = pChar->GetLowerDir();
 
 	pNew = new ZEffectLevelUp(m_pLevelUpEffect[0], Target, dir, rvector(0.f, 0.f, 0.f), pObj);
+	if (!pNew) {
+		mlog("ZEffectManager::AddLevelUpEffect - Failed to create ZEffectLevelUp (out of memory)\n");
+		return;
+	}
 	((ZEffectLevelUp*)pNew)->SetAlignType(1);
 	((ZEffectLevelUp*)pNew)->m_type = eq_parts_pos_info_Spine2;
 	Add(pNew);
 
 	pNew = new ZEffectLevelUp(m_pLevelUpEffect[1], Target, dir, rvector(0.f, 0.f, 0.f), pObj);
+	if (!pNew) {
+		mlog("ZEffectManager::AddLevelUpEffect - Failed to create second ZEffectLevelUp (out of memory)\n");
+		return;
+	}
 	((ZEffectLevelUp*)pNew)->SetAlignType(1);
 	((ZEffectLevelUp*)pNew)->m_type = eq_parts_pos_info_Root;
 
@@ -1046,6 +1102,10 @@ void ZEffectManager::AddReBirthEffect(const rvector& Target)
 
 	rvector dir = rvector(0.f, 1.f, 0.f);
 	pNew = new ZEffectSlash(m_pReBirthEffect, Target, dir);
+	if (!pNew) {
+		mlog("ZEffectManager::AddReBirthEffect - Failed to create ZEffectSlash (out of memory)\n");
+		return;
+	}
 	((ZEffectSlash*)pNew)->SetAlignType(1);
 	Add(pNew);
 }
@@ -1096,6 +1156,10 @@ void ZEffectManager::AddDashEffect(const rvector& Target, const rvector& TargetN
 
 	ZEffect* pNew = NULL;
 	pNew = new ZEffectDash(m_pDashEffect, Target, TargetNormal, pObj->GetUID());
+	if (!pNew) {
+		mlog("ZEffectManager::AddDashEffect - Failed to create ZEffectDash (out of memory)\n");
+		return;
+	}
 	((ZEffectSlash*)pNew)->SetAlignType(1);
 	Add(pNew);
 }
@@ -1382,6 +1446,10 @@ void ZEffectManager::AddShotgunEffect(const rvector& pos, const rvector& out, co
 
 	pNew = NULL;
 	pNew = new ZEffectShot(m_pFlameShotgun, pos, _dir, NULL);
+	if (!pNew) {
+		mlog("ZEffectManager::AddShotgunEffect - Failed to create ZEffectShot (out of memory)\n");
+		return;
+	}
 	((ZEffectShot*)pNew)->SetAlignType(1);
 
 	Add(pNew);
@@ -1393,11 +1461,35 @@ void ZEffectManager::AddShotgunEffect(const rvector& pos, const rvector& out, co
 	CrossProduct(&right, -dir, rvector(0, 0, 1));
 	Normalize(right);
 
-	rvector EMRandom((rand() % 100) / 100.0f, (rand() % 100) / 100.0f, (rand() % 100) / 100.0f);
-	EMRandom *= EM_RANDOM_SCALE;
-	rvector EMVelocity = (right + rvector(0, 0, 1) + EMRandom) * EM_VELOCITY;
-	pNew = new ZEffectStaticMesh(m_pMeshEmptyCartridges[1], out, EMVelocity, pChar->GetUID());
-	Add(pNew); pNew = NULL;
+	// Throttling para cartuchos de escopeta basado en nivel de efectos
+	bool bRenderShotgunCartridge = true;
+	static int nShotgunCartridgeCounter = 0;
+
+	if (g_nEffectLevel == Z_VIDEO_EFFECT_HIGH) {
+		bRenderShotgunCartridge = true; // Escopeta dispara menos frecuentemente, no necesita throttling agresivo
+	}
+	else if (g_nEffectLevel == Z_VIDEO_EFFECT_NORMAL) {
+		static bool toggleShotgun = true;
+		bRenderShotgunCartridge = toggleShotgun;
+		toggleShotgun = !toggleShotgun;
+	}
+	else if (g_nEffectLevel == Z_VIDEO_EFFECT_LOW) {
+		bRenderShotgunCartridge = (nShotgunCartridgeCounter % 2 == 0);
+		nShotgunCartridgeCounter++;
+	}
+
+	if (bRenderShotgunCartridge) {
+		rvector EMRandom((rand() % 100) / 100.0f, (rand() % 100) / 100.0f, (rand() % 100) / 100.0f);
+		EMRandom *= EM_RANDOM_SCALE;
+		rvector EMVelocity = (right + rvector(0, 0, 1) + EMRandom) * EM_VELOCITY;
+		pNew = new ZEffectStaticMesh(m_pMeshEmptyCartridges[1], out, EMVelocity, pChar->GetUID());
+		if (!pNew) {
+			mlog("ZEffectManager::AddShotgunEffect - Failed to create ZEffectStaticMesh (shotgun cartridge) (out of memory)\n");
+		} else {
+			Add(pNew);
+		}
+		pNew = NULL;
+	}
 }
 
 void ZEffectManager::AddShotEffect(rvector* pSource, int size, const rvector& Target,
@@ -1421,7 +1513,12 @@ void ZEffectManager::AddShotEffect(rvector* pSource, int size, const rvector& Ta
 
 	if (rand() % 5 == 0) {
 		pNew = new ZEffectLightTracer(m_pEBSLightTracer, Source, Target);
-		Add(pNew); pNew = NULL;
+		if (!pNew) {
+			mlog("ZEffectManager::AddShotEffect - Failed to create ZEffectLightTracer (out of memory)\n");
+		} else {
+			Add(pNew);
+		}
+		pNew = NULL;
 	}
 
 	if (bDrawFireEffects) {
@@ -1432,31 +1529,72 @@ void ZEffectManager::AddShotEffect(rvector* pSource, int size, const rvector& Ta
 #define SMOKE_ACCEL					rvector(0,0,50.f)
 #define SMOKE_VELOCITY				110.f
 
-		if (wtype == MWT_ROCKET) {
-			pNew = NULL;
-		}
-		else if (wtype == MWT_MACHINEGUN) {
-			rvector _Add;
+		// Throttling para humo de boca de cañón basado en nivel de efectos
+		// Esto reduce significativamente el lag causado por demasiados efectos de humo
+		bool bRenderSmoke = true;
+		static int nSmokeCounter = 0; // Contador para throttling adicional en armas automáticas
 
-			float min_scale = SMOKE_MIN_SCALE;
-			float max_scale = SMOKE_MAX_SCALE;
-			DWORD life = SMOKE_LIFE_TIME;
-
-			for (int i = 0; i < 1; i++) {
-				min_scale = SMOKE_MIN_SCALE * (rand() % 2);
-				max_scale = SMOKE_MAX_SCALE * (rand() % 2);
-				life = SMOKE_LIFE_TIME * (rand() % 3);
-
-				if (i % 4 == 0)	_Add = rvector(-rand() % 20, rand() % 20, rand() % 20);
-				else if (i % 4 == 1)	_Add = rvector(rand() % 20, -rand() % 20, rand() % 20);
-				else if (i % 4 == 2)	_Add = rvector(rand() % 20, rand() % 20, -rand() % 20);
-				else if (i % 4 == 3)	_Add = rvector(rand() % 20, rand() % 20, rand() % 20);
-
-				AddSmokeEffect(m_pEBSMuzzleSmoke[rand() % MUZZLESMOKE_COUNT], Source + _Add, SMOKE_VELOCITY * TargetDir, SMOKE_ACCEL, min_scale, max_scale, SMOKE_LIFE_TIME);
+		if (g_nEffectLevel == Z_VIDEO_EFFECT_HIGH) {
+			// Alto: Renderizar siempre, pero con throttling para armas automáticas
+			if (wtype == MWT_MACHINEGUN) {
+				// Para armas automáticas, solo renderizar cada 2 disparos para reducir lag
+				bRenderSmoke = (nSmokeCounter % 2 == 0);
+				nSmokeCounter++;
+			}
+			else {
+				bRenderSmoke = true;
 			}
 		}
-		else {
-			AddSmokeEffect(m_pEBSMuzzleSmoke[rand() % MUZZLESMOKE_COUNT], Source, SMOKE_VELOCITY * TargetDir, SMOKE_ACCEL, SMOKE_MIN_SCALE, SMOKE_MAX_SCALE, SMOKE_LIFE_TIME);
+		else if (g_nEffectLevel == Z_VIDEO_EFFECT_NORMAL) {
+			// Normal: Renderizar cada 2 disparos
+			static bool toggleSmoke = true;
+			if (toggleSmoke) {
+				bRenderSmoke = true;
+			}
+			else {
+				bRenderSmoke = false;
+			}
+			toggleSmoke = !toggleSmoke;
+			
+			// Para armas automáticas, throttling adicional (cada 3 disparos)
+			if (wtype == MWT_MACHINEGUN) {
+				bRenderSmoke = (nSmokeCounter % 3 == 0);
+				nSmokeCounter++;
+			}
+		}
+		else if (g_nEffectLevel == Z_VIDEO_EFFECT_LOW) {
+			// Bajo: Solo renderizar cada 3-4 disparos
+			bRenderSmoke = (nSmokeCounter % 4 == 0);
+			nSmokeCounter++;
+		}
+
+		if (bRenderSmoke) {
+			if (wtype == MWT_ROCKET) {
+				pNew = NULL;
+			}
+			else if (wtype == MWT_MACHINEGUN) {
+				rvector _Add;
+
+				float min_scale = SMOKE_MIN_SCALE;
+				float max_scale = SMOKE_MAX_SCALE;
+				DWORD life = SMOKE_LIFE_TIME;
+
+				for (int i = 0; i < 1; i++) {
+					min_scale = SMOKE_MIN_SCALE * (rand() % 2);
+					max_scale = SMOKE_MAX_SCALE * (rand() % 2);
+					life = SMOKE_LIFE_TIME * (rand() % 3);
+
+					if (i % 4 == 0)	_Add = rvector(-rand() % 20, rand() % 20, rand() % 20);
+					else if (i % 4 == 1)	_Add = rvector(rand() % 20, -rand() % 20, rand() % 20);
+					else if (i % 4 == 2)	_Add = rvector(rand() % 20, rand() % 20, -rand() % 20);
+					else if (i % 4 == 3)	_Add = rvector(rand() % 20, rand() % 20, rand() % 20);
+
+					AddSmokeEffect(m_pEBSMuzzleSmoke[rand() % MUZZLESMOKE_COUNT], Source + _Add, SMOKE_VELOCITY * TargetDir, SMOKE_ACCEL, min_scale, max_scale, SMOKE_LIFE_TIME);
+				}
+			}
+			else {
+				AddSmokeEffect(m_pEBSMuzzleSmoke[rand() % MUZZLESMOKE_COUNT], Source, SMOKE_VELOCITY * TargetDir, SMOKE_ACCEL, SMOKE_MIN_SCALE, SMOKE_MAX_SCALE, SMOKE_LIFE_TIME);
+			}
 		}
 
 		rvector _dir = rvector(0, 0, 1);
@@ -1482,18 +1620,30 @@ void ZEffectManager::AddShotEffect(rvector* pSource, int size, const rvector& Ta
 		case MWT_SMGx2:
 		{
 			pNew = new ZEffectShot(m_pFlamePistol, Source, _dir, pObj);
+			if (!pNew) {
+				mlog("ZEffectManager::AddShotEffect - Failed to create ZEffectShot (pistol) (out of memory)\n");
+				return;
+			}
 			((ZEffectShot*)pNew)->SetAlignType(1);
 		}
 		break;
 		case MWT_RIFLE:
 		{
 			pNew = new ZEffectShot(m_pFlameRifle, Source, _dir, pObj);
+			if (!pNew) {
+				mlog("ZEffectManager::AddShotEffect - Failed to create ZEffectShot (rifle) (out of memory)\n");
+				return;
+			}
 			((ZEffectShot*)pNew)->SetAlignType(1);
 		}
 		break;
 		case MWT_MACHINEGUN:
 		{
 			pNew = new ZEffectShot(m_pFlameMG, Source, _dir, pObj);
+			if (!pNew) {
+				mlog("ZEffectManager::AddShotEffect - Failed to create ZEffectShot (machinegun) (out of memory)\n");
+				return;
+			}
 			((ZEffectShot*)pNew)->SetAlignType(1);
 		}
 		break;
@@ -1502,25 +1652,45 @@ void ZEffectManager::AddShotEffect(rvector* pSource, int size, const rvector& Ta
 			break;
 		}
 
-		Add(pNew); pNew = NULL;
+		if (pNew) {
+			Add(pNew);
+		}
+		pNew = NULL;
 
 		if (size == 6) {
 			rvector _dir = GTargetR - Source;
 			Normalize(_dir);
 
 			pNew = new ZEffectShot(m_pFlamePistol, Source, _dir, pObj);
-			((ZEffectShot*)pNew)->SetStartTime(120);
-			((ZEffectShot*)pNew)->SetIsLeftWeapon(true);
+			if (!pNew) {
+				mlog("ZEffectManager::AddShotEffect - Failed to create ZEffectShot (dual) (out of memory)\n");
+			} else {
+				((ZEffectShot*)pNew)->SetStartTime(120);
+				((ZEffectShot*)pNew)->SetIsLeftWeapon(true);
+				Add(pNew);
+			}
+			pNew = NULL;
 
-			Add(pNew); pNew = NULL;
-
-			AddSmokeEffect(m_pEBSMuzzleSmoke[rand() % MUZZLESMOKE_COUNT], Source, SMOKE_VELOCITY * TargetDir, SMOKE_ACCEL, SMOKE_MIN_SCALE, SMOKE_MAX_SCALE, SMOKE_LIFE_TIME);
+			// Aplicar el mismo throttling para armas duales
+			if (bRenderSmoke) {
+				AddSmokeEffect(m_pEBSMuzzleSmoke[rand() % MUZZLESMOKE_COUNT], Source, SMOKE_VELOCITY * TargetDir, SMOKE_ACCEL, SMOKE_MIN_SCALE, SMOKE_MAX_SCALE, SMOKE_LIFE_TIME);
+			}
 		}
 
+		// Throttling para cartuchos - ya existente, pero mejorado para armas automáticas
 		bool bRender = true;
+		static int nCartridgeCounter = 0; // Contador adicional para throttling en armas automáticas
 
 		if (g_nEffectLevel == Z_VIDEO_EFFECT_HIGH) {
-			bRender = true;
+			// Alto: Renderizar siempre, pero con throttling para armas automáticas
+			if (wtype == MWT_MACHINEGUN) {
+				// Para armas automáticas, solo renderizar cada 2 disparos para reducir lag
+				bRender = (nCartridgeCounter % 2 == 0);
+				nCartridgeCounter++;
+			}
+			else {
+				bRender = true;
+			}
 		}
 		else if (g_nEffectLevel == Z_VIDEO_EFFECT_NORMAL) {
 			static bool toggle = true;
@@ -1531,9 +1701,17 @@ void ZEffectManager::AddShotEffect(rvector* pSource, int size, const rvector& Ta
 				bRender = false;
 			}
 			toggle = !toggle;
+			
+			// Para armas automáticas, throttling adicional (cada 3 disparos)
+			if (wtype == MWT_MACHINEGUN) {
+				bRender = (nCartridgeCounter % 3 == 0);
+				nCartridgeCounter++;
+			}
 		}
 		else if (g_nEffectLevel == Z_VIDEO_EFFECT_LOW) {
-			bRender = false;
+			// Bajo: Solo renderizar cada 3-4 disparos
+			bRender = (nCartridgeCounter % 4 == 0);
+			nCartridgeCounter++;
 		}
 
 		if (bRender) {
@@ -1550,12 +1728,22 @@ void ZEffectManager::AddShotEffect(rvector* pSource, int size, const rvector& Ta
 					rvector EMVelocity = (right + rvector(0, 0, 1) + EMRandom) * EM_VELOCITY;
 					pNew = new ZEffectStaticMesh(m_pMeshEmptyCartridges[0], pSource[1],
 						EMVelocity, pObj->GetUID());
-					Add(pNew); pNew = NULL;
+					if (!pNew) {
+						mlog("ZEffectManager::AddShotEffect - Failed to create ZEffectStaticMesh (cartridge) (out of memory)\n");
+					} else {
+						Add(pNew);
+					}
+					pNew = NULL;
 
 					if (size == 6) {
 						rvector EMVelocityL = (-right + rvector(0, 0, 1) + EMRandom) * EM_VELOCITY;
 						pNew = new ZEffectStaticMesh(m_pMeshEmptyCartridges[0], pSource[4], EMVelocityL, pObj->GetUID());
-						Add(pNew); pNew = NULL;
+						if (!pNew) {
+							mlog("ZEffectManager::AddShotEffect - Failed to create ZEffectStaticMesh (cartridge dual) (out of memory)\n");
+						} else {
+							Add(pNew);
+						}
+						pNew = NULL;
 					}
 				}
 			}

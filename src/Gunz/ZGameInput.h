@@ -20,13 +20,13 @@ struct ZKEYSEQUENCEITEM {
 };
 
 struct ZKEYSEQUENCEACTION {
-	ZKEYSEQUENCEACTION(float time, int count, ZKEYSEQUENCEITEM *key) {
+	ZKEYSEQUENCEACTION(float time, int count, ZKEYSEQUENCEITEM* key) {
 		fTotalTime = time; nKeyCount = count; pKeys = key;
 	}
 
 	float fTotalTime;
 	int nKeyCount;
-	ZKEYSEQUENCEITEM *pKeys;
+	ZKEYSEQUENCEITEM* pKeys;
 };
 
 class ZGameInput final
@@ -37,12 +37,11 @@ public:
 
 	static bool OnEvent(MEvent* pEvent);
 	void Update(float fElapsed);
-	
+
 private:
 	friend class Portal;
 
 	void GameCheckSequenceKeyCommand();
-	bool OnDebugEvent(MEvent* pEvent);
 
 	float lastanglex, lastanglez;
 

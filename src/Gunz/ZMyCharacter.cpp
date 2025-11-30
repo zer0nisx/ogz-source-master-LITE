@@ -865,6 +865,10 @@ bool ZMyCharacter::CheckWall(rvector& Pos)
 
 void ZMyCharacter::OnShotRocket()
 {
+	// Optimización: Guardar ZGetGame() en variable local al inicio
+	ZGame* pGame = ZGetGame();
+	if (!pGame) return;
+
 	ZItem* pSelectedItem = GetItems()->GetSelectedWeapon();
 
 	if (pSelectedItem == NULL || pSelectedItem->GetBulletAMagazine() <= 0) {
@@ -884,10 +888,7 @@ void ZMyCharacter::OnShotRocket()
 		rvector pos, dir;
 		RGetScreenLine(Cp.x, Cp.y, &pos, &dir);
 
-		// Optimización: Guardar ZGetGame() en variable local al inicio
-		ZGame* pGame = ZGetGame();
-		if (!pGame) return;
-
+		// pGame ya está definido arriba en OnShotRocket()
 		if (!pGame->GetWorld()->GetBsp()->Pick(pos, dir, &bpi)) {
 			bpi.PickPos = pos + dir * 10000.f;
 		}

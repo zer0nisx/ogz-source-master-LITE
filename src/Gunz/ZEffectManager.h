@@ -170,6 +170,10 @@ protected:
 	/// Effect List
 public:
 	ZEffectList	m_Effects[ZEDM_COUNT];
+	
+	// LÃ­mites mÃ¡ximos de efectos para prevenir memory leaks y degradaciÃ³n de rendimiento
+#define MAX_EFFECTS_PER_MODE		500		// MÃ¡ximo de efectos por modo de renderizado
+#define MAX_TOTAL_EFFECTS			2000	// MÃ¡ximo total de efectos activos
 
 protected:
 
@@ -399,16 +403,16 @@ public:
 
 	void AddShadowEffect(rmatrix& m,DWORD _color);
 
-	// ¿Â°ÔÀÓ³Ý Â¯ ¾ÆÀÌÄÜ
+	// ï¿½Â°ï¿½ï¿½Ó³ï¿½ Â¯ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	void AddStarEffect(ZObject* pObj);
 
-	// ÀÏ¹ÝÀûÀÎ ÀÌÆåÆ®
+	// ï¿½Ï¹ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®
 	void Add(const char* szName,const rvector& pos, const rvector& dir,const MUID& uidOwner,int nLifeTime);
 	void AddSp(const char* szName,int nCnt,const rvector& pos, const rvector& dir,const MUID& uidOwner);
 	void AddPartsPosType(const char* szName,const MUID& uidOwner,RMeshPartsPosInfoType type,int nLifeTime);
 };
 
-// ÀÌÆåÆ® µðÅ×ÀÏ ·¹º§..¿É¼Ç
+// ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½..ï¿½É¼ï¿½
 
 void SetEffectLevel(int level);
 int	 GetEffectLevel();
