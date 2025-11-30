@@ -185,15 +185,18 @@ MUID g_MyChrUID(0, 0);
 
 bool IsMyCharacter(ZObject* pObject)
 {
-	if ((g_pGame) && ((ZObject*)g_pGame->m_pMyCharacter == pObject)) return true;
-	return false;
+	ZGame* pGame = ZGetGame();
+	return pGame && pGame->m_pMyCharacter && ((ZObject*)pGame->m_pMyCharacter == pObject);
 }
 
 void TestCreateEffect(int nEffIndex)
 {
+	ZGame* pGame = ZGetGame();
+	if (!pGame || !pGame->m_pMyCharacter) return;
+
 	float fDist = RandomNumber(0.0f, 100.0f);
 	rvector vTar = rvector(RandomNumber(0.0f, 100.0f), RandomNumber(0.0f, 100.0f), RandomNumber(0.0f, 100.0f));
-	rvector vPos = g_pGame->m_pMyCharacter->GetPosition();
+	rvector vPos = pGame->m_pMyCharacter->GetPosition();
 	vPos.x += RandomNumber(0.0f, 100.0f);
 	vPos.y += RandomNumber(0.0f, 100.0f);
 	vPos.z += RandomNumber(0.0f, 100.0f);
@@ -202,7 +205,7 @@ void TestCreateEffect(int nEffIndex)
 
 	vTarNormal = rvector(RandomNumber(0.0f, 100.0f), RandomNumber(0.0f, 100.0f), RandomNumber(0.0f, 100.0f));
 
-	ZCharacter* pCharacter = g_pGame->m_pMyCharacter;
+	ZCharacter* pCharacter = pGame->m_pMyCharacter;
 	ZEffectManager* pEM = ZGetEffectManager();
 
 	switch (nEffIndex)
@@ -311,10 +314,12 @@ void TestCreateEffect(int nEffIndex)
 
 float CalcActualDamage(ZObject* pAttacker, ZObject* pVictim, float fDamage)
 {
-	if (g_pGame->GetMatch()->GetMatchType() == MMATCH_GAMETYPE_BERSERKER)
+	// Optimización: Guardar ZGetGame() en variable local para evitar múltiples llamadas
+	ZGame* pGame = ZGetGame();
+	if (pGame && pGame->GetMatch()->GetMatchType() == MMATCH_GAMETYPE_BERSERKER)
 	{
-		ZRuleBerserker* pRule = (ZRuleBerserker*)g_pGame->GetMatch()->GetRule();
-		if ((pAttacker) && (pAttacker != pVictim) && (pAttacker->GetUID() == pRule->GetBerserkerUID()))
+		ZRuleBerserker* pRule = (ZRuleBerserker*)pGame->GetMatch()->GetRule();
+		if ((pAttacker) && (pAttacker != pVictim) && (pRule) && (pAttacker->GetUID() == pRule->GetBerserkerUID()))
 		{
 			return fDamage * BERSERKER_DAMAGE_RATIO;
 		}
@@ -336,14 +341,14 @@ void TestCreateEffects()
 
 ZCharacterManager* ZGetCharacterManager()
 {
-	if (g_pGame == NULL) return NULL;
-	return &g_pGame->m_CharacterManager;
+	ZGame* pGame = ZGetGame();
+	return pGame ? &pGame->m_CharacterManager : NULL;
 }
 
 ZObjectManager* ZGetObjectManager()
 {
-	if (g_pGame == NULL) return NULL;
-	return &g_pGame->m_ObjectManager;
+	ZGame* pGame = ZGetGame();
+	return pGame ? &pGame->m_ObjectManager : NULL;
 }
 
 static float CalcDamageRatio(float Distance, float MinRatio,
@@ -1382,7 +1387,8 @@ bool ZGame::OnCommand_Immediate(MCommand* pCommand)
 
 		OnGameRoundState(uidStage, nRound, nRoundState, nArg);
 
-		g_pGame->GetMatch()->SetRoundStartTime();
+		// Estamos dentro de ZGame, usar this directamente
+		GetMatch()->SetRoundStartTime();
 	}
 	break;
 	case MC_MATCH_GAME_RESPONSE_TIMESYNC:
@@ -1734,7 +1740,8 @@ bool ZGame::OnCommand_Immediate(MCommand* pCommand)
 
 rvector ZGame::GetMyCharacterFirePosition()
 {
-	rvector p = g_pGame->m_pMyCharacter->GetPosition();
+	// Optimización: Usar m_pMyCharacter directamente (estamos dentro de ZGame)
+	rvector p = m_pMyCharacter ? m_pMyCharacter->GetPosition() : rvector(0, 0, 0);
 	p.z += 160.f;
 	return p;
 }
@@ -1962,11 +1969,12 @@ void ZGame::OnPeerOpened(MCommand* pCommand)
 	if (pCharacter && !pCharacter->IsDead()) {
 		pCharacter->SetVisible(true);
 
-		ZCharacter* pMyCharacter = g_pGame->m_pMyCharacter;
+		// Optimización: Guardar m_pMyCharacter en variable local para evitar múltiples accesos
+		ZCharacter* pMyCharacter = m_pMyCharacter;
 		if (pMyCharacter)
 		{
-			int nParts = g_pGame->m_pMyCharacter->GetItems()->GetSelectedWeaponParts();
-			g_pGame->m_pMyCharacter->m_bSpMotion = false;
+			int nParts = pMyCharacter->GetItems()->GetSelectedWeaponParts();
+			pMyCharacter->m_bSpMotion = false;
 			ZPostChangeWeapon(nParts);
 		}
 	}
@@ -2202,7 +2210,7 @@ void ZGame::OnExplosionGrenade(MUID uidOwner, rvector pos, float fDamage, float 
 			ZGetSoundEngine()->PlaySound("fx_bullethit_mt_met");
 		}
 
-		ZCharacter* pOwnerCharacter = g_pGame->m_CharacterManager.Find(uidOwner);
+		ZCharacter* pOwnerCharacter = m_CharacterManager.Find(uidOwner);
 		if (pOwnerCharacter) {
 			CheckCombo(pOwnerCharacter, Target, !bPushSkip);
 			CheckStylishAction(pOwnerCharacter);
@@ -2264,7 +2272,7 @@ void ZGame::OnExplosionMagic(ZWeaponMagic* pWeapon, MUID uidOwner, rvector pos,
 			float fDamage = pWeapon->GetDesc()->nModDamage;
 			if (pWeapon->GetDesc()->CheckResist(pTarget, &fDamage))
 			{
-				ZCharacter* pOwnerCharacter = g_pGame->m_CharacterManager.Find(uidOwner);
+				ZCharacter* pOwnerCharacter = m_CharacterManager.Find(uidOwner);
 				if (pOwnerCharacter) {
 					CheckCombo(pOwnerCharacter, pTarget, true);
 					CheckStylishAction(pOwnerCharacter);
@@ -2311,7 +2319,7 @@ void ZGame::OnExplosionMagicNonSplash(ZWeaponMagic* pWeapon, MUID uidOwner, MUID
 		float fDamage = pWeapon->GetDesc()->nModDamage;
 		if (pWeapon->GetDesc()->CheckResist(pTarget, &fDamage))
 		{
-			ZCharacter* pOwnerCharacter = g_pGame->m_CharacterManager.Find(uidOwner);
+			ZCharacter* pOwnerCharacter = m_CharacterManager.Find(uidOwner);
 			if (pOwnerCharacter) {
 				CheckCombo(pOwnerCharacter, pTarget, true);
 				CheckStylishAction(pOwnerCharacter);
@@ -3317,7 +3325,7 @@ void ZGame::OnPeerDead(const MUID& uidAttacker, const u32 nAttackerArg,
 		if (pVictimCS->nLife > 0) pVictimCS->nLife--;
 	}
 
-	if (bSuicide && (ZGetCharacterManager()->Find(uidAttacker) == g_pGame->m_pMyCharacter))
+	if (bSuicide && (ZGetCharacterManager()->Find(uidAttacker) == m_pMyCharacter))
 	{
 		ZGetScreenEffectManager()->AddExpEffect(nVictimExp);
 		int nExpPercent = GetExpPercentFromTransData(nVictimArg);
@@ -3724,7 +3732,8 @@ void ZGame::OnPeerChat(const MUID& Sender, MMatchTeam Team, const char* Message)
 
 rvector ZGame::GetFloor(rvector pos, rplane* pimpactplane)
 {
-	rvector floor = g_pGame->GetWorld()->GetBsp()->GetFloor(pos + rvector(0, 0, 120), CHARACTER_RADIUS - 1.1f, 58.f, pimpactplane);
+	// Estamos dentro de ZGame, usar GetWorld() directamente
+	rvector floor = GetWorld()->GetBsp()->GetFloor(pos + rvector(0, 0, 120), CHARACTER_RADIUS - 1.1f, 58.f, pimpactplane);
 
 #ifdef ENABLE_CHARACTER_COLLISION
 	for (ZObjectManager::iterator itor = m_ObjectManager.begin();
@@ -4710,7 +4719,8 @@ void ZGame::OnStageEnterBattle(MCmdEnterBattleParam nParam, MTD_PeerListNode * p
 
 	if (uidChar == ZGetMyUID())
 	{
-		if (g_pGame->CreateMyCharacter(pPeerNode->CharInfo) == true)
+		// Estamos dentro de ZGame, usar this directamente
+		if (CreateMyCharacter(pPeerNode->CharInfo) == true)
 		{
 			ConfigureCharacter(uidChar, (MMatchTeam)pPeerNode->ExtendInfo.nTeam, pPeerNode->ExtendInfo.nPlayerFlags);
 		}

@@ -2500,43 +2500,8 @@ bool ZGameInterface::OnGlobalEvent(MEvent* pEvent)
 	return false;
 }
 
-bool ZGameInterface::OnDebugEvent(MEvent* pEvent, MListener* pListener)
-{
-	switch (pEvent->nMessage) {
-	case MWM_KEYDOWN:
-	{
-		switch (pEvent->nKey)
-		{
-		case VK_F10:
-			m_pLogFrame->Show(!m_pLogFrame->IsVisible());
-			return true;
-		case VK_NUMPAD8:
-		{
-			if (GetState() == GUNZ_LOBBY)
-			{
-				if (ZGetCharacterViewList(GUNZ_LOBBY) != NULL)
-				{
-					RVisualMesh* pVMesh =
-						ZGetCharacterViewList(GUNZ_LOBBY)->Get(ZGetGameClient()->GetPlayerUID())->GetVisualMesh();
-
-					TestChangeWeapon(pVMesh);
-				}
-			}
-		}
-		break;
-		}
-	}
-	break;
-	}
-	return false;
-}
-
 bool ZGameInterface::OnEvent(MEvent* pEvent, MListener* pListener)
 {
-#ifndef _PUBLISH
-	if (OnDebugEvent(pEvent, pListener)) return true;
-#endif
-
 	return false;
 }
 

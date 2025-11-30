@@ -54,7 +54,10 @@ void ZCharacterManager::Delete(MUID uid)
 
 		ZGetObjectManager()->Delete((ZObject*)pCharacter);
 
-		g_pGame->m_VisualMeshMgr.Del(pCharacter->m_nVMID);
+		// Optimización: Guardar ZGetGame() en variable local
+		if (ZGame* pGame = ZGetGame()) {
+			pGame->m_VisualMeshMgr.Del(pCharacter->m_nVMID);
+		}
 		delete pCharacter; pCharacter = NULL;
 		erase(itor);
 	}
@@ -67,8 +70,11 @@ void ZCharacterManager::Clear()
 	{
 		ZCharacter* pCharacter = (*begin()).second;
 
-		if( g_pGame->m_VisualMeshMgr.m_list.size() )
-			g_pGame->m_VisualMeshMgr.Del(pCharacter->m_nVMID);
+		// Optimización: Guardar ZGetGame() en variable local
+		ZGame* pGame = ZGetGame();
+		if (pGame && pGame->m_VisualMeshMgr.m_list.size()) {
+			pGame->m_VisualMeshMgr.Del(pCharacter->m_nVMID);
+		}
 		delete pCharacter;
 		erase(begin());
 	}
@@ -88,7 +94,9 @@ ZCharacter* ZCharacterManager::Find(MUID uid)
 
 void ZCharacterManager::OutputDebugString_CharacterState()
 {
-	ZMyCharacter* pMyChar = g_pGame->m_pMyCharacter;
+	// Optimización: Guardar ZGetGame() en variable local
+	ZGame* pGame = ZGetGame();
+	ZMyCharacter* pMyChar = pGame ? pGame->m_pMyCharacter : nullptr;
 
 	if(pMyChar) {
 		pMyChar->OutputDebugString_CharacterState();

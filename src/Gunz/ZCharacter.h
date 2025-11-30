@@ -41,7 +41,6 @@ _USING_NAMESPACE_REALSPACE2
 #define ARRIVAL_TOLER		5.f
 
 enum ZC_SKILL {
-
 	ZC_SKILL_NONE = 0,
 
 	ZC_SKILL_UPPERCUT,
@@ -63,7 +62,6 @@ enum ZC_DIE_ACTION
 };
 
 enum ZC_SPMOTION_TYPE {
-
 	ZC_SPMOTION_TAUNT = 0,
 	ZC_SPMOTION_BOW,
 	ZC_SPMOTION_WAVE,
@@ -75,7 +73,6 @@ enum ZC_SPMOTION_TYPE {
 };
 
 enum ZC_WEAPON_SLOT_TYPE {
-
 	ZC_SLOT_MELEE_WEAPON = 0,
 	ZC_SLOT_PRIMARY_WEAPON,
 	ZC_SLOT_SECONDARY_WEAPON,
@@ -86,15 +83,14 @@ enum ZC_WEAPON_SLOT_TYPE {
 };
 
 enum ZSTUNTYPE {
-	ZST_NONE	=	-1,
-	ZST_DAMAGE1	=	0,
+	ZST_NONE = -1,
+	ZST_DAMAGE1 = 0,
 	ZST_DAMAGE2,
 	ZST_SLASH,
 	ZST_BLOCKED,
 	ZST_LIGHTNING,
 	ZST_LOOP,
 };
-
 
 struct ZSlot {
 	int m_WeaponID = 0;
@@ -121,10 +117,10 @@ public:
 
 	bool Create(const MTD_CharInfo& pCharInfo);
 	void Destroy();
-	
+
 	void InitMeshParts();
 	void SelectWeapon();
-	
+
 	void EmptyHistory();
 
 	void Draw() { OnDraw(); }
@@ -138,7 +134,7 @@ public:
 	}
 
 	bool isInvincible();
-	
+
 	bool IsMan() const;
 
 	virtual void OnUpdate(float fDelta) override;
@@ -158,12 +154,12 @@ public:
 	void CheckDrawWeaponTrack();
 	void UpdateSpWeapon();
 
-	void SetAnimation(const char *AnimationName, bool bEnableCancel, int tick);
-	void SetAnimation(RAniMode mode, const char *AnimationName, bool bEnableCancel, int tick);
+	void SetAnimation(const char* AnimationName, bool bEnableCancel, int tick);
+	void SetAnimation(RAniMode mode, const char* AnimationName, bool bEnableCancel, int tick);
 
 	void SetAnimationLower(ZC_STATE_LOWER nAni);
 	void SetAnimationUpper(ZC_STATE_UPPER nAni);
-	
+
 	ZC_STATE_LOWER GetStateLower() const { return m_AniState_Lower; }
 	ZC_STATE_UPPER GetStateUpper() const { return m_AniState_Upper; }
 
@@ -177,17 +173,16 @@ public:
 	bool IsMeleeWeapon();
 	virtual bool IsCollideable() override;
 
-	void SetTargetDir(rvector vDir); 
+	void SetTargetDir(rvector vDir);
 
 	virtual bool Pick(const rvector& pos, const rvector& dir, RPickInfo* pInfo = NULL) override;
 
 	virtual void OnChangeWeapon(MMatchItemDesc* Weapon);
-	void OnChangeParts(RMeshPartsType type,int PartsID);
-	void OnAttack(int type,rvector& pos);
+	void OnChangeParts(RMeshPartsType type, int PartsID);
+	void OnAttack(int type, rvector& pos);
 	void OnShot();
 
 	void ChangeWeapon(MMatchCharItemParts nParts);
-
 
 	auto GetLastShotItemID() const { return m_nLastShotItemID; }
 	auto GetLastShotTime() const { return m_fLastShotTime; }
@@ -200,7 +195,7 @@ public:
 
 	bool IsDead() override { return m_bDie; }
 	auto IsAlive() const { return !m_bDie; }
-	void ForceDie() { SetHP(0); m_bDie = true; }
+	void ForceDie() { SetHP(0); SetAP(0); m_bDie = true; }
 
 	void SetAccel(const rvector& accel) { m_Accel = accel; }
 	virtual void SetDirection(const rvector& dir) override;
@@ -220,10 +215,10 @@ public:
 	void SetName(const char* szName) { strcpy_safe(m_Property.szName, szName); }
 
 #undef GetUserName
-	const char *GetUserName() const { return m_szUserName;	}
-	const char *GetUserAndClanName() const { return m_szUserAndClanName; }
+	const char* GetUserName() const { return m_szUserName; }
+	const char* GetUserAndClanName() const { return m_szUserAndClanName; }
 	bool IsAdmin() const { return m_InitialInfo.nUGradeID == MMUG_DEVELOPER || m_InitialInfo.nUGradeID == MMUG_ADMIN; }
-	bool IsAdminHide() const { return m_bAdminHide;	}
+	bool IsAdminHide() const { return m_bAdminHide; }
 	void SetAdminHide(bool bHide) { m_bAdminHide = bHide; }
 
 	int GetHP() const { return m_pModule_HPAP->GetHP(); }
@@ -237,22 +232,22 @@ public:
 
 	bool GetStylishShoted() const { return m_bStylishShoted; }
 	void UpdateStylishShoted();
-	
+
 	MUID GetLastAttacker() const { return m_pModule_HPAP->GetLastAttacker(); }
 	void SetLastAttacker(const MUID& uid) { m_pModule_HPAP->SetLastAttacker(uid); }
 	auto GetLastDamageType() const { return m_LastDamageType; }
 	void SetLastDamageType(ZDAMAGETYPE type) { m_LastDamageType = type; }
 
 	bool DoingStylishMotion();
-	
+
 	bool IsObserverTarget();
 
 	virtual MMatchTeam GetTeamID() const override { return m_nTeamID; }
 	void SetTeamID(MMatchTeam nTeamID) { m_nTeamID = nTeamID; }
 	bool IsSameTeam(const ZCharacter* pCharacter) const
-	{ 
+	{
 		if (pCharacter->GetTeamID() == -1) return false;
-		if (pCharacter->GetTeamID() == GetTeamID()) return true; 
+		if (pCharacter->GetTeamID() == GetTeamID()) return true;
 		return false;
 	}
 	bool IsTagger() const { return m_bTagger; }
@@ -280,8 +275,8 @@ public:
 	bool IsFallingToNarak() const { return m_bFallingToNarak; }
 
 	MMatchItemDesc* GetSelectItemDesc() {
-		if(GetItems())
-			if(GetItems()->GetSelectedWeapon())
+		if (GetItems())
+			if (GetItems()->GetSelectedWeapon())
 				return GetItems()->GetSelectedWeapon()->GetDesc();
 		return NULL;
 	}
@@ -292,25 +287,25 @@ public:
 	void Save(ReplayPlayerInfo& Info);
 	void Load(const ReplayPlayerInfo& Info);
 
-	RMesh *GetWeaponMesh(MMatchCharItemParts parts);
+	RMesh* GetWeaponMesh(MMatchCharItemParts parts);
 
-	virtual float ColTest(const rvector& pos, const rvector& vec, float radius, rplane* out=0) override;
+	virtual float ColTest(const rvector& pos, const rvector& vec, float radius, rplane* out = 0) override;
 	virtual bool IsAttackable() override;
 
 	virtual bool IsGuardNonrecoilable() const override;
 	virtual bool IsGuardRecoilable() const override;
 	virtual void OnMeleeGuardSuccess() override;
 
-	void AddMassiveEffect(const rvector &pos, const rvector &dir);
+	void AddMassiveEffect(const rvector& pos, const rvector& dir);
 
-	virtual void OnDamagedAnimation(ZObject *pAttacker, int type) override;
+	virtual void OnDamagedAnimation(ZObject* pAttacker, int type) override;
 
 	virtual ZOBJECTHITTEST HitTest(const rvector& origin, const rvector& to,
-		float fTime, rvector *pOutPos = nullptr) override;
+		float fTime, rvector* pOutPos = nullptr) override;
 
 	virtual void OnKnockback(const rvector& dir, float fForce) override;
 	virtual void OnDamaged(ZObject* pAttacker, rvector srcPos, ZDAMAGETYPE damageType, MMatchWeaponType weaponType,
-		float fDamage, float fPiercingRatio=1.f, int nMeleeType=-1) override;
+		float fDamage, float fPiercingRatio = 1.f, int nMeleeType = -1) override;
 	virtual void OnScream() override;
 
 	void HandleDamage(ZObject* pAttacker, rvector srcPos, ZDAMAGETYPE damageType, MMatchWeaponType weaponType,
@@ -370,7 +365,7 @@ public:
 
 	int m_nVMID;
 
-	i32 Ping{999};
+	i32 Ping{ 999 };
 
 	bool IsBot = false;
 
@@ -391,7 +386,7 @@ protected:
 
 	rvector m_TargetDir;
 
-	ZModule_QuestStatus		*m_pModule_QuestStatus;
+	ZModule_QuestStatus* m_pModule_QuestStatus;
 
 	ZCharacterProperty		m_Property;
 	ZCharacterStatus		m_Status;
@@ -414,7 +409,6 @@ protected:
 			bool	m_bPlayDone_upper : 1;
 			bool	m_bIsLowModel : 1;
 			bool	m_bTagger : 1;
-
 		};
 		DWORD dwFlagsProtected;
 	};
@@ -467,7 +461,7 @@ private:
 
 	ZC_STATE_UPPER	m_AniState_Upper;
 	ZC_STATE_LOWER	m_AniState_Lower;
-	ZANIMATIONINFO *m_pAnimationInfo_Upper, *m_pAnimationInfo_Lower;
+	ZANIMATIONINFO* m_pAnimationInfo_Upper, * m_pAnimationInfo_Lower;
 
 	float Scale = 1.0f;
 };

@@ -115,9 +115,13 @@ void ZMyCharacter::OnDraw()
 
 void ZMyCharacter::ProcessInput(float fDelta)
 {
-	if (ZApplication::GetGame()->GetMatch()->GetRoundState() == MMATCH_ROUNDSTATE_PREPARE) return;
+	// Optimización: Guardar ZGetGame() en variable local al inicio de la función
+	ZGame* pGame = ZGetGame();
+	if (!pGame) return;
+
+	if (pGame->GetMatch()->GetRoundState() == MMATCH_ROUNDSTATE_PREPARE) return;
 	if (m_bInitialized == false) return;
-	if (ZGetGame()->IsReservedSuicide()) return;
+	if (pGame->IsReservedSuicide()) return;
 
 	UpdateButtonState();
 
@@ -147,10 +151,10 @@ void ZMyCharacter::ProcessInput(float fDelta)
 			!m_bSlash && !m_bJumpSlash && !m_bJumpSlashLanding)
 		{
 			auto AddAccel = [&](auto& vec)
-			{
-				m_Accel += vec;
-				ButtonPressed = true;
-			};
+				{
+					m_Accel += vec;
+					ButtonPressed = true;
+				};
 			if (ZIsActionKeyDown(ZACTION_FORWARD) == true)
 				AddAccel(forward);
 			if (ZIsActionKeyDown(ZACTION_BACK) == true)
@@ -178,11 +182,13 @@ void ZMyCharacter::ProcessInput(float fDelta)
 		bool bWallJump = false;
 		int nWallJumpDir = -1;
 
+		// pGame ya está definido arriba en ProcessInput()
+
 		if (ZIsActionKeyDown(ZACTION_JUMP) == true)
 		{
 			if (m_bReleasedJump && !m_bLimitJump)
 			{
-				m_fLastJumpPressedTime = g_pGame->GetTime();
+				m_fLastJumpPressedTime = pGame->GetTime();
 				m_bJumpQueued = true;
 				m_bWallJumpQueued = true;
 				m_bReleasedJump = false;
@@ -191,7 +197,7 @@ void ZMyCharacter::ProcessInput(float fDelta)
 		else
 			m_bReleasedJump = true;
 
-		if (m_bJumpQueued && (g_pGame->GetTime() - m_fLastJumpPressedTime > JUMP_QUEUE_TIME))
+		if (m_bJumpQueued && (pGame->GetTime() - m_fLastJumpPressedTime > JUMP_QUEUE_TIME))
 			m_bJumpQueued = false;
 
 		if (m_bJumpQueued && !m_bTumble && !m_bDrop && !m_bShot && !m_bShotReturn && !m_bSkill &&
@@ -218,7 +224,8 @@ void ZMyCharacter::ProcessInput(float fDelta)
 						pickorigin = m_Position;
 
 						RBSPPICKINFO bpi1, bpi2;
-						auto* bsp = ZGetGame()->GetWorld()->GetBsp();
+						// pGame ya está definido arriba en ProcessInput()
+						auto* bsp = pGame->GetWorld()->GetBsp();
 						bool bPicked1 = bsp->Pick(pickorigin + rvector(0, 0, 100), dir, &bpi1);
 						bool bPicked2 = bsp->Pick(pickorigin + rvector(0, 0, 180), dir, &bpi2);
 						if (bPicked1 && bPicked2)
@@ -247,7 +254,8 @@ void ZMyCharacter::ProcessInput(float fDelta)
 						dir = (i == 0) ? -right : right;
 
 						RBSPPICKINFO bpi;
-						bool bPicked = ZGetGame()->GetWorld()->GetBsp()->Pick(pickorigin, dir, &bpi);
+						// pGame ya está definido arriba en ProcessInput()
+						bool bPicked = pGame->GetWorld()->GetBsp()->Pick(pickorigin, dir, &bpi);
 						if (bPicked)
 						{
 							rvector backdir = -dir;
@@ -262,19 +270,20 @@ void ZMyCharacter::ProcessInput(float fDelta)
 							float fRatio = GetMoveSpeedRatio();
 
 							if (fDist < 100.f &&
-								DotProduct(GetVelocity(), jumpdir) > RUN_SPEED * fRatio *.8f &&
-								fDot > cos(55.f / 180.f*PI_FLOAT) &&
-								fDot < cos(25.f / 180.f*PI_FLOAT) &&
+								DotProduct(GetVelocity(), jumpdir) > RUN_SPEED * fRatio * .8f &&
+								fDot > cos(55.f / 180.f * PI_FLOAT) &&
+								fDot < cos(25.f / 180.f * PI_FLOAT) &&
 								DotProduct(jumpdir, dir) < 0)
 							{
-								rvector neworigin = pickorigin + 300.f*jumpdir;
+								rvector neworigin = pickorigin + 300.f * jumpdir;
 
 								RBSPPICKINFO bpi;
-								bPicked = ZGetGame()->GetWorld()->GetBsp()->Pick(neworigin, dir, &bpi);
+								// pGame ya está definido arriba en ProcessInput()
+								bPicked = pGame->GetWorld()->GetBsp()->Pick(neworigin, dir, &bpi);
 								if (bPicked && fabsf(Magnitude(bpi.PickPos - neworigin) - fDist) < 10)
 								{
-									rvector targetpos = pickorigin + 300.f*jumpdir;
-									bool bAdjusted = ZGetGame()->GetWorld()->GetBsp()->CheckWall(pickorigin,
+									rvector targetpos = pickorigin + 300.f * jumpdir;
+									bool bAdjusted = pGame->GetWorld()->GetBsp()->CheckWall(pickorigin,
 										targetpos, CHARACTER_RADIUS - 5, 60);
 									if (!bAdjusted)
 									{
@@ -283,7 +292,7 @@ void ZMyCharacter::ProcessInput(float fDelta)
 
 										SetTargetDir(jumpdir);
 										float speed = Magnitude(GetVelocity());
-										SetVelocity(jumpdir*speed);
+										SetVelocity(jumpdir * speed);
 									}
 								}
 							}
@@ -297,8 +306,9 @@ void ZMyCharacter::ProcessInput(float fDelta)
 			RBSPPICKINFO bpi;
 			auto& Vel = GetVelocity();
 			auto VelLengthSquared = MagnitudeSq(Vel);
+			// pGame ya está definido arriba en ProcessInput()
 			if (VelLengthSquared != 0 &&
-				ZGetGame()->GetWorld()->GetBsp()->Pick(pickorigin, Vel / sqrt(VelLengthSquared), &bpi))
+				pGame->GetWorld()->GetBsp()->Pick(pickorigin, Vel / sqrt(VelLengthSquared), &bpi))
 				PickedNormal = rvector(bpi.pInfo->plane.a, bpi.pInfo->plane.b, bpi.pInfo->plane.c);
 
 			float fDotJump2 = DotProduct(PickedNormal, m_Direction);
@@ -308,16 +318,18 @@ void ZMyCharacter::ProcessInput(float fDelta)
 			CrossProduct(&characterright, m_Direction, rvector(0, 0, 1));
 			float fDotJump2right = DotProduct(PickedNormal, characterright);
 
-			bool bJump2 = (g_pGame->GetTime() - m_pModule_Movable->GetAdjustedTime() < 0.2f
+			// pGame ya está definido arriba en ProcessInput()
+			bool bJump2 = (pGame->GetTime() - m_pModule_Movable->GetAdjustedTime() < 0.2f
 				&& Magnitude(pickorigin - bpi.PickPos) < 100.f
 				&& DotProduct(rvector(0, 0, -1), PickedNormal) < 0.1f
-				&& (fDotJump2 > .8f || fDotJump2<-.8f || fDotJump2right>.8f || fDotJump2right<-.8f)
-				&& g_pGame->GetTime() - m_fJump2Time>.5f)
+				&& (fDotJump2 > .8f || fDotJump2 < -.8f || fDotJump2right>.8f || fDotJump2right < -.8f)
+				&& pGame->GetTime() - m_fJump2Time > .5f)
 				&& fProjSpeed < -100.f
 				&& GetDistToFloor() > 30.f
 				&& !m_bWallJump && !bWallJump && !m_bLand && !m_bGuard;
 
-			if (m_bWallJump && !m_bWallJump2 && (m_fWallJumpTime + .4f < g_pGame->GetTime()))
+			// pGame ya está definido arriba en ProcessInput()
+			if (m_bWallJump && !m_bWallJump2 && (m_fWallJumpTime + .4f < pGame->GetTime()))
 			{
 				WallJump2();
 			}
@@ -326,7 +338,8 @@ void ZMyCharacter::ProcessInput(float fDelta)
 				m_bJumpQueued = false;
 				m_bWallJump = true;
 				m_nWallJumpDir = nWallJumpDir;
-				m_fWallJumpTime = g_pGame->GetTime();
+				// pGame ya está definido arriba en ProcessInput()
+				m_fWallJumpTime = pGame->GetTime();
 				m_bWallJump2 = false;
 				m_bWallHang = false;
 
@@ -340,7 +353,6 @@ void ZMyCharacter::ProcessInput(float fDelta)
 						AddVelocity(rvector(0, 0, WALL_JUMP_VELOCITY));
 				}
 				m_bLand = false;
-
 			}
 			else if (bJump2)
 			{
@@ -349,15 +361,16 @@ void ZMyCharacter::ProcessInput(float fDelta)
 				Normalize(PickedNormal);
 				float fAbsorb = DotProduct(PickedNormal, GetVelocity());
 				rvector newVelocity = GetVelocity();
-				newVelocity -= fAbsorb*PickedNormal;
+				newVelocity -= fAbsorb * PickedNormal;
 
 				newVelocity *= 1.1f;
 
-				newVelocity += PickedNormal*JUMP2_WALL_VELOCITY;
+				newVelocity += PickedNormal * JUMP2_WALL_VELOCITY;
 				newVelocity.z = JUMP2_VELOCITY;
 				SetVelocity(newVelocity);
 
-				m_fJump2Time = g_pGame->GetTime();
+				// pGame ya está definido arriba en ProcessInput()
+				m_fJump2Time = pGame->GetTime();
 
 				m_bLand = false;
 				m_bWallHang = false;
@@ -379,7 +392,6 @@ void ZMyCharacter::ProcessInput(float fDelta)
 
 				if (GetStateUpper() == ZC_STATE_UPPER_SHOT)
 					SetAnimationUpper(ZC_STATE_UPPER_NONE);
-
 			}
 			else if (m_bWallHang)
 			{
@@ -392,16 +404,17 @@ void ZMyCharacter::ProcessInput(float fDelta)
 					if (ZIsActionKeyDown(ZACTION_FORWARD))
 					{
 						m_nWallJump2Dir = 6;
-						SetVelocity(PickedNormal*50.f);
+						SetVelocity(PickedNormal * 50.f);
 					}
 					else
 					{
 						m_nWallJump2Dir = 7;
-						AddVelocity(PickedNormal*300.f);
+						AddVelocity(PickedNormal * 300.f);
 					}
 					AddVelocity(rvector(0, 0, 1400));
 
-					m_fJump2Time = g_pGame->GetTime();
+					// pGame ya está definido arriba en ProcessInput()
+					m_fJump2Time = pGame->GetTime();
 
 					m_bLand = false;
 					m_bWallHang = false;
@@ -424,11 +437,12 @@ void ZMyCharacter::ProcessInput(float fDelta)
 					rvector vel = rvector(GetVelocity().x, GetVelocity().y, 0);
 					float fVel = Magnitude(vel);
 
-					rvector newVelocity = vel*0.5f + m_Accel*fVel*.45f + rvector(0, 0, JUMP_VELOCITY);
+					rvector newVelocity = vel * 0.5f + m_Accel * fVel * .45f + rvector(0, 0, JUMP_VELOCITY);
 					SetVelocity(newVelocity);
 					m_bLand = false;
 
-					m_fJump2Time = g_pGame->GetTime();
+					// pGame ya está definido arriba en ProcessInput()
+					m_fJump2Time = pGame->GetTime();
 				}
 		}
 	}
@@ -451,7 +465,6 @@ void ZMyCharacter::OnShotMelee()
 
 	if (m_pVMesh->m_SelectWeaponMotionType == eq_wd_dagger ||
 		m_pVMesh->m_SelectWeaponMotionType == eq_ws_dagger) { // dagger
-
 		if (GetStateUpper() == ZC_STATE_UPPER_SHOT)
 			return;
 
@@ -503,8 +516,10 @@ void ZMyCharacter::OnShotMelee()
 				m_nJumpShotType = 0;
 			}
 
-			m_fNextShotTimeType[MMCIP_MELEE] = g_pGame->GetTime() + 0.8f;
-
+			// Optimización: Guardar ZGetGame() en variable local
+			ZGame* pGame = ZGetGame();
+			if (!pGame) return;
+			m_fNextShotTimeType[MMCIP_MELEE] = pGame->GetTime() + 0.8f;
 		}
 		else {
 			if (!m_bLand && GetDistToFloor() > 20.f) {
@@ -537,20 +552,24 @@ void ZMyCharacter::OnShotMelee()
 
 	int sel_type = GetItems()->GetSelectedWeaponParts();
 
+	// Optimización: Guardar ZGetGame() en variable local
+	ZGame* pGame = ZGetGame();
+	if (!pGame) return;
+
 	if (m_nShot == 1 && !m_bJumpShot) {
 		m_b1ShotSended = false;
-		m_f1ShotTime = g_pGame->GetTime();
+		m_f1ShotTime = pGame->GetTime();
 	}
 	else {
 		if (ZGetGameClient()->GetMatchStageSetting()->IsVanillaMode())
 		{
-			ZPostShotMelee(g_pGame->GetTime(), m_Position, m_nShot);
-			AddDelayedWork(g_pGame->GetTime() + 0.2f, ZDW_RECOIL);
+			ZPostShotMelee(pGame->GetTime(), m_Position, m_nShot);
+			AddDelayedWork(pGame->GetTime() + 0.2f, ZDW_RECOIL);
 		}
 		else
 		{
-			AddDelayedWork(g_pGame->GetTime() + 0.1 + max(m_nShot - 1, 0) * .05,
-				ZDW_RG_SLASH, reinterpret_cast<void *>(m_nShot));
+			AddDelayedWork(pGame->GetTime() + 0.1 + max(m_nShot - 1, 0) * .05,
+				ZDW_RG_SLASH, reinterpret_cast<void*>(m_nShot));
 		}
 	}
 }
@@ -590,7 +609,6 @@ void ZMyCharacter::OnShotRange()
 	ZCombatInterface* ci = ZApplication::GetGameInterface()->GetCombatInterface();
 
 	if (ci) {
-
 		Cp = ci->GetCrosshairPoint();
 
 		rvector pos, dir;
@@ -599,10 +617,13 @@ void ZMyCharacter::OnShotRange()
 		rvector mypos = m_Position + rvector(0, 0, 100);
 		rplane myplane = PlaneFromPointNormal(mypos, dir);
 
-		rvector checkpos, checkposto = pos + 10000.f*dir;
+		rvector checkpos, checkposto = pos + 10000.f * dir;
 		IntersectLineSegmentPlane(&checkpos, myplane, pos, checkposto);
 
-		if (g_pGame->Pick(this, checkpos, dir, &zpi, RM_FLAG_ADDITIVE | RM_FLAG_HIDE | RM_FLAG_PASSBULLET))
+		// Optimización: Guardar ZGetGame() en variable local
+		ZGame* pGame = ZGetGame();
+		if (!pGame) return;
+		if (pGame->Pick(this, checkpos, dir, &zpi, RM_FLAG_ADDITIVE | RM_FLAG_HIDE | RM_FLAG_PASSBULLET))
 		{
 			if (zpi.bBspPicked)
 				pickpos = zpi.bpi.PickPos;
@@ -612,7 +633,7 @@ void ZMyCharacter::OnShotRange()
 		}
 		else
 		{
-			pickpos = pos + dir*10000.f;
+			pickpos = pos + dir * 10000.f;
 		}
 	}
 
@@ -632,7 +653,11 @@ void ZMyCharacter::OnShotRange()
 	if (pSelectedItem->GetDesc())
 		wtype = pSelectedItem->GetDesc()->m_nWeaponType;
 
-	u32 seed = reinterpret<u32>(g_pGame->GetTime());
+	// Optimización: Guardar ZGetGame() en variable local
+	ZGame* pGame = ZGetGame();
+	if (!pGame) return;
+
+	u32 seed = reinterpret<u32>(pGame->GetTime());
 
 	if (wtype == MWT_SHOTGUN || wtype == MWT_SAWED_SHOTGUN)
 	{
@@ -650,7 +675,7 @@ void ZMyCharacter::OnShotRange()
 			vTo = nPos + 10000.f * nDir;
 		}
 
-		ZPostShot(g_pGame->GetTime(), vWeaponPos, vTo, sel_type);
+		ZPostShot(pGame->GetTime(), vWeaponPos, vTo, sel_type);
 	}
 	else
 	{
@@ -667,7 +692,7 @@ void ZMyCharacter::OnShotRange()
 
 		int sel_type = GetItems()->GetSelectedWeaponParts();
 
-		ZPostShot(g_pGame->GetTime(), vWeaponPos, vWeaponPos + 10000.f*r, sel_type);
+		ZPostShot(pGame->GetTime(), vWeaponPos, vWeaponPos + 10000.f * r, sel_type);
 	}
 }
 
@@ -726,7 +751,10 @@ void ZMyCharacter::OnShotItem()
 		pos = vWeapon;
 
 		rvector velocity = (GetVelocity() * 0.5f) + m_TargetDir * 100;
-		ZPostShotSp(g_pGame->GetTime(), pos, velocity, ZC_WEAPON_SP_ITEMKIT, sel_type);
+		// Optimización: Guardar ZGetGame() en variable local
+		ZGame* pGame = ZGetGame();
+		if (!pGame) return;
+		ZPostShotSp(pGame->GetTime(), pos, velocity, ZC_WEAPON_SP_ITEMKIT, sel_type);
 		return;
 	}
 
@@ -740,7 +768,6 @@ void ZMyCharacter::OnShotItem()
 	ZCombatInterface* ci = ZApplication::GetGameInterface()->GetCombatInterface();
 
 	if (ci) {
-
 		Cp = ci->GetCrosshairPoint();
 
 		rvector pos, dir;
@@ -749,10 +776,12 @@ void ZMyCharacter::OnShotItem()
 		rvector mypos = m_Position + rvector(0, 0, 100);
 		rplane myplane = PlaneFromPointNormal(mypos, dir);
 
-		rvector checkpos, checkposto = pos + 100000.f*dir;
+		rvector checkpos, checkposto = pos + 100000.f * dir;
 		IntersectLineSegmentPlane(&checkpos, myplane, pos, checkposto);
 
-		if (g_pGame->Pick(this, checkpos, dir, &zpi))
+		// Optimización: Guardar ZGetGame() en variable local
+		ZGame* pGame = ZGetGame();
+		if (pGame && pGame->Pick(this, checkpos, dir, &zpi))
 		{
 			if (zpi.bBspPicked)
 				pickpos = zpi.bpi.PickPos;
@@ -762,7 +791,7 @@ void ZMyCharacter::OnShotItem()
 		}
 		else
 		{
-			pickpos = pos + dir*10000.f;
+			pickpos = pos + dir * 10000.f;
 		}
 	}
 
@@ -775,7 +804,10 @@ void ZMyCharacter::OnShotItem()
 	rvector dir = pickpos - v1;
 
 	Normalize(dir);
-	ZPostShotSp(g_pGame->GetTime(), v1, dir, type, sel_type);
+	// Optimización: Guardar ZGetGame() en variable local
+	ZGame* pGame = ZGetGame();
+	if (!pGame) return;
+	ZPostShotSp(pGame->GetTime(), v1, dir, type, sel_type);
 }
 
 void ZMyCharacter::OnShotCustom()
@@ -810,10 +842,17 @@ bool ZMyCharacter::CheckWall(rvector& Pos)
 
 	memset(&bpi, 0, sizeof(RBSPPICKINFO));
 
-	if (ZGetGame()->GetWorld()->GetBsp()->Pick(nPos, nDir, &bpi)) {
+	// Optimización: Guardar ZGetGame() en variable local
+	ZGame* pGame = ZGetGame();
+	if (!pGame) {
+		Pos = vWPos;
+		return false;
+	}
+
+	if (pGame->GetWorld()->GetBsp()->Pick(nPos, nDir, &bpi)) {
 		if (bpi.pInfo) {
 			if (DotProduct(bpi.pInfo->plane, vWPos) < 0) {
-				Pos = bpi.PickPos - 2.f*nDir;
+				Pos = bpi.PickPos - 2.f * nDir;
 				return true;
 			}
 		}
@@ -824,13 +863,11 @@ bool ZMyCharacter::CheckWall(rvector& Pos)
 	return false;
 }
 
-
 void ZMyCharacter::OnShotRocket()
 {
 	ZItem* pSelectedItem = GetItems()->GetSelectedWeapon();
 
 	if (pSelectedItem == NULL || pSelectedItem->GetBulletAMagazine() <= 0) {
-
 		return;
 	}
 
@@ -842,15 +879,17 @@ void ZMyCharacter::OnShotRocket()
 	ZCombatInterface* ci = ZApplication::GetGameInterface()->GetCombatInterface();
 
 	if (ci) {
-
 		Cp = ci->GetCrosshairPoint();
 
 		rvector pos, dir;
 		RGetScreenLine(Cp.x, Cp.y, &pos, &dir);
 
-		if (!ZGetGame()->GetWorld()->GetBsp()->Pick(pos, dir, &bpi)) {
-			bpi.PickPos = pos + dir*10000.f;
+		// Optimización: Guardar ZGetGame() en variable local al inicio
+		ZGame* pGame = ZGetGame();
+		if (!pGame) return;
 
+		if (!pGame->GetWorld()->GetBsp()->Pick(pos, dir, &bpi)) {
+			bpi.PickPos = pos + dir * 10000.f;
 		}
 	}
 
@@ -862,7 +901,8 @@ void ZMyCharacter::OnShotRocket()
 
 	int sel_type = GetItems()->GetSelectedWeaponParts();
 
-	ZPostShotSp(g_pGame->GetTime(), vWeaponPos, dir, ZC_WEAPON_SP_ROCKET, sel_type);
+	// pGame ya está definido arriba en OnShotRocket()
+	ZPostShotSp(pGame->GetTime(), vWeaponPos, dir, ZC_WEAPON_SP_ROCKET, sel_type);
 }
 
 void ZMyCharacter::OnGadget_Hanging()
@@ -882,20 +922,24 @@ void ZMyCharacter::OnGadget_Hanging()
 	if (IsDead() || m_bWallJump || m_bGuard || m_bDrop || m_bTumble || m_bSkill ||
 		m_bBlast || m_bBlastFall || m_bBlastDrop || m_bBlastStand || m_bBlastAirmove) return;
 	if (GetStateLower() == ZC_STATE_LOWER_JUMPATTACK) return;
-	if (m_bWallJump2 && (g_pGame->GetTime() - m_fJump2Time) < .40f) return;
+	// Optimización: Guardar ZGetGame() en variable local al inicio
+	ZGame* pGame = ZGetGame();
+	if (!pGame) return;
+
+	if (m_bWallJump2 && (pGame->GetTime() - m_fJump2Time) < .40f) return;
 
 	m_bWallJump2 = false;
 
 	if (!m_bWallHang)
 	{
 		if (GetDistToFloor() > 100.f) {
-			m_fHangTime = g_pGame->GetTime();
+			m_fHangTime = pGame->GetTime();
 			m_bWallHang = true;
 			m_bHangSuccess = false;
 		}
 	}
 	else {
-		if (g_pGame->GetTime() - m_fHangTime > .4f && !m_bHangSuccess) {
+		if (pGame->GetTime() - m_fHangTime > .4f && !m_bHangSuccess) {
 			rvector pickorigin, dir;
 			rvector front = m_Direction;
 			front.z = 0;
@@ -904,7 +948,8 @@ void ZMyCharacter::OnGadget_Hanging()
 			pickorigin = m_Position + rvector(0, 0, 210);
 
 			RBSPPICKINFO bpi;
-			bool bPicked = ZGetGame()->GetWorld()->GetBsp()->Pick(pickorigin, dir, &bpi);
+			// pGame ya está definido arriba en OnGadget_Hanging()
+			bool bPicked = pGame->GetWorld()->GetBsp()->Pick(pickorigin, dir, &bpi);
 
 			if (bPicked && Magnitude(pickorigin - bpi.PickPos) < 100.f)
 			{
@@ -941,7 +986,6 @@ void ZMyCharacter::OnGadget_Snifer()
 	}
 }
 
-
 void ZMyCharacter::ProcessGadget()
 {
 	if (m_bWallJump || m_bGuard || m_bStun || m_bShot || m_bSkill ||
@@ -959,7 +1003,6 @@ void ZMyCharacter::ProcessGadget()
 	bool bSecondary = bPressingSecondary && !bWasPressingSecondaryLastFrame;
 
 	if (bSecondary && m_bLand) {
-
 		MMatchWeaponType type = MWT_NONE;
 
 		int sel_type = GetItems()->GetSelectedWeaponParts();
@@ -967,20 +1010,24 @@ void ZMyCharacter::ProcessGadget()
 
 		if (pSItem && pSItem->GetDesc())
 			type = pSItem->GetDesc()->m_nWeaponType;
+		// Optimización: Guardar ZGetGame() en variable local
+		ZGame* pGame = ZGetGame();
+		if (!pGame) return;
+
 		switch (type) {
 		case MWT_DAGGER:
 		case MWT_DUAL_DAGGER:
 			m_bSkill = true;
-			m_fSkillTime = g_pGame->GetTime();
+			m_fSkillTime = pGame->GetTime();
 			m_bTumble = false;
-			AddDelayedWork(g_pGame->GetTime() + 0.18f, ZDW_DASH);
+			AddDelayedWork(pGame->GetTime() + 0.18f, ZDW_DASH);
 			break;
 		case MWT_KATANA:
 		case MWT_DOUBLE_KATANA:
 			m_bSkill = true;
-			m_fSkillTime = g_pGame->GetTime();
+			m_fSkillTime = pGame->GetTime();
 			m_bTumble = false;
-			AddDelayedWork(g_pGame->GetTime() + 0.18f, ZDW_UPPERCUT);
+			AddDelayedWork(pGame->GetTime() + 0.18f, ZDW_UPPERCUT);
 			break;
 		}
 	}
@@ -999,7 +1046,6 @@ void ZMyCharacter::ProcessGadget()
 		if (pSelectedItem)
 		{
 			if (pSelectedItem->GetDesc()) {
-
 				switch (pSelectedItem->GetDesc()->m_nWeaponType)
 				{
 				case MWT_SNIFER:
@@ -1041,7 +1087,6 @@ void ZMyCharacter::ProcessGuard()
 	MMatchWeaponType type = pSItem->GetDesc()->m_nWeaponType;
 	if (type != MWT_KATANA && type != MWT_DOUBLE_KATANA) return;
 
-
 	if (m_bGuard) {
 		ReleaseLButtonQueue();
 	}
@@ -1051,7 +1096,11 @@ void ZMyCharacter::ProcessGuard()
 	bool bBothPressed = m_bLButtonPressed && m_bRButtonPressed &&
 		(m_bLButtonFirstPressed || m_bRButtonFirstPressed);
 
-	float fTime = g_pGame->GetTime();
+	// Optimización: Guardar ZGetGame() en variable local
+	ZGame* pGame = ZGetGame();
+	if (!pGame) return;
+
+	float fTime = pGame->GetTime();
 	bool bGuardTime = ((fTime - m_f1ShotTime) <= GUARD_TIME && m_bRButtonFirstPressed) ||
 		((fTime - m_fSkillTime) <= GUARD_TIME && m_bLButtonFirstPressed) ||
 		(m_bLButtonFirstPressed && m_bRButtonFirstPressed);
@@ -1072,7 +1121,7 @@ void ZMyCharacter::ProcessGuard()
 			m_bGuardStart = true;
 			m_bWallHang = false;
 			m_bJumpShot = false;
-			m_fGuardStartTime = g_pGame->GetTime();
+			m_fGuardStartTime = pGame->GetTime();
 
 			if (m_bGuardKey) m_bGuardByKey = true;
 			else			m_bGuardByKey = false;
@@ -1152,12 +1201,16 @@ void ZMyCharacter::OutputDebugString_CharacterState()
 
 void ZMyCharacter::ProcessShot()
 {
-	if (ZApplication::GetGame()->GetMatch()->GetRoundState() == MMATCH_ROUNDSTATE_PREPARE) return;
+	// Optimización: Guardar ZGetGame() en variable local al inicio
+	ZGame* pGame = ZGetGame();
+	if (!pGame) return;
+
+	if (pGame->GetMatch()->GetRoundState() == MMATCH_ROUNDSTATE_PREPARE) return;
 	if (m_bInitialized == false) return;
 
 	if (!m_bLButtonPressed) m_bEnterCharge = false;
 
-	if (m_bLButtonFirstPressed && (g_pGame->GetTime() - m_fLastLButtonPressedTime < SHOT_QUEUE_TIME))
+	if (m_bLButtonFirstPressed && (pGame->GetTime() - m_fLastLButtonPressedTime < SHOT_QUEUE_TIME))
 		m_bLButtonQueued = true;
 
 	if (GetItems()->GetSelectedWeapon() == NULL ||
@@ -1187,7 +1240,8 @@ void ZMyCharacter::ProcessShot()
 	}
 	else
 	{
-		if (ZApplication::GetGame()->GetMatch()->IsRuleGladiator() && !IsAdmin()) return;
+		// pGame ya está definido arriba en ProcessShot()
+		if (pGame->GetMatch()->IsRuleGladiator() && !IsAdmin()) return;
 		if (!m_bLButtonPressed) return;
 	}
 
@@ -1211,8 +1265,9 @@ void ZMyCharacter::ProcessShot()
 
 	if (nParts<0 || nParts > MMCIP_END - 1) return;
 
+	// pGame ya está definido arriba en ProcessShot()
 	if (GetItems()->GetSelectedWeapon()->GetDesc()->m_nType != MMIT_MELEE)
-		if (m_fNextShotTimeType[nParts] > g_pGame->GetTime())
+		if (m_fNextShotTimeType[nParts] > pGame->GetTime())
 			return;
 
 	ZItem* pSelectedItem = GetItems()->GetSelectedWeapon();
@@ -1223,7 +1278,8 @@ void ZMyCharacter::ProcessShot()
 	MMatchItemDesc* pRangeDesc = pSelectedItem->GetDesc();
 	DWORD nWeaponDelay = pRangeDesc->m_nDelay;
 
-	m_fNextShotTimeType[nParts] = g_pGame->GetTime() + (float)(nWeaponDelay)*0.001f;
+	// pGame ya está definido arriba en ProcessShot()
+	m_fNextShotTimeType[nParts] = pGame->GetTime() + (float)(nWeaponDelay) * 0.001f;
 
 	if (GetItems()->GetSelectedWeapon()->GetBulletAMagazine() <= 0)
 	{
@@ -1304,13 +1360,11 @@ void ZMyCharacter::UpdateAnimation()
 	{
 		if (m_nBlastType == 0) SetAnimationLower(ZC_STATE_LOWER_BLAST_DROP);
 		else if (m_nBlastType == 1) SetAnimationLower(ZC_STATE_LOWER_BLAST_DROP_DAGGER);
-
 	}
 	else if (m_bBlast)
 	{
 		if (m_nBlastType == 0) SetAnimationLower(ZC_STATE_LOWER_BLAST);
 		else if (m_nBlastType == 1) SetAnimationLower(ZC_STATE_LOWER_BLAST_DAGGER);
-
 	}
 	else if (m_bSkill)
 	{
@@ -1496,12 +1550,12 @@ void ZMyCharacter::WallJump2()
 		if (ZIsActionKeyDown(ZACTION_FORWARD))
 		{
 			m_nWallJump2Dir = 6;
-			SetVelocity(jump2*50.f);
+			SetVelocity(jump2 * 50.f);
 		}
 		else
 		{
 			m_nWallJump2Dir = 7;
-			AddVelocity(jump2*300.f);
+			AddVelocity(jump2 * 300.f);
 		}
 		AddVelocity(rvector(0, 0, 1400));
 	}
@@ -1517,11 +1571,14 @@ void ZMyCharacter::WallJump2()
 		else
 			m_nWallJump2Dir = 5;
 
-		AddVelocity(fSecondJumpSpeed*jump2);
+		AddVelocity(fSecondJumpSpeed * jump2);
 		AddVelocity(rvector(0, 0, 1300));
 	}
 
-	m_fJump2Time = g_pGame->GetTime();
+	// Optimización: Guardar ZGetGame() en variable local
+	ZGame* pGame = ZGetGame();
+	if (pGame)
+		m_fJump2Time = pGame->GetTime();
 }
 
 void ZMyCharacter::UpdateLimit()
@@ -1533,7 +1590,6 @@ void ZMyCharacter::UpdateLimit()
 	m_bLimitWall = false;
 
 	if (pDesc) {
-
 		if (pDesc->m_nLimitJump)			m_bLimitJump = true;
 		if (pDesc->m_nLimitTumble)		m_bLimitTumble = true;
 		if (pDesc->m_nLimitWall)			m_bLimitWall = true;
@@ -1551,10 +1607,14 @@ void ZMyCharacter::UpdateButtonState()
 
 	m_bLButtonFirstPressed = bLButtonPressed && !m_bLButtonPressed;
 	if (m_bLButtonFirstPressed)
-		m_fLastLButtonPressedTime = g_pGame->GetTime();
+	{
+		// Optimización: Guardar ZGetGame() en variable local
+		ZGame* pGame = ZGetGame();
+		if (pGame)
+			m_fLastLButtonPressedTime = pGame->GetTime();
+	}
 
 	m_bLButtonPressed = bLButtonPressed;
-
 
 	bool bRButtonPressed = ZIsActionKeyDown(ZACTION_USE_WEAPON2);
 
@@ -1562,11 +1622,18 @@ void ZMyCharacter::UpdateButtonState()
 
 	m_bRButtonFirstPressed = bRButtonPressed && !m_bRButtonPressed;
 	if (m_bRButtonFirstPressed)
-		m_fLastRButtonPressedTime = g_pGame->GetTime();
+	{
+		// Optimización: Guardar ZGetGame() en variable local
+		ZGame* pGame = ZGetGame();
+		if (pGame)
+			m_fLastRButtonPressedTime = pGame->GetTime();
+	}
 
 	m_bRButtonPressed = bRButtonPressed;
 
-	if (m_bLButtonQueued && (g_pGame->GetTime() - m_fLastLButtonPressedTime > SHOT_QUEUE_TIME)) {
+	// Optimización: Guardar ZGetGame() en variable local
+	ZGame* pGame = ZGetGame();
+	if (pGame && m_bLButtonQueued && (pGame->GetTime() - m_fLastLButtonPressedTime > SHOT_QUEUE_TIME)) {
 		m_bLButtonQueued = false;
 	}
 }
@@ -1577,15 +1644,20 @@ void ZMyCharacter::OnUpdate(float fDelta)
 
 	_BP("ZMyCharacter::Update");
 
-	if (g_pGame->IsReplay()) {
+	// Optimización: Guardar ZGetGame() en variable local
+	ZGame* pGame = ZGetGame();
+	if (!pGame) return;
+
+	if (pGame->IsReplay()) {
 		ZCharacter::OnUpdate(fDelta);
 		return;
 	}
 
 	CameraDir = m_TargetDir;
 
+	// pGame ya está definido arriba en OnUpdate()
 	if (m_bReserveDashAttacked) {
-		if (g_pGame->GetTime() > m_fReserveDashAttackedTime) {
+		if (pGame->GetTime() > m_fReserveDashAttackedTime) {
 			OnDashAttacked(m_vReserveDashAttackedDir);
 			m_bReserveDashAttacked = false;
 		}
@@ -1620,7 +1692,7 @@ void ZMyCharacter::OnUpdate(float fDelta)
 
 		if (GetDistToFloor() > 0.1f || GetVelocity().z > 0.1f)
 		{
-			m_pModule_Movable->UpdateGravity(GetGravityConst()*fAccmulatedDelta);
+			m_pModule_Movable->UpdateGravity(GetGravityConst() * fAccmulatedDelta);
 			m_bLand = false;
 		}
 
@@ -1629,7 +1701,7 @@ void ZMyCharacter::OnUpdate(float fDelta)
 
 	UpdateHeight(fDelta);
 
-	rvector diff = fDelta*GetVelocity();
+	rvector diff = fDelta * GetVelocity();
 
 	bool bUp = (diff.z > 0.01f);
 	bool bDownward = (diff.z < 0.01f);
@@ -1652,7 +1724,8 @@ void ZMyCharacter::OnUpdate(float fDelta)
 				if (GetVelocity().z < 0)
 					SetVelocity(GetVelocity().x, GetVelocity().y, 0);
 
-				if (GetLastThrowClearTime() < g_pGame->GetTime())
+				// pGame ya está definido arriba en OnUpdate()
+				if (GetLastThrowClearTime() < pGame->GetTime())
 					SetLastThrower(MUID(0, 0), 0.0f);
 			}
 		}
@@ -1662,14 +1735,14 @@ void ZMyCharacter::OnUpdate(float fDelta)
 
 	if (GetDistToFloor() < 0 && !IsDead())
 	{
-		float fAdjust = 400.f*fDelta;
+		float fAdjust = 400.f * fDelta;
 		rvector diff = rvector(0, 0, min(-GetDistToFloor(), fAdjust));
 		Move(diff);
 	}
 
 	if (IsMoveAnimation())
 	{
-		rvector origdiff = fDelta*GetVelocity();
+		rvector origdiff = fDelta * GetVelocity();
 
 		rvector diff = m_AnimationPositionDiff;
 		diff.z += origdiff.z;
@@ -1688,7 +1761,8 @@ void ZMyCharacter::OnUpdate(float fDelta)
 	float fWallJumpTime = (m_nWallJumpDir == 1) ? 1.5f : 2.3f;
 	float fSecondJumpTime = (m_nWallJumpDir == 1) ? 0.95f : 2.1f;
 
-	if (m_fWallJumpTime + fWallJumpTime < g_pGame->GetTime() && m_bWallJump)
+	// pGame ya está definido arriba en OnUpdate()
+	if (m_fWallJumpTime + fWallJumpTime < pGame->GetTime() && m_bWallJump)
 	{
 		m_bWallJump = false;
 		m_bLand = true;
@@ -1700,9 +1774,9 @@ void ZMyCharacter::OnUpdate(float fDelta)
 
 	if (m_bWallJump)
 	{
-		bool bEndWallJump2 = m_fWallJumpTime + fSecondJumpTime < g_pGame->GetTime() && !m_bWallJump2;
+		bool bEndWallJump2 = m_fWallJumpTime + fSecondJumpTime < pGame->GetTime() && !m_bWallJump2;
 
-		if (m_fWallJumpTime + 0.3f < g_pGame->GetTime())
+		if (m_fWallJumpTime + 0.3f < pGame->GetTime())
 		{
 			rvector dir2d = rvector(m_Direction.x, m_Direction.y, 0);
 			Normalize(dir2d);
@@ -1710,12 +1784,13 @@ void ZMyCharacter::OnUpdate(float fDelta)
 			if (m_nWallJumpDir == 1)
 			{
 				RBSPPICKINFO bpi;
-				bool bPicked = ZGetGame()->GetWorld()->GetBsp()->Pick(m_Position + rvector(0, 0, 40), dir2d, &bpi);
-				if (!bPicked || Magnitude(bpi.PickPos - m_Position)>100)
+				// pGame ya está definido arriba en OnUpdate()
+				bool bPicked = pGame->GetWorld()->GetBsp()->Pick(m_Position + rvector(0, 0, 40), dir2d, &bpi);
+				if (!bPicked || Magnitude(bpi.PickPos - m_Position) > 100)
 					bEndWallJump2 |= true;
 
 				rvector targetpos = m_Position + rvector(0, 0, 160);
-				bool bAdjusted = ZGetGame()->GetWorld()->GetBsp()->CheckWall(m_Position + rvector(0, 0, 130), targetpos, CHARACTER_RADIUS - 1, 50);
+				bool bAdjusted = pGame->GetWorld()->GetBsp()->CheckWall(m_Position + rvector(0, 0, 130), targetpos, CHARACTER_RADIUS - 1, 50);
 				if (bAdjusted)
 					bEndWallJump2 |= true;
 			}
@@ -1727,12 +1802,13 @@ void ZMyCharacter::OnUpdate(float fDelta)
 				rvector dir = (m_nWallJumpDir == 0) ? -right : right;
 
 				RBSPPICKINFO bpi;
-				bool bPicked = ZGetGame()->GetWorld()->GetBsp()->Pick(m_Position, dir, &bpi);
+				// pGame ya está definido arriba en OnUpdate()
+				bool bPicked = pGame->GetWorld()->GetBsp()->Pick(m_Position, dir, &bpi);
 				if (!bPicked || Magnitude(bpi.PickPos - m_Position) > 100)
 					bEndWallJump2 |= true;
 
-				rvector targetpos = m_Position + rvector(0, 0, 100) + 100.f*dir2d;
-				bool bAdjusted = ZGetGame()->GetWorld()->GetBsp()->CheckWall(m_Position + rvector(0, 0, 100), targetpos, CHARACTER_RADIUS - 1, 50);
+				rvector targetpos = m_Position + rvector(0, 0, 100) + 100.f * dir2d;
+				bool bAdjusted = pGame->GetWorld()->GetBsp()->CheckWall(m_Position + rvector(0, 0, 100), targetpos, CHARACTER_RADIUS - 1, 50);
 				if (bAdjusted)
 					bEndWallJump2 |= true;
 			}
@@ -1744,28 +1820,30 @@ void ZMyCharacter::OnUpdate(float fDelta)
 
 	int sel_type = GetItems()->GetSelectedWeaponParts();
 
-	if (m_bShot && m_nShot == 1 && !m_b1ShotSended && g_pGame->GetTime() - m_f1ShotTime > GUARD_TIME) {
+	// pGame ya está definido arriba en OnUpdate()
+	if (m_bShot && m_nShot == 1 && !m_b1ShotSended && pGame->GetTime() - m_f1ShotTime > GUARD_TIME) {
 		m_b1ShotSended = true;
 		if (ZGetGameClient()->GetMatchStageSetting()->IsVanillaMode())
 		{
-			ZPostShotMelee(g_pGame->GetTime(), m_Position, 1);
-			AddDelayedWork(g_pGame->GetTime() + 0.2f, ZDW_RECOIL);
+			ZPostShotMelee(pGame->GetTime(), m_Position, 1);
+			AddDelayedWork(pGame->GetTime() + 0.2f, ZDW_RECOIL);
 		}
 		else
 		{
-			AddDelayedWork(g_pGame->GetTime() + 0.1, ZDW_RG_SLASH, (void *)1);
+			AddDelayedWork(pGame->GetTime() + 0.1, ZDW_RG_SLASH, (void*)1);
 		}
 	}
 
-	if (m_bStun && m_nStunType == ZST_LOOP && g_pGame->GetTime() > m_fStunEndTime) {
+	if (m_bStun && m_nStunType == ZST_LOOP && pGame->GetTime() > m_fStunEndTime) {
 		m_bStun = false;
 	}
 
 	if (
 #ifdef _DEBUG
 		!m_bGuardTest &&
-#endif		
-		m_bGuard && g_pGame->GetTime() - m_fGuardStartTime > GUARD_DURATION) {
+#endif
+		// pGame ya está definido arriba en OnUpdate()
+		m_bGuard && pGame->GetTime() - m_fGuardStartTime > GUARD_DURATION) {
 		m_nGuardBlock = 0;
 		m_bGuardStart = false;
 		m_bGuardCancel = true;
@@ -1776,10 +1854,11 @@ void ZMyCharacter::OnUpdate(float fDelta)
 	if (!m_bLButtonPressed || GetItems()->GetSelectedWeaponParts() != MMCIP_MELEE)
 		m_bCharging = false;
 
-	if (m_bSplashShot && g_pGame->GetTime() - m_fSplashShotTime > .3f)
+	// pGame ya está definido arriba en OnUpdate()
+	if (m_bSplashShot && pGame->GetTime() - m_fSplashShotTime > .3f)
 	{
 		m_bSplashShot = false;
-		ZPostSkill(g_pGame->GetTime(), ZC_SKILL_SPLASHSHOT, sel_type);
+		ZPostSkill(pGame->GetTime(), ZC_SKILL_SPLASHSHOT, sel_type);
 	}
 
 	AniFrameInfo* pAniLow = m_pVMesh->GetFrameInfo(ani_mode_lower);
@@ -1806,7 +1885,10 @@ void ZMyCharacter::OnUpdate(float fDelta)
 					MMatchItemDesc* pRangeDesc = pSelectedItem->GetDesc();
 					DWORD nWeaponDelay = pRangeDesc->m_nDelay;
 
-					m_fNextShotTimeType[nParts] = g_pGame->GetTime() + (float)(nWeaponDelay)*0.001f;
+					// Optimización: Guardar ZGetGame() en variable local
+					ZGame* pGame = ZGetGame();
+					if (pGame)
+						m_fNextShotTimeType[nParts] = pGame->GetTime() + (float)(nWeaponDelay) * 0.001f;
 				}
 
 				if (m_bEnterCharge)
@@ -1820,22 +1902,25 @@ void ZMyCharacter::OnUpdate(float fDelta)
 		}
 		else
 			if (GetStateUpper() == ZC_STATE_UPPER_RELOAD)
-				g_pGame->OnReloadComplete(this);
+			{
+				// Optimización: Guardar ZGetGame() en variable local
+				ZGame* pGame = ZGetGame();
+				if (pGame)
+					pGame->OnReloadComplete(this);
+			}
 			else
 				if (m_bGuard) {
-
 					if (m_bGuardBlock_ret) {
-
 						m_bGuardBlock_ret = false;
 					}
 					else if (m_nGuardBlock) {
-
-						if (m_nGuardBlock < 2 && g_pGame->GetTime() - m_fLastShotTime < 0.2f) {
+						// Optimización: Guardar ZGetGame() en variable local
+						ZGame* pGame = ZGetGame();
+						if (pGame && m_nGuardBlock < 2 && pGame->GetTime() - m_fLastShotTime < 0.2f) {
 							m_nGuardBlock++;
 							m_bPlayDone_upper = false;
 						}
 						else {
-
 							if (m_nGuardBlock == 1)
 								m_bGuardBlock_ret = true;
 
@@ -1847,12 +1932,9 @@ void ZMyCharacter::OnUpdate(float fDelta)
 					m_bGuardStart = false;
 
 					if (m_bGuardCancel) {
-
 						m_bGuardCancel = false;
 						m_bGuard = false;
-
 					}
-
 				}
 
 		SetAnimationUpper(ZC_STATE_UPPER_NONE);
@@ -1893,13 +1975,14 @@ void ZMyCharacter::OnUpdate(float fDelta)
 
 		m_bJumpSlashLanding = false;
 
-		if (m_bJumpSlash && (m_bLand || (g_pGame->GetTime() - m_bJumpSlashTime > 2.f))) {
+		// Optimización: Guardar ZGetGame() en variable local
+		ZGame* pGame = ZGetGame();
+		if (pGame && m_bJumpSlash && (m_bLand || (pGame->GetTime() - m_bJumpSlashTime > 2.f))) {
 			m_bJumpSlash = false;
 			m_bJumpSlashLanding = true;
 		}
 
 		if (m_bShotReturn) {
-
 			m_nShot = 0;
 			m_bShotReturn = false;
 			SetVelocity(GetVelocity().x, GetVelocity().y, 0);
@@ -1907,20 +1990,15 @@ void ZMyCharacter::OnUpdate(float fDelta)
 		}
 
 		if (m_bShot) {
-
 			if (m_bEnterCharge) {
-
 				EnterCharge();
 			}
 			else if (m_nShot == 4) {
-
 				m_bShot = false;
 				m_bShotReturn = true;
 				m_bPlayDone = false;
-
 			}
 			else {
-
 				if (m_nShot == 5)
 				{
 					m_nShot = 0;
@@ -1941,7 +2019,6 @@ void ZMyCharacter::OnUpdate(float fDelta)
 							m_bShot = false;
 							m_bShotReturn = false;
 						}
-
 				}
 			}
 		}
@@ -1958,18 +2035,28 @@ void ZMyCharacter::OnUpdate(float fDelta)
 		{
 			m_bBlast = false;
 
-			if (g_pGame->GetTime() - m_fLastJumpPressedTime < 0.5f)
-				m_bBlastAirmove = true;
-			else
-				m_bBlastFall = true;
+			// Optimización: Guardar ZGetGame() en variable local
+			ZGame* pGame = ZGetGame();
+			if (pGame)
+			{
+				if (pGame->GetTime() - m_fLastJumpPressedTime < 0.5f)
+					m_bBlastAirmove = true;
+				else
+					m_bBlastFall = true;
+			}
 		}
 
 		if (m_bBlastFall && !m_bDrop && m_bLand)
 		{
-			m_bDrop = true;
-			m_bBlastFall = false;
-			m_bBlastDrop = true;
-			m_fDropTime = g_pGame->GetTime();
+			// Optimización: Guardar ZGetGame() en variable local
+			ZGame* pGame = ZGetGame();
+			if (pGame)
+			{
+				m_bDrop = true;
+				m_bBlastFall = false;
+				m_bBlastDrop = true;
+				m_fDropTime = pGame->GetTime();
+			}
 		}
 
 		if (m_bStun && m_nStunType != ZST_LOOP) {
@@ -1980,7 +2067,10 @@ void ZMyCharacter::OnUpdate(float fDelta)
 #ifdef _DEBUG
 	if (m_bGuardTest)
 	{
-		m_fLastShotTime = g_pGame->GetTime();
+		// Optimización: Guardar ZGetGame() en variable local
+		ZGame* pGame = ZGetGame();
+		if (pGame)
+			m_fLastShotTime = pGame->GetTime();
 	}
 #endif
 
@@ -1989,7 +2079,6 @@ void ZMyCharacter::OnUpdate(float fDelta)
 		&& !m_bGuardTest
 #endif
 		) {
-
 		bool bGuardCancel = false;
 
 		if (m_bGuardByKey) {
@@ -2011,17 +2100,20 @@ void ZMyCharacter::OnUpdate(float fDelta)
 			m_bGuardByKey = false;
 			SetAnimationUpper(ZC_STATE_UPPER_NONE);
 		}
-		}
+	}
 
 	if (m_bGuard)
 	{
-		if (m_nGuardBlock == 0 && !m_bGuardBlock_ret && g_pGame->GetTime() - m_fLastShotTime < 0.2f)
+		// Optimización: Guardar ZGetGame() en variable local
+		ZGame* pGame = ZGetGame();
+		if (pGame && m_nGuardBlock == 0 && !m_bGuardBlock_ret && pGame->GetTime() - m_fLastShotTime < 0.2f)
 		{
 			m_nGuardBlock = 1;
 		}
 	}
 
-	if (m_bDrop && (g_pGame->GetTime() - m_fDropTime > 1.f))
+	// pGame ya está definido arriba en OnUpdate()
+	if (m_bDrop && (pGame->GetTime() - m_fDropTime > 1.f))
 	{
 		m_bDrop = false;
 		m_bBlastDrop = false;
@@ -2033,7 +2125,8 @@ void ZMyCharacter::OnUpdate(float fDelta)
 		m_bDrop = true;
 		m_bBlastFall = false;
 		m_bBlastDrop = true;
-		m_fDropTime = g_pGame->GetTime();
+		// pGame ya está definido arriba
+		m_fDropTime = pGame->GetTime();
 	}
 
 	if (m_bCharging && !m_bCharged && GetStateLower() == ZC_STATE_CHARGE &&
@@ -2057,7 +2150,7 @@ void ZMyCharacter::OnUpdate(float fDelta)
 	ProcessDelayedWork();
 
 	_EP("ZMyCharacter::Update");
-	}
+}
 
 void ZMyCharacter::Animation_Reload()
 {
@@ -2065,7 +2158,7 @@ void ZMyCharacter::Animation_Reload()
 	SetAnimationUpper(ZC_STATE_UPPER_RELOAD);
 }
 
-void ZMyCharacter::ReserveDashAttacked(MUID uid, float time, rvector &dir)
+void ZMyCharacter::ReserveDashAttacked(MUID uid, float time, rvector& dir)
 {
 	m_uidReserveDashAttacker = uid;
 	m_bReserveDashAttacked = true;
@@ -2073,7 +2166,7 @@ void ZMyCharacter::ReserveDashAttacked(MUID uid, float time, rvector &dir)
 	m_fReserveDashAttackedTime = time;
 }
 
-void ZMyCharacter::OnDashAttacked(rvector &dir)
+void ZMyCharacter::OnDashAttacked(rvector& dir)
 {
 	if (m_bBlast || m_bBlastDrop || m_bBlastStand || isInvincible())
 		return;
@@ -2085,14 +2178,17 @@ void ZMyCharacter::OnDashAttacked(rvector &dir)
 	m_bBlast = true;
 	m_nBlastType = 1;
 
-	AddVelocity(rvector(dir.x*2000.f, dir.y*2000.f, dir.z*2000.f));
+	AddVelocity(rvector(dir.x * 2000.f, dir.y * 2000.f, dir.z * 2000.f));
 	Normalize(dir);
 
 	float fRatio = GetMoveSpeedRatio();
 
 	AddVelocity(dir * RUN_SPEED * fRatio);
 
-	SetLastThrower(m_uidReserveDashAttacker, g_pGame->GetTime() + 1.0f);
+	// Optimización: Guardar ZGetGame() en variable local
+	ZGame* pGame = ZGetGame();
+	if (pGame)
+		SetLastThrower(m_uidReserveDashAttacker, pGame->GetTime() + 1.0f);
 
 	m_bWallHang = false;
 	m_bHangSuccess = false;
@@ -2102,7 +2198,7 @@ void ZMyCharacter::OnDashAttacked(rvector &dir)
 	m_bJumpSlashLanding = false;
 }
 
-void ZMyCharacter::OnBlast(rvector &dir)
+void ZMyCharacter::OnBlast(rvector& dir)
 {
 	if (m_bBlast || m_bBlastDrop || m_bBlastStand || isInvincible())
 		return;
@@ -2188,10 +2284,10 @@ void ZMyCharacter::OnTumble(int nDir)
 
 	switch (nDir)
 	{
-	case 0:  SetVelocity(forward*fSpeed); break;
-	case 1:  SetVelocity(-forward*fSpeed); break;
-	case 2:  SetVelocity(right*fSpeed); break;
-	case 3:  SetVelocity(-right*fSpeed); break;
+	case 0:  SetVelocity(forward * fSpeed); break;
+	case 1:  SetVelocity(-forward * fSpeed); break;
+	case 2:  SetVelocity(right * fSpeed); break;
+	case 3:  SetVelocity(-right * fSpeed); break;
 	}
 
 	m_bTumble = true;
@@ -2248,7 +2344,6 @@ void ZMyCharacter::InitStatus()
 	m_bEnterCharge = false;
 
 	ZCharacter::InitStatus();
-
 }
 
 void ZMyCharacter::Revival()
@@ -2264,7 +2359,11 @@ void ZMyCharacter::InitBullet()
 {
 	ZCharacter::InitBullet();
 
-	MDataChecker* pChecker = ZApplication::GetGame()->GetDataChecker();
+	// Optimización: Guardar ZGetGame() en variable local
+	ZGame* pGame = ZGetGame();
+	if (!pGame) return;
+
+	MDataChecker* pChecker = pGame->GetDataChecker();
 
 	if (!m_Items.GetItem(MMCIP_PRIMARY)->IsEmpty())
 	{
@@ -2295,9 +2394,13 @@ void ZMyCharacter::SetDirection(const rvector& dir)
 	pCamera->SetDirection(dir);
 }
 
-void ZMyCharacter::OnDamagedAnimation(ZObject *pAttacker, int type)
+void ZMyCharacter::OnDamagedAnimation(ZObject* pAttacker, int type)
 {
-	const auto GameType = ZGetGame()->GetMatch()->GetMatchType();
+	// Optimización: Guardar ZGetGame() en variable local al inicio
+	ZGame* pGame = ZGetGame();
+	if (!pGame) return;
+
+	const auto GameType = pGame->GetMatch()->GetMatchType();
 	if (GameType == MMATCH_GAMETYPE_SKILLMAP)
 		return;
 
@@ -2316,7 +2419,10 @@ void ZMyCharacter::OnDamagedAnimation(ZObject *pAttacker, int type)
 void ZMyCharacter::OnDie()
 {
 	ZCharacter::OnDie();
-	m_fDeadTime = g_pGame->GetTime();
+	// Optimización: Guardar ZGetGame() en variable local
+	ZGame* pGame = ZGetGame();
+	if (pGame)
+		m_fDeadTime = pGame->GetTime();
 
 	m_bWallHang = false;
 	m_bWallJump = false;
@@ -2351,7 +2457,6 @@ float ZMyCharacter::GetControllabilityFactor()
 	{
 		switch (wtype)
 		{
-
 		case MWT_PISTOL:
 		case MWT_PISTOLx2:
 		{
@@ -2420,9 +2525,6 @@ void ZMyCharacter::UpdateCAFactor(float fDelta)
 	if (m_fCAFactor < fCurrWeaponCAFactor) m_fCAFactor = fCurrWeaponCAFactor;
 }
 
-
-
-
 #ifndef _PUBLISH
 
 #include "Physics.h"
@@ -2439,7 +2541,6 @@ ZDummyCharacter::ZDummyCharacter() : ZMyCharacter()
 	u32 nLegsPreset[_DUMMY_CHARACTER_PRESET] = { 23001, 23005, 23002, 23004, 23003 };
 	u32 nHandsPreset[_DUMMY_CHARACTER_PRESET] = { 22001, 22002, 22003, 22004, 22501 };
 	u32 nFeetPreset[_DUMMY_CHARACTER_PRESET] = { 24001, 24002, 24003, 24004, 24005 };
-
 
 	static int m_stIndex = 0; m_stIndex++;
 
@@ -2464,7 +2565,6 @@ ZDummyCharacter::ZDummyCharacter() : ZMyCharacter()
 	m_Items.SelectWeapon(MMCIP_PRIMARY);
 	m_Items.GetItem(MMCIP_PRIMARY)->Reload();
 
-
 	m_fNextAniTime = 5.0f;
 	m_fElapsedTime = 0.0f;
 	m_fNextShotTime = 5.0f;
@@ -2480,12 +2580,9 @@ void ZDummyCharacter::OnUpdate(float fDelta)
 {
 	ZCharacter::OnUpdate(fDelta);
 
-
-
 	m_fElapsedTime += fDelta;
 	m_fShotDelayElapsedTime += fDelta;
 	m_fShotElapsedTime += fDelta;
-
 
 	if (m_fElapsedTime >= m_fNextAniTime)
 	{
@@ -2494,9 +2591,7 @@ void ZDummyCharacter::OnUpdate(float fDelta)
 
 		m_fNextAniTime = RandomNumber(2.0f, 6.0f);
 		m_fElapsedTime = 0.0f;
-
 	}
-
 
 	if (m_fShotElapsedTime >= m_fNextShotTime)
 	{
@@ -2510,14 +2605,17 @@ void ZDummyCharacter::OnUpdate(float fDelta)
 		if (m_fShotDelayElapsedTime >= ((float)m_Items.GetItem(MMCIP_PRIMARY)->GetDesc()->m_nDelay / 1000.0f))
 		{
 			m_Items.GetItem(MMCIP_PRIMARY)->Reload();
-			float fShotTime = g_pGame->GetTime();
-			g_pGame->OnPeerShot(m_UID, fShotTime, m_Position, m_Direction, GetItems()->GetSelectedWeaponParts());
+			// Optimización: Guardar ZGetGame() en variable local
+			ZGame* pGame = ZGetGame();
+			if (pGame)
+			{
+				float fShotTime = pGame->GetTime();
+				pGame->OnPeerShot(m_UID, fShotTime, m_Position, m_Direction, GetItems()->GetSelectedWeaponParts());
+			}
 			m_fShotDelayElapsedTime = 0.0f;
 		}
-
 	}
 }
-
 
 #endif // _PUBLISH
 
@@ -2541,18 +2639,22 @@ bool ZMyCharacter::IsGuardRecoilable() const
 
 void ZMyCharacter::ProcessDelayedWork()
 {
+	// Optimización: Guardar ZGetGame() en variable local
+	ZGame* pGame = ZGetGame();
+	if (!pGame) return;
+
 	auto pred = [&](auto&& Item) {
-		if (g_pGame->GetTime() > Item.fTime)
+		if (pGame->GetTime() > Item.fTime)
 		{
 			OnDelayedWork(Item);
 			return true;
 		}
 		return false;
-};
+		};
 	m_DelayedWorkList.erase(std::remove_if(m_DelayedWorkList.begin(), m_DelayedWorkList.end(), pred), m_DelayedWorkList.end());
 }
 
-void ZMyCharacter::AddDelayedWork(float Time, ZDELAYEDWORK Work, void *Data)
+void ZMyCharacter::AddDelayedWork(float Time, ZDELAYEDWORK Work, void* Data)
 {
 	m_DelayedWorkList.push_back({ Time, Work, Data });
 }
@@ -2563,20 +2665,23 @@ void ZMyCharacter::OnDelayedWork(ZDELAYEDWORKITEM& Item)
 	case ZDW_RECOIL:
 	{
 		for (ZCharacterManager::iterator itor = ZGetCharacterManager()->begin();
-		itor != ZGetCharacterManager()->end(); ++itor)
+			itor != ZGetCharacterManager()->end(); ++itor)
 		{
 			ZCharacter* pTar = (*itor).second;
 			if (this == pTar || pTar->IsDead()) continue;
 
-			rvector diff = GetPosition() + m_Direction*10.f - pTar->GetPosition();
+			rvector diff = GetPosition() + m_Direction * 10.f - pTar->GetPosition();
 			diff.z *= .5f;
 			float fDist = Magnitude(diff);
 
 			if (fDist < 200.0f) {
-
 				bool bCheck = false;
 
-				if (ZApplication::GetGame()->GetMatch()->IsTeamPlay()) {
+				// Optimización: Guardar ZGetGame() en variable local al inicio
+				ZGame* pGame = ZGetGame();
+				if (!pGame) continue;
+
+				if (pGame->GetMatch()->IsTeamPlay()) {
 					if (IsTeam(pTar) == false) {
 						bCheck = true;
 					}
@@ -2585,11 +2690,10 @@ void ZMyCharacter::OnDelayedWork(ZDELAYEDWORKITEM& Item)
 					bCheck = true;
 				}
 
-				if (g_pGame->CheckWall(this, pTar) == true)
+				if (pGame->CheckWall(this, pTar) == true)
 					bCheck = false;
 
 				if (bCheck) {
-
 					rvector fTarDir = pTar->GetPosition() - GetPosition();
 					Normalize(fTarDir);
 					float fDot = DotProduct(m_Direction, fTarDir);
@@ -2613,8 +2717,10 @@ void ZMyCharacter::OnDelayedWork(ZDELAYEDWORKITEM& Item)
 			if (pSItem && pSItem->GetDesc())
 				type = pSItem->GetDesc()->m_nWeaponType;
 
-			if (type == MWT_KATANA || type == MWT_DOUBLE_KATANA) {
-				ZPostSkill(g_pGame->GetTime(), ZC_SKILL_UPPERCUT, sel_type);
+			// Optimización: Guardar ZGetGame() en variable local
+			ZGame* pGame = ZGetGame();
+			if (pGame && type == MWT_KATANA || type == MWT_DOUBLE_KATANA) {
+				ZPostSkill(pGame->GetTime(), ZC_SKILL_UPPERCUT, sel_type);
 			}
 		}
 		break;
@@ -2629,17 +2735,28 @@ void ZMyCharacter::OnDelayedWork(ZDELAYEDWORKITEM& Item)
 				type = pSItem->GetDesc()->m_nWeaponType;
 
 			if (type == MWT_DAGGER) {
-				ZPostSkill(g_pGame->GetTime(), ZC_SKILL_DASH, sel_type);
+				// Optimización: Guardar ZGetGame() en variable local
+				ZGame* pGame = ZGetGame();
+				if (pGame)
+					ZPostSkill(pGame->GetTime(), ZC_SKILL_DASH, sel_type);
 			}
 			else if (type == MWT_DUAL_DAGGER) {
-				ZPostSkill(g_pGame->GetTime(), ZC_SKILL_DASH, sel_type);
+				// Optimización: Guardar ZGetGame() en variable local
+				ZGame* pGame = ZGetGame();
+				if (pGame)
+					ZPostSkill(pGame->GetTime(), ZC_SKILL_DASH, sel_type);
 			}
 		}
 		break;
 	case ZDW_MASSIVE:
 		Discharged();
 		if (m_bSlash || m_bJumpSlash)
-			ZPostSkill(g_pGame->GetTime(), ZC_SKILL_SPLASHSHOT, GetItems()->GetSelectedWeaponParts());
+		{
+			// Optimización: Guardar ZGetGame() en variable local
+			ZGame* pGame = ZGetGame();
+			if (pGame)
+				ZPostSkill(pGame->GetTime(), ZC_SKILL_SPLASHSHOT, GetItems()->GetSelectedWeaponParts());
+		}
 		break;
 	case ZDW_RG_SLASH:
 		ZPostRGSlash(m_Position, m_Direction, reinterpret_cast<int>(Item.Data));
@@ -2687,15 +2804,20 @@ void ZMyCharacter::OnDelayedWork(ZDELAYEDWORKITEM& Item)
 	}
 }
 
-void ZMyCharacter::AddRecoilTarget(ZCharacter *pTarget)
+void ZMyCharacter::AddRecoilTarget(ZCharacter* pTarget)
 {
-	AddDelayedWork(ZGetGame()->GetTime() + 0.1, ZDW_RG_RECOIL, pTarget);
+	// Optimización: Guardar ZGetGame() en variable local
+	ZGame* pGame = ZGetGame();
+	if (pGame)
+		AddDelayedWork(pGame->GetTime() + 0.1, ZDW_RG_RECOIL, pTarget);
 }
 
 void ZMyCharacter::EnterCharge()
 {
-	if (!m_bCharging)
-		ZPostReaction(g_pGame->GetTime(), ZR_CHARGING);
+	// Optimización: Guardar ZGetGame() en variable local
+	ZGame* pGame = ZGetGame();
+	if (pGame && !m_bCharging)
+		ZPostReaction(pGame->GetTime(), ZR_CHARGING);
 
 	m_bShot = false;
 	m_nShot = 0;
@@ -2716,14 +2838,18 @@ void ZMyCharacter::ChargedShot()
 
 	ReleaseLButtonQueue();
 
+	// Optimización: Guardar ZGetGame() en variable local
+	ZGame* pGame = ZGetGame();
+	if (!pGame) return;
+
 	if (ZGetGameClient()->GetMatchStageSetting()->IsVanillaMode())
 	{
-		AddDelayedWork(g_pGame->GetTime() + 0.25f, ZDW_RECOIL);
-		AddDelayedWork(g_pGame->GetTime() + 0.3f, ZDW_MASSIVE);
+		AddDelayedWork(pGame->GetTime() + 0.25f, ZDW_RECOIL);
+		AddDelayedWork(pGame->GetTime() + 0.3f, ZDW_MASSIVE);
 	}
 	else
 	{
-		AddDelayedWork(g_pGame->GetTime() + 0.3 + 0.15, ZDW_RG_MASSIVE);
+		AddDelayedWork(pGame->GetTime() + 0.3 + 0.15, ZDW_RG_MASSIVE);
 	}
 }
 
@@ -2736,17 +2862,21 @@ void ZMyCharacter::JumpChargedShot()
 	m_bCharged = false;
 	ReleaseLButtonQueue();
 
+	// Optimización: Guardar ZGetGame() en variable local
+	ZGame* pGame = ZGetGame();
+	if (!pGame) return;
+
 	if (ZGetGameClient()->GetMatchStageSetting()->IsVanillaMode())
 	{
-		AddDelayedWork(g_pGame->GetTime() + 0.15f, ZDW_RECOIL);
-		AddDelayedWork(g_pGame->GetTime() + 0.2f, ZDW_MASSIVE);
+		AddDelayedWork(pGame->GetTime() + 0.15f, ZDW_RECOIL);
+		AddDelayedWork(pGame->GetTime() + 0.2f, ZDW_MASSIVE);
 	}
 	else
 	{
-		AddDelayedWork(g_pGame->GetTime() + 0.2 + 0.15, ZDW_RG_MASSIVE);
+		AddDelayedWork(pGame->GetTime() + 0.2 + 0.15, ZDW_RG_MASSIVE);
 	}
 
-	m_bJumpSlashTime = g_pGame->GetTime();
+	m_bJumpSlashTime = pGame->GetTime();
 }
 
 void ZMyCharacter::ShotBlocked()
@@ -2762,17 +2892,24 @@ void ZMyCharacter::ShotBlocked()
 void ZMyCharacter::Charged()
 {
 	m_bCharged = true;
-	m_fChargedFreeTime = g_pGame->GetTime() + CHARGED_TIME;
+	// Optimización: Guardar ZGetGame() en variable local
+	ZGame* pGame = ZGetGame();
+	if (pGame)
+		m_fChargedFreeTime = pGame->GetTime() + CHARGED_TIME;
 
 	ZPostReaction(CHARGED_TIME, ZR_CHARGED);
 }
 
 void ZMyCharacter::OnMeleeGuardSuccess()
 {
-	m_fGuardStartTime = g_pGame->GetTime() - GUARD_DURATION;
+	// Optimización: Guardar ZGetGame() en variable local
+	ZGame* pGame = ZGetGame();
+	if (pGame)
+		m_fGuardStartTime = pGame->GetTime() - GUARD_DURATION;
 	m_bGuardCancel = true;
 	m_bCharged = true;
-	m_fChargedFreeTime = g_pGame->GetTime() + COUNTER_CHARGED_TIME;
+	// pGame ya está definido arriba
+	m_fChargedFreeTime = pGame->GetTime() + COUNTER_CHARGED_TIME;
 
 	ZPostReaction(COUNTER_CHARGED_TIME, ZR_CHARGED);
 
@@ -2782,7 +2919,10 @@ void ZMyCharacter::OnMeleeGuardSuccess()
 void ZMyCharacter::Discharged()
 {
 	m_bCharged = false;
-	ZPostReaction(g_pGame->GetTime(), ZR_DISCHARGED);
+	// Optimización: Guardar ZGetGame() en variable local
+	ZGame* pGame = ZGetGame();
+	if (pGame)
+		ZPostReaction(pGame->GetTime(), ZR_DISCHARGED);
 }
 
 float ZMyCharacter::GetGravityConst()
@@ -2802,7 +2942,7 @@ float ZMyCharacter::GetGravityConst()
 
 	if (m_bSlash)
 	{
-		MMatchItemDesc *pDesc = GetItems()->GetItem(MMCIP_MELEE)->GetDesc();
+		MMatchItemDesc* pDesc = GetItems()->GetItem(MMCIP_MELEE)->GetDesc();
 		if (pDesc->m_nWeaponType == MWT_DOUBLE_KATANA) {
 			AniFrameInfo* pAniLow = m_pVMesh->GetFrameInfo(ani_mode_lower);
 			if (pAniLow->m_nFrame < 160 * 11) return 0;
@@ -2810,7 +2950,7 @@ float ZMyCharacter::GetGravityConst()
 	}
 
 	if (m_bSkill) {
-		MMatchItemDesc *pDesc = GetItems()->GetItem(MMCIP_MELEE)->GetDesc();
+		MMatchItemDesc* pDesc = GetItems()->GetItem(MMCIP_MELEE)->GetDesc();
 		if (pDesc->m_nWeaponType == MWT_DOUBLE_KATANA) {
 			AniFrameInfo* pAniLow = m_pVMesh->GetFrameInfo(ani_mode_lower);
 			if (pAniLow->m_nFrame < 160 * 20) return 0;
@@ -2822,12 +2962,20 @@ float ZMyCharacter::GetGravityConst()
 
 void ZMyCharacter::OnGuardSuccess()
 {
-	m_fLastShotTime = g_pGame->GetTime();
+	// Optimización: Guardar ZGetGame() en variable local
+	ZGame* pGame = ZGetGame();
+	if (pGame)
+		m_fLastShotTime = pGame->GetTime();
 }
 
 void ZMyCharacter::OnDamaged(ZObject* pAttacker, rvector srcPos, ZDAMAGETYPE damageType, MMatchWeaponType weaponType, float fDamage, float fPiercingRatio, int nMeleeType)
 {
-	const auto GameType = ZGetGame()->GetMatch()->GetMatchType();
+	// Optimización: Guardar ZGetGame() en variable local al inicio de la función
+	ZGame* pGame = ZGetGame();
+	if (!pGame)
+		return;
+
+	const auto GameType = pGame->GetMatch()->GetMatchType();
 	if (GameType == MMATCH_GAMETYPE_SKILLMAP)
 		return;
 
@@ -2855,15 +3003,21 @@ void ZMyCharacter::OnDamaged(ZObject* pAttacker, rvector srcPos, ZDAMAGETYPE dam
 	if (damageType == ZD_EXPLOSION)
 	{
 		if (GetVelocity().z > 0 && pAttacker != NULL)
-			SetLastThrower(pAttacker->GetUID(), g_pGame->GetTime() + 1.0f);
+		{
+			SetLastThrower(pAttacker->GetUID(), pGame->GetTime() + 1.0f);
+		}
 	}
 
-	LastDamagedTime = ZGetGame()->GetTime();
+	LastDamagedTime = pGame->GetTime();
 }
 
 void ZMyCharacter::OnKnockback(const rvector& dir, float fForce)
 {
-	const auto GameType = ZGetGame()->GetMatch()->GetMatchType();
+	// Optimización: Guardar ZGetGame() en variable local al inicio
+	ZGame* pGame = ZGetGame();
+	if (!pGame) return;
+
+	const auto GameType = pGame->GetMatch()->GetMatchType();
 	if (GameType == MMATCH_GAMETYPE_SKILLMAP)
 		return;
 
@@ -2877,18 +3031,18 @@ void ZMyCharacter::OnKnockback(const rvector& dir, float fForce)
 		vKnockBackDir *= (fForce * BLASTED_KNOCKBACK_RATIO);
 		vKnockBackDir.x = vKnockBackDir.x * 0.2f;
 		vKnockBackDir.y = vKnockBackDir.y * 0.2f;
-		
+
 		// CORRECCIÓN: Aplicar límite de velocidad consistente con knockback normal
 		// Anteriormente solo se limitaba por MAX_SPEED (1000) en UpdateVelocity,
 		// ahora aplicamos MAX_KNOCKBACK_VELOCITY (1700) directamente para consistencia
-		#define MAX_KNOCKBACK_VELOCITY		1700.f
+#define MAX_KNOCKBACK_VELOCITY		1700.f
 		rvector vel = vKnockBackDir;
 		if (Magnitude(vel) > MAX_KNOCKBACK_VELOCITY) {
 			Normalize(vel);
 			vel *= MAX_KNOCKBACK_VELOCITY;
 		}
 		SetVelocity(vel);
-		#undef MAX_KNOCKBACK_VELOCITY
+#undef MAX_KNOCKBACK_VELOCITY
 	}
 	else {
 		ZCharacter::OnKnockback(dir, fForce);
@@ -2909,7 +3063,12 @@ void ZMyCharacter::ReleaseButtonState()
 
 void ZMyCharacter::OnStun(float fTime)
 {
-	m_fStunEndTime = g_pGame->GetTime() + fTime;
-	m_bStun = true;
-	m_nStunType = ZST_LOOP;
+	// Optimización: Guardar ZGetGame() en variable local
+	ZGame* pGame = ZGetGame();
+	if (pGame)
+	{
+		m_fStunEndTime = pGame->GetTime() + fTime;
+		m_bStun = true;
+		m_nStunType = ZST_LOOP;
+	}
 }

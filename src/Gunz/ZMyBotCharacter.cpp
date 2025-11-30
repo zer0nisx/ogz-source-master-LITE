@@ -318,7 +318,9 @@ void ZMyBotCharacter::OnUpdate(float Delta)
 		ReplayCommands();
 
 		v3 Pos, Dir, CamDir;
-		if (GetHistory(&Pos, &Dir, g_pGame->GetTime(), &CamDir))
+		// Optimización: Guardar ZGetGame() en variable local
+		ZGame* pGame = ZGetGame();
+		if (pGame && GetHistory(&Pos, &Dir, pGame->GetTime(), &CamDir))
 		{
 			m_Position = Pos;
 			m_Direction = CamDir;

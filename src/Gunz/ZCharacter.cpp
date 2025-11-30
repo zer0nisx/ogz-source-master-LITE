@@ -371,7 +371,8 @@ void ZCharacter::SetAnimationLower(ZC_STATE_LOWER nAni)
 #ifdef TRACE_ANIMATION
 	{
 		DWORD curtime = GetGlobalTimeMS();
-		if (g_pGame->m_pMyCharacter == this)
+		ZGame* pGame = ZGetGame();
+		if (pGame && pGame->m_pMyCharacter == this)
 			mlog("animation - %d %s   - %d frame , interval %d \n", nAni,
 				m_pVMesh->GetFrameInfo(ani_mode_lower)->m_pAniSet->GetName(), m_pVMesh->GetFrameInfo(ani_mode_lower)->m_nFrame,
 				curtime - g_dwLastAnimationTime);
@@ -428,16 +429,10 @@ void ZCharacter::UpdateLoadAnimation()
 	}
 }
 
-// ported from 1.5, this replaces UpdateDirection
 void ZCharacter::UpdateMotion(float fDelta)
 {
 	if (m_bInitialized == false) return;
-	// ������ ��� �ٲٱ� - �������� ���
-	// ������ � ���¿����� ����̹ٲ�������Ƿ�..
-	// run , idle
-
-	// �ڽ��� Ÿ�ٹ��⿡ ĳ������ ������ �����..
-	if (IsDead()) { //�㸮 ���� ����~
+	if (IsDead()) {
 		m_pVMesh->m_vRotXYZ.x = 0.f;
 		m_pVMesh->m_vRotXYZ.y = 0.f;
 		m_pVMesh->m_vRotXYZ.z = 0.f;
@@ -470,7 +465,6 @@ void ZCharacter::UpdateMotion(float fDelta)
 			bInversed = true;
 		}
 
-		// fAngleLower �� ���� �߹���� �ؾ��ϴ� �߹����� ���� ����
 		float fAngleLower = GetAngleOfVectors(dir, m_DirectionLower);
 
 		rmatrix mat;
@@ -483,17 +477,13 @@ void ZCharacter::UpdateMotion(float fDelta)
 			m_DirectionLower = m_DirectionLower * mat;
 		}
 
-		// �������� �̻�Ǹ� ��ü�� Ʋ���ش�
 		if (fAngleLower > 5.f / 180.f * PI_FLOAT)
 		{
 			mat = RGetRotZRad(max(-ROTATION_SPEED * fDelta / 180.f * PI_FLOAT, -fAngleLower));
 			m_DirectionLower = m_DirectionLower * mat;
 		}
 
-		// ��ü�� ���ؾ� �ϴ� ������ ������ Ÿ�ٹ���
 		float fAngle = GetAngleOfVectors(m_TargetDir, m_DirectionLower);
-
-		// �׷��� ��ü���� ������ �׻� �������� ���Ϸ� �����Ѵ�.
 
 		if (fAngle < -65.f / 180.f * PI_FLOAT)
 		{
@@ -511,10 +501,9 @@ void ZCharacter::UpdateMotion(float fDelta)
 
 		m_pVMesh->m_vRotXYZ.x = -fAngle * 180 / PI_FLOAT * .9f;
 
-		// �������� �ణ ������ ����ش� :)
 		m_pVMesh->m_vRotXYZ.y = (m_TargetDir.z + 0.05f) * 50.f;
 	}
-	else // �޸���/�����ֱ���� �ִϸ��̼��� �ƴϸ� �㸮�ȵ�����.
+	else
 	{
 		m_Direction = m_TargetDir;
 		m_DirectionLower = m_Direction;
@@ -526,104 +515,6 @@ void ZCharacter::UpdateMotion(float fDelta)
 		}
 	}
 }
-
-//void ZCharacter::UpdateDirection(float fDelta, const v3& Direction)
-//{
-//	if (m_bInitialized==false) return;
-//
-//	if (IsDead()) {
-//		m_pVMesh->m_vRotXYZ = { 0, 0, 0 };
-//		return;
-//	}
-//
-//	auto&& s = *ZGetGameClient()->GetMatchStageSetting();
-//	if ((s.IsRefinedMode() && s.IsGladOnly() == false))
-//	{
-//		m_Direction = Direction;
-//		m_DirectionLower = m_Direction;
-//
-//		m_pVMesh->m_vRotXYZ.x = 0.f;
-//		m_pVMesh->m_vRotXYZ.y = (Direction.z + 0.05f) * 50.f;
-//		m_pVMesh->m_vRotXYZ.z = 0.f;
-//	}
-//	else
-//	{
-//		if ((m_AniState_Lower == ZC_STATE_LOWER_IDLE1) ||
-//			(m_AniState_Lower == ZC_STATE_LOWER_RUN_FORWARD) ||
-//			(m_AniState_Lower == ZC_STATE_LOWER_RUN_BACK))
-//		{
-//			m_Direction = m_TargetDir;
-//
-//			rvector targetdir = m_TargetDir;
-//			targetdir.z = 0;
-//			Normalize(targetdir);
-//
-//			rvector dir = m_Accel;
-//			dir.z = 0;
-//
-//			if (Magnitude(dir) < 10.f)
-//				dir = targetdir;
-//			else
-//				Normalize(dir);
-//
-//			bool bInversed = false;
-//			if (DotProduct(targetdir, dir) < -cos(PI_FLOAT / 4.f) + 0.01f)
-//			{
-//				dir = -dir;
-//				bInversed = true;
-//			}
-//
-//			float fAngleLower = GetAngleOfVectors(dir, m_DirectionLower);
-//
-//			rmatrix mat;
-//
-//#define ROTATION_SPEED	400.f
-//
-//			if (fAngleLower > 5.f / 180.f*PI_FLOAT)
-//			{
-//				mat = RGetRotZRad(max(-ROTATION_SPEED * fDelta / 180.f*PI_FLOAT, -fAngleLower));
-//				m_DirectionLower = m_DirectionLower * mat;
-//			}
-//
-//			if (fAngleLower < -5.f / 180.f*PI_FLOAT)
-//			{
-//				mat = RGetRotZRad(min(ROTATION_SPEED*fDelta / 180.f*PI_FLOAT, -fAngleLower));
-//				m_DirectionLower = m_DirectionLower * mat;
-//			}
-//
-//			float fAngle = GetAngleOfVectors(m_TargetDir, m_DirectionLower);
-//
-//			if (fAngle < -65.f / 180.f*PI_FLOAT)
-//			{
-//				fAngle = -65.f / 180.f*PI_FLOAT;
-//				mat = RGetRotZRad(-65.f / 180.f*PI_FLOAT);
-//				m_DirectionLower = m_Direction * mat;
-//			}
-//
-//			if (fAngle >= 65.f / 180.f*PI_FLOAT)
-//			{
-//				fAngle = 65.f / 180.f*PI_FLOAT;
-//				mat = RGetRotZRad(65.f / 180.f*PI_FLOAT);
-//				m_DirectionLower = m_Direction * mat;
-//			}
-//
-//			m_pVMesh->m_vRotXYZ.x = -fAngle * 180 / PI_FLOAT * .9f;
-//
-//			m_pVMesh->m_vRotXYZ.y = (m_TargetDir.z + 0.05f) * 50.f;
-//		}
-//		else
-//		{
-//			m_Direction = m_TargetDir;
-//			m_DirectionLower = m_Direction;
-//
-//			m_pVMesh->m_vRotXYZ.x = 0.f;
-//			m_pVMesh->m_vRotXYZ.y = 0.f;
-//			m_pVMesh->m_vRotXYZ.z = 0.f;
-//		}
-//
-//
-//	}
-//}
 
 static void GetDTM(bool* pDTM, int mode, bool isman)
 {
@@ -648,21 +539,21 @@ void ZCharacter::CheckDrawWeaponTrack()
 		)
 	{
 		if ((m_pVMesh->m_SelectWeaponMotionType == eq_wd_katana) ||
-			(m_pVMesh->m_SelectWeaponMotionType == eq_wd_sword) ||
-			(m_pVMesh->m_SelectWeaponMotionType == eq_wd_blade))
-		{
-			if ((ZC_STATE_LOWER_ATTACK1 <= m_AniState_Lower && m_AniState_Lower <= ZC_STATE_LOWER_GUARD_CANCEL) ||
-				(ZC_STATE_UPPER_LOAD <= m_AniState_Upper && m_AniState_Upper <= ZC_STATE_UPPER_GUARD_CANCEL))
+				(m_pVMesh->m_SelectWeaponMotionType == eq_wd_sword) ||
+				(m_pVMesh->m_SelectWeaponMotionType == eq_wd_blade))
 			{
-				if (m_AniState_Upper != ZC_STATE_UPPER_GUARD_IDLE) {
-					if ((m_AniState_Lower != ZC_STATE_LOWER_ATTACK1_RET) &&
-						(m_AniState_Lower != ZC_STATE_LOWER_ATTACK2_RET) &&
-						(m_AniState_Lower != ZC_STATE_LOWER_ATTACK3_RET) &&
-						(m_AniState_Lower != ZC_STATE_LOWER_ATTACK4_RET))
-						bDrawTracks = true;
+				if ((ZC_STATE_LOWER_ATTACK1 <= m_AniState_Lower && m_AniState_Lower <= ZC_STATE_LOWER_GUARD_CANCEL) ||
+					(ZC_STATE_UPPER_LOAD <= m_AniState_Upper && m_AniState_Upper <= ZC_STATE_UPPER_GUARD_CANCEL))
+				{
+					if (m_AniState_Upper != ZC_STATE_UPPER_GUARD_IDLE) {
+						if ((m_AniState_Lower != ZC_STATE_LOWER_ATTACK1_RET) &&
+							(m_AniState_Lower != ZC_STATE_LOWER_ATTACK2_RET) &&
+							(m_AniState_Lower != ZC_STATE_LOWER_ATTACK3_RET) &&
+							(m_AniState_Lower != ZC_STATE_LOWER_ATTACK4_RET))
+							bDrawTracks = true;
+					}
 				}
 			}
-		}
 	}
 
 	bool bDTM[2];
@@ -715,7 +606,8 @@ void ZCharacter::UpdateSpWeapon()
 
 		Normalize(vWeapon[1]);
 
-		if (m_UID == g_pGame->m_pMyCharacter->m_UID) {
+		ZGame* pGame = ZGetGame();
+		if (pGame && pGame->m_pMyCharacter && m_UID == pGame->m_pMyCharacter->m_UID) {
 			int type = ZC_WEAPON_SP_GRENADE;
 
 			RVisualMesh* pWVMesh = m_pVMesh->GetSelectWeaponVMesh();
@@ -736,7 +628,7 @@ void ZCharacter::UpdateSpWeapon()
 
 			int sel_type = GetItems()->GetSelectedWeaponParts();
 
-			ZPostShotSp(g_pGame->GetTime(), vWeapon[0], vWeapon[1], type, sel_type);
+			ZPostShotSp(pGame->GetTime(), vWeapon[0], vWeapon[1], type, sel_type);
 			m_pVMesh->m_bAddGrenade = false;
 		}
 	}
@@ -770,7 +662,6 @@ void ZCharacter::OnDraw()
 	if (m_nVMID == -1)
 		return;
 
-	// Create the bounding box
 	rboundingbox bb;
 	static constexpr auto Radius = 100;
 	static constexpr auto Height = 190;
@@ -784,7 +675,6 @@ void ZCharacter::OnDraw()
 	ScaleAndTranslate(bb.vmax);
 	ScaleAndTranslate(bb.vmin);
 
-	// Don't draw if the bounding box isn't visible
 	if (!ZGetGame()->GetWorld()->GetBsp()->IsVisible(bb)) return;
 	if (!isInViewFrustum(bb, RGetViewFrustum())) return;
 
@@ -794,16 +684,15 @@ void ZCharacter::OnDraw()
 
 	MEndProfile(ZCharacterDrawLight);
 
-	if (g_pGame->m_bShowWireframe)
+	ZGame* pGame = ZGetGame();
+	if (pGame && pGame->m_bShowWireframe)
 	{
 		RGetDevice()->SetRenderState(D3DRS_LIGHTING, FALSE);
 		RGetDevice()->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_DIFFUSE);
 		RGetDevice()->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG1);
 	}
 
-	// If we're falling into the abyss, disable fog
-	// and the depth buffer (pits have a black texture in the bottom)
-	bool bNarakSetState = m_bFallingToNarak && g_pGame->GetWorld()->IsFogVisible();
+	bool bNarakSetState = pGame && m_bFallingToNarak && pGame->GetWorld()->IsFogVisible();
 	if (bNarakSetState)
 	{
 		RGetDevice()->SetRenderState(D3DRS_FOGENABLE, FALSE);
@@ -813,19 +702,16 @@ void ZCharacter::OnDraw()
 	CheckDrawWeaponTrack();
 
 	auto MaxVisibility = 1.0f;
-	// In the skillmap gamemode, all player characters
-	// that aren't the player are transparent
-	if (!m_bHero && ZGetGame()->GetMatch()->GetMatchType() == MMATCH_GAMETYPE_SKILLMAP)
+	if (pGame && !m_bHero && pGame->GetMatch()->GetMatchType() == MMATCH_GAMETYPE_SKILLMAP)
 		MaxVisibility = 0.4f;
 
 	if (IsDead())
 	{
-		// If we are dead, fade out
 		constexpr auto TRAN_AFTER = 3.0f;
 		constexpr auto VANISH_TIME = 2.0f;
 
 		float fOpacity = max(0.f, min(MaxVisibility, (
-			VANISH_TIME - (g_pGame->GetTime() - GetDeadTime() - TRAN_AFTER)) / VANISH_TIME));
+			VANISH_TIME - (pGame ? (pGame->GetTime() - GetDeadTime() - TRAN_AFTER) : 0.0f)) / VANISH_TIME));
 		m_pVMesh->SetVisibility(fOpacity);
 	}
 	else if (!m_bHero) m_pVMesh->SetVisibility(MaxVisibility);
@@ -913,7 +799,8 @@ void ZCharacter::UpdateHeight(float fDelta)
 						(fSpeed - DAMAGE_VELOCITY) / (MAX_FALL_SPEED - DAMAGE_VELOCITY);
 				}
 
-				RBspObject* r_map = g_pGame->GetWorld()->GetBsp();
+				ZGame* pGame = ZGetGame();
+				RBspObject* r_map = pGame ? pGame->GetWorld()->GetBsp() : nullptr;
 
 				rvector vPos = GetPosition();
 				rvector vDir = rvector(0.f, 0.f, -1.f);
@@ -1015,7 +902,6 @@ void ZCharacter::OnUpdate(float fDelta)
 
 	UpdateSpeed();
 
-	// Guardar puntero local para evitar race condition
 	RVisualMesh* pVMesh = m_pVMesh;
 	if (pVMesh) {
 		pVMesh->SetVisibility(1.f);
@@ -1048,7 +934,8 @@ void ZCharacter::OnUpdate(float fDelta)
 	if (pObserver->IsVisible())
 	{
 		rvector dir;
-		if (!GetHistory(&m_vProxyPosition, &dir, g_pGame->GetTime() - pObserver->GetDelay()))
+		ZGame* pGame = ZGetGame();
+		if (!pGame || !GetHistory(&m_vProxyPosition, &dir, pGame->GetTime() - pObserver->GetDelay()))
 			return;
 
 		{
@@ -1064,7 +951,6 @@ void ZCharacter::OnUpdate(float fDelta)
 				m_pVMesh->m_vRotXYZ = vRot;
 			}
 		}
-		//UpdateDirection(fDelta, dir);
 	}
 	else {
 		m_vProxyPosition = GetPosition();
@@ -1085,7 +971,6 @@ void ZCharacter::OnUpdate(float fDelta)
 
 	rvector MeshPosition;
 
-	// Move origin with the animation when it moves the player (e.g. ground slash)
 	if (IsMoveAnimation())
 	{
 		rvector footposition = m_pVMesh->GetFootPosition();
@@ -1150,7 +1035,8 @@ void ZCharacter::OnUpdate(float fDelta)
 		m_bCharging = false;
 	}
 
-	if (m_bCharged && g_pGame->GetTime() > m_fChargedFreeTime) {
+	ZGame* pGame = ZGetGame();
+	if (pGame && m_bCharged && pGame->GetTime() > m_fChargedFreeTime) {
 		m_bCharged = false;
 	}
 
@@ -1159,7 +1045,8 @@ void ZCharacter::OnUpdate(float fDelta)
 
 void ZCharacter::CheckLostConn()
 {
-	if (g_pGame->GetTime() - m_fLastReceivedTime > 1.f)
+	ZGame* pGame = ZGetGame();
+	if (pGame && pGame->GetTime() - m_fLastReceivedTime > 1.f)
 	{
 		if (!m_bLostConEffect)
 		{
@@ -1207,7 +1094,6 @@ void ZCharacter::UpdateVelocity(float fDelta)
 		forward.z = 0;
 		Normalize(forward);
 
-		// �ִ밪�� ������ �����Ѵ�.
 		float run_speed = RUN_SPEED * fRatio;
 		float back_speed = BACK_SPEED * fRatio;
 		float stop_formax_speed = STOP_FORMAX_SPEED * (1 / fRatio);
@@ -1340,7 +1226,7 @@ static const char* GetPartsNextName(RMeshPartsType ptype, RVisualMesh* pVMesh, b
 	if (bFirst) {
 		RMesh* pMesh = ZGetMeshMgr()->Get("heroman1");
 
-		if (pMesh) { //man
+		if (pMesh) {
 			pMesh->GetPartsNode(eq_parts_chest, g_table[0]);
 			pMesh->GetPartsNode(eq_parts_head, g_table[1]);
 			pMesh->GetPartsNode(eq_parts_hands, g_table[2]);
@@ -1351,7 +1237,7 @@ static const char* GetPartsNextName(RMeshPartsType ptype, RVisualMesh* pVMesh, b
 
 		pMesh = ZGetMeshMgr()->Get("herowoman1");
 
-		if (pMesh) { //woman
+		if (pMesh) {
 			pMesh->GetPartsNode(eq_parts_chest, g_table[6]);
 			pMesh->GetPartsNode(eq_parts_head, g_table[7]);
 			pMesh->GetPartsNode(eq_parts_hands, g_table[8]);
@@ -1518,128 +1404,121 @@ void ZCharacter::SetDirection(const rvector& dir)
 
 void ZCharacter::OnKnockback(const rvector& dir, float fForce)
 {
-	// CORRECCIÓN: Eliminado filtro IsHero() restrictivo
-	// Anteriormente solo los personajes marcados como "Hero" recibían knockback,
-	// causando que otros jugadores/personajes no recibieran el efecto visual/físico.
-	// Ahora todos los personajes reciben knockback de manera consistente.
-	//
-	// Nota: ZMyCharacter tiene su propia implementación (override final) que se ejecuta primero,
-	// por lo que este cambio principalmente afecta a otros ZCharacter que no son ZMyCharacter.
 	ZCharacterObject::OnKnockback(dir, fForce);
 }
 
 void ZCharacter::UpdateSound()
 {
 	if (!m_bInitialized) return;
-	if (m_pVMesh) {
-		char szSndName[128]; szSndName[0] = 0;
-		RMATERIAL* pMaterial{};
-		RBSPPICKINFO bpi;
-		if (ZGetGame()->GetWorld()->GetBsp()->Pick(m_Position + rvector(0, 0, 100), rvector(0, 0, -1), &bpi) && bpi.nIndex != -1) {
-			pMaterial = ZGetGame()->GetWorld()->GetBsp()->GetMaterial(bpi.pNode, bpi.nIndex);
-		}
 
-		AniFrameInfo* pInfo = m_pVMesh->GetFrameInfo(ani_mode_lower);
-		if (!pInfo) return;  // Salir si no hay información de frame
-		int nFrame = pInfo->m_nFrame;
-		int nCurrFoot = 0;
+	ZGame* pGame = ZGetGame();
+	if (!pGame || !m_pVMesh) return;
 
-		auto GetFrame = [&](float x) {
-			return static_cast<int>(x / 30.f * 4800.f);
-			};
+	char szSndName[128]; szSndName[0] = 0;
+	RMATERIAL* pMaterial{};
+	RBSPPICKINFO bpi;
+	if (pGame->GetWorld()->GetBsp()->Pick(m_Position + rvector(0, 0, 100), rvector(0, 0, -1), &bpi) && bpi.nIndex != -1)
+	{
+		pMaterial = pGame->GetWorld()->GetBsp()->GetMaterial(bpi.pNode, bpi.nIndex);
+	}
 
-		if (m_AniState_Lower == ZC_STATE_LOWER_RUN_FORWARD ||
-			m_AniState_Lower == ZC_STATE_LOWER_RUN_BACK) {
-			if (GetFrame(8) < nFrame && nFrame < GetFrame(18))
-				nCurrFoot = 1;
-		}
+	AniFrameInfo* pInfo = m_pVMesh->GetFrameInfo(ani_mode_lower);
+	if (!pInfo) return;
+	int nFrame = pInfo->m_nFrame;
+	int nCurrFoot = 0;
 
-		if (m_AniState_Lower == ZC_STATE_LOWER_RUN_WALL_LEFT ||
-			m_AniState_Lower == ZC_STATE_LOWER_RUN_WALL_RIGHT) {
-			if (nFrame < GetFrame(9)) nCurrFoot = 1;
-			else if (nFrame < GetFrame(17)) nCurrFoot = 0;
-			else if (nFrame < GetFrame(24)) nCurrFoot = 1;
-			else if (nFrame < GetFrame(32)) nCurrFoot = 0;
-			else if (nFrame < GetFrame(40)) nCurrFoot = 1;
-			else if (nFrame < GetFrame(48)) nCurrFoot = 0;
-			else if (nFrame < GetFrame(55)) nCurrFoot = 1;
-		}
+	auto GetFrame = [&](float x) {
+		return static_cast<int>(x / 30.f * 4800.f);
+		};
 
-		if (m_AniState_Lower == ZC_STATE_LOWER_RUN_WALL) {
-			if (nFrame < GetFrame(8)) nCurrFoot = 1;
-			else if (nFrame < GetFrame(16)) nCurrFoot = 0;
-			else if (nFrame < GetFrame(26)) nCurrFoot = 1;
-			else if (nFrame < GetFrame(40)) nCurrFoot = 0;
-		}
+	if (m_AniState_Lower == ZC_STATE_LOWER_RUN_FORWARD ||
+		m_AniState_Lower == ZC_STATE_LOWER_RUN_BACK) {
+		if (GetFrame(8) < nFrame && nFrame < GetFrame(18))
+			nCurrFoot = 1;
+	}
 
-		if (m_nWhichFootSound != nCurrFoot && pMaterial) {
-			if (m_nWhichFootSound == 0)
-			{
-				// �޹�
-				rvector pos = m_pVMesh->GetLFootPosition();
-				char* szSndName = g_pGame->GetSndNameFromBsp("man_fs_l", pMaterial);
+	if (m_AniState_Lower == ZC_STATE_LOWER_RUN_WALL_LEFT ||
+		m_AniState_Lower == ZC_STATE_LOWER_RUN_WALL_RIGHT) {
+		if (nFrame < GetFrame(9)) nCurrFoot = 1;
+		else if (nFrame < GetFrame(17)) nCurrFoot = 0;
+		else if (nFrame < GetFrame(24)) nCurrFoot = 1;
+		else if (nFrame < GetFrame(32)) nCurrFoot = 0;
+		else if (nFrame < GetFrame(40)) nCurrFoot = 1;
+		else if (nFrame < GetFrame(48)) nCurrFoot = 0;
+		else if (nFrame < GetFrame(55)) nCurrFoot = 1;
+	}
+
+	if (m_AniState_Lower == ZC_STATE_LOWER_RUN_WALL) {
+		if (nFrame < GetFrame(8)) nCurrFoot = 1;
+		else if (nFrame < GetFrame(16)) nCurrFoot = 0;
+		else if (nFrame < GetFrame(26)) nCurrFoot = 1;
+		else if (nFrame < GetFrame(40)) nCurrFoot = 0;
+	}
+
+	if (m_nWhichFootSound != nCurrFoot && pMaterial) {
+		if (m_nWhichFootSound == 0)
+		{
+			rvector pos = m_pVMesh->GetLFootPosition();
+			ZGame* pGame = ZGetGame();
+			char* szSndName = pGame ? pGame->GetSndNameFromBsp("man_fs_l", pMaterial) : nullptr;
 
 #ifdef _BIRDSOUND
-				ZApplication::GetSoundEngine()->PlaySoundCharacter(szSndName, pos, IsObserverTarget());
+			ZApplication::GetSoundEngine()->PlaySoundCharacter(szSndName, pos, IsObserverTarget());
 #else
-				ZApplication::GetSoundEngine()->PlaySound(szSndName, pos, IsObserverTarget());
+			ZApplication::GetSoundEngine()->PlaySound(szSndName, pos, IsObserverTarget());
 #endif
-			}
-			else
-			{
-				rvector pos = m_pVMesh->GetRFootPosition();
-				char* szSndName = g_pGame->GetSndNameFromBsp("man_fs_r", pMaterial);
-#ifdef _BIRDSOUND
-				ZApplication::GetSoundEngine()->PlaySoundCharacter(szSndName, pos, IsObserverTarget());
-#else
-				ZApplication::GetSoundEngine()->PlaySound(szSndName, pos, IsObserverTarget());
-#endif
-			}
-			m_nWhichFootSound = nCurrFoot;
 		}
-
-		RAniSoundInfo* pSInfo;
-		RAniSoundInfo* pSInfoTable[2];
-
-		rvector p;
-
-		AniFrameInfo* pAniLow = m_pVMesh->GetFrameInfo(ani_mode_lower);
-		AniFrameInfo* pAniUp = m_pVMesh->GetFrameInfo(ani_mode_upper);
-
-		if (!pAniLow || !pAniUp) return;  // Salir si falta información
-
-		pSInfoTable[0] = &pAniLow->m_SoundInfo;
-		pSInfoTable[1] = &pAniUp->m_SoundInfo;
-
-		for (int i = 0; i < 2; i++) {
-			pSInfo = pSInfoTable[i];
-
-			if (pSInfo->isPlay)
-			{
-				p = pSInfo->Pos;
-
-				if (pMaterial)
-				{
-					strcpy_safe(szSndName, g_pGame->GetSndNameFromBsp(pSInfo->Name, pMaterial));
-
-					int nStr = (int)strlen(szSndName);
-					strncpy_safe(m_pSoundMaterial, szSndName + (nStr - 6), 7);
-
-					ZApplication::GetSoundEngine()->PlaySoundElseDefault(szSndName, pSInfo->Name, p, IsObserverTarget());
-				}
-				else {
-					m_pSoundMaterial[0] = 0;
-
-					strcpy_safe(szSndName, pSInfo->Name);
+		else
+		{
+			rvector pos = m_pVMesh->GetRFootPosition();
+			char* szSndName = pGame->GetSndNameFromBsp("man_fs_r", pMaterial);
 #ifdef _BIRDSOUND
-					ZApplication::GetSoundEngine()->PlaySoundCharacter(szSndName, p, IsObserverTarget());
+			ZApplication::GetSoundEngine()->PlaySoundCharacter(szSndName, pos, IsObserverTarget());
 #else
-					ZApplication::GetSoundEngine()->PlaySound(szSndName, p, IsObserverTarget());
+			ZApplication::GetSoundEngine()->PlaySound(szSndName, pos, IsObserverTarget());
 #endif
-				}
+		}
+		m_nWhichFootSound = nCurrFoot;
+	}
 
-				pSInfo->Clear();
+	RAniSoundInfo* pSInfo;
+	RAniSoundInfo* pSInfoTable[2];
+
+	rvector p;
+
+	AniFrameInfo* pAniLow = m_pVMesh->GetFrameInfo(ani_mode_lower);
+	AniFrameInfo* pAniUp = m_pVMesh->GetFrameInfo(ani_mode_upper);
+
+	if (!pAniLow || !pAniUp) return;
+
+	pSInfoTable[0] = &pAniLow->m_SoundInfo;
+	pSInfoTable[1] = &pAniUp->m_SoundInfo;
+
+	for (int i = 0; i < 2; i++) {
+		pSInfo = pSInfoTable[i];
+
+		if (pSInfo->isPlay)
+		{
+			p = pSInfo->Pos;
+
+			if (pMaterial)
+			{
+				strcpy_safe(szSndName, pGame->GetSndNameFromBsp(pSInfo->Name, pMaterial));
+
+				int nStr = (int)strlen(szSndName);
+				strncpy_safe(m_pSoundMaterial, szSndName + (nStr - 6), 7);
+
+				ZApplication::GetSoundEngine()->PlaySoundElseDefault(szSndName, pSInfo->Name, p, IsObserverTarget());
 			}
+			else {
+				m_pSoundMaterial[0] = 0;
+
+				strcpy_safe(szSndName, pSInfo->Name);
+
+				ZApplication::GetSoundEngine()->PlaySound(szSndName, p, IsObserverTarget());
+			}
+
+			pSInfo->Clear();
 		}
 	}
 
@@ -1647,19 +1526,11 @@ void ZCharacter::UpdateSound()
 	{
 		if (GetProperty()->nSex == MMS_MALE)
 		{
-#ifdef _BIRDSOUND
-			ZGetSoundEngine()->PlaySoundCharacter("ooh_male", m_Position, IsObserverTarget());
-#else
 			ZGetSoundEngine()->PlaySound("ooh_male", m_Position, IsObserverTarget());
-#endif
 		}
 		else
 		{
-#ifdef _BIRDSOUND
-			ZGetSoundEngine()->PlaySoundCharacter("ooh_female", m_Position, IsObserverTarget());
-#else
 			ZGetSoundEngine()->PlaySound("ooh_female", m_Position, IsObserverTarget());
-#endif
 		}
 		m_bDamaged = false;
 	}
@@ -1853,7 +1724,6 @@ void ZCharacter::OutputDebugString_CharacterState()
 
 	ZItem* pItem = m_Items.GetSelectedWeapon();
 
-	// ���õ� ����
 #define IF_SITEM_ENUM(a)		if(a==m_Items.GetSelectedWeaponType())		{ AddTextEnum(m_Items.GetSelectedWeaponType(),a); }
 #define ELSE_IF_SITEM_ENUM(a)	else if(a==m_Items.GetSelectedWeaponType())	{ AddTextEnum(m_Items.GetSelectedWeaponType(),a); }
 
@@ -2104,7 +1974,10 @@ void ZCharacter::InitMesh()
 		mlog("AddCharacter ���ϴ� ���� ã���� ����\n");
 	}
 
-	int nVMID = g_pGame->m_VisualMeshMgr.Add(pMesh);
+	ZGame* pGame = ZGetGame();
+	if (!pGame) return;
+
+	int nVMID = pGame->m_VisualMeshMgr.Add(pMesh);
 
 	if (nVMID == -1) {
 		mlog("AddCharacter ĳ���� ���� ����\n");
@@ -2112,7 +1985,7 @@ void ZCharacter::InitMesh()
 
 	m_nVMID = nVMID;
 
-	RVisualMesh* pVMesh = g_pGame->m_VisualMeshMgr.GetFast(nVMID);
+	RVisualMesh* pVMesh = pGame->m_VisualMeshMgr.GetFast(nVMID);
 	SetVisualMesh(pVMesh);
 }
 
@@ -2175,22 +2048,11 @@ void ZCharacter::InitProperties()
 	m_Property.fMaxAP += fAddedAP;
 	m_Property.fMaxHP += fAddedHP;
 
-	/*if(GetUserGrade() == MMUG_DEVELOPER) {
-		strcpy_safe(m_szUserName,ZMsg(MSG_WORD_DEVELOPER));
-		strcpy_safe(m_szUserAndClanName,ZMsg(MSG_WORD_DEVELOPER));
-	}
-	else if(GetUserGrade() == MMUG_ADMIN) {
-		strcpy_safe(m_szUserName,ZMsg(MSG_WORD_ADMIN));
-		strcpy_safe(m_szUserAndClanName,ZMsg(MSG_WORD_ADMIN));
-	}
-	else {*/
 	strcpy_safe(m_szUserName, m_Property.szName);
 	if (m_Property.szClanName[0])
 		sprintf_safe(m_szUserAndClanName, "%s(%s)", m_Property.szName, m_Property.szClanName);
 	else
 		sprintf_safe(m_szUserAndClanName, "%s", m_Property.szName);
-	//}
-
 	MMatchObjCache* pObjCache = ZGetGameClient()->FindObjCache(GetUID());
 	if (pObjCache && IsAdminGrade(pObjCache->GetUGrade()) &&
 		pObjCache->CheckFlag(MTD_PlayerFlags_AdminHide))
@@ -2327,7 +2189,10 @@ void ZCharacter::InitMeshParts()
 
 void ZCharacter::SelectWeapon()
 {
-	if (!g_pGame->GetMatch()->IsRuleGladiator())
+	ZGame* pGame = ZGetGame();
+	if (!pGame || !pGame->GetMatch()) return;
+
+	if (!pGame->GetMatch()->IsRuleGladiator())
 	{
 		if (!m_Items.GetItem(MMCIP_PRIMARY)->IsEmpty()) ChangeWeapon(MMCIP_PRIMARY);
 		else if (!m_Items.GetItem(MMCIP_SECONDARY)->IsEmpty()) ChangeWeapon(MMCIP_SECONDARY);
@@ -2356,14 +2221,14 @@ void ZCharacter::ChangeWeapon(MMatchCharItemParts nParts)
 	if (m_Items.GetItem(nParts) == NULL) return;
 	if (m_Items.GetItem(nParts)->GetDesc() == NULL) return;
 
-	if (g_pGame->GetMatch()->IsRuleGladiator())
+	ZGame* pGame = ZGetGame();
+	if (pGame && pGame->GetMatch() && pGame->GetMatch()->IsRuleGladiator())
 	{
 		if ((nParts == MMCIP_PRIMARY) || (nParts == MMCIP_SECONDARY)) {
 			return;
 		}
 	}
 
-	// equipped item before change
 	MMatchCharItemParts BackupParts = m_Items.GetSelectedWeaponParts();
 
 	m_Items.SelectWeapon(nParts);
@@ -2386,8 +2251,6 @@ void ZCharacter::ChangeWeapon(MMatchCharItemParts nParts)
 		m_bCharged = false;
 }
 
-//#define _CHECKVALIDSHOTLOG
-
 bool ZCharacter::CheckValidShotTime(int nItemID, float fTime, ZItem* pItem)
 {
 #ifdef _CHECKVALIDSHOTLOG
@@ -2399,18 +2262,15 @@ bool ZCharacter::CheckValidShotTime(int nItemID, float fTime, ZItem* pItem)
 		return false;
 
 	if (GetLastShotItemID() == nItemID) {
-		// if time passed is less than item delay
 		if (fTime - GetLastShotTime() < (float)pItem->GetDesc()->m_nDelay / 1000.0f) {
 			MMatchWeaponType nWeaponType = pItem->GetDesc()->m_nWeaponType;
 			if ((MWT_DAGGER <= nWeaponType && nWeaponType <= MWT_DOUBLE_KATANA) &&
 				(fTime - GetLastShotTime() >= 0.23f))
 			{
-				// continue Valid... (Į�� ��Ȯ�� �ð������� ����� �����ѹ����.
 			}
 			else if ((nWeaponType == MWT_DOUBLE_KATANA || nWeaponType == MWT_DUAL_DAGGER) &&
 				(fTime - GetLastShotTime() >= 0.11f))
 			{
-				// continue Valid... (Į�� ��Ȯ�� �ð������� ����� �����ѹ����.
 			}
 			else {
 #ifdef _CHECKVALIDSHOTLOG
@@ -2453,8 +2313,8 @@ void ZCharacter::OnDamagedAnimation(ZObject* pAttacker, int type)
 		float fMag = Magnitude(dir);
 		if (fMag > 0.001f) {
 			Normalize(dir);
-		} else {
-			// Usar dirección por defecto si están en la misma posición
+		}
+		else {
 			dir = m_Direction;
 		}
 
@@ -2497,8 +2357,8 @@ void ZCharacter::ActDead()
 	float fMag = Magnitude(vDir);
 	if (fMag > 0.001f) {
 		Normalize(vDir);
-	} else {
-		// Usar dirección por defecto si no hay dirección de daño
+	}
+	else {
 		vDir = m_Direction;
 		vDir.z = 0.f;
 		Normalize(vDir);
@@ -2510,7 +2370,9 @@ void ZCharacter::ActDead()
 
 	bool bKnockBack = false;
 
-	SetDeadTime(g_pGame->GetTime());
+	if (ZGame* pGame = ZGetGame()) {
+		SetDeadTime(pGame->GetTime());
+	}
 
 	if ((GetStateLower() != ZC_STATE_LOWER_DIE1) &&
 		(GetStateLower() != ZC_STATE_LOWER_DIE2) &&
@@ -2522,7 +2384,6 @@ void ZCharacter::ActDead()
 		float dot = m_LastDamageDot;
 
 		switch (m_LastDamageWeapon) {
-			// melee
 		case MWT_DAGGER:
 		case MWT_DUAL_DAGGER:
 		case MWT_KATANA:
@@ -2540,7 +2401,6 @@ void ZCharacter::ActDead()
 		case MWT_SNIFER:
 			if (m_LastDamageDistance < 800.f)
 			{
-				// 400 ~ 900
 				fForce = 300 + (1.f - (m_LastDamageDistance / 800.f)) * 500.f;
 				bKnockBack = true;
 			}
@@ -2550,7 +2410,6 @@ void ZCharacter::ActDead()
 		case MWT_MACHINEGUN:
 			if (m_LastDamageDistance < 1000.f)
 			{
-				// 500 ~ 1000
 				fForce = 400 + (1.f - (m_LastDamageDistance / 1000.f)) * 500.f;
 
 				bKnockBack = true;
@@ -2600,27 +2459,28 @@ void ZCharacter::ActDead()
 		SetAnimationUpper(ZC_STATE_UPPER_NONE);
 	}
 
-	// excellent
 #define EXCELLENT_TIME	3.0f
 	ZCharacter* pLastAttacker = ZGetCharacterManager()->Find(GetLastAttacker());
 	if (pLastAttacker && pLastAttacker != this)
 	{
-		if (g_pGame->GetTime() - pLastAttacker->m_fLastKillTime < EXCELLENT_TIME && ZApplication::GetGame()->GetMatch()->GetMatchType() != MMATCH_GAMETYPE_DUEL)
+		ZGame* pGame = ZGetGame();
+		if (pGame && pGame->GetTime() - pLastAttacker->m_fLastKillTime < EXCELLENT_TIME &&
+			ZApplication::GetGame() && ZApplication::GetGame()->GetMatch()->GetMatchType() != MMATCH_GAMETYPE_DUEL)
 		{
 			pLastAttacker->GetStatus()->nExcellent++;
 			pLastAttacker->AddIcon(ZCI_EXCELLENT);
 		}
 
-		pLastAttacker->m_fLastKillTime = g_pGame->GetTime();
+		if (pGame) {
+			pLastAttacker->m_fLastKillTime = pGame->GetTime();
+		}
 
-		// fantastic
 		if (!m_bLand && GetDistToFloor() > 200.f && ZApplication::GetGame()->GetMatch()->GetMatchType() != MMATCH_GAMETYPE_DUEL)
 		{
 			pLastAttacker->GetStatus()->nFantastic++;
 			pLastAttacker->AddIcon(ZCI_FANTASTIC);
 		}
 
-		// unbelievable
 		if (pLastAttacker && ZApplication::GetGame()->GetMatch()->GetMatchType() != MMATCH_GAMETYPE_DUEL)
 		{
 			pLastAttacker->m_nKillsThisRound++;
@@ -2694,8 +2554,6 @@ void ZCharacter::Load(const ReplayPlayerInfo& rpi)
 	m_bAdminHide = rpi.State.HidingAdmin;
 	if (rpi.State.LowerAnimation != u8(-1))
 	{
-		// Change weapon first so that the SetAnimation* calls override the animations that
-		// ChangeWeapon set (NONE and LOAD).
 		ChangeWeapon(MMatchCharItemParts(rpi.State.SelectedItem));
 		SetAnimationLower(ZC_STATE_LOWER(rpi.State.LowerAnimation));
 		SetAnimationUpper(ZC_STATE_UPPER(rpi.State.UpperAnimation));
@@ -2838,17 +2696,15 @@ void ZCharacter::OnDamaged(ZObject* pAttacker, rvector srcPos, ZDAMAGETYPE damag
 	if (m_bInitialized == false) return;
 	if (!IsVisible() || IsDead()) return;
 
-	// If this isn't called on MyCharacter, it's unreliable predicted damage.
-	// Actual damage for other players is reported in HP/AP info packets.
-	//if (this != ZGetGame()->m_pMyCharacter)
-		//return;
-
 	HandleDamage(pAttacker, srcPos, damageType, weaponType, fDamage, fPiercingRatio, nMeleeType);
 }
 
 void ZCharacter::HandleDamage(ZObject* pAttacker, rvector srcPos, ZDAMAGETYPE damageType, MMatchWeaponType weaponType, float fDamage, float fPiercingRatio, int nMeleeType)
 {
-	bool bCanAttack = g_pGame->IsAttackable(pAttacker, this)
+	ZGame* pGame = ZGetGame();
+	if (!pGame) return;
+
+	bool bCanAttack = pGame->IsAttackable(pAttacker, this)
 		|| (pAttacker == this && (damageType == ZD_EXPLOSION || damageType == ZD_FALLING));
 
 	if (damageType != ZD_FALLING)
@@ -2858,8 +2714,8 @@ void ZCharacter::HandleDamage(ZObject* pAttacker, rvector srcPos, ZDAMAGETYPE da
 	float fMag = Magnitude(dir);
 	if (fMag > 0.001f) {
 		Normalize(dir);
-	} else {
-		// Si están en la misma posición, usar dirección del personaje
+	}
+	else {
 		dir = m_Direction;
 	}
 
