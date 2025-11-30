@@ -642,7 +642,7 @@ void ZMyBotCharacter::CheckDead()
 	if (ZGetGameClient()->GetMatchStageSetting()->GetNetcode() == NetcodeType::ServerBased)
 		return;
 
-	if ((IsDead() == false) && (GetHP() <= 0))
+	if (!IsDead() && (GetHP() <= 0))
 	{
 		if (uidAttacker == MUID(0, 0) && GetLastAttacker() != MUID(0, 0))
 			uidAttacker = GetLastAttacker();

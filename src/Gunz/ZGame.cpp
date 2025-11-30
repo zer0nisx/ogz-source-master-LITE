@@ -767,7 +767,7 @@ void ZGame::CheckMyCharDead(float fElapsed)
 	if (ZGetGameClient()->GetMatchStageSetting()->GetNetcode() == NetcodeType::ServerBased)
 		return;
 
-	if ((m_pMyCharacter->IsDead() == false) && (m_pMyCharacter->GetHP() <= 0))
+	if (!m_pMyCharacter->IsDead() && (m_pMyCharacter->GetHP() <= 0))
 	{
 		if (uidAttacker == MUID(0, 0) && m_pMyCharacter->GetLastAttacker() != MUID(0, 0))
 			uidAttacker = m_pMyCharacter->GetLastAttacker();
@@ -1959,7 +1959,7 @@ void ZGame::OnPeerOpened(MCommand* pCommand)
 
 	//// Show Character ////////////////////////////////////////
 	ZCharacter* pCharacter = m_CharacterManager.Find(uidChar);
-	if (pCharacter && pCharacter->IsDead() == false) {
+	if (pCharacter && !pCharacter->IsDead()) {
 		pCharacter->SetVisible(true);
 
 		ZCharacter* pMyCharacter = g_pGame->m_pMyCharacter;

@@ -36,7 +36,7 @@ bool ZObserver::OnKeyEvent(bool bCtrl, char nKey)
 	} else {
 		MUID uidTarget = m_QuickTarget.GetTarget(nIndex);
 
-		// ÅÂ°ÅÁöÁ¤ Æ¯¼öÅ° »ç¿ë Ã¼Å©
+		// ï¿½Â°ï¿½ï¿½ï¿½ï¿½ï¿½ Æ¯ï¿½ï¿½Å° ï¿½ï¿½ï¿½ Ã¼Å©
 		if ((uidTarget == MUID(0,0)) && (nKey == OBSERVER_QUICK_TAGGER_TARGET_KEY))
 		{
 			for (ZCharacterManager::iterator itor = g_pGame->m_CharacterManager.begin(); 
@@ -52,7 +52,7 @@ bool ZObserver::OnKeyEvent(bool bCtrl, char nKey)
 		}
 		
 		ZCharacter* pCharacter = g_pGame->m_CharacterManager.Find(uidTarget);
-		if (pCharacter && pCharacter->IsDead() == false)
+		if (pCharacter && !pCharacter->IsDead())
 		{
 			SetTarget(uidTarget);
 		}
@@ -117,7 +117,7 @@ void ZObserver::Show(bool bVisible)
 		}
 	}
 
-	// ÇØÁ¦	
+	// ï¿½ï¿½ï¿½ï¿½	
 	m_pTargetCharacter = NULL;
 	ShowInfo(false);
 	m_bVisible = false;
@@ -194,7 +194,7 @@ bool ZObserver::SetFirstTarget()
 		}
 	}
 
-	// Å¸°ÙÀ¸·Î ÇÒ¸¸ÇÑ »ç¶÷ÀÌ ¾øÀ¸¸é ¿ÉÁ®¹ö ¸ðµå ÇØÁ¦
+	// Å¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ò¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	Show(false);
 
 	return false;
@@ -378,7 +378,7 @@ void ZObserver::OnDraw(MDrawContext* pDC)
 		pDC->FillRectangle( 432.0f*fRx, 37.0f*fRy, nWidth, 5.0f*fRy);
 
 
-		// °ÔÀÌÁö ÇÁ·¹ÀÓ Ãâ·Â
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
 		MBitmap* pBitmap = MBitmapManager::Get( "duel_score.tga");
 		if ( pBitmap)
 		{
@@ -387,7 +387,7 @@ void ZObserver::OnDraw(MDrawContext* pDC)
 		}
 
 
-		// ÀÌ¸§ Ãâ·Â
+		// ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½
 		MFont *pFont = MFontManager::Get("FONTa10_O2Wht");
 		if ( pFont == NULL)
 			_ASSERT(0);
@@ -445,7 +445,7 @@ void ZObserver::OnDraw(MDrawContext* pDC)
 			TextRelative( pDC, 0.5f, 50.0f/800.0f, szName, true);
 	}
 
-	// Ä«¸Þ¶ó Ç¥½Ã
+	// Ä«ï¿½Þ¶ï¿½ Ç¥ï¿½ï¿½
 	if ( !ZGetMyInfo()->IsAdminGrade()) {
 		ZCamera *pCamera = ZGetGameInterface()->GetCamera();
 
@@ -462,10 +462,10 @@ void ZObserver::OnDraw(MDrawContext* pDC)
 
 
 
-	// Admin ¿ÉÁ®¹öÀÏ °æ¿ì¿¡ ³²Àº ÀÎ¿ø¼ö Ç¥½Ã
+	// Admin ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ì¿¡ ï¿½ï¿½ï¿½ï¿½ ï¿½Î¿ï¿½ï¿½ï¿½ Ç¥ï¿½ï¿½
 	if ( ZGetMyInfo()->IsAdminGrade())
 	{
-		// ÀÎ¿ø¼ö ±¸ÇÏ±â
+		// ï¿½Î¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ï±ï¿½
 		int nNumOfTotal=0, nNumOfRedTeam=0, nNumOfBlueTeam=0;
 		ZCharacterManager::iterator itor;
 		ZCharacter* pCharacter;
@@ -473,7 +473,7 @@ void ZObserver::OnDraw(MDrawContext* pDC)
 		{
 			pCharacter = (*itor).second;
 	
-			if ( pCharacter->GetTeamID() == MMT_SPECTATOR)		// ¿ÉÀú¹ö´Â –A´Ù
+			if ( pCharacter->GetTeamID() == MMT_SPECTATOR)		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Aï¿½ï¿½
 				continue;
 
 			if(pCharacter->IsAdminHide()) continue;
@@ -486,12 +486,12 @@ void ZObserver::OnDraw(MDrawContext* pDC)
 				nNumOfBlueTeam++;
 		}
 
-		// ÆÀ ÀÌ¹ÌÁö Ç¥½Ã
+		// ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½ Ç¥ï¿½ï¿½
 		float sizex = MGetWorkspaceWidth() / 800.f;
 		float sizey = MGetWorkspaceHeight() / 600.f;
 		char szText[128];
 
-		// ¹è°æ Ç¥½Ã
+		// ï¿½ï¿½ï¿½ Ç¥ï¿½ï¿½
 		MCOLOR backgroundcolor;
 
 		if (ZApplication::GetGame()->GetMatch()->IsTeamPlay())
@@ -503,7 +503,7 @@ void ZObserver::OnDraw(MDrawContext* pDC)
 			pDC->SetColor(backgroundcolor);
 			pDC->FillRectangle( 700 * sizex, 62 * sizey, 85 * sizex, 22 * sizey);
 
-			// ÀÎ¿ø¼ö Ç¥½Ã
+			// ï¿½Î¿ï¿½ï¿½ï¿½ Ç¥ï¿½ï¿½
 			backgroundcolor = MCOLOR(255,180,180, 255);
 			pDC->SetColor(backgroundcolor);
 			sprintf_safe( szText, "%s:%d", ZMsg( MSG_WORD_REDTEAM), nNumOfRedTeam); 
