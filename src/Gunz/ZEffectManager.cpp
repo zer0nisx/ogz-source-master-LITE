@@ -586,7 +586,7 @@ ZEffectManager::~ZEffectManager()
 
 	ZEffectShot::Release();
 
-	ZEffectWeaponEnchant::Release();
+	// ZEffectWeaponEnchant::Release(); // Removido - ya se llama arriba (lÃ­nea 580)
 
 	ZEffectSmoke::Release();
 	ZEffectLandingSmoke::Release();
@@ -616,6 +616,13 @@ int ZEffectManager::DeleteSameType(ZEffectAniMesh* pNew)
 
 	for (node = m_Effects[d].begin(); node != m_Effects[d].end(); ) {
 		pEffect = (*node);
+
+		// Verificar NULL para evitar crash si hay efectos corruptos en la lista
+		if (pEffect == NULL) {
+			mlog("ZEffectManager::DeleteSameType - NULL effect found in list, removing\n");
+			node = m_Effects[d].erase(node);
+			continue;
+		}
 
 		if (pEffect->isEffectType(pNew->m_nType)) {
 			if (((ZEffectAniMesh*)pEffect)->GetUID() == pNew->GetUID()) {
@@ -741,7 +748,7 @@ void ZEffectManager::Draw(u32 nTime, int mode, float height)
 
 			if (pEffect == NULL) {
 				int _size = (int)m_Effects[d].size();
-				mlog("¶ß¾Æ.. EffectManager NULL ¹®Á¦ ¹ß»ý ( %d list ¿ä¼Ò) : size : %d \n", d, _size);
+				mlog("ï¿½ß¾ï¿½.. EffectManager NULL ï¿½ï¿½ï¿½ï¿½ ï¿½ß»ï¿½ ( %d list ï¿½ï¿½ï¿½) : size : %d \n", d, _size);
 				++node;
 			}
 			else {
@@ -888,7 +895,7 @@ void ZEffectManager::Draw(u32 nTime)
 
 			if (pEffect == NULL) {
 				int _size = (int)m_Effects[d].size();
-				mlog("¶ß¾Æ.. EffectManager NULL ¹®Á¦ ¹ß»ý ( %d list ¿ä¼Ò) : size : %d \n", d, _size);
+				mlog("ï¿½ß¾ï¿½.. EffectManager NULL ï¿½ï¿½ï¿½ï¿½ ï¿½ß»ï¿½ ( %d list ï¿½ï¿½ï¿½) : size : %d \n", d, _size);
 				++node;
 			}
 			else {

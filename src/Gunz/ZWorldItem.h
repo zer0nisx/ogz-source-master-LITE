@@ -15,9 +15,9 @@ using namespace RealSpace2;
 //enum ZWORLD_ITEM_SPAWN_TYPE
 enum ZWORLD_ITEM_SPAWN_FLAG
 {
-	WORLD_ITEM_TIME_ONCE			= 0x1,		// ÇÑ¹ø »ý¼ºµÇ°í ¸ÔÈ÷¸é ³¡ ( DEFAULT)
-	WORLD_ITEM_TIME_REGULAR			= 0x2,		// ¸ÔÈù ÈÄ ÀÏÁ¤ ½Ã°£ÀÌ Áö³ª¸é »ý¼ºµÊ 
-	WORLD_ITEM_STAND_ALINE			= 0x4,		// ¼­¹ö¿Í Åë½ÅÇÏÁö ¾Ê°í Å¬¶óÀÌ¾ðÆ®¸¸ Ã³¸®
+	WORLD_ITEM_TIME_ONCE			= 0x1,		// ï¿½Ñ¹ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ç°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ( DEFAULT)
+	WORLD_ITEM_TIME_REGULAR			= 0x2,		// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
+	WORLD_ITEM_STAND_ALINE			= 0x4,		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê°ï¿½ Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ®ï¿½ï¿½ Ã³ï¿½ï¿½
 };
 
 enum ZWORLD_ITEM_STATE
@@ -25,7 +25,7 @@ enum ZWORLD_ITEM_STATE
 	WORLD_ITEM_INVALIDATE = 0,
 	WORLD_ITEM_VALIDATE,
 	WORLD_ITEM_WAITING,
-	WORLD_ITEM_CANDIDATE,	// Å¬¶óÀÌ¾ðÆ®¿¡¼­´Â ÆÇÁ¤ÀÌ ³², ¼­¹ö°¡ ÆÇÁ¤ÇØ ÁÖ±æ ±â´Ù¸®°í ÀÖ´Â »óÅÂ	
+	WORLD_ITEM_CANDIDATE,	// Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö±ï¿½ ï¿½ï¿½Ù¸ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½	
 	NUM_WORLD_ITEM_STATE,
 };
 
@@ -44,14 +44,14 @@ class ZCharacter;
 class ZWorldItem
 {
 protected:
-	short					m_nID;							// ÀÎ½ºÅÏ½º ID
-	short					m_nItemID;						// ¾ÆÀÌÅÛ ID
-	char					m_Name[MAX_NAME_LENGTH];		// ¾ÆÀÌÅÛ ÀÌ¸§
-	char					m_modelName[MAX_NAME_LENGTH];	// ¸ðµ¨ ÀÌ¸§
-	MMATCH_WORLD_ITEM_TYPE	m_Type;							// ¾ÆÀÌÅÛÀÇ Á¾·ù
-	ZWORLD_ITEM_STATE		m_State;						// ¾ÆÀÌÅÛÀÇ »óÅÂ
+	short					m_nID;							// ï¿½Î½ï¿½ï¿½Ï½ï¿½ ID
+	short					m_nItemID;						// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ID
+	char					m_Name[MAX_NAME_LENGTH];		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½
+	char					m_modelName[MAX_NAME_LENGTH];	// ï¿½ï¿½ ï¿½Ì¸ï¿½
+	MMATCH_WORLD_ITEM_TYPE	m_Type;							// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+	ZWORLD_ITEM_STATE		m_State;						// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	MTD_WorldItemSubType	m_SubType;
-	rvector					m_Position;						// ¾ÆÀÌÅÛÀÇ ¿ùµå À§Ä¡
+	rvector					m_Position;						// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡
 	rvector					m_Dir;
 	rvector					m_Up;
 	unsigned int			m_nSpawnTypeFlags;
@@ -63,11 +63,11 @@ public:
 	bool					m_bToggle;
 	bool					m_bisDraw;
 public:
-	// ¾ÆÀÌÅÛ »ý¼º
-	void Initialize( int nID, short nItemID, MTD_WorldItemSubType SubType, ZWORLD_ITEM_STATE state, unsigned int nSpawnTypeFlags,	// ½ºÆù Çü½Ä
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+	void Initialize( int nID, short nItemID, MTD_WorldItemSubType SubType, ZWORLD_ITEM_STATE state, unsigned int nSpawnTypeFlags,	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		const rvector& position, float fAmount		);
 
-	virtual bool ApplyWorldItem( ZCharacter* pCharacter );					// ¸ÔÈ÷±â
+	virtual bool ApplyWorldItem( ZCharacter* pCharacter );					// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 	void CreateVisualMesh();
 
@@ -136,26 +136,27 @@ protected:
 	static ZWorldItemManager msInstance;
 
 	int						m_nStandAloneIDGen;
+	int						m_nUpdateCounter;		// Contador para throttling de update()
 	int GenStandAlondID();
 protected:
-	bool ApplyWorldItem( WIL_Iterator& iter, ZCharacter* pCharacter );	// pCharacter¿¡°Ô pWorldItemÀ» Àû¿ë½ÃÅ°±â
+	bool ApplyWorldItem( WIL_Iterator& iter, ZCharacter* pCharacter );	// pCharacterï¿½ï¿½ï¿½ï¿½ pWorldItemï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Å°ï¿½ï¿½
 	void DeleteWorldItem( WIL_Iterator& iter, bool bDrawRemoveEffect );
 	bool SpawnWorldItem( WIL_Iterator& iter );
 	void OnOptainWorldItem(ZWorldItem* pItem);
 public:
-	void update();																			// Ä³¸¯ÅÍ¿ÍÀÇ Ãæµ¹ Ã¼Å©, ¾ÆÀÌÅÛ »ý¼º½Ã°£ Ã¼Å©
-	ZWorldItem *AddWorldItem( int nID, short nItemID,MTD_WorldItemSubType nItemSubType, const rvector& pos );	// ¸Ê ·Îµù½Ã ¾ÆÀÌÅÛ Ãß°¡ÇÒ¶§ È£ÃâÇÏ´Â ÇÔ¼ö
+	void update();																			// Ä³ï¿½ï¿½ï¿½Í¿ï¿½ï¿½ï¿½ ï¿½æµ¹ Ã¼Å©, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ã°ï¿½ Ã¼Å©
+	ZWorldItem *AddWorldItem( int nID, short nItemID,MTD_WorldItemSubType nItemSubType, const rvector& pos );	// ï¿½ï¿½ ï¿½Îµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ï¿½Ò¶ï¿½ È£ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½Ô¼ï¿½
 			
 	bool DeleteWorldItem( int nID, bool bDrawRemoveEffect=false );
 
-	void Clear();											// ¾ÆÀÌÅÛ ¸®½ºÆ®, ¿þÀÌÆÃ ¸®½ºÆ®... // °ÔÀÓ¿¡¼­ ³ª¿Ã¶§ È£Ãâ
-	void Reset(bool bDrawRemoveEffect=false);				// ÆÀÀü¿¡¼­ ¶ó¿îµå ½ÃÀÛÇÒ¶§ È£Ãâ
-	int GetLinkedWorldItemID(MMatchItemDesc* pItemDesc);		// ¾ÆÀÌÅÛ°ú ¿¬°áµÈ ¿ùµå¾ÆÀÌÅÛ ID ¹ÝÈ¯
+	void Clear();											// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®... // ï¿½ï¿½ï¿½Ó¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ã¶ï¿½ È£ï¿½ï¿½
+	void Reset(bool bDrawRemoveEffect=false);				// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ò¶ï¿½ È£ï¿½ï¿½
+	int GetLinkedWorldItemID(MMatchItemDesc* pItemDesc);		// ï¿½ï¿½ï¿½ï¿½ï¿½Û°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ID ï¿½ï¿½È¯
 
-	bool ApplyWorldItem( int nID, ZCharacter* pCharacter );			// pCharacter¿¡°Ô pWorldItemÀ» Àû¿ë½ÃÅ°±â
+	bool ApplyWorldItem( int nID, ZCharacter* pCharacter );			// pCharacterï¿½ï¿½ï¿½ï¿½ pWorldItemï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Å°ï¿½ï¿½
 	
 	
-	void AddQuestPortal(rvector& pos);		// Äù½ºÆ®¿¡¼­ Æ÷Å» ¿­¸±¶§ È£Ãâ
+	void AddQuestPortal(rvector& pos);		// ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å» ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È£ï¿½ï¿½
 
 
 	static ZWorldItemManager*	GetInstance()	{ return &msInstance; }
@@ -173,5 +174,5 @@ public:
 ZWorldItemManager* ZGetWorldItemManager();
 
 
-// worlditem.xml¿¡ ÀÖ´Â Æ¯º°ÇÑ id
-#define WORLDITEM_PORTAL_ID			201				// Äù½ºÆ®¿¡¼­ »ç¿ëÇÏ´Â Æ÷Å»
+// worlditem.xmlï¿½ï¿½ ï¿½Ö´ï¿½ Æ¯ï¿½ï¿½ï¿½ï¿½ id
+#define WORLDITEM_PORTAL_ID			201				// ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½Å»

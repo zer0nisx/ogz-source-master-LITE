@@ -16,83 +16,78 @@
 using namespace RealSpace2;
 
 #define BASE_EFFECT_MODEL "baseEffect"
-#define USER_WORLDITEM_FIRST		100			// 100 ¹øºÎÅÍ´Â À¯Àú°¡ ½ºÆù½ÃÅ°´Â ¾ÆÀÌÅÛ - ÀÇ·áÅ¶ µî
-
+#define USER_WORLDITEM_FIRST		100
 
 ZWorldItemManager ZWorldItemManager::msInstance;
 
-//////////////////////////////////////////////////////////////////////////
-//		ZWorldItem
-//////////////////////////////////////////////////////////////////////////
-void ZWorldItem::Initialize( int nID, short nItemID,MTD_WorldItemSubType SubType, ZWORLD_ITEM_STATE state, unsigned int nSpawnTypeFlags, const rvector& position, float fAmount )
+void ZWorldItem::Initialize(int nID, short nItemID, MTD_WorldItemSubType SubType, ZWORLD_ITEM_STATE state, unsigned int nSpawnTypeFlags, const rvector& position, float fAmount)
 {
-	m_nID				= nID;
-	m_nItemID			= nItemID;
-	m_State				= state;
-	m_nSpawnTypeFlags	= nSpawnTypeFlags;
-	m_SubType			= SubType;
-	m_Position			= position;
-	m_fAmount			= fAmount;
-	m_Dir				= rvector(0,1,0);
-	m_Up				= rvector(0,0,1);
+	m_nID = nID;
+	m_nItemID = nItemID;
+	m_State = state;
+	m_nSpawnTypeFlags = nSpawnTypeFlags;
+	m_SubType = SubType;
+	m_Position = position;
+	m_fAmount = fAmount;
+	m_Dir = rvector(0, 1, 0);
+	m_Up = rvector(0, 0, 1);
 }
 
-bool ZWorldItem::ApplyWorldItem( ZCharacter* pCharacter )
+bool ZWorldItem::ApplyWorldItem(ZCharacter* pCharacter)
 {
-	int max,maxBullet,maxMagazine,inc,currentBullet,currentMagazine;
-	if( pCharacter == NULL || (
-		(m_State != WORLD_ITEM_VALIDATE ) && (m_State != WORLD_ITEM_CANDIDATE)) )
-		return false;	
+	int max, maxBullet, maxMagazine, inc, currentBullet, currentMagazine;
+	if (pCharacter == NULL || (
+		(m_State != WORLD_ITEM_VALIDATE) && (m_State != WORLD_ITEM_CANDIDATE)))
+		return false;
 
 	ZItem* pSeletedWeapon = 0;
-	switch( m_Type ) 
+	switch (m_Type)
 	{
 	case WIT_QUEST:
 		break;
 	case WIT_HP:
-		pCharacter->SetHP( min(	 pCharacter->GetHP() + m_fAmount, pCharacter->GetProperty()->fMaxHP ) );
+		pCharacter->SetHP(min(pCharacter->GetHP() + m_fAmount, pCharacter->GetProperty()->fMaxHP));
 		break;
 	case WIT_AP:
-		pCharacter->SetAP( min(	 pCharacter->GetAP() + m_fAmount, pCharacter->GetProperty()->fMaxAP ) );
+		pCharacter->SetAP(min(pCharacter->GetAP() + m_fAmount, pCharacter->GetProperty()->fMaxAP));
 		break;
 	case WIT_HPAP:
-		pCharacter->SetHP( min(	 pCharacter->GetHP() + m_fAmount, pCharacter->GetProperty()->fMaxHP ) );
-		pCharacter->SetAP( min(	 pCharacter->GetAP() + m_fAmount, pCharacter->GetProperty()->fMaxAP ) );
+		pCharacter->SetHP(min(pCharacter->GetHP() + m_fAmount, pCharacter->GetProperty()->fMaxHP));
+		pCharacter->SetAP(min(pCharacter->GetAP() + m_fAmount, pCharacter->GetProperty()->fMaxAP));
 		break;
 	case WIT_BULLET:
 		pSeletedWeapon = pCharacter->GetItems()->GetSelectedWeapon();
-		if( pSeletedWeapon && pSeletedWeapon->GetItemType() != MMIT_RANGE )
+		if (pSeletedWeapon && pSeletedWeapon->GetItemType() != MMIT_RANGE)
 		{
-			if( !pCharacter->GetItems()->GetItem(MMCIP_PRIMARY)->IsEmpty() )
+			if (!pCharacter->GetItems()->GetItem(MMCIP_PRIMARY)->IsEmpty())
 				pSeletedWeapon = pCharacter->GetItems()->GetItem(MMCIP_PRIMARY);
-			else if( !pCharacter->GetItems()->GetItem(MMCIP_PRIMARY)->IsEmpty() )
+			else if (!pCharacter->GetItems()->GetItem(MMCIP_SECONDARY)->IsEmpty())
 				pSeletedWeapon = pCharacter->GetItems()->GetItem(MMCIP_SECONDARY);
 			else
 				pSeletedWeapon = 0;
 		}
 
-		if( pSeletedWeapon )
+		if (pSeletedWeapon)
 		{
-			currentBullet	= pSeletedWeapon->GetBulletAMagazine();		// ÇöÀç Âø¿ëÇÑ ÅºÃ¢¾ÈÀÇ ÃÑ¾Ë¼ö
-			currentMagazine	= pSeletedWeapon->GetBullet();				// ÇöÀç Âø¿ëÇÏÁö ¾ÊÀº ÅºÃ¢¾ÈÀÇ ÃÑ¾Ë¼ö
-			
-			inc = pSeletedWeapon->GetDesc()->m_nMagazine;		// ÃÑ¾Ë Áõ°¡ºÐ
-			max = pSeletedWeapon->GetDesc()->m_nMaxBullet;		// ÀüÃ¼ Ã¤¿öÁú¼ö ÀÖ´Â ÃÑ¾ËÀÇ °¹¼ö
+			currentBullet = pSeletedWeapon->GetBulletAMagazine();
+			currentMagazine = pSeletedWeapon->GetBullet();
 
-			maxBullet = min((max - currentMagazine),inc);
+			inc = pSeletedWeapon->GetDesc()->m_nMagazine;
+			max = pSeletedWeapon->GetDesc()->m_nMaxBullet;
+
+			maxBullet = min((max - currentMagazine), inc);
 			maxMagazine = max - maxBullet;
 
 			int nBullet = (int)m_fAmount;
-			if( currentBullet < inc ) 
+			if (currentBullet < inc)
 			{
-				pSeletedWeapon->SetBulletAMagazine( maxBullet );				// ÇöÀç ÅºÃ¢ÀÇ ÃÑ¾Ë¼ö Ã¤¿ì±â			
+				pSeletedWeapon->SetBulletAMagazine(maxBullet);
 				--nBullet;
 			}
 
-			if( nBullet > 0 )
-				pSeletedWeapon->SetBullet( min( ( nBullet*inc + currentMagazine ), maxMagazine));
+			if (nBullet > 0)
+				pSeletedWeapon->SetBullet(min((nBullet * inc + currentMagazine), maxMagazine));
 
-			//// MEMORYHACK ¹æÁö¿£Áø¿¡ ¾Ë·ÁÁØ´Ù.
 			if (pCharacter->GetUID() == ZGetMyUID()) {
 				MDataChecker* pChecker = ZApplication::GetGame()->GetDataChecker();
 				pChecker->RenewCheck((BYTE*)pSeletedWeapon->GetBulletPointer(), sizeof(int));
@@ -100,40 +95,39 @@ bool ZWorldItem::ApplyWorldItem( ZCharacter* pCharacter )
 			}
 		}
 		break;
-	
+
 	default:
-		mlog("Á¤ÀÇ µÇÁö ¾ÊÀº ¾ÆÀÌÅÛ Å¸ÀÔÀÔ´Ï´Ù\n");
+		mlog("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½ï¿½Ô´Ï´ï¿½\n");
 		return false;
 	}
 
-	if( pCharacter == g_pGame->m_pMyCharacter )
+	if (pCharacter == g_pGame->m_pMyCharacter)
 	{
 		ZGetSoundEngine()->PlaySound("fx_itemget");
 	}
 
 	return true;
-
 }
 
 ZWorldItem::ZWorldItem()
 {
-	m_nID					= 0;
-	m_Type				= WIT_HP;
-	m_State				= WORLD_ITEM_INVALIDATE;
-	m_Position			= rvector( 0.f, 0.f, 0.f );
-	m_nSpawnTypeFlags	= WORLD_ITEM_TIME_ONCE;
-	m_pVMesh			= NULL;
+	m_nID = 0;
+	m_Type = WIT_HP;
+	m_State = WORLD_ITEM_INVALIDATE;
+	m_Position = rvector(0.f, 0.f, 0.f);
+	m_nSpawnTypeFlags = WORLD_ITEM_TIME_ONCE;
+	m_pVMesh = NULL;
 
-	m_dwStartTime		 = 0.f;
+	m_dwStartTime = 0.f;
 	m_dwToggleBackupTime = 0.f;
 
-	m_bToggle			= true;
-	m_bisDraw			= true;
+	m_bToggle = true;
+	m_bisDraw = true;
 }
 
-ZWorldItem::~ZWorldItem() 
+ZWorldItem::~ZWorldItem()
 {
-	if(m_pVMesh) {
+	if (m_pVMesh) {
 		delete m_pVMesh;
 		m_pVMesh = NULL;
 	}
@@ -141,20 +135,17 @@ ZWorldItem::~ZWorldItem()
 
 void ZWorldItem::CreateVisualMesh()
 {
-	RMesh* pMesh	= ZGetMeshMgr()->Get( m_modelName );
+	RMesh* pMesh = ZGetMeshMgr()->Get(m_modelName);
 	m_pVMesh = new RVisualMesh;
-	m_pVMesh->Create( pMesh );
+	m_pVMesh->Create(pMesh);
 	m_pVMesh->SetAnimation("play");
 	m_pVMesh->SetCheckViewFrustum(true);
 }
 
-//////////////////////////////////////////////////////////////////////////
-//		ZWorldItemMananger
-//////////////////////////////////////////////////////////////////////////
 ZWorldItemManager::ZWorldItemManager()
 {
-	m_nStandAloneIDGen = 10000000;		// worlditemÀÌ Ãµ¸¸°³ ÀÌ»óÀº ³ª¿ÀÁö ¾Ê´Â´Ù.
-
+	m_nStandAloneIDGen = 10000000;
+	m_nUpdateCounter = 0;
 }
 
 int ZWorldItemManager::GenStandAlondID()
@@ -162,150 +153,156 @@ int ZWorldItemManager::GenStandAlondID()
 	return (++m_nStandAloneIDGen);
 }
 
-bool ZWorldItemManager::ApplyWorldItem( int nID, ZCharacter* pCharacter )
+bool ZWorldItemManager::ApplyWorldItem(int nID, ZCharacter* pCharacter)
 {
-	WIL_Iterator iter = mItemList.find( nID );
-	if( iter == mItemList.end() )	return false;
+	WIL_Iterator iter = mItemList.find(nID);
+	if (iter == mItemList.end())	return false;
 
-	return ApplyWorldItem( iter, pCharacter );
+	return ApplyWorldItem(iter, pCharacter);
 }
 
-bool ZWorldItemManager::ApplyWorldItem( WIL_Iterator& iter, ZCharacter* pCharacter )
+bool ZWorldItemManager::ApplyWorldItem(WIL_Iterator& iter, ZCharacter* pCharacter)
 {
 	ZWorldItem* pWorldItem = iter->second;
-	if( !pWorldItem->ApplyWorldItem( pCharacter ) )	
+	if (!pWorldItem->ApplyWorldItem(pCharacter))
 	{
-		mlog("ApplyItem FunctionÀÇ ÀÎÀÚ¿¡ Á¤È®ÇÏÁö ¾Ê½À´Ï´Ù.(¾ÆÀÌÅÛÀÇ state¿¡ ¹®Á¦°¡ ÀÖ´Â°Í °°½À´Ï´Ù)\n" );
-		return false;	
+		mlog("ApplyItem Functionï¿½ï¿½ ï¿½ï¿½ï¿½Ú¿ï¿½ ï¿½ï¿½È®ï¿½ï¿½ï¿½ï¿½ ï¿½Ê½ï¿½ï¿½Ï´ï¿½.(ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ stateï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´Â°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½)\n");
+		return false;
 	}
 
-	// Äù½ºÆ®¿¡¼­ ´Ù¸¥ ÆÀÀ» ±â´Ù¸®´Â ´ë±â »óÅÂÀÎ °æ¿ì..
-
-	if( ZGetQuest() && ZGetQuest()->GetQuestState() == MQUEST_COMBAT_PREPARE )
-		if( g_pGame->m_pMyCharacter->IsObserverTarget() )// ´ÙÀ½½ºÅ×ÀÌÁö·Î ³Ñ¾î°¡¼­ ±â´Ù¸®´Â °æ¿ì
+	if (ZGetQuest() && ZGetQuest()->GetQuestState() == MQUEST_COMBAT_PREPARE)
+		if (g_pGame->m_pMyCharacter->IsObserverTarget())
 			return true;
 
-	switch(pWorldItem->GetType())
+	switch (pWorldItem->GetType())
 	{
-		case WIT_HP :
-		case WIT_HPAP : 
-			ZGetEffectManager()->AddHealEffect( pCharacter->GetPosition(), pCharacter );
-			break;
-		case WIT_QUEST :
-			ZGetEffectManager()->AddEatBoxEffect( pCharacter->GetPosition(), pCharacter );
-			break;
-		case WIT_AP :
-			ZGetEffectManager()->AddRepireEffect( pCharacter->GetPosition(), pCharacter );
-			break;
-		case WIT_BULLET :
-			ZGetEffectManager()->AddExpanseAmmoEffect(pCharacter->GetPosition(), pCharacter );
+	case WIT_HP:
+	case WIT_HPAP:
+		ZGetEffectManager()->AddHealEffect(pCharacter->GetPosition(), pCharacter);
+		break;
+	case WIT_QUEST:
+		ZGetEffectManager()->AddEatBoxEffect(pCharacter->GetPosition(), pCharacter);
+		break;
+	case WIT_AP:
+		ZGetEffectManager()->AddRepireEffect(pCharacter->GetPosition(), pCharacter);
+		break;
+	case WIT_BULLET:
+		ZGetEffectManager()->AddExpanseAmmoEffect(pCharacter->GetPosition(), pCharacter);
 	}
 
-	if( CheckBitSet(pWorldItem->GetSpawnTypeFlags(), WORLD_ITEM_TIME_ONCE) )
-		DeleteWorldItem( iter, false );
+	if (CheckBitSet(pWorldItem->GetSpawnTypeFlags(), WORLD_ITEM_TIME_ONCE))
+		DeleteWorldItem(iter, false);
 	else
-		pWorldItem->SetState( WORLD_ITEM_WAITING );
+		pWorldItem->SetState(WORLD_ITEM_WAITING);
 
 	return true;
 }
 
-ZWorldItem *ZWorldItemManager::AddWorldItem( int nID, short nItemID,MTD_WorldItemSubType nItemSubType, const rvector& pos )
+ZWorldItem* ZWorldItemManager::AddWorldItem(int nID, short nItemID, MTD_WorldItemSubType nItemSubType, const rvector& pos)
 {
 	ZWorldItem* pWorldItem = NULL;
 
-	WIL_Iterator iterItem = mItemList.find( nID );
-	if( iterItem == mItemList.end() )
+	WIL_Iterator iterItem = mItemList.find(nID);
+	if (iterItem == mItemList.end())
 	{
-		map<short, MMatchWorldItemDesc*>::iterator iter = MGetMatchWorldItemDescMgr()->find( nItemID );
-		if( iter == MGetMatchWorldItemDescMgr()->end() ) 
+		map<short, MMatchWorldItemDesc*>::iterator iter = MGetMatchWorldItemDescMgr()->find(nItemID);
+		if (iter == MGetMatchWorldItemDescMgr()->end())
 		{
-			mlog("Ãß°¡ÇÏ·Á´Â ¿ùµå¾ÆÀÌÅÛÀÌ Á¤ÀÇ µÇÁö ¾ÊÀº ÀÌ¸§ÀÔ´Ï´Ù\n" );
+			mlog("ï¿½ß°ï¿½ï¿½Ï·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½ï¿½Ô´Ï´ï¿½\n");
 			return NULL;
 		}
 		MMatchWorldItemDesc* pDesc = iter->second;
 
 		u32 nSpawnTypeFlags = WORLD_ITEM_TIME_ONCE;
-		if (pDesc->m_nItemType == WIT_CLIENT) 
+		if (pDesc->m_nItemType == WIT_CLIENT)
 			SetBitSet(nSpawnTypeFlags, WORLD_ITEM_STAND_ALINE);
 
 		pWorldItem = new ZWorldItem();
-		pWorldItem->Initialize( nID, nItemID, nItemSubType,WORLD_ITEM_INVALIDATE, nSpawnTypeFlags, pos, pDesc->m_fAmount );
-		pWorldItem->SetName( pDesc->m_szDescName );
-		pWorldItem->SetModelName( pDesc->m_szModelName );
-		pWorldItem->SetType(pDesc->m_nItemType );
+		pWorldItem->Initialize(nID, nItemID, nItemSubType, WORLD_ITEM_INVALIDATE, nSpawnTypeFlags, pos, pDesc->m_fAmount);
+		pWorldItem->SetName(pDesc->m_szDescName);
+		pWorldItem->SetModelName(pDesc->m_szModelName);
+		pWorldItem->SetType(pDesc->m_nItemType);
 		pWorldItem->m_dwStartTime = GetGlobalTimeMS();
 
-		if(pDesc->m_nItemType==WIT_QUEST) {
+		if (pDesc->m_nItemType == WIT_QUEST) {
 			pWorldItem->CreateVisualMesh();
 		}
 
-		mItemList.insert( WorldItemList::value_type( nID, pWorldItem ));
-		iterItem = mItemList.find( nID );
+		mItemList.insert(WorldItemList::value_type(nID, pWorldItem));
+		iterItem = mItemList.find(nID);
 	}
-	SpawnWorldItem( iterItem );
-	
+	SpawnWorldItem(iterItem);
+
 	return pWorldItem;
 }
 
 #define  WORLD_ITEM_RADIUS		100.f
+#define  WORLD_ITEM_UPDATE_THROTTLE	2
+
 void ZWorldItemManager::update()
 {
 	ZCharacter* pCharacter = g_pGame->m_pMyCharacter;
-	
-	if( pCharacter==NULL||pCharacter->IsDead() ) return; 
-	
-	for(auto* pItem : MakePairValueAdapter(mItemList))
+
+	if (pCharacter == NULL || pCharacter->IsDead()) return;
+
+	m_nUpdateCounter++;
+	if (m_nUpdateCounter % WORLD_ITEM_UPDATE_THROTTLE != 0)
+		return;
+
+	rvector charPos = pCharacter->m_Position;
+	const float fRadiusSq = WORLD_ITEM_RADIUS * WORLD_ITEM_RADIUS;
+
+	for (auto* pItem : MakePairValueAdapter(mItemList))
 	{
-		if( pItem->GetState() == WORLD_ITEM_VALIDATE )
+		if (pItem->GetState() == WORLD_ITEM_VALIDATE)
 		{
-			char szName[64];
-			strcpy_safe(szName,pItem->GetName());
-			rvector charPos = pCharacter->m_Position;
 			rvector itemPos = pItem->GetPosition();
-			auto vec = charPos - itemPos;
-			if (Magnitude(vec) <= WORLD_ITEM_RADIUS)
+			rvector vec = charPos - itemPos;
+
+			float fDistSq = vec.x * vec.x + vec.y * vec.y + vec.z * vec.z;
+			if (fDistSq <= fRadiusSq)
 			{
 				OnOptainWorldItem(pItem);
-			}			
+			}
 		}
 	}
 }
 
 void ZWorldItemManager::OnOptainWorldItem(ZWorldItem* pItem)
 {
-	if( !CheckBitSet(pItem->GetSpawnTypeFlags(), WORLD_ITEM_STAND_ALINE) )
+	if (!CheckBitSet(pItem->GetSpawnTypeFlags(), WORLD_ITEM_STAND_ALINE))
 	{
 		if (ZGetGameClient()->GetMatchStageSetting()->GetNetcode() != NetcodeType::ServerBased)
-			ZPostRequestObtainWorldItem( ZGetGameClient()->GetPlayerUID(), pItem->GetID() );
+			ZPostRequestObtainWorldItem(ZGetGameClient()->GetPlayerUID(), pItem->GetID());
 	}
 	else
 	{
 		ZPostLocalEventOptainSpecialWorldItem(int(pItem->GetItemID()));
 	}
 
-	pItem->SetState( WORLD_ITEM_CANDIDATE );
+	pItem->SetState(WORLD_ITEM_CANDIDATE);
 }
 
 void ZWorldItemManager::Clear()
 {
-	for( WIL_Iterator iter = mItemList.begin(); iter != mItemList.end(); )
+	for (WIL_Iterator iter = mItemList.begin(); iter != mItemList.end(); )
 	{
-		SAFE_DELETE( iter->second );
-		iter = mItemList.erase( iter );
+		SAFE_DELETE(iter->second);
+		iter = mItemList.erase(iter);
 	}
 	mDrawer.Clear();
 }
 
-bool ZWorldItemManager::DeleteWorldItem( int nID , bool bDrawRemoveEffect)
+bool ZWorldItemManager::DeleteWorldItem(int nID, bool bDrawRemoveEffect)
 {
-	WIL_Iterator iter = mItemList.find( nID );
-	if( iter == mItemList.end() )	return false;
+	WIL_Iterator iter = mItemList.find(nID);
+	if (iter == mItemList.end())	return false;
 
-	DeleteWorldItem( iter, bDrawRemoveEffect);
+	DeleteWorldItem(iter, bDrawRemoveEffect);
 	return true;
 }
 
-void ZWorldItemManager::DeleteWorldItem( WIL_Iterator& iter , bool bDrawRemoveEffect)
+void ZWorldItemManager::DeleteWorldItem(WIL_Iterator& iter, bool bDrawRemoveEffect)
 {
 	if (bDrawRemoveEffect)
 	{
@@ -313,80 +310,78 @@ void ZWorldItemManager::DeleteWorldItem( WIL_Iterator& iter , bool bDrawRemoveEf
 		mDrawer.DrawEffect(WORLD_ITEM_EFFECT_REMOVE, pItem->GetPosition());
 	}
 
-	SAFE_DELETE( iter->second );
-	mItemList.erase( iter );
+	SAFE_DELETE(iter->second);
+	mItemList.erase(iter);
 }
 
-void ZWorldItemManager::Draw(int mode,float height,bool bWaterMap)//ÀÓ½Ã..
+void ZWorldItemManager::Draw(int mode, float height, bool bWaterMap)
 {
-	ZWorldItem* pWorldItem	= 0;
+	ZWorldItem* pWorldItem = 0;
 
-	RSetWBuffer( TRUE );
+	RSetWBuffer(TRUE);
 	RGetDevice()->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
 
 	float _h = 0.f;
 
-	for( WIL_Iterator iter = mItemList.begin(); iter != mItemList.end(); ++iter )
+	for (WIL_Iterator iter = mItemList.begin(); iter != mItemList.end(); ++iter)
 	{
-		pWorldItem	= iter->second;
-		if( pWorldItem->GetState() == WORLD_ITEM_VALIDATE )
+		pWorldItem = iter->second;
+		if (pWorldItem->GetState() == WORLD_ITEM_VALIDATE)
 		{
 			_h = pWorldItem->GetPosition().z;
 
 			bool bDraw = false;
 
-			if(mode==0) {			// ¸ÕÀú±×¸®±â
-
-				if( bWaterMap ) {
-					if( _h <= height)	// ¹°¼Ó
+			if (mode == 0) {
+				if (bWaterMap) {
+					if (_h <= height)
 						bDraw = true;
 				}
 				else {
 					bDraw = false;
 				}
 
-				if( pWorldItem->GetType()==WIT_QUEST ) 
+				if (pWorldItem->GetType() == WIT_QUEST)
 					bDraw = true;
-				
-			} else if(mode==1) {	// ³ªÁß±×¸®±â
-
-				if( bWaterMap )  {
-					if(bWaterMap && _h > height)	// ¹°¹Û
+			}
+			else if (mode == 1) {
+				if (bWaterMap) {
+					if (bWaterMap && _h > height)
 						bDraw = true;
 				}
 				else {
 					bDraw = true;
 				}
 
-				if( pWorldItem->GetType()==WIT_QUEST )
+				if (pWorldItem->GetType() == WIT_QUEST)
 					bDraw = false;
 			}
 
-			if(bDraw)
-				mDrawer.DrawWorldItem( pWorldItem );
+			if (bDraw)
+				mDrawer.DrawWorldItem(pWorldItem);
 		}
 	}
 }
 
 void ZWorldItemManager::Draw()
 {
-	ZWorldItem* pWorldItem	= 0;
+	ZWorldItem* pWorldItem = 0;
 
-	RSetWBuffer( TRUE );
+	RSetWBuffer(TRUE);
 	RGetDevice()->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
 
-	for( WIL_Iterator iter = mItemList.begin(); iter != mItemList.end(); ++iter )
+	for (WIL_Iterator iter = mItemList.begin(); iter != mItemList.end(); ++iter)
 	{
-		pWorldItem	= iter->second;
-		if( pWorldItem->GetState() == WORLD_ITEM_VALIDATE )
-			mDrawer.DrawWorldItem( pWorldItem );
+		pWorldItem = iter->second;
+		if (pWorldItem->GetState() == WORLD_ITEM_VALIDATE)
+			mDrawer.DrawWorldItem(pWorldItem);
 	}
 }
 
-bool ZWorldItemManager::SpawnWorldItem( WIL_Iterator& iter )
+bool ZWorldItemManager::SpawnWorldItem(WIL_Iterator& iter)
 {
 	ZWorldItem* pItem = iter->second;
-	pItem->SetState( WORLD_ITEM_VALIDATE );
+	pItem->SetState(WORLD_ITEM_VALIDATE);
 
 	if (pItem->GetItemID() < USER_WORLDITEM_FIRST)
 		mDrawer.DrawEffect(WORLD_ITEM_EFFECT_CREATE, pItem->GetPosition());
@@ -396,7 +391,7 @@ bool ZWorldItemManager::SpawnWorldItem( WIL_Iterator& iter )
 
 void ZWorldItemManager::Reset(bool bDrawRemoveEffect)
 {
-	for( WIL_Iterator iter = mItemList.begin(); iter != mItemList.end(); ++iter)
+	for (WIL_Iterator iter = mItemList.begin(); iter != mItemList.end(); ++iter)
 	{
 		ZWorldItem* pItem = iter->second;
 
@@ -406,7 +401,7 @@ void ZWorldItemManager::Reset(bool bDrawRemoveEffect)
 				mDrawer.DrawEffect(WORLD_ITEM_EFFECT_REMOVE, pItem->GetPosition());
 		}
 
-		SAFE_DELETE( pItem );
+		SAFE_DELETE(pItem);
 	}
 
 	mItemList.clear();
@@ -415,78 +410,73 @@ void ZWorldItemManager::Reset(bool bDrawRemoveEffect)
 void ZWorldItemManager::AddQuestPortal(rvector& pos)
 {
 	int id = GenStandAlondID();
-	AddWorldItem(id, WORLDITEM_PORTAL_ID,MTD_Static, pos);
+	AddWorldItem(id, WORLDITEM_PORTAL_ID, MTD_Static, pos);
 
-	ZGetSoundEngine()->PlaySound("fx_openportal",pos);
+	ZGetSoundEngine()->PlaySound("fx_openportal", pos);
 }
 
-//////////////////////////////////////////////////////////////////////////
-//		ZWorldItemDrawer
-//////////////////////////////////////////////////////////////////////////
-RVisualMesh* ZWorldItemDrawer::AddMesh( const char* pName )
+RVisualMesh* ZWorldItemDrawer::AddMesh(const char* pName)
 {
-	_ASSERT( pName );
-	RMesh* pMesh	= ZGetMeshMgr()->Get( (char*)pName );
+	_ASSERT(pName);
+	RMesh* pMesh = ZGetMeshMgr()->Get((char*)pName);
 	RVisualMesh* pVMesh = new RVisualMesh;
-	pVMesh->Create( pMesh );
- 	pVMesh->SetAnimation("play");
+	pVMesh->Create(pMesh);
+	pVMesh->SetAnimation("play");
 	pVMesh->SetCheckViewFrustum(true);
-	mVMeshList.insert( WorldItemVMeshMap::value_type( string(pName), pVMesh ));
+	mVMeshList.insert(WorldItemVMeshMap::value_type(string(pName), pVMesh));
 	return pVMesh;
 }
 
-void ZWorldItemDrawer::DrawWorldItem( ZWorldItem* pWorldItem, bool Rotate )
+void ZWorldItemDrawer::DrawWorldItem(ZWorldItem* pWorldItem, bool Rotate)
 {
-	_ASSERT( pWorldItem != 0 );
+	_ASSERT(pWorldItem != 0);
 
-	if( pWorldItem->m_bisDraw==false )
-		return; //weapon ¿¡¼­ ±×·ÁÁÖ´Â ¸ðµ¨ÀÇ °æ¿ì..
+	if (pWorldItem->m_bisDraw == false)
+		return;
 
-	WIVMM_iterator iter = mVMeshList.find( string( pWorldItem->GetModelName()) );
+	WIVMM_iterator iter = mVMeshList.find(string(pWorldItem->GetModelName()));
 	RVisualMesh* pVMesh = 0;
 
-	if(pWorldItem->m_pVMesh) {// ÀÚ½Å¸¸ÀÇ visual mesh ¸¦ »ç¿ëÇÑ´Ù¸é~
+	if (pWorldItem->m_pVMesh) {
 		pVMesh = pWorldItem->m_pVMesh;
 
-		if(pWorldItem->GetType()==WIT_QUEST)
-			if( pVMesh->isOncePlayDone() )
+		if (pWorldItem->GetType() == WIT_QUEST)
+			if (pVMesh->isOncePlayDone())
 				pVMesh->SetAnimation("playloop");
 	}
 	else {
-
-		if( iter == mVMeshList.end() ) 
-			pVMesh = AddMesh( pWorldItem->GetModelName() );
+		if (iter == mVMeshList.end())
+			pVMesh = AddMesh(pWorldItem->GetModelName());
 		else
 			pVMesh = iter->second;
 	}
-	
+
 	rmatrix world;
 	rvector pos = pWorldItem->GetPosition();
 	rvector dir = pWorldItem->GetDir();
-	rvector up  = pWorldItem->GetUp();
+	rvector up = pWorldItem->GetUp();
 
-//	MakeWorldMatrix( &world, pos, rvector(0,1,0), rvector(0,0,1) );
-	MakeWorldMatrix( &world, pos, dir , up );
+	MakeWorldMatrix(&world, pos, dir, up);
 
 	float fVis = 1.f;
 
 	DWORD thistime = GetGlobalTimeMS();
 
-	if( (pWorldItem->GetType()!=WIT_CLIENT)
-		&& (pWorldItem->GetSubType() != MTD_Static) )
+	if ((pWorldItem->GetType() != WIT_CLIENT)
+		&& (pWorldItem->GetSubType() != MTD_Static))
 	{
-		if( thistime > pWorldItem->m_dwStartTime + 6000) // 6ÃÊ ÀÌÈÄ
+		if (thistime > pWorldItem->m_dwStartTime + 6000)
 		{
-			if(pWorldItem->m_dwToggleBackupTime < thistime  ) {
+			if (pWorldItem->m_dwToggleBackupTime < thistime) {
 				pWorldItem->m_bToggle = !pWorldItem->m_bToggle;
 				pWorldItem->m_dwToggleBackupTime = thistime + 100;
-			} 
-			
-			float fAspect = ( pWorldItem->m_dwToggleBackupTime - thistime ) / 100.f;
+			}
 
-			fAspect = max(min(fAspect,1.f),0.5f); // 0.3f ~ 1.f
+			float fAspect = (pWorldItem->m_dwToggleBackupTime - thistime) / 100.f;
 
-			if(pWorldItem->m_bToggle) {
+			fAspect = max(min(fAspect, 1.f), 0.5f);
+
+			if (pWorldItem->m_bToggle) {
 				fVis = fAspect;
 			}
 			else {
@@ -497,48 +487,47 @@ void ZWorldItemDrawer::DrawWorldItem( ZWorldItem* pWorldItem, bool Rotate )
 
 	pVMesh->SetVisibility(fVis);
 
-	pVMesh->SetWorldMatrix( world );
+	pVMesh->SetWorldMatrix(world);
 	pVMesh->Frame();
 	pVMesh->Render();
 
-	if(pVMesh->m_bIsRender==false)
+	if (pVMesh->m_bIsRender == false)
 		return;
 
-	if (pWorldItem->GetItemID() < USER_WORLDITEM_FIRST) 
-		if(pWorldItem->GetType()!=WIT_QUEST)
-			DrawEffect( WORLD_ITEM_EFFECT_IDLE, pos );
+	if (pWorldItem->GetItemID() < USER_WORLDITEM_FIRST)
+		if (pWorldItem->GetType() != WIT_QUEST)
+			DrawEffect(WORLD_ITEM_EFFECT_IDLE, pos);
 }
 
-void ZWorldItemDrawer::DrawEffect( ZWORLD_ITEM_EFFECT effect, const rvector& pos )
+void ZWorldItemDrawer::DrawEffect(ZWORLD_ITEM_EFFECT effect, const rvector& pos)
 {
 	RVisualMesh* pVMesh = 0;
-	switch( effect ) 
+	switch (effect)
 	{
 	case WORLD_ITEM_EFFECT_CREATE:
-		ZGetEffectManager()->AddWorldItemEatenEffect( pos );
+		ZGetEffectManager()->AddWorldItemEatenEffect(pos);
 		break;
 	case WORLD_ITEM_EFFECT_REMOVE:
-		ZGetEffectManager()->AddWorldItemEatenEffect( pos );
+		ZGetEffectManager()->AddWorldItemEatenEffect(pos);
 		break;
 	case WORLD_ITEM_EFFECT_IDLE:
-		{
-		WIVMM_iterator iter = mVMeshList.find( string(BASE_EFFECT_MODEL) );
-		if( iter == mVMeshList.end() )
-			pVMesh = AddMesh( BASE_EFFECT_MODEL );
+	{
+		WIVMM_iterator iter = mVMeshList.find(string(BASE_EFFECT_MODEL));
+		if (iter == mVMeshList.end())
+			pVMesh = AddMesh(BASE_EFFECT_MODEL);
 		else
 			pVMesh = iter->second;
-		if( pVMesh != 0 )
+		if (pVMesh != 0)
 		{
 			rmatrix world;
-			MakeWorldMatrix( &world, pos, rvector(0,1,0), rvector(0,0,1) );
+			MakeWorldMatrix(&world, pos, rvector(0, 1, 0), rvector(0, 0, 1));
 
-			pVMesh->SetWorldMatrix( world );
+			pVMesh->SetWorldMatrix(world);
 			pVMesh->Frame();
 			pVMesh->Render();
-		}			
 		}
-		break;
-
+	}
+	break;
 	}
 }
 
@@ -549,24 +538,18 @@ ZWorldItemDrawer::~ZWorldItemDrawer()
 
 void ZWorldItemDrawer::Clear()
 {
-	for( WIVMM_iterator iter = mVMeshList.begin(); iter != mVMeshList.end(); )
+	for (WIVMM_iterator iter = mVMeshList.begin(); iter != mVMeshList.end(); )
 	{
 		RVisualMesh* pVMesh = iter->second;
-		SAFE_DELETE( pVMesh );
-		iter	= mVMeshList.erase( iter );
+		SAFE_DELETE(pVMesh);
+		iter = mVMeshList.erase(iter);
 	}
 }
 
-
-
-//////////////////////////////////////////////////////////////////////////
-//		Global Method
-//////////////////////////////////////////////////////////////////////////
 ZWorldItemManager* ZGetWorldItemManager()
 {
 	return ZWorldItemManager::GetInstance();
 }
-
 
 int ZWorldItemManager::GetLinkedWorldItemID(MMatchItemDesc* pItemDesc)
 {
@@ -575,14 +558,12 @@ int ZWorldItemManager::GetLinkedWorldItemID(MMatchItemDesc* pItemDesc)
 	{
 		MMatchWorldItemDesc* pWorldItemDesc = itor->second;
 
-		// worlditem.xmlÀÇ ¸ðµ¨ÀÌ¸§°ú zitem.xmlÀÇ ¸Þ½¬ÀÌ¸§ÀÌ °°¾Æ¾ß¸¸ µÈ´Ù.
-		if(strcmp(pItemDesc->m_szMeshName, pWorldItemDesc->m_szModelName)==0)
+		if (strcmp(pItemDesc->m_szMeshName, pWorldItemDesc->m_szModelName) == 0)
 		{
 			return pWorldItemDesc->m_nID;
 		}
 	}
 
-	_ASSERT(0);	// ¸Â´Â ¿ùµå¾ÆÀÌÅÛÀÌ ¾ø´Ù.
+	_ASSERT(0);
 	return 0;
-
 }

@@ -57,11 +57,30 @@ void ZWorldManager::Clear()
 }
 ```
 
-#### 🟡 **Moderado: Búsqueda Lineal en AddWorld**
+#### 🟡 **Moderado: Búsqueda Lineal en AddWorld + Bug de Lógica**
 - **Ubicación**: `ZWorldManager.cpp:35-45`
-- **Problema**: Búsqueda O(n) en cada `AddWorld`
-- **Impacto**: Bajo-Medio - Solo afecta durante carga de mapas
-- **Mejora Sugerida**: Usar `std::unordered_map<string, ZWorld*>` para O(1)
+- **Problema**: 
+  1. Búsqueda O(n) en cada `AddWorld` - busca en `vector` (puede tener duplicados) en lugar de `m_Worlds` (set único)
+  2. **BUG**: Busca en el vector activo en lugar del set de mundos únicos, lo que puede causar comportamiento inesperado
+- **Código Problemático**:
+```cpp
+void ZWorldManager::AddWorld(const char* szMapName)
+{
+    for (iterator i = begin(); i!=end(); i++) {  // ⚠️ Busca en vector (puede tener duplicados)
+        ZWorld *pWorld = *i;
+        if(strcmp(pWorld->m_szName,szMapName)==0) {
+            pWorld->m_nRefCount++;
+            push_back(pWorld);
+            return;
+        }
+    }
+    // ...
+}
+```
+- **Impacto**: Bajo-Medio - Solo afecta durante carga de mapas, pero puede causar bugs si hay múltiples referencias
+- **Mejora Sugerida**: 
+  1. Buscar en `m_Worlds` (set) en lugar del vector
+  2. Usar `std::unordered_map<string, ZWorld*>` para O(1)
 
 #### 🟢 **Menor: Validación de Índices**
 - **Ubicación**: `ZWorldManager.cpp:79-83, 85-90`
@@ -126,29 +145,51 @@ void ZWorldItemManager::update()
   - Verificar solo items cercanos al jugador
   - Throttling: verificar cada N frames
 
-#### 🟡 **Moderado: Código Duplicado en Draw()**
+#### 🟢 **Menor: Código Duplicado en Draw() - NO ES PROBLEMA REAL**
 - **Ubicación**: `ZWorldItemManager.cpp:320-384`
-- **Problema**: Dos métodos `Draw()` con lógica similar
-- **Código**:
+- **Análisis Revisado**: 
+  - Los dos métodos `Draw()` tienen propósitos diferentes y se llaman en momentos distintos
+  - `Draw()` simple: se usa cuando no hay agua o para casos especiales
+  - `Draw(int mode, float height, bool bWaterMap)`: se usa para renderizado con agua (dos passes: bajo/sobre agua)
+- **Uso Real** (verificado en `ZGameDrawD3D9.cpp:142,157`):
 ```cpp
-void ZWorldItemManager::Draw()  // Versión simple
-void ZWorldItemManager::Draw(int mode,float height,bool bWaterMap)  // Versión compleja
+// Pass 1: Items bajo agua (antes de renderizar agua)
+ZGetWorldItemManager()->Draw(0, Game.GetWorld()->GetWaterHeight(), Game.GetWorld()->IsWaterMap());
+// ... renderizar agua ...
+// Pass 2: Items sobre agua (después de renderizar agua)
+ZGetWorldItemManager()->Draw(1, Game.GetWorld()->GetWaterHeight(), Game.GetWorld()->IsWaterMap());
 ```
-- **Impacto**: Mantenimiento duplicado, posible inconsistencia
-- **Solución**: Unificar en un solo método con parámetros opcionales
+- **Veredicto**: ✅ **NO ES PROBLEMA** - La duplicación es intencional y necesaria para el sistema de renderizado con agua
+- **Recomendación**: Mantener como está, pero agregar comentarios explicativos
 
-#### 🟡 **Moderado: Lógica Compleja en ApplyWorldItem (Balas)**
+#### 🟡 **Moderado: Lógica Compleja en ApplyWorldItem (Balas) + BUG**
 - **Ubicación**: `ZWorldItem.cpp:62-102`
-- **Problema**: Lógica de recarga de balas muy compleja y difícil de seguir
+- **Problema**: 
+  1. Lógica de recarga de balas muy compleja y difícil de seguir (40+ líneas)
+  2. **BUG CRÍTICO**: Línea 68 verifica `MMCIP_PRIMARY` dos veces en lugar de `PRIMARY` y `SECONDARY`
 - **Código Problemático**:
 ```cpp
 case WIT_BULLET:
-    // ⚠️ 40+ líneas de lógica compleja para recargar balas
+    pSeletedWeapon = pCharacter->GetItems()->GetSelectedWeapon();
+    if( pSeletedWeapon && pSeletedWeapon->GetItemType() != MMIT_RANGE )
+    {
+        if( !pCharacter->GetItems()->GetItem(MMCIP_PRIMARY)->IsEmpty() )
+            pSeletedWeapon = pCharacter->GetItems()->GetItem(MMCIP_PRIMARY);
+        else if( !pCharacter->GetItems()->GetItem(MMCIP_PRIMARY)->IsEmpty() )  // ⚠️ BUG: Debería ser SECONDARY
+            pSeletedWeapon = pCharacter->GetItems()->GetItem(MMCIP_SECONDARY);
+        else
+            pSeletedWeapon = 0;
+    }
+    // ⚠️ 30+ líneas más de lógica compleja para recargar balas
     // Variables: currentBullet, currentMagazine, maxBullet, maxMagazine, inc, max
     // Múltiples condiciones y cálculos anidados
 ```
-- **Impacto**: Difícil de mantener, propenso a bugs
-- **Solución**: Extraer a método separado `ReloadAmmo()`
+- **Impacto**: 
+  - Bug: Puede causar que no se recargue el arma secundaria correctamente
+  - Mantenimiento: Difícil de mantener, propenso a más bugs
+- **Solución**: 
+  1. **URGENTE**: Corregir bug línea 68: cambiar segundo `MMCIP_PRIMARY` a `MMCIP_SECONDARY`
+  2. Extraer a método separado `ReloadAmmo()`
 
 #### 🟡 **Moderado: Uso de Macros para Constantes**
 - **Ubicación**: `ZWorldItem.cpp:19, 250`
@@ -187,16 +228,23 @@ case WIT_BULLET:
 
 ### 3.1 ZWorldManager
 - **Carga de mapas**: O(n) donde n = número de mapas únicos
-- **AddWorld**: O(n) búsqueda lineal - podría ser O(1) con hash map
-- **Clear**: O(n) donde n = número de referencias activas
-- **Veredicto**: ✅ Rendimiento aceptable (mapas se cargan una vez)
+  - **Validado**: Típicamente 1 mapa (modo normal) o múltiples sectores en quest
+- **AddWorld**: O(n) búsqueda lineal en vector activo - **BUG**: debería buscar en `m_Worlds` (set)
+  - **Problema**: Busca en vector que puede tener duplicados, no en set único
+  - **Mejora**: O(1) con hash map o buscar en `m_Worlds` directamente
+- **Clear**: O(n) donde n = número de referencias activas en vector
+- **Veredicto**: ✅ Rendimiento aceptable (mapas se cargan una vez), pero tiene bug de lógica
 
 ### 3.2 ZWorldItemManager
-- **update()**: O(n) cada frame donde n = número de items
+- **update()**: O(n) cada frame donde n = número de items válidos
+  - **Validado**: Itera sobre `mItemList` (map) y verifica estado + distancia
+  - **Optimización**: Solo verifica items con `WORLD_ITEM_VALIDATE`, pero aún O(n)
 - **Draw()**: O(n) cada frame donde n = número de items válidos
+  - **Nota**: Se llama 2 veces por frame (bajo/sobre agua) = 2*O(n)
 - **AddWorldItem**: O(log n) - inserción en map
 - **DeleteWorldItem**: O(log n) - búsqueda en map
-- **Veredicto**: ⚠️ **Problema de escalabilidad** - No escala bien con muchos items
+- **Límite Real**: `MAX_WORLDITEM_SPAWN = 100` (definido en `MMatchWorldItemDesc.h:89`)
+- **Veredicto**: ⚠️ **Problema de escalabilidad confirmado** - Con 100 items = 100 verificaciones/frame = 6,000/segundo a 60 FPS
 
 ### 3.3 Benchmarks Estimados
 
@@ -344,10 +392,12 @@ namespace WorldItemConstants {
 
 ## 5. Plan de Implementación
 
-### Fase 1: Optimizaciones Críticas (1-2 semanas)
-1. ✅ Refactorizar `ZWorldManager` para eliminar herencia de `std::vector`
-2. ✅ Implementar spatial partitioning en `ZWorldItemManager::update()`
-3. ✅ Agregar throttling a `update()`
+### Fase 1: Correcciones Críticas y Optimizaciones (1-2 semanas)
+1. 🔴 **URGENTE**: Corregir bug en `ZWorldItem.cpp:68` (MMCIP_PRIMARY duplicado → SECONDARY)
+2. 🔴 **URGENTE**: Corregir bug en `ZWorldManager::AddWorld()` (buscar en `m_Worlds` en lugar de vector)
+3. ✅ Refactorizar `ZWorldManager` para eliminar herencia de `std::vector`
+4. ✅ Implementar spatial partitioning en `ZWorldItemManager::update()`
+5. ✅ Agregar throttling a `update()`
 
 ### Fase 2: Mejoras de Código (1 semana)
 4. ✅ Unificar métodos `Draw()`
@@ -400,22 +450,31 @@ namespace WorldItemConstants {
 ## 8. Conclusión
 
 ### ZWorldManager
-- **Estado**: Funcional pero con problemas de diseño
-- **Prioridad**: Media-Alta
+- **Estado**: Funcional pero con **BUGS** y problemas de diseño
+- **Bugs Encontrados**: 
+  1. `AddWorld()` busca en vector en lugar de set único
+- **Prioridad**: Media-Alta (bugs deben corregirse primero)
 - **Esfuerzo**: Medio (2-3 semanas)
 
 ### ZWorldItemManager
-- **Estado**: Funcional pero con problemas de rendimiento
-- **Prioridad**: Alta
+- **Estado**: Funcional pero con **BUG CRÍTICO** y problemas de rendimiento
+- **Bugs Encontrados**:
+  1. **CRÍTICO**: Línea 68 verifica `MMCIP_PRIMARY` dos veces (debería ser SECONDARY)
+- **Prioridad**: **ALTA** (bug crítico + optimizaciones de rendimiento)
 - **Esfuerzo**: Alto (3-4 semanas)
 
 ### Recomendación General
-**Empezar con optimizaciones de rendimiento en ZWorldItemManager** ya que:
-1. Tiene mayor impacto en gameplay (ejecuta cada frame)
-2. Problema de escalabilidad más crítico
-3. Mejoras más visibles para el usuario
+**URGENTE - Corregir bugs primero:**
+1. 🔴 **Bug crítico en ZWorldItem.cpp:68** - Puede causar que no se recargue arma secundaria
+2. 🔴 **Bug en ZWorldManager::AddWorld()** - Lógica incorrecta de búsqueda
 
-**ZWorldManager** puede esperar a refactorización más completa del sistema de mundos.
+**Luego optimizaciones:**
+3. **Empezar con optimizaciones de rendimiento en ZWorldItemManager** ya que:
+   - Tiene mayor impacto en gameplay (ejecuta cada frame)
+   - Problema de escalabilidad más crítico
+   - Mejoras más visibles para el usuario
+
+**ZWorldManager** puede esperar a refactorización más completa del sistema de mundos después de corregir el bug.
 
 ---
 
@@ -433,5 +492,23 @@ namespace WorldItemConstants {
 
 **Fecha de Análisis**: 2024
 **Autor**: Análisis Automatizado
-**Versión**: 1.0
+**Versión**: 1.1 (Validado con código adicional)
+
+## 10. Validaciones Realizadas
+
+### Código Revisado Adicionalmente:
+- ✅ `ZGameDrawD3D9.cpp` - Confirmado uso de dos `Draw()` para renderizado con agua
+- ✅ `ZGameClient.cpp` - Confirmado flujo de agregar/eliminar items
+- ✅ `MMatchWorldItemDesc.h` - Confirmado límite de 100 items (`MAX_WORLDITEM_SPAWN`)
+- ✅ `ZGame.cpp` - Confirmado que `update()` se llama cada frame
+- ✅ `ZWorldManager.cpp` - Validado bug en `AddWorld()` (busca en vector en lugar de set)
+
+### Bugs Confirmados:
+1. ✅ **ZWorldItem.cpp:68** - `MMCIP_PRIMARY` duplicado (debería ser `MMCIP_SECONDARY`)
+2. ✅ **ZWorldManager.cpp:37** - Busca en vector activo en lugar de `m_Worlds` (set único)
+
+### Análisis Corregidos:
+- ✅ `Draw()` duplicado - **NO ES PROBLEMA** (necesario para renderizado con agua)
+- ✅ Confirmado límite real de items (100 máximo)
+- ✅ Validado impacto de rendimiento (6,000 cálculos/segundo con 100 items)
 

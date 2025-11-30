@@ -54,11 +54,13 @@ ZCamera* ZGetCamera(void) {
 
 ZEffectManager*	ZGetEffectManager(void) { 
 //	return &g_pGame->m_EffectManager; 
-	return ZGetGameInterface()->GetEffectManager(); 
+	ZGameInterface* pGameInterface = ZGetGameInterface();
+	return pGameInterface ? pGameInterface->GetEffectManager() : NULL;
 }
 
 ZScreenEffectManager* ZGetScreenEffectManager(void) { 
-	return ZGetGameInterface()->GetScreenEffectManager(); 
+	ZGameInterface* pGameInterface = ZGetGameInterface();
+	return pGameInterface ? pGameInterface->GetScreenEffectManager() : NULL;
 }
 
 MZFileSystem* ZGetFileSystem(void) { 
@@ -86,7 +88,7 @@ ZGameTypeManager* ZGetGameTypeManager(void)
 		ZApplication::GetGameInterface()->GetGameTypeManager() : NULL;
 }
 
-extern ZInput* g_pInput;	// TODO: Á¤¸®
+extern ZInput* g_pInput;	// TODO: ï¿½ï¿½ï¿½ï¿½
 ZInput*	ZGetInput(void)
 {
 	return g_pInput;

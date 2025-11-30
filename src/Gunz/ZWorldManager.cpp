@@ -20,10 +20,10 @@ void ZWorldManager::Destroy()
 
 void ZWorldManager::Clear()
 {
-	while(size()) {
-		ZWorld *pWorld = back();
+	while (size()) {
+		ZWorld* pWorld = back();
 		pWorld->m_nRefCount--;
-		if(pWorld->m_nRefCount==0)
+		if (pWorld->m_nRefCount == 0)
 		{
 			m_Worlds.erase(m_Worlds.find(pWorld));
 			delete pWorld;
@@ -34,10 +34,11 @@ void ZWorldManager::Clear()
 
 void ZWorldManager::AddWorld(const char* szMapName)
 {
-	for (iterator i = begin(); i!=end(); i++) {
-		ZWorld *pWorld = *i;
-		if(strcmp(pWorld->m_szName,szMapName)==0) {
-			// ¿ÃπÃ ¿÷¥Ÿ
+	// Buscar en el set de mundos √∫nicos en lugar del vector (que puede tener duplicados)
+	for (std::set<ZWorld*>::iterator i = m_Worlds.begin(); i != m_Worlds.end(); i++) {
+		ZWorld* pWorld = *i;
+		if (strcmp(pWorld->m_szName, szMapName) == 0) {
+			// ÔøΩÃπÔøΩ ÔøΩ÷¥ÔøΩ
 			pWorld->m_nRefCount++;
 			push_back(pWorld);
 			return;
@@ -47,26 +48,25 @@ void ZWorldManager::AddWorld(const char* szMapName)
 	char szMapFileName[256];
 	char szMapPath[64] = "";
 	ZGetCurrMapPath(szMapPath);
-	sprintf_safe(szMapFileName, "%s%s/%s.rs", szMapPath,szMapName,szMapName);
+	sprintf_safe(szMapFileName, "%s%s/%s.rs", szMapPath, szMapName, szMapName);
 
-	ZWorld *pWorld = new ZWorld;
-	strcpy_safe(pWorld->m_szName,szMapName);
-	strcpy_safe(pWorld->m_szBspName,szMapFileName);
+	ZWorld* pWorld = new ZWorld;
+	strcpy_safe(pWorld->m_szName, szMapName);
+	strcpy_safe(pWorld->m_szBspName, szMapFileName);
 	push_back(pWorld);
 	m_Worlds.insert(pWorld);
 }
 
-bool ZWorldManager::LoadAll(ZLoadingProgress *pLoading )
+bool ZWorldManager::LoadAll(ZLoadingProgress* pLoading)
 {
-	int n=0;
+	int n = 0;
 
-	_ASSERT(m_Worlds.size()>0);
-	for (set<ZWorld*>::iterator i = m_Worlds.begin(); i!=m_Worlds.end(); i++) {
+	_ASSERT(m_Worlds.size() > 0);
+	for (set<ZWorld*>::iterator i = m_Worlds.begin(); i != m_Worlds.end(); i++) {
+		ZLoadingProgress loadingWorld("Map", pLoading, (float)1 / (float)m_Worlds.size());
 
-		ZLoadingProgress loadingWorld("Map",pLoading,(float)1/(float)m_Worlds.size());
-
-		ZWorld *pWorld = *i;
-		if(!pWorld->Create(&loadingWorld))
+		ZWorld* pWorld = *i;
+		if (!pWorld->Create(&loadingWorld))
 			return false;
 		loadingWorld.UpdateAndDraw(1.f);
 
@@ -75,23 +75,22 @@ bool ZWorldManager::LoadAll(ZLoadingProgress *pLoading )
 	return true;
 }
 
-
-ZWorld *ZWorldManager::GetWorld(int i)
+ZWorld* ZWorldManager::GetWorld(int i)
 {
-	if((int)size()<=i || i<0) return NULL;
+	if ((int)size() <= i || i < 0) return NULL;
 	return at(i);
 }
 
-ZWorld *ZWorldManager::SetCurrent(int i)
+ZWorld* ZWorldManager::SetCurrent(int i)
 {
-	if((int)size()<=i || i<0) {
+	if ((int)size() <= i || i < 0) {
 		_ASSERT(FALSE);
 		return NULL;
 	}
 
 	m_nCurrent = i;
 
-	ZWorld *pCurrent = GetCurrent();
+	ZWorld* pCurrent = GetCurrent();
 
 	SetClearColor(pCurrent->m_bFog ? pCurrent->m_dwFogColor : 0);
 
@@ -101,8 +100,8 @@ ZWorld *ZWorldManager::SetCurrent(int i)
 void ZWorldManager::OnInvalidate()
 {
 	ZWaterList::OnInvalidate();
-	for (set<ZWorld*>::iterator i = m_Worlds.begin(); i!=m_Worlds.end(); i++) {
-		ZWorld *pWorld = *i;
+	for (set<ZWorld*>::iterator i = m_Worlds.begin(); i != m_Worlds.end(); i++) {
+		ZWorld* pWorld = *i;
 		pWorld->OnInvalidate();
 	}
 }
@@ -110,8 +109,8 @@ void ZWorldManager::OnInvalidate()
 void ZWorldManager::OnRestore()
 {
 	ZWaterList::OnRestore();
-	for (set<ZWorld*>::iterator i = m_Worlds.begin(); i!=m_Worlds.end(); i++) {
-		ZWorld *pWorld = *i;
+	for (set<ZWorld*>::iterator i = m_Worlds.begin(); i != m_Worlds.end(); i++) {
+		ZWorld* pWorld = *i;
 		pWorld->OnRestore();
 	}
 }

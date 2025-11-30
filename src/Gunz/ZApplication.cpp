@@ -725,12 +725,14 @@ MZFileSystem* ZApplication::GetFileSystem(void)
 
 ZGameClient* ZApplication::GetGameClient(void)
 {
-	return (GetGameInterface()->GetGameClient());
+	ZGameInterface* pGameInterface = GetGameInterface();
+	return pGameInterface ? pGameInterface->GetGameClient() : NULL;
 }
 
 ZGame* ZApplication::GetGame(void)
 {
-	return (GetGameInterface()->GetGame());
+	ZGameInterface* pGameInterface = GetGameInterface();
+	return pGameInterface ? pGameInterface->GetGame() : NULL;
 }
 
 ZTimer* ZApplication::GetTimer(void)
