@@ -668,7 +668,7 @@ bool ZQuest::OnReadyToNewSector(MCommand* pCommand)
 	{
 		// Optimización: Guardar ZGetCharacterManager() en variable local
 		ZCharacterManager* pCharMgr = ZGetCharacterManager();
-		if (!pCharMgr) return;
+		if (!pCharMgr) return false;
 		
 		ZCharacter* pChar = pCharMgr->Find(uidPlayer);
 		if (pChar && m_CharactersGone.find(ZGetGameClient()->GetPlayerUID()) != m_CharactersGone.end()) {

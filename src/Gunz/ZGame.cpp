@@ -3325,12 +3325,8 @@ void ZGame::OnPeerDead(const MUID& uidAttacker, const u32 nAttackerArg,
 		if (pVictimCS->nLife > 0) pVictimCS->nLife--;
 	}
 
-	// Optimización: Guardar ZGetCharacterManager() en variable local para evitar múltiples llamadas
-	ZCharacterManager* pCharMgr = ZGetCharacterManager();
-	if (!pCharMgr) return;
-	
-	ZCharacter* pAttacker = pCharMgr->Find(uidAttacker);
-	ZCharacter* pVictim = pCharMgr->Find(uidVictim);
+	// Optimización: Usar variables ya declaradas arriba (pAttacker y pVictim ya existen)
+	// No necesitamos redeclararlas, solo usar las que ya tenemos
 	
 	if (bSuicide && (pAttacker == m_pMyCharacter))
 	{
