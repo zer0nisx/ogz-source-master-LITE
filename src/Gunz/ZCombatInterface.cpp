@@ -399,8 +399,11 @@ void ZCombatInterface::DrawNPCName(MDrawContext* pDC)
 
 void ZCombatInterface::DrawTDMScore(MDrawContext* pDC)
 {
-	int nBlueKills = ZGetGame()->GetMatch()->GetTeamKills(MMT_BLUE);
-	int nRedKills = ZGetGame()->GetMatch()->GetTeamKills(MMT_RED);
+	ZGame* pGame = ZGetGame();
+	if (!pGame) return;
+
+	int nBlueKills = pGame->GetMatch()->GetTeamKills(MMT_BLUE);
+	int nRedKills = pGame->GetMatch()->GetTeamKills(MMT_RED);
 	int nTargetKills = ZGetGameClient()->GetMatchStageSetting()->GetRoundMax();
 
 	ZBmNumLabel* pBmNumLabel = (ZBmNumLabel*)ZApplication::GetGameInterface()->GetIDLResource()->FindWidget("TDM_Score_Blue");

@@ -117,6 +117,8 @@ void ZActor::OnDraw()
 
 	if (IsDieAnimationDone())
 	{
+		if (!g_pGame) return; // Validación de seguridad
+
 		constexpr auto TRAN_AFTER = 0.5f;
 		constexpr auto VANISH_TIME = 1.f;
 
@@ -515,6 +517,7 @@ void ZActor::OnBlastDagger(rvector& dir, rvector& pos)
 
 	Normalize(m_vAddBlastVel);
 
+	if (!g_pGame) return; // Validación de seguridad
 	m_fAddBlastVelTime = g_pGame->GetTime();
 
 	m_fDelayTime = 3.0f;
@@ -555,18 +558,22 @@ ZActor* ZActor::CreateActor(MQUEST_NPC nNPCType, float fTC, int nQL)
 
 void ZActor::PostBasicInfo()
 {
+	ZGame* pGame = ZGetGame();
+	if (!pGame) return;
+
 	DWORD nNowTime = GetGlobalTimeMS();
 	if (GetInitialized() == false) return;
 
-	if (IsDead() && ZGetGame()->GetTime() - GetDeadTime() > 5.f) return;
+	if (IsDead() && pGame->GetTime() - GetDeadTime() > 5.f) return;
 	int nMoveTick = (ZGetGameClient()->GetAllowTunneling() == false) ? PEERMOVE_TICK : PEERMOVE_AGENT_TICK;
 
 	if ((int)(nNowTime - m_nLastTime[ACTOR_LASTTIME_BASICINFO]) >= nMoveTick)
 	{
 		m_nLastTime[ACTOR_LASTTIME_BASICINFO] = nNowTime;
 
+		float currentTime = pGame->GetTime();
 		ZACTOR_BASICINFO pbi;
-		pbi.fTime = ZGetGame()->GetTime();
+		pbi.fTime = currentTime;
 		pbi.uidNPC = GetUID();
 
 		pbi.posx = m_Position.x;
@@ -589,7 +596,7 @@ void ZActor::PostBasicInfo()
 		Item.info.position = m_Position;
 		Item.info.direction = GetDirection();
 		Item.info.velocity = GetVelocity();
-		Item.fSendTime = Item.fReceivedTime = ZGetGame()->GetTime();
+		Item.fSendTime = Item.fReceivedTime = currentTime;
 		AddToHistory(Item);
 	}
 }
@@ -602,7 +609,8 @@ void ZActor::InputBasicInfo(ZBasicInfo* pni, BYTE anistate)
 		SetVelocity(pni->velocity);
 		SetDirection(pni->direction);
 		m_Animation.ForceAniState(anistate);
-		m_fLastBasicInfo = g_pGame->GetTime();
+		if (g_pGame) // Validación de seguridad
+			m_fLastBasicInfo = g_pGame->GetTime();
 	}
 }
 
@@ -663,6 +671,8 @@ void ZActor::ProcessMovement(float fDelta)
 	}
 
 	if (CheckFlag(AF_BLAST_DAGGER)) {
+		if (!g_pGame) return; // Validación de seguridad
+
 		float fSpeed = m_fSpeed;
 
 #define BLAST_DAGGER_MAX_TIME 0.8f
@@ -822,6 +832,8 @@ void ZActor::Attack_Melee()
 
 void ZActor::Attack_Range(rvector& dir)
 {
+	if (!g_pGame) return; // Validación de seguridad
+
 	m_Animation.Input(ZA_INPUT_ATTACK_RANGE);
 
 	SetDirection(dir);
@@ -917,7 +929,7 @@ void ZActor::OnDamaged(ZObject* pAttacker, rvector srcPos, ZDAMAGETYPE damageTyp
 	if (!CheckFlag(AF_SOUND_WOUNDED))
 	{
 		bool bMyKill = false;
-		if (pAttacker)
+		if (pAttacker && g_pGame) // Validación de seguridad
 		{
 			bMyKill = (pAttacker == g_pGame->m_pMyCharacter);
 		}
@@ -1000,10 +1012,13 @@ void ZActor::CheckDead(float fDelta)
 {
 	if (!IsMyControl()) return;
 
+	ZGame* pGame = ZGetGame();
+	if (!pGame) return;
+
 	if (!CheckFlag(AF_DEAD))
 	{
 		if (m_pModule_HPAP->GetHP() <= 0) {
-			SetDeadTime(ZGetGame()->GetTime());
+			SetDeadTime(pGame->GetTime());
 			m_Animation.Input(ZA_EVENT_DEATH);
 			SetFlag(AF_DEAD, true);
 
@@ -1017,7 +1032,7 @@ void ZActor::CheckDead(float fDelta)
 	{
 		if (!CheckFlag(AF_REQUESTED_DEAD))
 		{
-			if (ZGetGame()->GetTime() - GetDeadTime() > GetNPCInfo()->fDyingTime)
+			if (pGame->GetTime() - GetDeadTime() > GetNPCInfo()->fDyingTime)
 			{
 				MUID uidAttacker = GetLastAttacker();
 				if (uidAttacker == MUID(0, 0))

@@ -82,10 +82,13 @@ void ZMatch::ProcessRespawn()
 	if (ZGetGameTypeManager()->IsQuestDerived(GetMatchType())) return;
 #endif
 
-	if (!IsWaitForRoundEnd() && g_pGame->m_pMyCharacter)
+	ZGame* pGame = ZGetGame();
+	if (!pGame) return;
+
+	if (!IsWaitForRoundEnd() && pGame->m_pMyCharacter)
 	{
 		static bool bLastDead = false;
-		if (g_pGame->m_pMyCharacter->IsDead())
+		if (pGame->m_pMyCharacter->IsDead())
 		{
 			if (bLastDead == false)
 			{
@@ -116,7 +119,7 @@ void ZMatch::ProcessRespawn()
 
 		}
 
-		bLastDead = g_pGame->m_pMyCharacter->IsDead();
+		bLastDead = pGame->m_pMyCharacter->IsDead();
 	}
 
 }
@@ -174,18 +177,21 @@ void ZMatch::SoloSpawn()
 
 void ZMatch::InitCharactersPosition()
 {
+	ZGame* pGame = ZGetGame();
+	if (!pGame) return;
+
 	if (IsTeamPlay())
 	{
 		int nSpawnIndex[] = { 0, 0 };
 
-		for (auto& pair : g_pGame->m_CharacterManager)
+		for (auto& pair : pGame->m_CharacterManager)
 		{
 			ZCharacter* pCharacter = pair.second;
 			for (size_t i = 0; i < std::size(nSpawnIndex); i++)
 			{
 				if (pCharacter->GetTeamID() == MMT_RED + i)
 				{
-					ZMapSpawnData* pSpawnData = g_pGame->GetMapDesc()->GetSpawnManager()->GetTeamData(i, nSpawnIndex[i]);
+					ZMapSpawnData* pSpawnData = pGame->GetMapDesc()->GetSpawnManager()->GetTeamData(i, nSpawnIndex[i]);
 					if (pSpawnData != NULL)
 					{
 						pCharacter->SetPosition(pSpawnData->m_Pos);
@@ -200,9 +206,9 @@ void ZMatch::InitCharactersPosition()
 		return;
 	}
 
-	if (ZApplication::GetGame()->GetMatch()->GetMatchType() == MMATCH_GAMETYPE_DUEL)
+	if (pGame->GetMatch()->GetMatchType() == MMATCH_GAMETYPE_DUEL)
 	{
-		ZRuleDuel* pDuel = (ZRuleDuel*)ZGetGameInterface()->GetGame()->GetMatch()->GetRule();
+		ZRuleDuel* pDuel = (ZRuleDuel*)pGame->GetMatch()->GetRule();
 		if (pDuel)
 		{
 			int nIndex = 2;
@@ -213,20 +219,20 @@ void ZMatch::InitCharactersPosition()
 
 			if (MIsMapOnlyDuel(ZGetGameClient()->GetMatchStageSetting()->GetMapIndex()))
 			{
-				ZMapSpawnData* pSpawnData = g_pGame->GetMapDesc()->GetSpawnManager()->GetData(nIndex);
+				ZMapSpawnData* pSpawnData = pGame->GetMapDesc()->GetSpawnManager()->GetData(nIndex);
 				if (pSpawnData != NULL)
 				{
-					g_pGame->m_pMyCharacter->SetPosition(pSpawnData->m_Pos);
-					g_pGame->m_pMyCharacter->SetDirection(pSpawnData->m_Dir);
+					pGame->m_pMyCharacter->SetPosition(pSpawnData->m_Pos);
+					pGame->m_pMyCharacter->SetDirection(pSpawnData->m_Dir);
 				}
 			}
 			else
 			{
-				ZMapSpawnData* pSpawnData = g_pGame->GetMapDesc()->GetSpawnManager()->GetTeamData(nIndex, 0);
+				ZMapSpawnData* pSpawnData = pGame->GetMapDesc()->GetSpawnManager()->GetTeamData(nIndex, 0);
 				if (pSpawnData != NULL)
 				{
-					g_pGame->m_pMyCharacter->SetPosition(pSpawnData->m_Pos);
-					g_pGame->m_pMyCharacter->SetDirection(pSpawnData->m_Dir);
+					pGame->m_pMyCharacter->SetPosition(pSpawnData->m_Pos);
+					pGame->m_pMyCharacter->SetDirection(pSpawnData->m_Dir);
 				}
 			}
 
@@ -234,7 +240,7 @@ void ZMatch::InitCharactersPosition()
 		}
 	}
 
-	ZMapSpawnData* pSpawnData = g_pGame->GetMapDesc()->GetSpawnManager()->GetSoloRandomData();
+	ZMapSpawnData* pSpawnData = pGame->GetMapDesc()->GetSpawnManager()->GetSoloRandomData();
 
 	v3 pos{0, 0, 100}, dir{ 1, 0, 0 };
 	if (pSpawnData)
@@ -243,21 +249,24 @@ void ZMatch::InitCharactersPosition()
 		dir = pSpawnData->m_Dir;
 	}
 
-	g_pGame->m_pMyCharacter->SetPosition(pos);
-	g_pGame->m_pMyCharacter->SetDirection(dir);
+	pGame->m_pMyCharacter->SetPosition(pos);
+	pGame->m_pMyCharacter->SetDirection(dir);
 }
 
 void ZMatch::InitRound()
 {
-	g_pGame->InitRound();
+	ZGame* pGame = ZGetGame();
+	if (!pGame) return;
+
+	pGame->InitRound();
 
 	InitCharactersPosition();
 	InitCharactersProperties();
 
 	ZGetWorldItemManager()->Reset();
 
-	rvector pos = g_pGame->m_pMyCharacter->GetPosition();
-	rvector dir = g_pGame->m_pMyCharacter->GetLowerDir();
+	rvector pos = pGame->m_pMyCharacter->GetPosition();
+	rvector dir = pGame->m_pMyCharacter->GetLowerDir();
 
 	m_nRoundKills = 0;
 
@@ -321,7 +330,7 @@ void ZMatch::SetRoundState(MMATCH_ROUNDSTATE nRoundState, int nArg)
 
 #ifndef _PUBLISH
 	char szLog[128];
-	sprintf_safe(szLog, "RoundState:%d À¸·Î ¹Ù²ñ\n", m_nRoundState);
+	sprintf_safe(szLog, "RoundState:%d ï¿½ï¿½ï¿½ï¿½ ï¿½Ù²ï¿½\n", m_nRoundState);
 	OutputDebugString(szLog);
 #endif
 

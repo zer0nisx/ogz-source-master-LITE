@@ -4644,9 +4644,12 @@ void ZGameInterface::ReserveLeaveBattle()
 {
 	if (!m_pGame) return;
 
-	if (ZGetGame()->GetTime() - ZGetGame()->m_pMyCharacter->LastDamagedTime > 5
-		|| !ZGetGame()->m_pMyCharacter->IsAlive()
-		|| ZGetGame()->IsReplay())
+	ZGame* pGame = ZGetGame();
+	if (!pGame) return;
+
+	if (pGame->GetTime() - pGame->m_pMyCharacter->LastDamagedTime > 5
+		|| !pGame->m_pMyCharacter->IsAlive()
+		|| pGame->IsReplay())
 	{
 		LeaveBattle();
 		return;

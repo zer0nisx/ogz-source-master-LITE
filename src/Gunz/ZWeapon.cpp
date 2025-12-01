@@ -91,8 +91,12 @@ void ZWeaponRocket::Create(RMesh* pMesh, const rvector &pos, const rvector &dir,
 	m_Position=pos;
 	m_Velocity=dir*ROCKET_VELOCITY;
 
-	m_fStartTime = g_pGame->GetTime();
-	m_fLastAddTime = g_pGame->GetTime();
+	ZGame* pGame = ZGetGame();
+	if (!pGame) return;
+
+	float currentTime = pGame->GetTime();
+	m_fStartTime = currentTime;
+	m_fLastAddTime = currentTime;
 
 	m_Dir=dir;
 	m_Up=rvector(0,0,1);
@@ -123,6 +127,9 @@ void ZWeaponRocket::Create(RMesh* pMesh, const rvector &pos, const rvector &dir,
 
 bool ZWeaponRocket::Update(float fElapsedTime)
 {
+	ZGame* pGame = ZGetGame();
+	if (!pGame) return false;
+
 	rvector diff = m_Velocity*fElapsedTime;
 
 #ifdef PORTAL
@@ -131,7 +138,7 @@ bool ZWeaponRocket::Update(float fElapsedTime)
 
 	rvector oldPos = m_Position;
 
-	if(g_pGame->GetTime() - m_fStartTime > ROCKET_LIFE ) {
+	if(pGame->GetTime() - m_fStartTime > ROCKET_LIFE ) {
 		Explosion();
 
 		if(Z_VIDEO_DYNAMICLIGHT && m_SLSid ) {
@@ -151,7 +158,7 @@ bool ZWeaponRocket::Update(float fElapsedTime)
 
 	rvector pickpos;
 	ZPICKINFO zpi;
-	bool bPicked = ZGetGame()->Pick(nullptr, m_Position, dir, &zpi, dwPickPassFlag);
+	bool bPicked = pGame->Pick(nullptr, m_Position, dir, &zpi, dwPickPassFlag);
 	if (bPicked)
 	{
 		if (zpi.bBspPicked)
@@ -207,7 +214,7 @@ bool ZWeaponRocket::Update(float fElapsedTime)
 
 	m_pVMesh->SetWorldMatrix(mat);
 
-	float this_time = g_pGame->GetTime();
+	float this_time = pGame->GetTime();
 
 	if( this_time > m_fLastAddTime + 0.02f ) {
 
@@ -507,8 +514,11 @@ void ZWeaponGrenade::Create(RMesh* pMesh, const rvector &pos, const rvector &vel
 
 bool ZWeaponGrenade::Update(float fElapsedTime)
 {
+	ZGame* pGame = ZGetGame();
+	if (!pGame) return false;
+
 	rvector oldPos = m_Position;
-	if(g_pGame->GetTime() - m_fStartTime > GRENADE_LIFE) {
+	if(pGame->GetTime() - m_fStartTime > GRENADE_LIFE) {
 		Explosion();
 		if(Z_VIDEO_DYNAMICLIGHT)
 		ZGetStencilLight()->AddLightSource( m_Position, 3.0f, 1300 );
@@ -529,7 +539,7 @@ bool ZWeaponGrenade::Update(float fElapsedTime)
 		rvector pickpos,normal;
 
 		ZPICKINFO zpi;
-		bool bPicked=g_pGame->Pick(ZGetCharacterManager()->Find(m_uidOwner),m_Position,dir,&zpi,dwPickPassFlag);
+		bool bPicked = pGame->Pick(ZGetCharacterManager()->Find(m_uidOwner), m_Position, dir, &zpi, dwPickPassFlag);
 		if(bPicked)
 		{
 			if(zpi.bBspPicked)
@@ -605,7 +615,9 @@ void ZWeaponGrenade::Explosion()
 	dir.z = 0.f;
 	ZGetEffectManager()->AddGrenadeEffect(v, dir);
 
-	g_pGame->OnExplosionGrenade(m_uidOwner, v, m_fDamage, 400.f, .2f, 1.f, m_nTeamID);
+	ZGame* pGame = ZGetGame();
+	if (pGame)
+		pGame->OnExplosionGrenade(m_uidOwner, v, m_fDamage, 400.f, .2f, 1.f, m_nTeamID);
 
 	ZGetSoundEngine()->PlaySound("we_grenade_explosion", v);
 
@@ -629,12 +641,15 @@ void ZWeaponFlashBang::Explosion()
 		return;
 	}
 
-	if (g_pGame->m_pMyCharacter->IsDead())
+	ZGame* pGame = ZGetGame();
+	if (!pGame) return;
+
+	if (pGame->m_pMyCharacter->IsDead())
 	{
 		return;
 	}
 
-	if (!ZGetGame()->GetWorld()->GetBsp()->Pick(m_Position, dir, &pick))
+	if (!pGame->GetWorld()->GetBsp()->Pick(m_Position, dir, &pick))
 	{
 		mbIsLineOfSight = true;
 	}
@@ -642,7 +657,7 @@ void ZWeaponFlashBang::Explosion()
 	{
 		auto vec = pick.PickPos - m_Position;
 		float distMap	= MagnitudeSq(vec);
-		rvector temp = g_pGame->m_pMyCharacter->m_Position - m_Position;
+		rvector temp = pGame->m_pMyCharacter->m_Position - m_Position;
 		float distChar	= MagnitudeSq(temp);
 		if( distMap > distChar )
 		{
@@ -656,8 +671,8 @@ void ZWeaponFlashBang::Explosion()
 
 	if( !mbIsExplosion && mbIsLineOfSight )
 	{
-		rvector pos		= g_pGame->m_pMyCharacter->GetPosition();
-		rvector dir		= g_pGame->m_pMyCharacter->GetTargetDir();
+		rvector pos		= pGame->m_pMyCharacter->GetPosition();
+		rvector dir		= pGame->m_pMyCharacter->GetTargetDir();
 		mbIsExplosion	= true;
 		CreateFlashBangEffect( m_Position, pos, dir, 10 );
 	}
@@ -666,9 +681,12 @@ void ZWeaponFlashBang::Explosion()
 
 bool	ZWeaponFlashBang::Update( float fElapsedTime )
 {
+	ZGame* pGame = ZGetGame();
+	if (!pGame) return false;
+
 	rvector oldPos = m_Position;
 
-	float lap	= g_pGame->GetTime() - m_fStartTime;
+	float lap	= pGame->GetTime() - m_fStartTime;
 
 	if( lap >= FLASHBANG_LIFE )
 	{
@@ -690,7 +708,7 @@ bool	ZWeaponFlashBang::Update( float fElapsedTime )
 		rvector pickpos, normal;
 
 		ZPICKINFO zpi;
-		bool bPicked	= g_pGame->Pick( ZGetCharacterManager()->Find(m_uidOwner), m_Position, dir, &zpi, dwPickPassFlag );
+		bool bPicked	= pGame->Pick( ZGetCharacterManager()->Find(m_uidOwner), m_Position, dir, &zpi, dwPickPassFlag );
 
 		if( bPicked )
 		{
@@ -788,8 +806,11 @@ const float ZWeaponSmokeGrenade::mcfTrigerTimeList[NUM_SMOKE] =
 
 bool ZWeaponSmokeGrenade::Update( float fElapsedTime )
 {
+	ZGame* pGame = ZGetGame();
+	if (!pGame) return false;
+
 	rvector oldPos = m_Position;
-	float lap	= g_pGame->GetTime() - m_fStartTime;
+	float lap	= pGame->GetTime() - m_fStartTime;
 
 	if( lap >= SMOKE_GRENADE_LIFETIME )
 	{
@@ -975,9 +996,12 @@ bool ZWeaponMagic::Update(float fElapsedTime)
 		}
 	}
 
+	ZGame* pGame = ZGetGame();
+	if (!pGame) return false;
+
 	rvector oldPos = m_Position;
 
-	if(g_pGame->GetTime() - m_fStartTime > MAGIC_WEAPON_LIFE ) {
+	if(pGame->GetTime() - m_fStartTime > MAGIC_WEAPON_LIFE ) {
 		Explosion( WMET_MAP, NULL , rvector(0,1,0));
 
 		if(Z_VIDEO_DYNAMICLIGHT && m_SLSid ) {
@@ -1006,7 +1030,7 @@ bool ZWeaponMagic::Update(float fElapsedTime)
 		ZObject* pOwnerObject = ZGetObjectManager()->GetObject(m_uidOwner);
 		ZObject* pPickObject = NULL;
 
-		bool bPicked=g_pGame->Pick(pOwnerObject, m_Position,dir,&zpi,dwPickPassFlag);
+		bool bPicked = pGame->Pick(pOwnerObject, m_Position, dir, &zpi, dwPickPassFlag);
 		if(bPicked)
 		{
 			if(zpi.bBspPicked) {
@@ -1042,7 +1066,7 @@ bool ZWeaponMagic::Update(float fElapsedTime)
 		{
 			rvector to = m_Position + diff;
 
-			if (g_pGame->ObjectColTest(pOwnerObject, m_Position, to, m_pSkillDesc->fColRadius, &pPickObject))
+			if (pGame->ObjectColTest(pOwnerObject, m_Position, to, m_pSkillDesc->fColRadius, &pPickObject))
 			{
 				pickdir = to - m_Position;
 				Normalize(pickdir);
@@ -1065,6 +1089,9 @@ bool ZWeaponMagic::Update(float fElapsedTime)
 		}
 	}
 
+	ZGame* pGame = ZGetGame();
+	if (!pGame) return false;
+
 	rmatrix mat;
 	rvector dir=m_Velocity;
 	Normalize(dir);
@@ -1073,7 +1100,7 @@ bool ZWeaponMagic::Update(float fElapsedTime)
 	m_pVMesh->SetScale(rvector(m_fMagicScale,m_fMagicScale,m_fMagicScale));
 	m_pVMesh->SetWorldMatrix(mat);
 
-	float this_time = g_pGame->GetTime();
+	float this_time = pGame->GetTime();
 
 	if( this_time > m_fLastAddTime + 0.02f ) {
 
@@ -1121,6 +1148,8 @@ void ZWeaponMagic::Render()
 
 void ZWeaponMagic::Explosion(WeaponMagicExplosionType type, ZObject* pVictim, const rvector& vDir)
 {
+	if (!g_pGame) return; // Validación de seguridad
+
 	rvector v = m_Position-rvector(0,0,100.f);
 
 #define MAGIC_MINIMUM_DAMAGE	0.2f
