@@ -22,7 +22,8 @@ int MMatchServer::AgentAdd(const MUID& uidComm)
 int MMatchServer::AgentRemove(const MUID& uidAgent, MAgentObjectMap::iterator* pNextItor)
 {
 	MAgentObjectMap::iterator i = m_AgentMap.find(uidAgent);
-	if(i==m_AgentMap.end()) return MERR_OBJECT_INVALID;
+	if (i == m_AgentMap.end())
+		return MERR_OBJECT_INVALID;
 
 	MAgentObject* pAgent = (*i).second;
 
@@ -41,16 +42,15 @@ int MMatchServer::AgentRemove(const MUID& uidAgent, MAgentObjectMap::iterator* p
 MAgentObject* MMatchServer::GetAgent(const MUID& uidAgent)
 {
 	MAgentObjectMap::iterator i = m_AgentMap.find(uidAgent);
-	if(i==m_AgentMap.end()) return NULL;
+	if (i == m_AgentMap.end()) return NULL;
 	return (*i).second;
 }
 
-
 MAgentObject* MMatchServer::GetAgentByCommUID(const MUID& uidComm)
 {
-	for(MAgentObjectMap::iterator i=m_AgentMap.begin(); i!=m_AgentMap.end(); i++){
+	for (MAgentObjectMap::iterator i = m_AgentMap.begin(); i != m_AgentMap.end(); i++) {
 		MAgentObject* pAgent = ((*i).second);
-		for (list<MUID>::iterator j=pAgent->m_CommListener.begin();j!=pAgent->m_CommListener.end();j++){
+		for (list<MUID>::iterator j = pAgent->m_CommListener.begin(); j != pAgent->m_CommListener.end(); j++) {
 			MUID TargetUID = *j;
 			if (TargetUID == uidComm)
 				return pAgent;
@@ -59,13 +59,12 @@ MAgentObject* MMatchServer::GetAgentByCommUID(const MUID& uidComm)
 	return NULL;
 }
 
-
 MAgentObject* MMatchServer::FindFreeAgent()
 {
 	MAgentObject* pFreeAgent = NULL;
-	for (MAgentObjectMap::iterator i=m_AgentMap.begin(); i!=m_AgentMap.end(); i++) {
+	for (MAgentObjectMap::iterator i = m_AgentMap.begin(); i != m_AgentMap.end(); i++) {
 		MAgentObject* pAgent = (*i).second;
-		if ( (pFreeAgent == NULL) || (pFreeAgent->GetAssignCount() > pAgent->GetStageCount()) )
+		if ((pFreeAgent == NULL) || (pFreeAgent->GetAssignCount() > pAgent->GetStageCount()))
 			pFreeAgent = pAgent;
 	}
 	return pFreeAgent;
@@ -88,15 +87,15 @@ void MMatchServer::ReserveAgent(MMatchStage* pStage)
 void MMatchServer::LocateAgentToClient(const MUID& uidPlayer, const MUID& uidAgent)
 {
 	MAgentObject* pAgent = GetAgent(uidAgent);
-	if (pAgent == NULL) 
+	if (pAgent == NULL)
 		return;
 
 	char szCharName[64];
 	MMatchObject* pChar = GetObject(uidPlayer);
-	sprintf_safe(szCharName, "%s(%d%d)", (pChar?pChar->GetAccountName():"?"), uidPlayer.High, uidPlayer.Low);
+	sprintf_safe(szCharName, "%s(%d%d)", (pChar ? pChar->GetAccountName() : "?"), uidPlayer.High, uidPlayer.Low);
 	LOG(LOG_DEBUG, "Locate Agent : Locate Agent(%d%d) to Player %s ", uidAgent.High, uidAgent.Low, szCharName);
 
-	MCommand* pCmd = CreateCommand(MC_AGENT_LOCATETO_CLIENT, MUID(0,0));
+	MCommand* pCmd = CreateCommand(MC_AGENT_LOCATETO_CLIENT, MUID(0, 0));
 	pCmd->AddParameter(new MCmdParamUID(uidAgent));
 	pCmd->AddParameter(new MCmdParamStr(pAgent->GetIP()));
 	pCmd->AddParameter(new MCmdParamInt(pAgent->GetTCPPort()));
@@ -104,17 +103,16 @@ void MMatchServer::LocateAgentToClient(const MUID& uidPlayer, const MUID& uidAge
 	RouteToListener(pChar, pCmd);
 }
 
-
 void MMatchServer::OnRegisterAgent(const MUID& uidComm, char* szIP, int nTCPPort, int nUDPPort)
 {
 	MAgentObject* pOldAgent = NULL;
-	while(pOldAgent=FindFreeAgent()) {
+	while (pOldAgent = FindFreeAgent()) {
 		AgentRemove(pOldAgent->GetUID(), NULL);
 	}
 
 	int nErrCode = AgentAdd(uidComm);
-	if(nErrCode!=MOK) {
-		LOG(LOG_DEBUG, MErrStr(nErrCode) );
+	if (nErrCode != MOK) {
+		LOG(LOG_DEBUG, MErrStr(nErrCode));
 	}
 
 	MCommObject* pCommObj = (MCommObject*)m_CommRefCache.GetRef(uidComm);
@@ -127,7 +125,7 @@ void MMatchServer::OnRegisterAgent(const MUID& uidComm, char* szIP, int nTCPPort
 	pAgent->AddCommListener(uidComm);
 	pAgent->SetAddr(szIP, nTCPPort, nUDPPort);
 
-	LOG(LOG_DEBUG, "Agent Registered (CommUID %u:%u) IP:%s, TCPPort:%d, UDPPort:%d ", 
+	LOG(LOG_DEBUG, "Agent Registered (CommUID %u:%u) IP:%s, TCPPort:%d, UDPPort:%d ",
 		uidComm.High, uidComm.Low, szIP, nTCPPort, nUDPPort);
 }
 
@@ -146,7 +144,7 @@ void MMatchServer::OnAgentStageReady(const MUID& uidCommAgent, const MUID& uidSt
 
 	MAgentObject* pAgent = GetAgentByCommUID(uidCommAgent);
 	if (pAgent == NULL) return;
-	
+
 	pStage->SetAgentReady(true);
 
 	LOG(LOG_DEBUG, "Agent Ready to Handle Stage(%d%d)", uidStage.High, uidStage.Low);
@@ -169,11 +167,10 @@ void MMatchServer::OnPeerReady(const MUID& uidChar, const MUID& uidPeer)
 
 	LocateAgentToClient(uidChar, pStage->GetAgentUID());
 
-	MCommand* pCmd = CreateCommand(MC_MATCH_RESPONSE_PEER_RELAY, MUID(0,0));
+	MCommand* pCmd = CreateCommand(MC_MATCH_RESPONSE_PEER_RELAY, MUID(0, 0));
 	pCmd->AddParameter(new MCmdParamUID(uidPeer));
 	RouteToListener(pChar, pCmd);
 }
-
 
 void MMatchServer::OnRequestRelayPeer(const MUID& uidChar, const MUID& uidPeer)
 {
@@ -194,7 +191,7 @@ void MMatchServer::OnRequestRelayPeer(const MUID& uidChar, const MUID& uidPeer)
 		pAgent = FindFreeAgent();
 		if (pAgent == NULL) {
 			// Notify Agent not ready
-			MCommand* pCmd = CreateCommand(MC_AGENT_ERROR, MUID(0,0));
+			MCommand* pCmd = CreateCommand(MC_AGENT_ERROR, MUID(0, 0));
 			pCmd->AddParameter(new MCmdParamInt(0));
 			RouteToListener(pChar, pCmd);
 			return;

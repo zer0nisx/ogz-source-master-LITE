@@ -10,7 +10,6 @@
 #define MTICK_CLAN_DBREFRESH_PERIOD_LIMIT		7200000			// (1000*60*120) - 2 hours
 #define MTICK_CLAN_EMPTY_PERIOD_LIMIT			600000			// (1000*60*10) - 10 secs
 
-
 MMatchClan::MMatchClan()
 {
 	Clear();
@@ -18,10 +17,7 @@ MMatchClan::MMatchClan()
 
 MMatchClan::~MMatchClan()
 {
-
-
 }
-
 
 void MMatchClan::Clear()
 {
@@ -53,7 +49,6 @@ void MMatchClan::InitClanInfoFromDB()
 	{
 		mlog("DB Query(GetClanInfo) Failed\n");
 	}
-
 }
 
 void MMatchClan::Create(int nCLID, const char* szClanName)
@@ -61,13 +56,12 @@ void MMatchClan::Create(int nCLID, const char* szClanName)
 	m_nCLID = nCLID;
 	strcpy_safe(m_szClanName, szClanName);
 
-
 	m_SmartRefresh.AddCategory(new MRefreshCategoryClanMemberImpl(this, 0));	// Category 0 �� ��ü��� ��� ���
 }
 
 void MMatchClan::InitClanInfoEx(const int nLevel, const int nTotalPoint, const int nPoint, const int nRanking,
-		            const int nWins, const int nLosses, const int nTotalMemberCount, const char* szMaster,
-					const char* szEmblemUrl, int nEmblemChecksum)
+	const int nWins, const int nLosses, const int nTotalMemberCount, const char* szMaster,
+	const char* szEmblemUrl, int nEmblemChecksum)
 {
 	m_ClanInfoEx.nLevel = nLevel;
 	m_ClanInfoEx.nTotalPoint = nTotalPoint;
@@ -84,7 +78,6 @@ void MMatchClan::InitClanInfoEx(const int nLevel, const int nTotalPoint, const i
 void MMatchClan::AddObject(const MUID& uid, MMatchObject* pObj)
 {
 	m_Members.Insert(uid, pObj);
-
 }
 
 void MMatchClan::RemoveObject(const MUID& uid)
@@ -95,7 +88,6 @@ void MMatchClan::RemoveObject(const MUID& uid)
 		m_Members.erase(itor);
 	}
 }
-
 
 void MMatchClan::Tick(u64 nClock)
 {
@@ -108,7 +100,7 @@ void MMatchClan::Tick(u64 nClock)
 
 	m_SmartRefresh.UpdateCategory(nClock);
 
-	if (GetMemberCount() <= 0) m_nEmptyPeriod += MTICK_CLAN_RUN; 
+	if (GetMemberCount() <= 0) m_nEmptyPeriod += MTICK_CLAN_RUN;
 	else m_nEmptyPeriod = 0;
 }
 
@@ -139,15 +131,13 @@ bool MMatchClan::CheckLifePeriod()
 MMatchClanMap::MMatchClanMap()
 {
 	m_nLastTick = 0;
-
 }
 
 MMatchClanMap::~MMatchClanMap()
 {
-
-
+	// Asegurar que Destroy() fue llamado antes del destructor
+	Destroy();
 }
-
 
 void MMatchClanMap::Destroy()
 {
@@ -158,10 +148,18 @@ void MMatchClanMap::Destroy()
 	}
 
 	clear();
+	m_ClanNameMap.clear(); // Limpiar explícitamente el mapa de nombres
 }
 
 void MMatchClanMap::CreateClan(int nCLID, const char* szClanName)
 {
+	// Verificar si el clan ya existe
+	iterator itor = find(nCLID);
+	if (itor != end()) {
+		// Clan ya existe, no crear duplicado
+		return;
+	}
+
 	MMatchClan* pNewClan = new MMatchClan;
 	pNewClan->Create(nCLID, szClanName);
 
@@ -175,7 +173,6 @@ void MMatchClanMap::DestroyClan(int nCLID, MMatchClanMap::iterator* pNextItor)
 	if (itor != end())
 	{
 		MMatchClan* pClan = (*itor).second;
-
 
 		map<std::string, MMatchClan*>::iterator itorClanNameMap = m_ClanNameMap.find(string(pClan->GetName()));
 		if (itorClanNameMap != m_ClanNameMap.end())
@@ -191,30 +188,30 @@ void MMatchClanMap::DestroyClan(int nCLID, MMatchClanMap::iterator* pNextItor)
 
 void MMatchClanMap::AddObject(const MUID& uid, MMatchObject* pObj)
 {
-	if (! IsEnabledObject(pObj)) return;
+	if (!IsEnabledObject(pObj)) return;
 
 	int nCLID = pObj->GetCharInfo()->m_ClanInfo.m_nClanID;
 	if (nCLID == 0) return;
 
-	// Ŭ���� ������ ���� ����
+	// Buscar o crear el clan (evitar búsqueda duplicada)
 	iterator itor = find(nCLID);
-	if (itor == end()) 
+	if (itor == end())
 	{
 		CreateClan(nCLID, pObj->GetCharInfo()->m_ClanInfo.m_szClanName);
+		// Buscar de nuevo después de crear
+		itor = find(nCLID);
 	}
 
-	itor = find(nCLID);
 	if (itor != end())
 	{
 		MMatchClan* pClan = (*itor).second;
-
 		pClan->AddObject(uid, pObj);
 	}
 }
 
 void MMatchClanMap::RemoveObject(const MUID& uid, MMatchObject* pObj)
 {
-	if (! IsEnabledObject(pObj)) return;
+	if (!IsEnabledObject(pObj)) return;
 	int nCLID = pObj->GetCharInfo()->m_ClanInfo.m_nClanID;
 	if (nCLID == 0) return;
 
@@ -235,18 +232,17 @@ bool MMatchClanMap::CheckTick(u64 nClock)
 	return true;
 }
 
-
 void MMatchClanMap::Tick(u64 nClock)
 {
 	if (!CheckTick(nClock)) return;
 
 	// Update Clans
-	for(MMatchClanMap::iterator iClan=begin(); iClan!=end();)
+	for (MMatchClanMap::iterator iClan = begin(); iClan != end();)
 	{
 		MMatchClan* pClan = (*iClan).second;
 		pClan->Tick(nClock);
 
-		if (pClan->CheckLifePeriod() == false) 
+		if (pClan->CheckLifePeriod() == false)
 		{
 			DestroyClan(pClan->GetCLID(), &iClan);
 			continue;
@@ -265,7 +261,7 @@ MMatchClan* MMatchClanMap::GetClan(const int nCLID)
 	{
 		return (*itor).second;
 	}
-	
+
 	return NULL;
 }
 
@@ -279,4 +275,3 @@ MMatchClan* MMatchClanMap::GetClan(const char* szClanName)
 
 	return NULL;
 }
-

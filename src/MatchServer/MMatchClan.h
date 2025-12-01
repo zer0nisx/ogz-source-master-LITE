@@ -92,6 +92,13 @@ private:
 public:
 	MMatchClanMap();
 	virtual ~MMatchClanMap();
+	
+	// No copiable ni movible (regla de tres/cinco)
+	MMatchClanMap(const MMatchClanMap&) = delete;
+	MMatchClanMap& operator=(const MMatchClanMap&) = delete;
+	MMatchClanMap(MMatchClanMap&&) = delete;
+	MMatchClanMap& operator=(MMatchClanMap&&) = delete;
+	
 	void Destroy(); 
 	void Tick(u64 nClock);
 
