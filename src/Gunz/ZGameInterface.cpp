@@ -659,6 +659,8 @@ bool ZGameInterface::InitInterfaceListener()
 	SetListenerWidget("CharSelectionCaller", ZGetCharSelectionCallerButtonListener());
 	SetListenerWidget("BuyConfirmCaller", ZGetBuyButtonListener());
 	SetListenerWidget("BuyCashConfirmCaller", ZGetBuyCashItemButtonListener());
+	SetListenerWidget("BuyConfirm_Buy", ZGetBuyConfirmButtonListener());  // Mejora: Listener para botón de confirmación
+	SetListenerWidget("BuyConfirm_Cancel", ZGetBuyConfirmCancelButtonListener());  // Mejora: Listener para botón de cancelar
 	SetListenerWidget("SellConfirmCaller", ZGetSellButtonListener());
 	SetListenerWidget("SellQuestItemConfirmCaller", ZGetSellQuestItemConfirmOpenListener());
 	SetListenerWidget("SellQuestItem_Cancel", ZGetSellQuestItemConfirmCloseListener());
@@ -3119,15 +3121,102 @@ void ZGameInterface::SellQuestItemCountDn()
 	SetSellQuestItemConfirmFrame();
 }
 
+// Declaraciones forward para funciones usadas en ShowBuyConfirm
+string GetRestrictionString(MMatchItemDesc* pItemDesc);
+string GetItemSpecString(MMatchItemDesc* pItemDesc);
+
+// Mejora: Confirmar compra del item
+void ZGameInterface::ConfirmBuy()
+{
+	if (m_nBuyItemID == 0)
+		return;
+
+	MMatchItemDesc* pItemDesc = MGetMatchItemDescMgr()->GetItemDesc(m_nBuyItemID);
+	if (!pItemDesc)
+		return;
+
+	// Ocultar ventana de confirmación
+	MWidget* pFrame = m_IDLResource.FindWidget("BuyConfirm");
+	if (pFrame)
+		pFrame->Show(false);
+
+	// Ejecutar compra
+	ZPostRequestBuyItem(ZGetGameClient()->GetPlayerUID(), m_nBuyItemID);
+	ZPostRequestCharacterItemList(ZGetGameClient()->GetPlayerUID());
+
+	// Limpiar itemID
+	m_nBuyItemID = 0;
+}
+
+// Mejora: Mostrar ventana de confirmación con información del item
+void ZGameInterface::ShowBuyConfirm(u32 nItemID)
+{
+	MMatchItemDesc* pItemDesc = MGetMatchItemDescMgr()->GetItemDesc(nItemID);
+	if (!pItemDesc)
+		return;
+
+	// Mostrar imagen del item
+	MPicture* pItemIcon = (MPicture*)m_IDLResource.FindWidget("BuyConfirm_ItemIcon");
+	if (pItemIcon)
+		pItemIcon->SetBitmap(GetItemIconBitmap(pItemDesc, true));
+
+	// Mostrar nombre del item
+	MLabel* pItemName = (MLabel*)m_IDLResource.FindWidget("BuyConfirm_ItemName");
+	if (pItemName)
+		pItemName->SetText(pItemDesc->m_szName);
+
+	// Mostrar precio del item
+	MLabel* pItemPrice = (MLabel*)m_IDLResource.FindWidget("BuyConfirm_ItemPrice");
+	if (pItemPrice)
+	{
+		char szPrice[128];
+		sprintf_safe(szPrice, "Precio: %d BP", pItemDesc->m_nBountyPrice);
+		pItemPrice->SetText(szPrice);
+	}
+
+	// Mostrar estadísticas del item
+	MTextArea* pItemStats = (MTextArea*)m_IDLResource.FindWidget("BuyConfirm_ItemStats");
+	if (pItemStats)
+	{
+		pItemStats->Clear();
+		pItemStats->SetTextColor(MCOLOR(200, 200, 200));
+		
+		// Restricciones
+		string restrictionStr = GetRestrictionString(pItemDesc);
+		if (!restrictionStr.empty())
+		{
+			pItemStats->AddText(restrictionStr.c_str(), MCOLOR(170, 170, 170));
+			pItemStats->AddText("\n");
+		}
+
+		// Estadísticas
+		string specStr = GetItemSpecString(pItemDesc);
+		if (!specStr.empty())
+		{
+			pItemStats->AddText(specStr.c_str(), MCOLOR(200, 200, 200));
+		}
+	}
+
+	// Mostrar ventana
+	MWidget* pFrame = m_IDLResource.FindWidget("BuyConfirm");
+	if (pFrame)
+		pFrame->Show(true, true);
+}
+
+// Mejora: Cancelar compra
+void ZGameInterface::CancelBuy()
+{
+	// Ocultar ventana de confirmación
+	MWidget* pFrame = m_IDLResource.FindWidget("BuyConfirm");
+	if (pFrame)
+		pFrame->Show(false);
+
+	// Limpiar itemID
+	m_nBuyItemID = 0;
+}
+
 void ZGameInterface::Buy()
 {
-	MButton* pButton = (MButton*)m_IDLResource.FindWidget("BuyConfirmCaller");
-	if (pButton)
-	{
-		pButton->Enable(false);
-		pButton->Show(false);
-		pButton->Show(true);
-	}
 	u32 nItemID = 0;
 	ZEquipmentListBox* pListBox = (ZEquipmentListBox*)m_IDLResource.FindWidget("AllEquipmentList");
 	if (pListBox == NULL)
@@ -3188,8 +3277,9 @@ void ZGameInterface::Buy()
 		}
 		else
 		{
-			ZPostRequestBuyItem(ZGetGameClient()->GetPlayerUID(), nItemID);
-			ZPostRequestCharacterItemList(ZGetGameClient()->GetPlayerUID());
+			// Mejora: Almacenar itemID y mostrar ventana de confirmación con información del item
+			m_nBuyItemID = nItemID;
+			ShowBuyConfirm(nItemID);
 		}
 	}
 	else

@@ -113,6 +113,8 @@ DECLARE_LISTENER(ZGetItemCountUpButtonListener)
 DECLARE_LISTENER(ZGetItemCountDnButtonListener)
 DECLARE_LISTENER(ZGetBuyButtonListener)
 DECLARE_LISTENER(ZGetBuyCashItemButtonListener)
+DECLARE_LISTENER(ZGetBuyConfirmButtonListener)  // Mejora: Listener para botón de confirmación de compra
+DECLARE_LISTENER(ZGetBuyConfirmCancelButtonListener)  // Mejora: Listener para botón de cancelar compra
 DECLARE_LISTENER(ZGetEquipButtonListener)
 DECLARE_LISTENER(ZGetEquipmentSearchButtonListener)
 DECLARE_LISTENER(ZGetStageForcedEntryToGameListener)

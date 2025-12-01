@@ -950,6 +950,14 @@ END_IMPLEMENT_LISTENER()
 BEGIN_IMPLEMENT_LISTENER(ZGetBuyCashItemButtonListener, MBTN_CLK_MSG)
 ZApplication::GetGameInterface()->BuyCashItem();
 END_IMPLEMENT_LISTENER()
+// Mejora: Listener para botón de confirmación de compra
+BEGIN_IMPLEMENT_LISTENER(ZGetBuyConfirmButtonListener, MBTN_CLK_MSG)
+ZApplication::GetGameInterface()->ConfirmBuy();
+END_IMPLEMENT_LISTENER()
+// Mejora: Listener para botón de cancelar compra
+BEGIN_IMPLEMENT_LISTENER(ZGetBuyConfirmCancelButtonListener, MBTN_CLK_MSG)
+ZApplication::GetGameInterface()->CancelBuy();
+END_IMPLEMENT_LISTENER()
 
 BEGIN_IMPLEMENT_LISTENER(ZGetItemCountUpButtonListener, MBTN_CLK_MSG)
 ZApplication::GetGameInterface()->SellQuestItemCountUp();

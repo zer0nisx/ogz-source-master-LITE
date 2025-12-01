@@ -94,6 +94,7 @@ protected:
 	bool				m_bWaitingArrangedGame{};
 
 	int					m_nSellQuestItemCount{};
+	u32					m_nBuyItemID{ 0 };  // Mejora: ItemID a comprar
 
 	MBitmap				*m_pThumbnailBitmap{};
 
@@ -297,6 +298,9 @@ public:
 	void Sell();
 	void SellQuestItem();
 	void Buy();
+	void ShowBuyConfirm(u32 nItemID);  // Mejora: Mostrar ventana de confirmación con info del item
+	void ConfirmBuy();  // Mejora: Confirmar compra del item
+	void CancelBuy();  // Mejora: Cancelar compra
 	void BuyCashItem();
 	int CheckRestrictBringAccountItem();
 	void BringAccountItem();
