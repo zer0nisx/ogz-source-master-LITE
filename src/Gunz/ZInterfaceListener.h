@@ -127,6 +127,9 @@ DECLARE_LISTENER(ZShopListFrameOpen)
 
 DECLARE_LISTENER(ZGetShopCachRechargeButtonListener);
 DECLARE_LISTENER(ZGetShopSearchCallerButtonListener);
+DECLARE_LISTENER(ZGetShopSearchEditListener);
+DECLARE_LISTENER(ZGetShopSortComboBoxListener);
+DECLARE_LISTENER(ZGetShopFilterAffordableListener);
 
 DECLARE_LISTENER(ZGetEquipmentCharacterTabButtonListener);
 DECLARE_LISTENER(ZGetEquipmentAccountTabButtonListener);

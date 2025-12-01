@@ -443,6 +443,7 @@ public:
 				int sel = pComboBox->GetSelIndex();
 
 				ZGetShop()->m_ListFilter = sel;
+				ZGetShop()->InvalidateFilterCache(); // Mejora #5: Invalidar cache
 				ZGetShop()->Serialize();
 
 				ZMyItemList* pil = ZGetMyInfo()->GetItemList();

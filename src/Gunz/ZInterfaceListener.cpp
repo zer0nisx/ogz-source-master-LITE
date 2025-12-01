@@ -466,7 +466,7 @@ public:
 			}
 			else
 			{
-				ZApplication::GetGameInterface()->ShowMessage("¼±ÅÃÇÏ½Å ¸ÊÀÌ ¾ø½À´Ï´Ù. ¸ÊÀ» ¼±ÅÃÇØ ÁÖ¼¼¿ä.");
+				ZApplication::GetGameInterface()->ShowMessage("ï¿½ï¿½ï¿½ï¿½ï¿½Ï½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½. ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¼ï¿½ï¿½ï¿½.");
 			}
 
 			return true;
@@ -1006,7 +1006,48 @@ ZApplication::GetGameInterface()->ShowErrorMessage(MERR_NOT_SUPPORT);
 END_IMPLEMENT_LISTENER()
 
 BEGIN_IMPLEMENT_LISTENER(ZGetShopSearchCallerButtonListener, MBTN_CLK_MSG)
-ZApplication::GetGameInterface()->ShowErrorMessage(MERR_NOT_SUPPORT);
+// Mejora #3: BÃºsqueda - Toggle del campo de bÃºsqueda (si existe widget)
+ZIDLResource* pResource = ZApplication::GetGameInterface()->GetIDLResource();
+MEdit* pEdit = (MEdit*)pResource->FindWidget("ShopSearchEdit");
+if (pEdit)
+{
+	pEdit->Show(!pEdit->IsVisible());
+	if (pEdit->IsVisible())
+		pEdit->SetFocus();
+}
+END_IMPLEMENT_LISTENER()
+
+// Mejora #3: Listener para campo de bÃºsqueda
+BEGIN_IMPLEMENT_LISTENER(ZGetShopSearchEditListener, MEDIT_CHAR_MSG)
+MEdit* pEdit = (MEdit*)pWidget;
+if (pEdit)
+{
+	const char* szText = pEdit->GetText();
+	ZGetShop()->SetSearchText(szText);
+	ZGetShop()->Serialize();
+}
+END_IMPLEMENT_LISTENER()
+
+// Mejora #4: Listener para ordenamiento
+BEGIN_IMPLEMENT_LISTENER(ZGetShopSortComboBoxListener, MCMBBOX_CHANGED)
+MComboBox* pComboBox = (MComboBox*)pWidget;
+if (pComboBox)
+{
+	int nSortType = pComboBox->GetSelIndex();
+	ZGetShop()->SetSortType(nSortType);
+	ZGetShop()->Serialize();
+}
+END_IMPLEMENT_LISTENER()
+
+// Mejora #2: Listener para filtro "Puedo Comprar"
+BEGIN_IMPLEMENT_LISTENER(ZGetShopFilterAffordableListener, MBTN_CLK_MSG)
+MButton* pButton = (MButton*)pWidget;
+if (pButton)
+{
+	bool bChecked = pButton->GetCheck();
+	ZGetShop()->SetFilterAffordable(bChecked);
+	ZGetShop()->Serialize();
+}
 END_IMPLEMENT_LISTENER()
 
 void PostMapname()
@@ -1117,7 +1158,7 @@ if (ZCharacterSelectView::GetNumOfCharacter())
 }
 else
 {
-	ZApplication::GetGameInterface()->ShowMessage("ÇØ´ç ½½·Ô¿¡ Ä³¸¯ÅÍ°¡ ¾ø½À´Ï´Ù.");
+	ZApplication::GetGameInterface()->ShowMessage("ï¿½Ø´ï¿½ ï¿½ï¿½ï¿½Ô¿ï¿½ Ä³ï¿½ï¿½ï¿½Í°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.");
 }
 END_IMPLEMENT_LISTENER()
 

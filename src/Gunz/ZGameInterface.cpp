@@ -674,6 +674,9 @@ bool ZGameInterface::InitInterfaceListener()
 	SetListenerWidget("CashEquipmentListCaller", ZGetCashEquipmentListCallerButtonListener());
 	SetListenerWidget("CashRecharge", ZGetShopCachRechargeButtonListener());
 	SetListenerWidget("ShopSearchFrameCaller", ZGetShopSearchCallerButtonListener());
+	SetListenerWidget("ShopSearchEdit", ZGetShopSearchEditListener());
+	SetListenerWidget("ShopSortComboBox", ZGetShopSortComboBoxListener());
+	SetListenerWidget("ShopFilterAffordable", ZGetShopFilterAffordableListener());
 
 	SetListenerWidget("AllEquipmentList", ZGetShopPurchaseItemListBoxListener());
 	SetListenerWidget("MyAllEquipmentList", ZGetShopSaleItemListBoxListener());
