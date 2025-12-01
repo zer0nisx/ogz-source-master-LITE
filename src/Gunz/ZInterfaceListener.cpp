@@ -1050,6 +1050,21 @@ if (pButton)
 }
 END_IMPLEMENT_LISTENER()
 
+// Mejora: Listener para ordenamiento en equipamiento
+BEGIN_IMPLEMENT_LISTENER(ZGetEquipSortComboBoxListener, MCMBBOX_CHANGED)
+MComboBox* pComboBox = (MComboBox*)pWidget;
+if (pComboBox)
+{
+	int nSortType = pComboBox->GetSelIndex();
+	ZMyItemList* pil = ZGetMyInfo()->GetItemList();
+	if (pil)
+	{
+		pil->SetSortType(nSortType);
+		pil->Serialize();
+	}
+}
+END_IMPLEMENT_LISTENER()
+
 void PostMapname()
 {
 	ZIDLResource* pResource = ZApplication::GetGameInterface()->GetIDLResource();
