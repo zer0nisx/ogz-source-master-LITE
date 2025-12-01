@@ -2665,8 +2665,12 @@ void ZMyCharacter::OnDelayedWork(ZDELAYEDWORKITEM& Item)
 	switch (Item.nWork) {
 	case ZDW_RECOIL:
 	{
-		for (ZCharacterManager::iterator itor = ZGetCharacterManager()->begin();
-			itor != ZGetCharacterManager()->end(); ++itor)
+		// Optimización: Guardar ZGetCharacterManager() en variable local
+		ZCharacterManager* pCharMgr = ZGetCharacterManager();
+		if (!pCharMgr) break;
+		
+		for (ZCharacterManager::iterator itor = pCharMgr->begin();
+			itor != pCharMgr->end(); ++itor)
 		{
 			ZCharacter* pTar = (*itor).second;
 			if (this == pTar || pTar->IsDead()) continue;

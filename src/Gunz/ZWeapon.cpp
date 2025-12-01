@@ -329,8 +329,11 @@ void ZWeaponItemkit::UpdateFirstPos()
 	return;
 
 	if(m_bInit==false) {
-
-		ZCharacter* pC = ZGetCharacterManager()->Find(m_uidOwner);
+		// Optimización: Guardar ZGetCharacterManager() en variable local
+		ZCharacterManager* pCharMgr = ZGetCharacterManager();
+		if (!pCharMgr) return;
+		
+		ZCharacter* pC = pCharMgr->Find(m_uidOwner);
 
 		if(pC) {
 			if(pC->m_pVMesh) {
@@ -393,9 +396,18 @@ void ZWeaponItemkit::UpdatePos(float fElapsedTime,DWORD dwPickPassFlag)
 	rvector pickpos;
 	rvector normal=rvector(0,0,1);
 
+	// Optimización: Guardar ZGetCharacterManager() y ZGetGame() en variables locales
+	ZCharacterManager* pCharMgr = ZGetCharacterManager();
+	if (!pCharMgr) return;
+	
+	ZGame* pGame = ZGetGame();
+	if (!pGame) return;
+	
+	ZCharacter* pOwner = pCharMgr->Find(m_uidOwner);
+	
 	ZPICKINFO zpi;
 
-	bool bPicked = g_pGame->Pick(ZGetCharacterManager()->Find(m_uidOwner), m_Position, dir, &zpi, dwPickPassFlag);
+	bool bPicked = pGame->Pick(pOwner, m_Position, dir, &zpi, dwPickPassFlag);
 
 	if (bPicked) {
 		if(zpi.bBspPicked)	{
@@ -536,10 +548,16 @@ bool ZWeaponGrenade::Update(float fElapsedTime)
 
 		float fDist=Magnitude(diff);
 
+		// Optimización: Guardar ZGetCharacterManager() en variable local
+		ZCharacterManager* pCharMgr = ZGetCharacterManager();
+		if (!pCharMgr) return;
+		
+		ZCharacter* pOwner = pCharMgr->Find(m_uidOwner);
+		
 		rvector pickpos,normal;
 
 		ZPICKINFO zpi;
-		bool bPicked = pGame->Pick(ZGetCharacterManager()->Find(m_uidOwner), m_Position, dir, &zpi, dwPickPassFlag);
+		bool bPicked = pGame->Pick(pOwner, m_Position, dir, &zpi, dwPickPassFlag);
 		if(bPicked)
 		{
 			if(zpi.bBspPicked)
@@ -705,10 +723,16 @@ bool	ZWeaponFlashBang::Update( float fElapsedTime )
 
 		float fDist		= Magnitude( diff );
 
+		// Optimización: Guardar ZGetCharacterManager() en variable local
+		ZCharacterManager* pCharMgr = ZGetCharacterManager();
+		if (!pCharMgr) return;
+		
+		ZCharacter* pOwner = pCharMgr->Find(m_uidOwner);
+		
 		rvector pickpos, normal;
 
 		ZPICKINFO zpi;
-		bool bPicked	= pGame->Pick( ZGetCharacterManager()->Find(m_uidOwner), m_Position, dir, &zpi, dwPickPassFlag );
+		bool bPicked	= pGame->Pick( pOwner, m_Position, dir, &zpi, dwPickPassFlag );
 
 		if( bPicked )
 		{
@@ -834,10 +858,19 @@ bool ZWeaponSmokeGrenade::Update( float fElapsedTime )
 
 		float fDist		= Magnitude( diff );
 
+		// Optimización: Guardar ZGetCharacterManager() y ZGetGame() en variables locales
+		ZCharacterManager* pCharMgr = ZGetCharacterManager();
+		if (!pCharMgr) return;
+		
+		ZGame* pGame = ZGetGame();
+		if (!pGame) return;
+		
+		ZCharacter* pOwner = pCharMgr->Find(m_uidOwner);
+		
 		rvector pickpos, normal;
 
 		ZPICKINFO zpi;
-		bool bPicked	= g_pGame->Pick( ZGetCharacterManager()->Find(m_uidOwner), m_Position, dir, &zpi, dwPickPassFlag );
+		bool bPicked	= pGame->Pick( pOwner, m_Position, dir, &zpi, dwPickPassFlag );
 		
 		if( bPicked )
 		{

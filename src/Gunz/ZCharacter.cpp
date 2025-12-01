@@ -2460,28 +2460,32 @@ void ZCharacter::ActDead()
 	}
 
 #define EXCELLENT_TIME	3.0f
-	ZCharacter* pLastAttacker = ZGetCharacterManager()->Find(GetLastAttacker());
+	// Optimización: Guardar ZGetCharacterManager() y ZGetGame() en variables locales
+	ZCharacterManager* pCharMgr = ZGetCharacterManager();
+	if (!pCharMgr) return;
+	
+	ZCharacter* pLastAttacker = pCharMgr->Find(GetLastAttacker());
 	if (pLastAttacker && pLastAttacker != this)
 	{
 		ZGame* pGame = ZGetGame();
-		if (pGame && pGame->GetTime() - pLastAttacker->m_fLastKillTime < EXCELLENT_TIME &&
-			ZApplication::GetGame() && ZApplication::GetGame()->GetMatch()->GetMatchType() != MMATCH_GAMETYPE_DUEL)
+		if (!pGame) return;
+		
+		if (pGame->GetTime() - pLastAttacker->m_fLastKillTime < EXCELLENT_TIME &&
+			pGame->GetMatch()->GetMatchType() != MMATCH_GAMETYPE_DUEL)
 		{
 			pLastAttacker->GetStatus()->nExcellent++;
 			pLastAttacker->AddIcon(ZCI_EXCELLENT);
 		}
 
-		if (pGame) {
-			pLastAttacker->m_fLastKillTime = pGame->GetTime();
-		}
+		pLastAttacker->m_fLastKillTime = pGame->GetTime();
 
-		if (!m_bLand && GetDistToFloor() > 200.f && ZApplication::GetGame()->GetMatch()->GetMatchType() != MMATCH_GAMETYPE_DUEL)
+		if (!m_bLand && GetDistToFloor() > 200.f && pGame->GetMatch()->GetMatchType() != MMATCH_GAMETYPE_DUEL)
 		{
 			pLastAttacker->GetStatus()->nFantastic++;
 			pLastAttacker->AddIcon(ZCI_FANTASTIC);
 		}
 
-		if (pLastAttacker && ZApplication::GetGame()->GetMatch()->GetMatchType() != MMATCH_GAMETYPE_DUEL)
+		if (pLastAttacker && pGame->GetMatch()->GetMatchType() != MMATCH_GAMETYPE_DUEL)
 		{
 			pLastAttacker->m_nKillsThisRound++;
 			if (pLastAttacker->m_nKillsThisRound == 3)

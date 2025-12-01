@@ -568,43 +568,49 @@ void ZCombatInterface::OnDraw(MDrawContext* pDC)
 				bool bIsChallengerDie = false;
 				int nMyChar = -1;
 
-				ZRuleDuel* pDuel = (ZRuleDuel*)ZGetGameInterface()->GetGame()->GetMatch()->GetRule();
-				if (pDuel)
+			ZRuleDuel* pDuel = (ZRuleDuel*)ZGetGameInterface()->GetGame()->GetMatch()->GetRule();
+			if (pDuel)
+			{
+				// Optimización: Guardar ZGetCharacterManager() y ZGetMyUID() en variables locales
+				ZCharacterManager* pCharMgr = ZGetCharacterManager();
+				if (!pCharMgr) return;
+				
+				MUID myUID = ZGetMyUID(); // Guardar una vez para evitar múltiples llamadas
+				
+				for (ZCharacterManager::iterator itor = pCharMgr->begin();
+					itor != pCharMgr->end(); ++itor)
 				{
-					for (ZCharacterManager::iterator itor = ZGetCharacterManager()->begin();
-						itor != ZGetCharacterManager()->end(); ++itor)
-					{
-						ZCharacter* pCharacter = (*itor).second;
+					ZCharacter* pCharacter = (*itor).second;
 
-						// Player
-						if (pCharacter->GetUID() == pDuel->QInfo.m_uidChampion)
+					// Player
+					if (pCharacter->GetUID() == pDuel->QInfo.m_uidChampion)
+					{
+						if (myUID == pDuel->QInfo.m_uidChampion)
 						{
-							if (ZGetMyUID() == pDuel->QInfo.m_uidChampion)
+							// Draw victory
+							ZGetCombatInterface()->DrawVictory(pDC, 210, 86, pDuel->QInfo.m_nVictory);
+						}
+						else
+						{
+							sprintf_safe(charName[0], "%s%d  %s", ZMsg(MSG_CHARINFO_LEVELMARKER),
+								pCharacter->GetProperty()->nLevel, pCharacter->GetUserName());
+
+							if ((myUID == pDuel->QInfo.m_uidChampion)
+								|| (myUID == pDuel->QInfo.m_uidChallenger))
 							{
 								// Draw victory
-								ZGetCombatInterface()->DrawVictory(pDC, 210, 86, pDuel->QInfo.m_nVictory);
-							}
-							else
-							{
-								sprintf_safe(charName[0], "%s%d  %s", ZMsg(MSG_CHARINFO_LEVELMARKER),
-									pCharacter->GetProperty()->nLevel, pCharacter->GetUserName());
-
-								if ((ZGetMyUID() == pDuel->QInfo.m_uidChampion)
-									|| (ZGetMyUID() == pDuel->QInfo.m_uidChallenger))
-								{
-									// Draw victory
-									int nTextWidth = pFont->GetWidth(charName[0]);
-									int nWidth = ZGetCombatInterface()->DrawVictory(pDC, 162, 300,
-										pDuel->QInfo.m_nVictory, true);
-									ZGetCombatInterface()->DrawVictory(pDC, 43 + nTextWidth + nWidth, 157,
-										pDuel->QInfo.m_nVictory);
-								}
+								int nTextWidth = pFont->GetWidth(charName[0]);
+								int nWidth = ZGetCombatInterface()->DrawVictory(pDC, 162, 300,
+									pDuel->QInfo.m_nVictory, true);
+								ZGetCombatInterface()->DrawVictory(pDC, 43 + nTextWidth + nWidth, 157,
+									pDuel->QInfo.m_nVictory);
 							}
 						}
+					}
 
-						else if (pCharacter->GetUID() == pDuel->QInfo.m_uidChallenger)
-						{
-							if (ZGetMyUID() != pDuel->QInfo.m_uidChallenger)
+					else if (pCharacter->GetUID() == pDuel->QInfo.m_uidChallenger)
+					{
+						if (myUID != pDuel->QInfo.m_uidChallenger)
 								sprintf_safe(charName[0], "%s%d  %s", ZMsg(MSG_CHARINFO_LEVELMARKER),
 									pCharacter->GetProperty()->nLevel, pCharacter->GetUserName());
 
@@ -1407,10 +1413,14 @@ void ZCombatInterface::DrawScoreBoard(MDrawContext* pDC)
 
 	if (bClanGame)
 	{
+		// Optimización: Guardar ZGetCharacterManager() en variable local
+		ZCharacterManager* pCharMgr = ZGetCharacterManager();
+		if (!pCharMgr) return;
+		
 		int nRed = 0, nBlue = 0;
 
-		for (ZCharacterManager::iterator itor = ZGetCharacterManager()->begin();
-			itor != ZGetCharacterManager()->end(); ++itor)
+		for (ZCharacterManager::iterator itor = pCharMgr->begin();
+			itor != pCharMgr->end(); ++itor)
 		{
 			ZCharacter* pCharacter = (*itor).second;
 
@@ -1667,9 +1677,13 @@ void ZCombatInterface::DrawScoreBoard(MDrawContext* pDC)
 		}
 	}
 
+	// Optimización: Guardar ZGetCharacterManager() en variable local (pGame ya está definido arriba)
+	ZCharacterManager* pCharMgr = ZGetCharacterManager();
+	if (!pCharMgr) return;
+	
 	ZCharacterManager::iterator itor;
-	for (itor = ZGetCharacterManager()->begin();
-		itor != ZGetCharacterManager()->end(); ++itor)
+	for (itor = pCharMgr->begin();
+		itor != pCharMgr->end(); ++itor)
 	{
 		ZCharacter* pCharacter = (*itor).second;
 
@@ -2848,9 +2862,13 @@ void ZCombatInterface::OnFinish()
 
 	m_ResultItems.Destroy();
 
+	// Optimización: Guardar ZGetCharacterManager() en variable local (pGame ya está definido arriba)
+	ZCharacterManager* pCharMgr = ZGetCharacterManager();
+	if (!pCharMgr) return;
+	
 	ZCharacterManager::iterator itor;
-	for (itor = ZGetCharacterManager()->begin();
-		itor != ZGetCharacterManager()->end(); ++itor)
+	for (itor = pCharMgr->begin();
+		itor != pCharMgr->end(); ++itor)
 	{
 		ZCharacter* pCharacter = (*itor).second;
 		ZResultBoardItem* pItem = new ZResultBoardItem;

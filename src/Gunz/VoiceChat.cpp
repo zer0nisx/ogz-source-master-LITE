@@ -185,7 +185,9 @@ VoiceChat::~VoiceChat()
 
 void VoiceChat::StartRecording()
 {
-	if (Recording || !CanRecord || ZGetGame()->IsReplay())
+	// Optimización: Guardar ZGetGame() en variable local (importante en threads)
+	ZGame* pGame = ZGetGame();
+	if (Recording || !CanRecord || (pGame && pGame->IsReplay()))
 		return;
 
 #ifdef WAVEIN
@@ -233,7 +235,9 @@ void VoiceChat::StartRecording()
 
 void VoiceChat::StopRecording()
 {
-	if (!Recording || !CanRecord || ZGetGame()->IsReplay())
+	// Optimización: Guardar ZGetGame() en variable local (importante en threads)
+	ZGame* pGame = ZGetGame();
+	if (!Recording || !CanRecord || (pGame && pGame->IsReplay()))
 		return;
 
 #ifdef WAVEIN
@@ -497,8 +501,10 @@ void VoiceChat::OnDraw(MDrawContext* pDC)
 		i++;
 	};
 
-	if (Recording)
-		DrawStuff(ZGetGame()->m_pMyCharacter);
+	// Optimización: Guardar ZGetGame() en variable local (importante en threads)
+	ZGame* pGame = ZGetGame();
+	if (Recording && pGame && pGame->m_pMyCharacter)
+		DrawStuff(pGame->m_pMyCharacter);
 
 	for (auto item : MicStreams)
 	{
