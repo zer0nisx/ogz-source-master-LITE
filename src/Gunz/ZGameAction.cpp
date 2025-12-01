@@ -28,7 +28,7 @@ bool ZGameAction::OnReaction(MCommand* pCommand)
 	float fTime;
 	int nReactionID;
 
-	pCommand->GetParameter(&fTime,			0, MPT_FLOAT);		// ½Ã°£
+	pCommand->GetParameter(&fTime,			0, MPT_FLOAT);		// ï¿½Ã°ï¿½
 	pCommand->GetParameter(&nReactionID,	1, MPT_INT);
 
 	ZCharacter *pChar=ZGetCharacterManager()->Find(pCommand->GetSenderUID());
@@ -44,7 +44,10 @@ bool ZGameAction::OnReaction(MCommand* pCommand)
 		}break;
 		case ZR_CHARGED		: {
 			pChar->m_bCharged=true;
-			pChar->m_fChargedFreeTime = g_pGame->GetTime() + fTime;
+			ZGame* pGame = ZGetGame();
+			if (pGame) {
+				pChar->m_fChargedFreeTime = pGame->GetTime() + fTime;
+			}
 			ZGetEffectManager()->AddChargedEffect(pChar);
 
 			ZGetSoundEngine()->PlaySound("fx2/FX_ChargeComplete", pChar->GetPosition());
@@ -76,11 +79,11 @@ bool ZGameAction::OnPeerSkill(MCommand* pCommand)
 	if (pOwnerCharacter == NULL) return true;
 
 	switch(nSkill)	{
-		// ¶ç¿ì±â ½ºÅ³
+		// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å³
 		case ZC_SKILL_UPPERCUT		: OnPeerSkill_Uppercut(pOwnerCharacter);break;
-			// °­º£±â ½ºÇÃ·¡½Ã
+			// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ã·ï¿½ï¿½ï¿½
 		case ZC_SKILL_SPLASHSHOT	: OnPeerSkill_LastShot(fTime,pOwnerCharacter);break;
-			// ´Ü°Ë Æ¯¼ö°ø°Ý
+			// ï¿½Ü°ï¿½ Æ¯ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		case ZC_SKILL_DASH			: OnPeerSkill_Dash(pOwnerCharacter);break;
 	}
 
@@ -123,10 +126,13 @@ void ZGameAction::OnPeerSkill_LastShot(float fShotTime,ZCharacter *pOwnerCharact
 		if (pTar == NULL) continue;
 		if (pOwnerCharacter == pTar) continue;
 
-		if (pTar != g_pGame->m_pMyCharacter &&
+		ZGame* pGame = ZGetGame();
+		if (!pGame) continue;
+		
+		if (pTar != pGame->m_pMyCharacter &&
 			(!pTar->IsNPC() || !((ZActor*)pTar)->IsMyControl())) continue;
 
-		if (!ZGetGame()->IsAttackable(pOwnerCharacter, pTar)) continue;
+		if (!pGame->IsAttackable(pOwnerCharacter, pTar)) continue;
 
 		rvector TargetPosition, TargetDir;
 
@@ -141,7 +147,7 @@ void ZGameAction::OnPeerSkill_LastShot(float fShotTime,ZCharacter *pOwnerCharact
 
 			if ((pTar) && (pTar != pOwnerCharacter)) {
 
-				if (g_pGame->CheckWall(pOwnerCharacter, pTar) == false)
+				if (pGame->CheckWall(pOwnerCharacter, pTar) == false)
 				{
 					if (pTar->IsGuardNonrecoilable() && DotProduct(pTar->m_Direction, OwnerDir) < 0)
 					{
@@ -194,19 +200,26 @@ void ZGameAction::OnPeerSkill_LastShot(float fShotTime,ZCharacter *pOwnerCharact
 	}
 #define KATANA_SHOCK_RANGE		1000.f
 
-	float fPower = (KATANA_SHOCK_RANGE - Magnitude(g_pGame->m_pMyCharacter->GetPosition() + rvector(0, 0, 50) - OwnerPosition)) / KATANA_SHOCK_RANGE;
-	if (fPower > 0)
-		ZGetGameInterface()->GetCamera()->Shock(fPower*500.f, .5f, rvector(0.0f, 0.0f, -1.0f));
+	ZGame* pGame = ZGetGame();
+	if (pGame && pGame->m_pMyCharacter) {
+		float fPower = (KATANA_SHOCK_RANGE - Magnitude(pGame->m_pMyCharacter->GetPosition() + rvector(0, 0, 50) - OwnerPosition)) / KATANA_SHOCK_RANGE;
+		if (fPower > 0)
+			ZGetGameInterface()->GetCamera()->Shock(fPower*500.f, .5f, rvector(0.0f, 0.0f, -1.0f));
+	}
 }
 
 void ZGameAction::OnPeerSkill_Uppercut(ZCharacter *pOwnerCharacter)
 {
 	if (!ZGetGameClient()->GetMatchStageSetting()->CanFlip())
 		return;
-	if (ZGetGame()->GetMatch()->GetMatchType() == MMATCH_GAMETYPE_SKILLMAP)
+	
+	ZGame* pGame = ZGetGame();
+	if (!pGame) return;
+	
+	if (pGame->GetMatch()->GetMatchType() == MMATCH_GAMETYPE_SKILLMAP)
 		return;
 
-	float fShotTime=g_pGame->GetTime();
+	float fShotTime = pGame->GetTime();
 	rvector OwnerPosition,OwnerDir;
 	OwnerPosition = pOwnerCharacter->GetPosition();
 	OwnerDir = pOwnerCharacter->m_Direction;
@@ -260,7 +273,7 @@ void ZGameAction::OnPeerSkill_Uppercut(ZCharacter *pOwnerCharacter)
 					bCheck = true;
 				}
 
-				if(g_pGame->CheckWall(pOwnerCharacter,pTar)==true)
+				if(pGame->CheckWall(pOwnerCharacter,pTar)==true)
 					bCheck = false;
 
 				if( bCheck) {
@@ -270,7 +283,7 @@ void ZGameAction::OnPeerSkill_Uppercut(ZCharacter *pOwnerCharacter)
 					float fDot = DotProduct(OwnerDir, fTarDir);
 					if (fDot > 0)
 					{
-						int cm = g_pGame->SelectSlashEffectMotion(pOwnerCharacter);
+						int cm = pGame->SelectSlashEffectMotion(pOwnerCharacter);
 
 						rvector tpos = pTar->GetPosition();
 
@@ -281,11 +294,11 @@ void ZGameAction::OnPeerSkill_Uppercut(ZCharacter *pOwnerCharacter)
 						ZGetEffectManager()->AddBloodEffect( tpos , -fTarDir);
 						ZGetEffectManager()->AddSlashEffect( tpos , -fTarDir , cm );
 
-						g_pGame->CheckCombo(pOwnerCharacter, pTar , true);
-						if (pTar == g_pGame->m_pMyCharacter) 
+						pGame->CheckCombo(pOwnerCharacter, pTar , true);
+						if (pGame->m_pMyCharacter && pTar == pGame->m_pMyCharacter) 
 						{
-							g_pGame->m_pMyCharacter->SetLastThrower(pOwnerCharacter->GetUID(), g_pGame->GetTime()+1.0f);
-							ZPostReaction(g_pGame->GetTime(),ZR_BE_UPPERCUT);
+							pGame->m_pMyCharacter->SetLastThrower(pOwnerCharacter->GetUID(), pGame->GetTime()+1.0f);
+							ZPostReaction(pGame->GetTime(),ZR_BE_UPPERCUT);
 						}
 						pTar->OnBlast(OwnerDir);
 
@@ -307,7 +320,10 @@ void ZGameAction::OnPeerSkill_Dash(ZCharacter *pOwnerCharacter)
 {
 	if(pOwnerCharacter->GetStateLower() != ZC_STATE_LOWER_UPPERCUT) return;
 
-	float fShotTime=g_pGame->GetTime();
+	ZGame* pGame = ZGetGame();
+	if (!pGame) return;
+
+	float fShotTime = pGame->GetTime();
 	rvector OwnerPosition,OwnerDir;
 	OwnerPosition = pOwnerCharacter->GetPosition();
 	OwnerDir = pOwnerCharacter->m_Direction;
@@ -357,7 +373,7 @@ void ZGameAction::OnPeerSkill_Dash(ZCharacter *pOwnerCharacter)
 					bCheck = true;
 				}
 
-				if(g_pGame->CheckWall(pOwnerCharacter,pTar)==true)
+				if(pGame->CheckWall(pOwnerCharacter,pTar)==true)
 					bCheck = false;
 
 				if( bCheck) {
@@ -386,10 +402,10 @@ void ZGameAction::OnPeerSkill_Dash(ZCharacter *pOwnerCharacter)
 
 					if ( bDamage ) {
 
-						int cm = g_pGame->SelectSlashEffectMotion(pOwnerCharacter);
+						int cm = pGame->SelectSlashEffectMotion(pOwnerCharacter);
 
 						float add_time = 0.3f * (fDist / 600.f);
-						float time = g_pGame->GetTime() + add_time;
+						float time = pGame->GetTime() + add_time;
 
 						rvector tpos = pTar->GetPosition();
 
@@ -401,21 +417,21 @@ void ZGameAction::OnPeerSkill_Dash(ZCharacter *pOwnerCharacter)
 
 						ZGetSoundEngine()->PlaySound("uppercut", tpos );
 
-						if (pTar == g_pGame->m_pMyCharacter) {
+						if (pGame->m_pMyCharacter && pTar == pGame->m_pMyCharacter) {
 							rvector _dir = pTar->GetPosition() - pOwnerCharacter->GetPosition();
 							_dir.z = 0.f;
 
-							g_pGame->m_pMyCharacter->ReserveDashAttacked( pOwnerCharacter->GetUID(), time,_dir );
+							pGame->m_pMyCharacter->ReserveDashAttacked( pOwnerCharacter->GetUID(), time,_dir );
 						}
 						pTar->OnBlastDagger(OwnerDir,OwnerPosition);
 
 						float fDamage = pDesc->m_nDamage * 1.5f;
 						float fRatio = pItem->GetPiercingRatio( pDesc->m_nWeaponType , eq_parts_chest );
 
-						if(ZGetGame()->IsAttackable(pOwnerCharacter,pTar))
+						if(pGame->IsAttackable(pOwnerCharacter,pTar))
 							pTar->OnDamagedSkill(pOwnerCharacter,pOwnerCharacter->GetPosition(),ZD_MELEE,MWT_DAGGER,fDamage,fRatio);
 
-						g_pGame->CheckCombo(pOwnerCharacter, pTar,true);
+						pGame->CheckCombo(pOwnerCharacter, pTar,true);
 					}
 
 				}//IsTeam

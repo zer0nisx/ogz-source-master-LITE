@@ -69,8 +69,9 @@ bool ZGameInterface::OnCommand(MCommand* pCommand)
 	return false;
 #endif
 
-	if(g_pGame!=NULL) {
-		return g_pGame->OnCommand(pCommand);
+	ZGame* pGame = ZGetGame();
+	if(pGame) {
+		return pGame->OnCommand(pCommand);
 	}
 
 	if (ZGetQuest()->OnCommand(pCommand)) return true;
@@ -86,23 +87,23 @@ bool ZGameInterface::OnCommand(MCommand* pCommand)
 			void* pCharListBlob = pParam->GetPointer();
 			int nCount = MGetBlobArrayCount(pCharListBlob);
 
-			// Ä³¸¯ÅÍ Á¤º¸ °¡Á®¿À±â
+			// Ä³ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			ZCharacterSelectView::OnReceivedAccountCharInfo(pCharListBlob);
 			
-			// Ä³¸¯ÅÍ°¡ ÇÑ¸íµµ ¾øÀ¸¸é ¸Þ½ÃÁö Ãâ·Â
+			// Ä³ï¿½ï¿½ï¿½Í°ï¿½ ï¿½Ñ¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Þ½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
 			if (ZCharacterSelectView::GetNumOfCharacter() <= 0)
 			{
 				ZApplication::GetGameInterface()->ShowMessage( MSG_GAME_NOCHARACTER);
 			}
 
-			// Ä³¸¯ÅÍ ÇÏ³ª ¼±ÅÃ
+			// Ä³ï¿½ï¿½ï¿½ï¿½ ï¿½Ï³ï¿½ ï¿½ï¿½ï¿½ï¿½
 			if ( ZCharacterSelectView::GetNumOfCharacter() > 0)
 			{
 				ZCharacterSelectView::SetSelectedCharacterFromLastChar();
 				ZApplication::GetGameInterface()->ChangeSelectedChar( ZCharacterSelectView::GetSelectedCharacter() );
 			}
 
-			// Ä³¸¯ÅÍ ¸®½ºÆ®°¡ ³¯¶ó¿À¸é CHARSELECTIONÀ¸·Î STATEº¯È¯
+			// Ä³ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ CHARSELECTIONï¿½ï¿½ï¿½ï¿½ STATEï¿½ï¿½È¯
 			ZApplication::GetGameInterface()->SetState(GUNZ_CHARSELECTION);
 		}
 		break;
@@ -118,7 +119,7 @@ bool ZGameInterface::OnCommand(MCommand* pCommand)
 
 			ZCharacterSelectView::OnReceivedCharInfo(nCharNum, pCharInfoBlob);
 
-			// Ä³¸¯ÅÍ º¸ÀÌ±â
+			// Ä³ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì±ï¿½
 			if ( ZApplication::GetGameInterface()->GetCharacterSelectView() != NULL)
 			{
 				ZApplication::GetGameInterface()->GetCharacterSelectView()->SelectChar(nCharNum);

@@ -936,7 +936,7 @@ bool ZGameInterface::OnGameCreate()
 		return false;
 	}
 
-	m_pMyCharacter = (ZMyCharacter*)g_pGame->m_pMyCharacter;
+	m_pMyCharacter = m_pGame ? (ZMyCharacter*)m_pGame->m_pMyCharacter : nullptr;
 
 	SetFocus();
 
@@ -1016,10 +1016,10 @@ void ZGameInterface::OnGameDestroy()
 
 	ShowWidget(CENTERMESSAGE, false);
 
-	if (g_pGame != NULL) {
-		g_pGame->Destroy();
+	if (m_pGame != NULL) {
+		m_pGame->Destroy();
 		SAFE_DELETE(m_pGame);
-		g_pGame = NULL;
+		g_pGame = NULL; // Mantener sincronización con variable global
 	}
 
 	SetCursorEnable(true);
@@ -2521,7 +2521,9 @@ void ZGameInterface::ChangeParts(int key)
 
 void ZGameInterface::ChangeWeapon(ZChangeWeaponType nType)
 {
-	ZMyCharacter* pChar = g_pGame->m_pMyCharacter;
+	if (!m_pGame || !m_pGame->m_pMyCharacter) return;
+	
+	ZMyCharacter* pChar = m_pGame->m_pMyCharacter;
 
 	if (pChar->m_pVMesh == NULL) return;
 
@@ -2537,7 +2539,8 @@ void ZGameInterface::ChangeWeapon(ZChangeWeaponType nType)
 	auto IsOutOfAmmo = [&](int PartsInt)
 		{
 			auto Parts = MMatchCharItemParts(PartsInt);
-			auto* Item = g_pGame->m_pMyCharacter->GetItems()->GetItem(Parts);
+			if (!m_pGame || !m_pGame->m_pMyCharacter) return true;
+			auto* Item = m_pGame->m_pMyCharacter->GetItems()->GetItem(Parts);
 			if (!Item)
 				return true;
 
@@ -2704,7 +2707,7 @@ bool ZGameInterface::Update(float fElapsed)
 
 	UpdateCursorEnable();
 
-	if (g_pGame != NULL && m_bLeaveBattleReserved && (m_dwLeaveBattleTime < GetGlobalTimeMS()))
+	if (m_pGame != NULL && m_bLeaveBattleReserved && (m_dwLeaveBattleTime < GetGlobalTimeMS()))
 		LeaveBattle();
 
 	__EP(13);
@@ -2768,16 +2771,17 @@ void ZGameInterface::ClearMapThumbnail()
 
 void ZGameInterface::Reload()
 {
-	if (!g_pGame->m_pMyCharacter->GetItems()->GetSelectedWeapon()) return;
-	MMatchItemDesc* pSelectedItemDesc = g_pGame->m_pMyCharacter->GetItems()->GetSelectedWeapon()->GetDesc();
+	if (!m_pGame || !m_pGame->m_pMyCharacter) return;
+	if (!m_pGame->m_pMyCharacter->GetItems()->GetSelectedWeapon()) return;
+	MMatchItemDesc* pSelectedItemDesc = m_pGame->m_pMyCharacter->GetItems()->GetSelectedWeapon()->GetDesc();
 
 	if (pSelectedItemDesc == NULL) return;
 
 	if (pSelectedItemDesc->m_nType != MMIT_RANGE)  return;
 
-	if (g_pGame->m_pMyCharacter->GetItems()->GetSelectedWeapon()->isReloadable() == false) return;
+	if (m_pGame->m_pMyCharacter->GetItems()->GetSelectedWeapon()->isReloadable() == false) return;
 
-	ZMyCharacter* pChar = g_pGame->m_pMyCharacter;
+	ZMyCharacter* pChar = m_pGame->m_pMyCharacter;
 
 	if (pChar->m_bBlast ||
 		pChar->m_bBlastFall ||
@@ -3712,7 +3716,9 @@ void ZGameInterface::OnResponseCharacterItemList(MUID* puidEquipItem, MTD_ItemNo
 
 void ZGameInterface::FinishGame()
 {
-	g_pGame->StopRecording();
+	if (m_pGame) {
+		m_pGame->StopRecording();
+	}
 	ZGetGameInterface()->GetCombatInterface()->Finish();
 }
 

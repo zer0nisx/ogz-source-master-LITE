@@ -69,5 +69,5 @@ MUID ZQuestGameInfo::GetBoss()
 {
 	if (m_Bosses.empty()) return MUID(0,0);
 
-	return m_Bosses[0];
+	return m_Bosses.at(0); // Usar at() para bounds checking (aunque ya verificamos empty)
 }

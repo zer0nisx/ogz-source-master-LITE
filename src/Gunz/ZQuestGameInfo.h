@@ -5,27 +5,27 @@
 #include <vector>
 using namespace std;
 
-// Äù½ºÆ®ÀÇ °ÔÀÓ Á¤º¸
+// ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 class ZQuestGameInfo
 {
 private:
 	bool							m_bInitialized;
 	vector<MQUEST_NPC>				m_NPCInfoVector;
 	vector<MQuestLevelSectorNode>	m_MapSectorVector;
-	int								m_nQL;						// ÇöÀç ½Ã³ª¸®¿ÀÀÇ Äù½ºÆ® ·¹º§
+	int								m_nQL;						// ï¿½ï¿½ï¿½ï¿½ ï¿½Ã³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½
 	float							m_fNPC_TC;
-	int								m_nNPCCount;				// ÇÑ ¼½ÅÍ´ç µîÀåÇÒ ÃÑ NPC¼ö
-	int								m_nNPCKilled;				// ÇÑ ¼½ÅÍ´ç Á×Àº NPC ¼ö
-	int								m_nCurrSectorIndex;			// ÇöÀç °ÔÀÓÁßÀÎ ¼½ÅÍ ÀÎµ¦½º
-	int								m_nNumOfObtainQuestItem;	// Äù½ºÆ® ÆÀÀÌ È¹µæÇÑ ¾ÆÀÌÅÛ °¹¼ö
-	vector<MUID>					m_Bosses;					// º¸½º UID
-	rvector							m_vPortalPos;				// Æ÷Å»ÀÇ À§Ä¡
+	int								m_nNPCCount;				// ï¿½ï¿½ ï¿½ï¿½ï¿½Í´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ NPCï¿½ï¿½
+	int								m_nNPCKilled;				// ï¿½ï¿½ ï¿½ï¿½ï¿½Í´ï¿½ ï¿½ï¿½ï¿½ï¿½ NPC ï¿½ï¿½
+	int								m_nCurrSectorIndex;			// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Îµï¿½ï¿½ï¿½
+	int								m_nNumOfObtainQuestItem;	// ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ È¹ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+	vector<MUID>					m_Bosses;					// ï¿½ï¿½ï¿½ï¿½ UID
+	rvector							m_vPortalPos;				// ï¿½ï¿½Å»ï¿½ï¿½ ï¿½ï¿½Ä¡
 public:
 	ZQuestGameInfo();
 	~ZQuestGameInfo();
 	void Init(MTD_QuestGameInfo* pMTDQuestGameInfo);
 	void Final();
-	void OnMovetoNewSector(int nSectorIndex);				// »õ·Î¿î ¼½ÅÍ·Î ÀÌµ¿
+	void OnMovetoNewSector(int nSectorIndex);				// ï¿½ï¿½ï¿½Î¿ï¿½ ï¿½ï¿½ï¿½Í·ï¿½ ï¿½Ìµï¿½
 
 	// interface func
 	int GetNPCInfoCount();
@@ -35,7 +35,7 @@ public:
 	int GetMapSectorLink(int index);
 	bool IsInited();
 	inline float GetNPC_TC();
-	inline bool IsCurrSectorLastSector();			// ÇöÀç ¼½ÅÍ°¡ ¸¶Áö¸· ¼½ÅÍÀÎÁö ¿©ºÎ
+	inline bool IsCurrSectorLastSector();			// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Í°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	int GetCurrSectorIndex()				{ return m_nCurrSectorIndex; }
 	int GetNPCCount( void)					{ return m_nNPCCount; }
 	int GetNPCKilled( void)					{ return m_nNPCKilled; }
@@ -64,14 +64,29 @@ inline int ZQuestGameInfo::GetMapSectorCount()
 }
 inline MQUEST_NPC ZQuestGameInfo::GetNPCInfo(int index) 
 { 
+	if (index < 0 || index >= (int)m_NPCInfoVector.size()) {
+		mlog("ZQuestGameInfo::GetNPCInfo - Invalid index %d (size: %d), returning 0\n", 
+			index, (int)m_NPCInfoVector.size());
+		return MQUEST_NPC(0);
+	}
 	return m_NPCInfoVector[index]; 
 }
 inline int ZQuestGameInfo::GetMapSectorID(int index) 
 { 
+	if (index < 0 || index >= (int)m_MapSectorVector.size()) {
+		mlog("ZQuestGameInfo::GetMapSectorID - Invalid index %d (size: %d), returning 0\n", 
+			index, (int)m_MapSectorVector.size());
+		return 0;
+	}
 	return m_MapSectorVector[index].nSectorID; 
 }
 inline int ZQuestGameInfo::GetMapSectorLink(int index)
 {
+	if (index < 0 || index >= (int)m_MapSectorVector.size()) {
+		mlog("ZQuestGameInfo::GetMapSectorLink - Invalid index %d (size: %d), returning 0\n", 
+			index, (int)m_MapSectorVector.size());
+		return 0;
+	}
 	return m_MapSectorVector[index].nNextLinkIndex;
 }
 

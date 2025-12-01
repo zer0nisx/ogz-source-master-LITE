@@ -247,7 +247,8 @@ bool ZQuest::OnGameCommand(MCommand* pCommand)
 
 bool ZQuest::OnNPCSpawn(MCommand* pCommand)
 {
-	if (g_pGame == NULL) return false;
+	ZGame* pGame = ZGetGame();
+	if (!pGame) return false;
 
 	MUID uidChar, uidNPC;
 	unsigned char nNPCType, nPositionIndex;
@@ -261,7 +262,7 @@ bool ZQuest::OnNPCSpawn(MCommand* pCommand)
 
 	ZMapSpawnType nSpawnType = ZMST_NPC_MELEE;
 
-	ZMapSpawnManager* pMSM = g_pGame->GetMapDesc()->GetSpawnManager();
+	ZMapSpawnManager* pMSM = pGame->GetMapDesc()->GetSpawnManager();
 	MQuestNPCInfo* pNPCInfo = GetNPCInfo(NPCType);
 	if (pNPCInfo == NULL) return false;
 
@@ -476,7 +477,10 @@ bool ZQuest::OnPeerNPCAttackRange(MCommand* pCommand)
 	rvector to = rvector(pinfo->tox, pinfo->toy, pinfo->toz);
 
 	// rocket �׽�Ʈ�� �־�ô�.
-	ZObject* pOwner = ZGetGame()->m_ObjectManager.GetObject(uidOwner);
+	ZGame* pGame = ZGetGame();
+	if (!pGame) return false;
+	
+	ZObject* pOwner = pGame->m_ObjectManager.GetObject(uidOwner);
 	MMatchItemDesc* pDesc = NULL;
 
 	if (pOwner == NULL) return false; // ���� ġƮŰ�� �����...
@@ -490,7 +494,7 @@ bool ZQuest::OnPeerNPCAttackRange(MCommand* pCommand)
 		{
 			rvector dir = to - pos;
 			Normalize(dir);
-			ZGetGame()->m_WeaponManager.AddRocket(pos, dir, pOwner);
+			pGame->m_WeaponManager.AddRocket(pos, dir, pOwner);
 			ZApplication::GetSoundEngine()->PlaySEFire(pDesc, pos.x, pos.y, pos.z, false);
 
 			return true;
@@ -505,13 +509,13 @@ bool ZQuest::OnPeerNPCAttackRange(MCommand* pCommand)
 
 			ZApplication::GetSoundEngine()->PlaySEFire(pDesc, pos.x, pos.y, pos.z, false);
 
-			ZGetGame()->m_WeaponManager.AddMagic(&skill, pos, dir, pOwner);
+			pGame->m_WeaponManager.AddMagic(&skill, pos, dir, pOwner);
 			return true;
 		}
 	}
 
-	ZGetGame()->OnPeerShot_Range((MMatchCharItemParts)pinfo->sel_type, pOwner,
-		ZGetGame()->GetTime(), pos, to, reinterpret<u32>(ZGetGame()->GetTime()));
+	pGame->OnPeerShot_Range((MMatchCharItemParts)pinfo->sel_type, pOwner,
+		pGame->GetTime(), pos, to, reinterpret<u32>(pGame->GetTime()));
 
 	return true;
 }
@@ -530,12 +534,15 @@ bool ZQuest::OnRefreshPlayerStatus(MCommand* pCommand)
 	if (!bAdminHide)
 	{
 		// �������̰ų� ������ ������¸� Ǭ��.
-		ZGetGame()->ReleaseObserver();
+		ZGame* pGame = ZGetGame();
+		if (pGame) {
+			pGame->ReleaseObserver();
 
-		// If you're dead, respawn.
-		if (ZGetGame()->m_pMyCharacter->IsDead())
-		{
-			ZGetGame()->GetMatch()->RespawnSolo();
+			// If you're dead, respawn.
+			if (pGame->m_pMyCharacter && pGame->m_pMyCharacter->IsDead())
+			{
+				pGame->GetMatch()->RespawnSolo();
+			}
 		}
 	}
 
@@ -546,7 +553,10 @@ bool ZQuest::OnRefreshPlayerStatus(MCommand* pCommand)
 		if (!pCharacter->IsAdminHide())	pCharacter->InitStatus();
 	}
 
-	ZGetGame()->CancelSuicide();
+	ZGame* pGame = ZGetGame();
+	if (pGame) {
+		pGame->CancelSuicide();
+	}
 
 	return true;
 }
@@ -633,12 +643,13 @@ bool ZQuest::OnQuestCombatState(MCommand* pCommand)
 		// ������ ���ʹ� ���� ��ũ�� ����.
 		if (!m_GameInfo.IsCurrSectorLastSector())
 		{
-			if (g_pGame)
+			ZGame* pGame = ZGetGame();
+			if (pGame)
 			{
 				rvector portal_pos;
 				int nCurrSectorIndex = m_GameInfo.GetCurrSectorIndex();
 				int nLinkIndex = m_GameInfo.GetMapSectorLink(nCurrSectorIndex);
-				portal_pos = g_pGame->GetMapDesc()->GetQuestSectorLink(nLinkIndex);
+				portal_pos = pGame->GetMapDesc()->GetQuestSectorLink(nLinkIndex);
 				ZGetWorldItemManager()->AddQuestPortal(portal_pos);
 				m_GameInfo.SetPortalPos(portal_pos);
 
@@ -877,7 +888,12 @@ void ZQuest::LoadNPCMeshes()
 	{
 		MQUEST_NPC npc = m_GameInfo.GetNPCInfo(i);
 
-		ZGetNpcMeshMgr()->Load(GetNPCInfo(npc)->szMeshName);
+		MQuestNPCInfo* pNPCInfo = GetNPCInfo(npc);
+		if (!pNPCInfo) {
+			mlog("ZQuest::LoadNPCMeshes - NPC %d not found in catalogue, skipping\n", (int)npc);
+			continue;
+		}
+		ZGetNpcMeshMgr()->Load(pNPCInfo->szMeshName);
 	}
 
 	ZGetNpcMeshMgr()->ReloadAllAnimation();// ���� ���� ���ϸ��̼��� �ִٸ� �ε�
@@ -906,7 +922,10 @@ void ZQuest::LoadNPCSounds()
 
 void ZQuest::MoveToNextSector()
 {
-	ZCharacter* pMyChar = ZGetGame()->m_pMyCharacter;
+	ZGame* pGame = ZGetGame();
+	if (!pGame || !pGame->m_pMyCharacter) return;
+	
+	ZCharacter* pMyChar = pGame->m_pMyCharacter;
 	pMyChar->InitStatus();
 
 	// ���ο� ����� �̵�!!
@@ -1045,8 +1064,9 @@ void ZQuest::GetMyObtainQuestItemList(int nRewardXP, int nRewardBP, void* pMyObt
 			// ���� ��ϵǴ� �������� �ʱ�ȭ�� ���ְ� ����� ����� ��.
 
 			pNewQuestItem = new ZMyQuestItemNode;
-			if (0 == pNewQuestItem)
+			if (!pNewQuestItem)
 			{
+				mlog("ZQuest::GetMyObtainQuestItemList - Failed to create ZMyQuestItemNode (out of memory)\n");
 				continue;
 			}
 
@@ -1169,10 +1189,14 @@ bool ZQuest::OnPeerNPCDead(MCommand* pCommand)
 
 		if (uidKiller == ZGetMyUID())
 		{
-			ZModule_QuestStatus* pMod = (ZModule_QuestStatus*)g_pGame->m_pMyCharacter->GetModule(ZMID_QUESTSTATUS);
-			if (pMod)
+			ZGame* pGame = ZGetGame();
+			if (pGame && pGame->m_pMyCharacter)
 			{
-				ZGetScreenEffectManager()->AddKO();
+				ZModule_QuestStatus* pMod = (ZModule_QuestStatus*)pGame->m_pMyCharacter->GetModule(ZMID_QUESTSTATUS);
+				if (pMod)
+				{
+					ZGetScreenEffectManager()->AddKO();
+				}
 			}
 		}
 	}
@@ -1190,7 +1214,8 @@ bool ZQuest::OnSectorBonus(MCommand* pCommand)
 	int nAddedXP = GetExpFromTransData(nExpValue);
 	int nExpPercent = GetExpPercentFromTransData(nExpValue);
 
-	if (ZGetCharacterManager()->Find(uidPlayer) == g_pGame->m_pMyCharacter)
+	ZGame* pGame = ZGetGame();
+	if (pGame && ZGetCharacterManager()->Find(uidPlayer) == pGame->m_pMyCharacter)
 	{
 		ZGetScreenEffectManager()->AddExpEffect(nAddedXP);
 		ZGetMyInfo()->SetLevelPercent(nExpPercent);
