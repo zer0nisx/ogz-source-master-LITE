@@ -568,49 +568,49 @@ void ZCombatInterface::OnDraw(MDrawContext* pDC)
 				bool bIsChallengerDie = false;
 				int nMyChar = -1;
 
-			ZRuleDuel* pDuel = (ZRuleDuel*)ZGetGameInterface()->GetGame()->GetMatch()->GetRule();
-			if (pDuel)
-			{
-				// Optimización: Guardar ZGetCharacterManager() y ZGetMyUID() en variables locales
-				ZCharacterManager* pCharMgr = ZGetCharacterManager();
-				if (!pCharMgr) return;
-				
-				MUID myUID = ZGetMyUID(); // Guardar una vez para evitar múltiples llamadas
-				
-				for (ZCharacterManager::iterator itor = pCharMgr->begin();
-					itor != pCharMgr->end(); ++itor)
+				ZRuleDuel* pDuel = (ZRuleDuel*)ZGetGameInterface()->GetGame()->GetMatch()->GetRule();
+				if (pDuel)
 				{
-					ZCharacter* pCharacter = (*itor).second;
+					// Optimización: Guardar ZGetCharacterManager() y ZGetMyUID() en variables locales
+					ZCharacterManager* pCharMgr = ZGetCharacterManager();
+					if (!pCharMgr) return;
 
-					// Player
-					if (pCharacter->GetUID() == pDuel->QInfo.m_uidChampion)
+					MUID myUID = ZGetMyUID(); // Guardar una vez para evitar múltiples llamadas
+
+					for (ZCharacterManager::iterator itor = pCharMgr->begin();
+						itor != pCharMgr->end(); ++itor)
 					{
-						if (myUID == pDuel->QInfo.m_uidChampion)
-						{
-							// Draw victory
-							ZGetCombatInterface()->DrawVictory(pDC, 210, 86, pDuel->QInfo.m_nVictory);
-						}
-						else
-						{
-							sprintf_safe(charName[0], "%s%d  %s", ZMsg(MSG_CHARINFO_LEVELMARKER),
-								pCharacter->GetProperty()->nLevel, pCharacter->GetUserName());
+						ZCharacter* pCharacter = (*itor).second;
 
-							if ((myUID == pDuel->QInfo.m_uidChampion)
-								|| (myUID == pDuel->QInfo.m_uidChallenger))
+						// Player
+						if (pCharacter->GetUID() == pDuel->QInfo.m_uidChampion)
+						{
+							if (myUID == pDuel->QInfo.m_uidChampion)
 							{
 								// Draw victory
-								int nTextWidth = pFont->GetWidth(charName[0]);
-								int nWidth = ZGetCombatInterface()->DrawVictory(pDC, 162, 300,
-									pDuel->QInfo.m_nVictory, true);
-								ZGetCombatInterface()->DrawVictory(pDC, 43 + nTextWidth + nWidth, 157,
-									pDuel->QInfo.m_nVictory);
+								ZGetCombatInterface()->DrawVictory(pDC, 210, 86, pDuel->QInfo.m_nVictory);
+							}
+							else
+							{
+								sprintf_safe(charName[0], "%s%d  %s", ZMsg(MSG_CHARINFO_LEVELMARKER),
+									pCharacter->GetProperty()->nLevel, pCharacter->GetUserName());
+
+								if ((myUID == pDuel->QInfo.m_uidChampion)
+									|| (myUID == pDuel->QInfo.m_uidChallenger))
+								{
+									// Draw victory
+									int nTextWidth = pFont->GetWidth(charName[0]);
+									int nWidth = ZGetCombatInterface()->DrawVictory(pDC, 162, 300,
+										pDuel->QInfo.m_nVictory, true);
+									ZGetCombatInterface()->DrawVictory(pDC, 43 + nTextWidth + nWidth, 157,
+										pDuel->QInfo.m_nVictory);
+								}
 							}
 						}
-					}
 
-					else if (pCharacter->GetUID() == pDuel->QInfo.m_uidChallenger)
-					{
-						if (myUID != pDuel->QInfo.m_uidChallenger)
+						else if (pCharacter->GetUID() == pDuel->QInfo.m_uidChallenger)
+						{
+							if (myUID != pDuel->QInfo.m_uidChallenger)
 								sprintf_safe(charName[0], "%s%d  %s", ZMsg(MSG_CHARINFO_LEVELMARKER),
 									pCharacter->GetProperty()->nLevel, pCharacter->GetUserName());
 
@@ -1416,7 +1416,7 @@ void ZCombatInterface::DrawScoreBoard(MDrawContext* pDC)
 		// Optimización: Guardar ZGetCharacterManager() en variable local
 		ZCharacterManager* pCharMgr = ZGetCharacterManager();
 		if (!pCharMgr) return;
-		
+
 		int nRed = 0, nBlue = 0;
 
 		for (ZCharacterManager::iterator itor = pCharMgr->begin();
@@ -1500,7 +1500,7 @@ void ZCombatInterface::DrawScoreBoard(MDrawContext* pDC)
 	if (ZGetGameTypeManager()->IsQuestDerived(pGame->GetMatch()->GetMatchType()))
 	{
 		// Optimización: Guardar ZGetQuest()->GetGameInfo() en variable local para evitar múltiples llamadas
-		MQuestGameInfo* pGameInfo = ZGetQuest()->GetGameInfo();
+		auto* pGameInfo = ZGetQuest()->GetGameInfo();
 		sprintf_safe(szText, "%s : %d", ZMsg(MSG_WORD_REMAINNPC), pGameInfo->GetNPCCount() - pGameInfo->GetNPCKilled());
 		TextRelative(pDC, x, y, szText);
 		y -= linespace2;
@@ -1571,7 +1571,7 @@ void ZCombatInterface::DrawScoreBoard(MDrawContext* pDC)
 	else if (ZGetGameTypeManager()->IsQuestDerived(pGame->GetMatch()->GetMatchType()))
 	{
 		// Optimización: Guardar ZGetQuest()->GetGameInfo() en variable local para evitar múltiples llamadas
-		MQuestGameInfo* pGameInfo = ZGetQuest()->GetGameInfo();
+		auto* pGameInfo = ZGetQuest()->GetGameInfo();
 		sprintf_safe(szText, "%s : %d / %d", ZMsg(MSG_WORD_RPROGRESS), pGameInfo->GetCurrSectorIndex() + 1, pGameInfo->GetMapSectorCount());
 	}
 	else if (!bClanGame)
@@ -1688,7 +1688,7 @@ void ZCombatInterface::DrawScoreBoard(MDrawContext* pDC)
 	// Optimización: Guardar ZGetCharacterManager() en variable local (pGame ya está definido arriba)
 	ZCharacterManager* pCharMgr = ZGetCharacterManager();
 	if (!pCharMgr) return;
-	
+
 	ZCharacterManager::iterator itor;
 	for (itor = pCharMgr->begin();
 		itor != pCharMgr->end(); ++itor)
@@ -2873,7 +2873,7 @@ void ZCombatInterface::OnFinish()
 	// Optimización: Guardar ZGetCharacterManager() en variable local (pGame ya está definido arriba)
 	ZCharacterManager* pCharMgr = ZGetCharacterManager();
 	if (!pCharMgr) return;
-	
+
 	ZCharacterManager::iterator itor;
 	for (itor = pCharMgr->begin();
 		itor != pCharMgr->end(); ++itor)

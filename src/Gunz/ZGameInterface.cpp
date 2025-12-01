@@ -3143,14 +3143,14 @@ void ZGameInterface::Buy()
 		int nIndex = (int)uidItem.Low - 1;
 		if (nIndex < 0)
 		{
-			ZApplication::GetGameInterface()->ShowErrorMessage(MERR_INVALID_ITEM);
+			ZApplication::GetGameInterface()->ShowErrorMessage(MERR_CANNOT_BUY_ITEM);
 			return;
 		}
 		nItemID = ZGetShop()->GetItemID(nIndex);
 		// Corrección #5: Verificar INVALID_ITEM_ID en lugar de 0
 		if (nItemID == 0xFFFFFFFF)  // INVALID_ITEM_ID
 		{
-			ZApplication::GetGameInterface()->ShowErrorMessage(MERR_INVALID_ITEM);
+			ZApplication::GetGameInterface()->ShowErrorMessage(MERR_CANNOT_BUY_ITEM);
 			return;
 		}
 
@@ -3162,7 +3162,7 @@ void ZGameInterface::Buy()
 			MQuestItemDesc* pQuestItemDesc = GetQuestItemDescMgr().FindQItemDesc(nItemID);
 			if (0 == pQuestItemDesc)
 			{
-				ZApplication::GetGameInterface()->ShowErrorMessage(MERR_INVALID_ITEM);
+				ZApplication::GetGameInterface()->ShowErrorMessage(MERR_CANNOT_BUY_ITEM);
 				return;
 			}
 
@@ -3173,7 +3173,7 @@ void ZGameInterface::Buy()
 		// Error #1: Verificar NULL antes de usar pItemDesc
 		if (pItemDesc == NULL)
 		{
-			ZApplication::GetGameInterface()->ShowErrorMessage(MERR_INVALID_ITEM);
+			ZApplication::GetGameInterface()->ShowErrorMessage(MERR_CANNOT_BUY_ITEM);
 			return;
 		}
 		if (pItemDesc->IsCashItem())

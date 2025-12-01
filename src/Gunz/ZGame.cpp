@@ -416,7 +416,7 @@ bool ZGame::Create(MZFileSystem* pfs, ZLoadingProgress* pLoading)
 
 	if (ZGetApplication()->GetLaunchMode() != ZApplication::ZLAUNCH_MODE_STANDALONE_AI &&
 		pGameTypeManager->IsQuestDerived(pGameClient->GetMatchStageSetting()->GetGameType())) {
-		MQuestGameInfo* pGameInfo = pQuest->GetGameInfo();
+		auto* pGameInfo = pQuest->GetGameInfo();
 		for (int i = 0; i < pGameInfo->GetMapSectorCount(); i++)
 		{
 			MQuestMapSectorInfo* pSecInfo = pQuest->GetSectorInfo(pGameInfo->GetMapSectorID(i));
@@ -527,7 +527,7 @@ bool ZGame::Create(MZFileSystem* pfs, ZLoadingProgress* pLoading)
 #endif
 
 	m_pMyCharacter->GetStatus()->nLoadingPercent = 100;
-	ZGameClient* pGameClient = ZGetGameClient();
+	// Reutilizar pGameClient ya definido arriba en el método
 	ZPostLoadingComplete(pGameClient->GetPlayerUID(), 100);
 
 	ZPostStageEnterBattle(pGameClient->GetPlayerUID(), pGameClient->GetStageUID());
@@ -3347,7 +3347,7 @@ void ZGame::OnPeerDead(const MUID& uidAttacker, const u32 nAttackerArg,
 
 	// Optimización: Usar variables ya declaradas arriba (pAttacker y pVictim ya existen)
 	// No necesitamos redeclararlas, solo usar las que ya tenemos
-	
+
 	if (bSuicide && (pAttacker == m_pMyCharacter))
 	{
 		ZGetScreenEffectManager()->AddExpEffect(nVictimExp);
@@ -4371,31 +4371,31 @@ void ZGame::AddEffectRoundState(MMATCH_ROUNDSTATE nRoundState, int nArg)
 			for (int j = 0; j < 2; j++)
 			{
 				bool bAllKill = true;
-			// Optimización: Guardar ZGetCharacterManager() en variable local
-			ZCharacterManager* pCharMgr = ZGetCharacterManager();
-			if (!pCharMgr) return;
-			
-			ZCharacter* pAllKillPlayer = NULL;
+				// Optimización: Guardar ZGetCharacterManager() en variable local
+				ZCharacterManager* pCharMgr = ZGetCharacterManager();
+				if (!pCharMgr) return;
 
-			for (ZCharacterManager::iterator itor = pCharMgr->begin();
-				itor != pCharMgr->end(); ++itor)
-			{
-				ZCharacter* pCharacter = (*itor).second;
-				if (pCharacter == NULL) return;
+				ZCharacter* pAllKillPlayer = NULL;
 
-				if (j == 0) {
-					nTeam = MMT_RED;
-				}
-				else if (j == 1) {
-					nTeam = MMT_BLUE;
-				}
-
-				if (pCharacter->GetTeamID() != nTeam)
-					continue;
-
-				if (pCharacter->IsDead())
+				for (ZCharacterManager::iterator itor = pCharMgr->begin();
+					itor != pCharMgr->end(); ++itor)
 				{
-					ZCharacter* pKiller = pCharMgr->Find(pCharacter->GetLastAttacker());
+					ZCharacter* pCharacter = (*itor).second;
+					if (pCharacter == NULL) return;
+
+					if (j == 0) {
+						nTeam = MMT_RED;
+					}
+					else if (j == 1) {
+						nTeam = MMT_BLUE;
+					}
+
+					if (pCharacter->GetTeamID() != nTeam)
+						continue;
+
+					if (pCharacter->IsDead())
+					{
+						ZCharacter* pKiller = pCharMgr->Find(pCharacter->GetLastAttacker());
 						if (pAllKillPlayer == NULL)
 						{
 							if (!pKiller || pKiller->GetTeamID() == nTeam)
@@ -4445,10 +4445,10 @@ void ZGame::AddEffectRoundState(MMATCH_ROUNDSTATE nRoundState, int nArg)
 					uidTarget = m_pMyCharacter->GetUID();
 
 				// Optimización: Guardar ZGetCharacterManager() en variable local
-			ZCharacterManager* pCharMgr = ZGetCharacterManager();
-			if (!pCharMgr) return;
-			
-			for (ZCharacterManager::iterator itor = pCharMgr->begin(); itor != pCharMgr->end(); ++itor)
+				ZCharacterManager* pCharMgr = ZGetCharacterManager();
+				if (!pCharMgr) return;
+
+				for (ZCharacterManager::iterator itor = pCharMgr->begin(); itor != pCharMgr->end(); ++itor)
 				{
 					ZCharacter* pCharacter = (*itor).second;
 
