@@ -485,7 +485,10 @@ bool MMatchServer::Create(int nPort)
 
 	if (!InitDB()) return false;
 
-	m_AsyncProxy.Create(DEFAULT_ASYNCPROXY_THREADPOOL);
+	if (!m_AsyncProxy.Create(DEFAULT_ASYNCPROXY_THREADPOOL)) {
+		LOG(LOG_ALL, "Match Server AsyncProxy Create FAILED");
+		return false;
+	}
 
 	m_Admin.Create(this);
 

@@ -4,6 +4,8 @@
 #include <algorithm>
 #include <functional>
 #include <mutex>
+#include <vector>
+#include <thread>
 #include "GlobalTypes.h"
 #include "MSync.h"
 #include "function_view.h"
@@ -29,6 +31,7 @@ public:
 		m_nJobID = nJobID;
 		m_nPostTime = 0;
 		m_nFinishTime = 0;
+		m_nResult = MASYNC_RESULT_FAILED; // Inicializar resultado
 	}
 	virtual ~MAsyncJob()	{}
 
@@ -48,6 +51,26 @@ class MAsyncJobList : private std::deque<MAsyncJob*> {
 protected:
 	MCriticalSection m_csLock;
 public:
+	MAsyncJobList() = default;
+	~MAsyncJobList() {
+		// Limpiar jobs pendientes si los hay
+		// Nota: No usar Lock() aquí porque puede causar deadlock si se llama desde otro thread
+		// En su lugar, limpiar directamente sin lock (solo si estamos seguros de que no hay otros threads)
+		while (!empty()) {
+			MAsyncJob* pJob = front();
+			pop_front();
+			if (pJob) {
+				delete pJob;
+			}
+		}
+	}
+
+	// No copiable ni movible
+	MAsyncJobList(const MAsyncJobList&) = delete;
+	MAsyncJobList& operator=(const MAsyncJobList&) = delete;
+	MAsyncJobList(MAsyncJobList&&) = delete;
+	MAsyncJobList& operator=(MAsyncJobList&&) = delete;
+
 	void Lock()		{ m_csLock.lock(); }
 	void Unlock()	{ m_csLock.unlock(); }
 
@@ -85,10 +108,27 @@ protected:
 	MAsyncJobList ResultQueue;
 
 	MCriticalSection csCrashDump;
+	
+	std::vector<std::thread> m_Threads; // Track threads para poder esperarlos
+	std::vector<IDatabase*> m_Databases; // Track databases para limpiarlas
+	MCriticalSection m_csThreads; // Proteger acceso a threads
+	bool m_bDestroyed; // Flag para evitar múltiples llamadas a Destroy()
 
 	void OnRun(IDatabase* Database);
 
 public:
+	// Constructor por defecto
+	MAsyncProxy() : m_bDestroyed(false) {}
+	
+	// Destructor - limpia recursos
+	~MAsyncProxy();
+	
+	// No copiable ni movible (regla de tres/cinco)
+	MAsyncProxy(const MAsyncProxy&) = delete;
+	MAsyncProxy& operator=(const MAsyncProxy&) = delete;
+	MAsyncProxy(MAsyncProxy&&) = delete;
+	MAsyncProxy& operator=(MAsyncProxy&&) = delete;
+
 	bool Create(int ThreadCount);
 	bool Create(int ThreadCount, function_view<IDatabase*()> GetDatabase);
 	void Destroy();

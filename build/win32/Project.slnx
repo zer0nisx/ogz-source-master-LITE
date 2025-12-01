@@ -206,6 +206,7 @@
 		<BuildDependency Project="RealSpace2/RealSpace2.vcxproj"/>
 		<BuildDependency Project="ZERO_CHECK.vcxproj"/>
 		<BuildDependency Project="cml/cml.vcxproj"/>
+		<BuildDependency Project="sdk/imgui/imgui.vcxproj"/>
 	</Project>
 	<Project Path="ZERO_CHECK.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="5b1216ee-1d01-3b9c-8e8f-acd32d771e06"/>
 	<Project Path="cml/all_unity.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="ab8c76df-e450-3be8-ab89-84faeae55265">

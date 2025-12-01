@@ -798,7 +798,7 @@ void ZConfiguration::Init()
 	m_Video.bTerrible = false;
 	m_Video.bVSync = false;  // VSync desactivado por defecto
 	m_Video.bTripleBuffer = false;  // Triple buffering desactivado por defecto
-	m_Video.bDX9Ex = true;  // DirectX 9 Extended desactivado por defecto (requiere Windows Vista+)
+	m_Video.bDX9Ex = false;  // DirectX 9 Extended desactivado por defecto (requiere Windows Vista+)
 	bCamFix = true;
 	InterfaceFix = false;
 

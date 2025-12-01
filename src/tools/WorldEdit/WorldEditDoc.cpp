@@ -1,117 +1,45 @@
-// WorldEditDoc.cpp : implementation of the CWorldEditDoc class
-//
-
+// WorldEditDoc.cpp - ImGui version (no MFC)
 #include "stdafx.h"
-#include "WorldEdit.h"
-
 #include "WorldEditDoc.h"
-
 #include "RBspObject.h"
 #include "FileInfo.h"
 #include "RMaterialList.h"
+#include "MDebug.h"
 
-#ifdef _DEBUG
-#define new DEBUG_NEW
-#undef THIS_FILE
-static char THIS_FILE[] = __FILE__;
-#endif
-
-/////////////////////////////////////////////////////////////////////////////
-// CWorldEditDoc
-
-IMPLEMENT_DYNCREATE(CWorldEditDoc, CDocument)
-
-BEGIN_MESSAGE_MAP(CWorldEditDoc, CDocument)
-	//{{AFX_MSG_MAP(CWorldEditDoc)
-		// NOTE - the ClassWizard will add and remove mapping macros here.
-		//    DO NOT EDIT what you see in these blocks of generated code!
-	//}}AFX_MSG_MAP
-END_MESSAGE_MAP()
-
-/////////////////////////////////////////////////////////////////////////////
-// CWorldEditDoc construction/destruction
-
-BOOL CWorldEditDoc::OnNewDocument()
+WorldEditDoc::WorldEditDoc()
 {
-	if (!CDocument::OnNewDocument())
-		return FALSE;
-
-	// TODO: add reinitialization code here
-	// (SDI documents will reuse this document)
-
-	return TRUE;
 }
 
-
-
-/////////////////////////////////////////////////////////////////////////////
-// CWorldEditDoc serialization
-
-void CWorldEditDoc::Serialize(CArchive& ar)
+WorldEditDoc::~WorldEditDoc()
 {
-	if (ar.IsStoring())
-	{
-		// TODO: add storing code here
-	}
-	else
-	{
-		// TODO: add loading code here
-	}
+    CloseDocument();
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// CWorldEditDoc diagnostics
-
-#ifdef _DEBUG
-void CWorldEditDoc::AssertValid() const
+bool WorldEditDoc::OpenDocument(const wchar_t* lpszPathName)
 {
-	CDocument::AssertValid();
+    CloseDocument();
+
+    m_pBspObject = std::make_unique<RBspObject>();
+    
+    // Convert wide string to narrow string
+    char narrowPath[MAX_PATH];
+    WideCharToMultiByte(CP_ACP, 0, lpszPathName, -1, narrowPath, MAX_PATH, nullptr, nullptr);
+    
+    if (!m_pBspObject->Open(narrowPath, RBspObject::ROpenMode::Editor))
+    {
+        m_pBspObject.reset();
+        mlog("Failed to open map: %s\n", narrowPath);
+        return false;
+    }
+
+    m_bLastPicked = false;
+    m_filePath = lpszPathName;
+    return true;
 }
 
-void CWorldEditDoc::Dump(CDumpContext& dc) const
+void WorldEditDoc::CloseDocument()
 {
-	CDocument::Dump(dc);
-}
-#endif //_DEBUG
-
-/////////////////////////////////////////////////////////////////////////////
-// CWorldEditDoc commands
-
-BOOL CWorldEditDoc::OnOpenDocument(LPCTSTR lpszPathName) 
-{
-	if (!CDocument::OnOpenDocument(lpszPathName))
-		return FALSE;
-
-	m_pBspObject.reset();
-
-	m_pBspObject = std::make_unique<RBspObject>();
-	CStringA strPathName(lpszPathName);
-	if(!m_pBspObject->Open(strPathName, RBspObject::ROpenMode::Editor))
-	{
-		m_pBspObject.reset();
-		AfxMessageBox(L"Failed to open map!");
-		return FALSE;
-	}
-
-	m_bLastPicked=false;
-	return TRUE;
-}
-
-void CWorldEditDoc::OnCloseDocument()
-{
-	// TODO: Add your specialized code here and/or call the base class
-	m_pBspObject.reset();
-
-	CDocument::OnCloseDocument();
-}
-
-bool CWorldEditDoc::ReOpen()
-{
-	m_bLastPicked=false;
-
-	m_pBspObject.reset();
-
-	m_pBspObject = std::make_unique<RBspObject>();
-	CStringA strPathName(GetPathName());
-	return m_pBspObject->Open(strPathName,RBspObject::ROpenMode::Editor);
+    m_pBspObject.reset();
+    m_bLastPicked = false;
+    m_filePath.clear();
 }

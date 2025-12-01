@@ -1,56 +1,29 @@
-// WorldEditDoc.h : interface of the CWorldEditDoc class
-//
-/////////////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_WORLDEDITDOC_H__3090997F_4BF6_4435_B38E_E33CBAED1A75__INCLUDED_)
-#define AFX_WORLDEDITDOC_H__3090997F_4BF6_4435_B38E_E33CBAED1A75__INCLUDED_
-
-#if _MSC_VER > 1000
+// WorldEditDoc.h - ImGui version (no MFC)
 #pragma once
-#endif // _MSC_VER > 1000
 
 #include "RNameSpace.h"
 #include "RBspObject.h"
 #include <memory>
+#include <string>
 
 _USING_NAMESPACE_REALSPACE2
 
-class CWorldEditDoc : public CDocument
+class WorldEditDoc
 {
-protected: // create from serialization only
-	DECLARE_DYNCREATE(CWorldEditDoc)
-
-// Attributes
 public:
-	std::unique_ptr<RBspObject> m_pBspObject;
+    WorldEditDoc();
+    ~WorldEditDoc();
 
-	bool m_bLastPicked{};
-	RBSPPICKINFO m_LastPicked;
+    bool OpenDocument(const wchar_t* lpszPathName);
+    void CloseDocument();
+    bool IsDocumentOpen() const { return m_pBspObject != nullptr; }
 
-// Operations
-public:
-	bool ReOpen();
+    std::unique_ptr<RBspObject> m_pBspObject;
+    bool m_bLastPicked = false;
+    RBSPPICKINFO m_LastPicked;
 
-	virtual BOOL OnNewDocument();
-	virtual void Serialize(CArchive& ar);
-	virtual BOOL OnOpenDocument(LPCTSTR lpszPathName);
+    std::wstring GetFilePath() const { return m_filePath; }
 
-#ifdef _DEBUG
-	virtual void AssertValid() const;
-	virtual void Dump(CDumpContext& dc) const;
-#endif
-
-protected:
-
-protected:
-	DECLARE_MESSAGE_MAP()
-public:
-	virtual void OnCloseDocument();
+private:
+    std::wstring m_filePath;
 };
-
-/////////////////////////////////////////////////////////////////////////////
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_WORLDEDITDOC_H__3090997F_4BF6_4435_B38E_E33CBAED1A75__INCLUDED_)
