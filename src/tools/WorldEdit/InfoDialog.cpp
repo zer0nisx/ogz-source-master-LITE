@@ -53,23 +53,23 @@ BOOL CInfoDialog::OnInitDialog()
 	// global information
 	rvector diff=pBsp->GetDimension();
 
-	string.Format("Dimension : ( %3.1f , %3.1f , %3.1f )\r\n",diff.x,diff.y,diff.z);
+	string.Format(L"Dimension : ( %3.1f , %3.1f , %3.1f )\r\n",diff.x,diff.y,diff.z);
 	info+=string;
 
-	string.Format("%d convex polygons\r\n",pBsp->GetConvexPolygonCount());
+	string.Format(L"%d convex polygons\r\n",pBsp->GetConvexPolygonCount());
 	info+=string;
 
-	string.Format("%d polygons & %d nodes\r\n",pBsp->GetPolygonCount(),pBsp->GetNodeCount());
+	string.Format(L"%d polygons & %d nodes\r\n",pBsp->GetPolygonCount(),pBsp->GetNodeCount());
 	info+=string;
 
-	string.Format("%d bsp polygons & %d bsp nodes\r\n",pBsp->GetBspPolygonCount(),pBsp->GetBspNodeCount());
+	string.Format(L"%d bsp polygons & %d bsp nodes\r\n",pBsp->GetBspPolygonCount(),pBsp->GetBspNodeCount());
 	info+=string;
 
 	int nVBSize=pBsp->GetVertexCount()*sizeof(BSPVERTEX);
-	string.Format("%d vertices , vertex buffer size : %d bytes ( %d kbytes )\r\n",pBsp->GetVertexCount(),nVBSize,nVBSize/1024);
+	string.Format(L"%d vertices , vertex buffer size : %d bytes ( %d kbytes )\r\n",pBsp->GetVertexCount(),nVBSize,nVBSize/1024);
 	info+=string;
 
-	string.Format("%d lightmap textures \r\n",pBsp->GetLightmapCount());
+	string.Format(L"%d lightmap textures \r\n",pBsp->GetLightmapCount());
 	info+=string;
 	/*
 	string.Format("%d lightmap texture ( ",pBsp->GetLightmapCount());
@@ -83,22 +83,22 @@ BOOL CInfoDialog::OnInitDialog()
 	*/
 
 
-	// material °ü·Ã Ãâ·ÂÇÑ´Ù.
+	// material ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
 	{
-		string.Format("\r\n%d materials\r\n",pBsp->GetMaterialCount());
+		string.Format(L"\r\n%d materials\r\n",pBsp->GetMaterialCount());
 		info+=string;
 
 		int nCount=0,nTotalBytes=0;
 		for(int i=0;i!=pBsp->GetMaterialCount();i++)
 		{
 			RMATERIAL *pmat=pBsp->GetMaterial(i);
-			string.Format("   %d %s : ( %s ) ",nCount,pmat->Name.c_str(),pmat->DiffuseMap.c_str());
+			string.Format(L"   %d %s : ( %s ) ",nCount,CString(pmat->Name.c_str()),CString(pmat->DiffuseMap.c_str()));
 			info+=string;
 
 			RBaseTexture *pbt=pBsp->GetBaseTexture(nCount);
 			if(pbt && pbt->GetWidth())
 			{
-				char *szFormat;
+				const char *szFormat;
 				D3DFORMAT fm=pbt->GetFormat();
 				switch(fm)
 				{
@@ -109,35 +109,35 @@ BOOL CInfoDialog::OnInitDialog()
 
 				int bpp=4;
 				int nSize=pbt->GetWidth()*pbt->GetHeight()*bpp;
-				string.Format(" ( %d x %d %s ) %d bytes",pbt->GetWidth(),pbt->GetHeight(),szFormat,nSize);
+				string.Format(L" ( %d x %d %s ) %d bytes",pbt->GetWidth(),pbt->GetHeight(),CString(szFormat),nSize);
 
 				nTotalBytes+=nSize;
 
 				info+=string;
 			}
-			info+="\r\n";
+			info+=L"\r\n";
 			nCount++;
 		}
 
-		string.Format("total %d bytes (%d kb ) texture memory used.\r\n",nTotalBytes,nTotalBytes/1024);
+		string.Format(L"total %d bytes (%d kb ) texture memory used.\r\n",nTotalBytes,nTotalBytes/1024);
 		info+=string;
 	}
 
-	string.Format("%d objects\r\n%d map lights\r\n%d object lights\r\n",
+	string.Format(L"%d objects\r\n%d map lights\r\n%d object lights\r\n",
 		pBsp->GetMapObjectList()->size(), pBsp->GetMapLightList().size(), pBsp->GetObjectLightList().size());
 	info+=string;
 
-	// object °ü·Ã Ãâ·Â
+	// object ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
 	{
 		int nCount=0;
 		RMapObjectList *pol=pBsp->GetMapObjectList();
-		string.Format("\r\n%d map objects\r\n",pol->size());
+		string.Format(L"\r\n%d map objects\r\n",pol->size());
 		info+=string;
 
 		for(RMapObjectList::iterator i=pol->begin();i!=pol->end();i++)
 		{
 			ROBJECTINFO& poi=*i;
-			string.Format("   %d %s\r\n",nCount++,poi.name.c_str());
+			string.Format(L"   %d %s\r\n",nCount++,CString(poi.name.c_str()));
 			info+=string;
 		}
 	}

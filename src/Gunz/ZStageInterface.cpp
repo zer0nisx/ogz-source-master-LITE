@@ -98,7 +98,7 @@ void ZStageInterface::OnCreate()
 	if ( pDesc)
 	{
 		pDesc->SetTextColor( MCOLOR(0xFF808080));
-		pDesc->SetText( "¾ÆÀÌÅÛÀ» È­¸é Áß¾Ó¿¡ ÀÖ´Â µÎ°³ÀÇ Á¦´Ü¿¡ ²ø¾î³õÀ½À¸·Î½á °ÔÀÓ ·¹º§À» Á¶Á¤ÇÒ ¼ö ÀÖ½À´Ï´Ù.");
+		pDesc->SetText( "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È­ï¿½ï¿½ ï¿½ß¾Ó¿ï¿½ ï¿½Ö´ï¿½ ï¿½Î°ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ü¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö½ï¿½ï¿½Ï´ï¿½.");
 	}
 
 	ZApplication::GetGameInterface()->ShowWidget( "Stage_Flame0", false);
@@ -191,22 +191,24 @@ void ZStageInterface::OnStageInterfaceSettup()
 		}
 	}
 
-	ChangeStageButtons( ZGetGameClient()->IsForcedEntry(), ZGetGameClient()->AmIStageMaster(), bMyReady);
+	// OptimizaciÃ³n: Guardar ZGetGameClient() en variable local para evitar mÃºltiples llamadas
+	ZGameClient* pGameClient = ZGetGameClient();
+	ChangeStageButtons( pGameClient->IsForcedEntry(), pGameClient->AmIStageMaster(), bMyReady);
 
-	ChangeStageGameSetting( ZGetGameClient()->GetMatchStageSetting()->GetStageSetting());
+	ChangeStageGameSetting( pGameClient->GetMatchStageSetting()->GetStageSetting());
 	
-	if ( !ZGetGameClient()->AmIStageMaster() && ( ZGetGameClient()->IsForcedEntry()))
+	if ( !pGameClient->AmIStageMaster() && ( pGameClient->IsForcedEntry()))
 	{
 		if ( pMyCharNode != NULL)
 			ChangeStageEnableReady( bMyReady);
 	}
 
-	if ( (ZGetGameClient()->AmIStageMaster() == true) && ( ZGetGameClient()->IsForcedEntry()))
+	if ( (pGameClient->AmIStageMaster() == true) && ( pGameClient->IsForcedEntry()))
 	{
-		bool b = ZGetGameClient()->GetMatchStageSetting()->GetStageState() == STAGE_STATE_STANDBY;
+		bool b = pGameClient->GetMatchStageSetting()->GetStageState() == STAGE_STATE_STANDBY;
 		if (b)
 		{
-			ZGetGameClient()->ReleaseForcedEntry();
+			pGameClient->ReleaseForcedEntry();
 		}
 
 		ZGetGameInterface()->EnableWidget( "StageSettingCaller", b);
@@ -241,10 +243,11 @@ void ZStageInterface::OnStageInterfaceSettup()
 	MLabel* pLabel = (MLabel*)pResource->FindWidget( "StageNameLabel");
 	if ( pLabel != 0)
 	{
+		// Reutilizar pGameClient ya definido arriba en el mÃ©todo (lÃ­nea 195)
 		char szStr[ 256];
 		sprintf_safe( szStr, "%s > %s > %03d:%s",
-			ZGetGameClient()->GetServerName(), ZMsg( MSG_WORD_STAGE),
-			ZGetGameClient()->GetStageNumber(), ZGetGameClient()->GetStageName());
+			pGameClient->GetServerName(), ZMsg( MSG_WORD_STAGE),
+			pGameClient->GetStageNumber(), pGameClient->GetStageName());
 		pLabel->SetText( szStr);
 	}
 

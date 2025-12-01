@@ -98,12 +98,12 @@
       <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
       <UseFullPaths>false</UseFullPaths>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;_WINSOCK_DEPRECATED_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_USE_GDIPLUS;CURL_STATICLIB;CMAKE_INTDIR="Debug"</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;_WINSOCK_DEPRECATED_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;CURL_STATICLIB;CMAKE_INTDIR="Debug"</PreprocessorDefinitions>
       <ObjectFileName>$(IntDir)</ObjectFileName>
       <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;_WINSOCK_DEPRECATED_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_USE_GDIPLUS;CURL_STATICLIB;CMAKE_INTDIR=\"Debug\"</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;_WINSOCK_DEPRECATED_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;CURL_STATICLIB;CMAKE_INTDIR=\"Debug\"</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\RealSpace2\.;C:\ogz-source-master-LITE\src\RealSpace2\Include;C:\ogz-source-master-LITE\src\RealSpace2\..\cml\Include;C:\ogz-source-master-LITE\src\RealSpace2\..\RealSpace\Include;C:\ogz-source-master-LITE\src\RealSpace2\..\sdk;C:\ogz-source-master-LITE\src\RealSpace2\..\sdk\dx9\include;C:\ogz-source-master-LITE\src\cml\.;C:\ogz-source-master-LITE\src\cml\Include;C:\ogz-source-master\src\sdk\zlib\include;C:\ogz-source-master-LITE\src\cml\..\sdk\curl\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidjson\include;C:\ogz-source-master-LITE\src\sdk\curl\include;C:\ogz-source-master-LITE\src\sdk\rapidxml\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
@@ -140,12 +140,12 @@
       <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
       <UseFullPaths>false</UseFullPaths>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;_WINSOCK_DEPRECATED_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_USE_GDIPLUS;NDEBUG;_PUBLISH;CURL_STATICLIB;CMAKE_INTDIR="Release"</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;_WINSOCK_DEPRECATED_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;NDEBUG;_PUBLISH;CURL_STATICLIB;CMAKE_INTDIR="Release"</PreprocessorDefinitions>
       <ObjectFileName>$(IntDir)</ObjectFileName>
       <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;_WINSOCK_DEPRECATED_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_USE_GDIPLUS;NDEBUG;_PUBLISH;CURL_STATICLIB;CMAKE_INTDIR=\"Release\"</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;_WINSOCK_DEPRECATED_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;NDEBUG;_PUBLISH;CURL_STATICLIB;CMAKE_INTDIR=\"Release\"</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\RealSpace2\.;C:\ogz-source-master-LITE\src\RealSpace2\Include;C:\ogz-source-master-LITE\src\RealSpace2\..\cml\Include;C:\ogz-source-master-LITE\src\RealSpace2\..\RealSpace\Include;C:\ogz-source-master-LITE\src\RealSpace2\..\sdk;C:\ogz-source-master-LITE\src\RealSpace2\..\sdk\dx9\include;C:\ogz-source-master-LITE\src\cml\.;C:\ogz-source-master-LITE\src\cml\Include;C:\ogz-source-master\src\sdk\zlib\include;C:\ogz-source-master-LITE\src\cml\..\sdk\curl\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidjson\include;C:\ogz-source-master-LITE\src\sdk\curl\include;C:\ogz-source-master-LITE\src\sdk\rapidxml\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
@@ -182,12 +182,12 @@
       <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
       <UseFullPaths>false</UseFullPaths>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;_WINSOCK_DEPRECATED_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_USE_GDIPLUS;NDEBUG;_PUBLISH;CURL_STATICLIB;CMAKE_INTDIR="MinSizeRel"</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;_WINSOCK_DEPRECATED_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;NDEBUG;_PUBLISH;CURL_STATICLIB;CMAKE_INTDIR="MinSizeRel"</PreprocessorDefinitions>
       <ObjectFileName>$(IntDir)</ObjectFileName>
       <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;_WINSOCK_DEPRECATED_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_USE_GDIPLUS;NDEBUG;_PUBLISH;CURL_STATICLIB;CMAKE_INTDIR=\"MinSizeRel\"</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;_WINSOCK_DEPRECATED_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;NDEBUG;_PUBLISH;CURL_STATICLIB;CMAKE_INTDIR=\"MinSizeRel\"</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\RealSpace2\.;C:\ogz-source-master-LITE\src\RealSpace2\Include;C:\ogz-source-master-LITE\src\RealSpace2\..\cml\Include;C:\ogz-source-master-LITE\src\RealSpace2\..\RealSpace\Include;C:\ogz-source-master-LITE\src\RealSpace2\..\sdk;C:\ogz-source-master-LITE\src\RealSpace2\..\sdk\dx9\include;C:\ogz-source-master-LITE\src\cml\.;C:\ogz-source-master-LITE\src\cml\Include;C:\ogz-source-master\src\sdk\zlib\include;C:\ogz-source-master-LITE\src\cml\..\sdk\curl\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidjson\include;C:\ogz-source-master-LITE\src\sdk\curl\include;C:\ogz-source-master-LITE\src\sdk\rapidxml\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
@@ -224,12 +224,12 @@
       <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
       <UseFullPaths>false</UseFullPaths>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;_WINSOCK_DEPRECATED_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_USE_GDIPLUS;NDEBUG;_PUBLISH;CURL_STATICLIB;CMAKE_INTDIR="RelWithDebInfo"</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;_WINSOCK_DEPRECATED_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;NDEBUG;_PUBLISH;CURL_STATICLIB;CMAKE_INTDIR="RelWithDebInfo"</PreprocessorDefinitions>
       <ObjectFileName>$(IntDir)</ObjectFileName>
       <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;_WINSOCK_DEPRECATED_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_USE_GDIPLUS;NDEBUG;_PUBLISH;CURL_STATICLIB;CMAKE_INTDIR=\"RelWithDebInfo\"</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;_WINSOCK_DEPRECATED_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;NDEBUG;_PUBLISH;CURL_STATICLIB;CMAKE_INTDIR=\"RelWithDebInfo\"</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>C:\ogz-source-master-LITE\src\RealSpace2\.;C:\ogz-source-master-LITE\src\RealSpace2\Include;C:\ogz-source-master-LITE\src\RealSpace2\..\cml\Include;C:\ogz-source-master-LITE\src\RealSpace2\..\RealSpace\Include;C:\ogz-source-master-LITE\src\RealSpace2\..\sdk;C:\ogz-source-master-LITE\src\RealSpace2\..\sdk\dx9\include;C:\ogz-source-master-LITE\src\cml\.;C:\ogz-source-master-LITE\src\cml\Include;C:\ogz-source-master\src\sdk\zlib\include;C:\ogz-source-master-LITE\src\cml\..\sdk\curl\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidxml\include;C:\ogz-source-master-LITE\src\cml\..\sdk\rapidjson\include;C:\ogz-source-master-LITE\src\sdk\curl\include;C:\ogz-source-master-LITE\src\sdk\rapidxml\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>

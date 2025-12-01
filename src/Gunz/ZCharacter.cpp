@@ -593,8 +593,12 @@ void ZCharacter::UpdateSpWeapon()
 
 		Normalize(nDir);
 
+		// Optimización: Guardar ZGetGame() en variable local para evitar múltiples llamadas
+		ZGame* pGame = ZGetGame();
+		if (!pGame) return;
+
 		RBSPPICKINFO bpi;
-		if (ZGetGame()->GetWorld()->GetBsp()->Pick(nPos, nDir, &bpi))
+		if (pGame->GetWorld()->GetBsp()->Pick(nPos, nDir, &bpi))
 		{
 			if (DotProduct(bpi.pInfo->plane, vWeapon[0]) < 0) {
 				vWeapon[0] = bpi.PickPos - nDir;
@@ -606,8 +610,7 @@ void ZCharacter::UpdateSpWeapon()
 
 		Normalize(vWeapon[1]);
 
-		ZGame* pGame = ZGetGame();
-		if (pGame && pGame->m_pMyCharacter && m_UID == pGame->m_pMyCharacter->m_UID) {
+		if (pGame->m_pMyCharacter && m_UID == pGame->m_pMyCharacter->m_UID) {
 			int type = ZC_WEAPON_SP_GRENADE;
 
 			RVisualMesh* pWVMesh = m_pVMesh->GetSelectWeaponVMesh();
@@ -675,7 +678,9 @@ void ZCharacter::OnDraw()
 	ScaleAndTranslate(bb.vmax);
 	ScaleAndTranslate(bb.vmin);
 
-	if (!ZGetGame()->GetWorld()->GetBsp()->IsVisible(bb)) return;
+	// Optimización: Guardar ZGetGame() en variable local para reutilizar más abajo
+	ZGame* pGame = ZGetGame();
+	if (!pGame || !pGame->GetWorld()->GetBsp()->IsVisible(bb)) return;
 	if (!isInViewFrustum(bb, RGetViewFrustum())) return;
 
 	auto ZCharacterDrawLight = MBeginProfile("ZCharacter::Draw::Light");
@@ -684,8 +689,8 @@ void ZCharacter::OnDraw()
 
 	MEndProfile(ZCharacterDrawLight);
 
-	ZGame* pGame = ZGetGame();
-	if (pGame && pGame->m_bShowWireframe)
+	// Reutilizar pGame ya definido arriba
+	if (pGame->m_bShowWireframe)
 	{
 		RGetDevice()->SetRenderState(D3DRS_LIGHTING, FALSE);
 		RGetDevice()->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_DIFFUSE);

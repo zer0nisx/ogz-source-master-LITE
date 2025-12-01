@@ -230,6 +230,10 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
       <Project>{8ED8152D-C69F-3D3B-8C9E-E6CB844F5B4A}</Project>
       <Name>SafeUDP</Name>
     </ProjectReference>
+    <ProjectReference Include="C:\ogz-source-master-LITE\build\win32\tools\WorldEdit\WorldEdit.vcxproj">
+      <Project>{F2D2E707-113D-34D9-B151-535C178C8A0B}</Project>
+      <Name>WorldEdit</Name>
+    </ProjectReference>
     <ProjectReference Include="C:\ogz-source-master-LITE\build\win32\cml\cml.vcxproj">
       <Project>{65F26DF4-191B-3662-9288-C8D12B6D8C1F}</Project>
       <Name>cml</Name>

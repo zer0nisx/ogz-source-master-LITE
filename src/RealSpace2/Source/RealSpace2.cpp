@@ -62,7 +62,7 @@ static auto g_dwLastFPSTime = GetGlobalTimeMS();
 
 static bool g_bTrilinear = true;
 static bool g_bTripleBuffer = false;  // Configurado desde ZConfiguration
-static bool g_bDX9Ex = true;  // DirectX 9 Extended (configurado desde ZConfiguration)
+static bool g_bDX9Ex = false;  // DirectX 9 Extended (configurado desde ZConfiguration)
 static bool g_bQuery = false;
 
 static D3DMULTISAMPLE_TYPE g_MultiSample = D3DMULTISAMPLE_NONE;
@@ -121,7 +121,7 @@ void SetDX9Ex(bool b)
 	// Si el valor no cambia, no hacer nada
 	if (g_bDX9Ex == b)
 		return;
-	
+
 	g_bDX9Ex = b;
 	// Nota: DX9Ex solo se puede activar antes de crear el dispositivo
 	// Si el dispositivo ya está creado, se aplicará en el próximo reset o reinicio
@@ -451,7 +451,7 @@ static bool InitD3D9(HWND hWnd, const RMODEPARAMS* params)
 		// Para DX9Ex, CreateDeviceEx requiere D3DDISPLAYMODEEX* para fullscreen, NULL para windowed
 		D3DDISPLAYMODEEX* pFullscreenDisplayMode = NULL;
 		D3DDISPLAYMODEEX fullscreenDisplayMode;
-		
+
 		if (!g_d3dpp.Windowed)
 		{
 			// Modo fullscreen: necesitamos D3DDISPLAYMODEEX
@@ -464,7 +464,7 @@ static bool InitD3D9(HWND hWnd, const RMODEPARAMS* params)
 			fullscreenDisplayMode.ScanLineOrdering = D3DSCANLINEORDERING_PROGRESSIVE;
 			pFullscreenDisplayMode = &fullscreenDisplayMode;
 		}
-		
+
 		HRESULT hr = g_pD3DEx->CreateDeviceEx(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hWnd, BehaviorFlags, &g_d3dpp, pFullscreenDisplayMode, &g_pd3dDeviceEx);
 		if (SUCCEEDED(hr) && g_pd3dDeviceEx)
 		{
@@ -585,12 +585,12 @@ bool RCloseDisplay()
 		g_pd3dDevice->EndScene();
 		SAFE_RELEASE(g_pd3dDevice);
 	}
-	
+
 	// Liberar punteros de DX9Ex (si se libera g_pd3dDevice, también se libera g_pd3dDeviceEx)
 	g_pd3dDeviceEx = nullptr;
 
 	SAFE_RELEASE(g_pD3D);
-	
+
 	// Liberar puntero de DX9Ex (si se libera g_pD3D, también se libera g_pD3DEx)
 	g_pD3DEx = nullptr;
 	// Commented out to prevent crash when in fullscreen.
@@ -660,7 +660,7 @@ void RResetDevice(const RMODEPARAMS* params)
 		// Para DX9Ex, ResetEx requiere D3DDISPLAYMODEEX* para fullscreen, NULL para windowed
 		D3DDISPLAYMODEEX* pFullscreenDisplayMode = NULL;
 		D3DDISPLAYMODEEX fullscreenDisplayMode;
-		
+
 		if (!g_d3dpp.Windowed)
 		{
 			// Modo fullscreen: necesitamos D3DDISPLAYMODEEX
@@ -673,7 +673,7 @@ void RResetDevice(const RMODEPARAMS* params)
 			fullscreenDisplayMode.ScanLineOrdering = D3DSCANLINEORDERING_PROGRESSIVE;
 			pFullscreenDisplayMode = &fullscreenDisplayMode;
 		}
-		
+
 		hr = g_pd3dDeviceEx->ResetEx(&g_d3dpp, pFullscreenDisplayMode);
 	}
 	else
@@ -704,10 +704,10 @@ void RResetDevice(const RMODEPARAMS* params)
 
 	RS2::Get().OnRestore();
 	RBaseTexture_Restore();
-	
+
 	// Restaurar buffer manager
 	RBufferManager::GetInstance().OnRestore();
-	
+
 	RFrame_Restore();
 
 	MLog("... SUCCESS!\n");
@@ -726,7 +726,7 @@ RRESULT RIsReadyToRender()
 		// No necesitamos verificar TestCooperativeLevel() constantemente
 		return R_OK;
 	}
-	
+
 	HRESULT hr;
 	if (FAILED(hr = g_pd3dDevice->TestCooperativeLevel()))
 	{
@@ -774,7 +774,7 @@ void RFlip()
 	RBeginScene();
 
 	g_nFrameCount++;
-	
+
 	// Limpiar buffers no usados del buffer manager cada 600 frames (~10 segundos a 60fps)
 	// Intervalo aumentado para reducir overhead, limpieza incremental procesa solo una fracción cada vez
 	// Esto previene acumulación de memoria con mínimo impacto en rendimiento

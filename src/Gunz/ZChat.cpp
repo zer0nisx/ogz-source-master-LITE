@@ -17,8 +17,8 @@
 #include "Config.h"
 
 #define ZCHAT_CHAT_DELAY				250
-#define ZCHAT_CHAT_ABUSE_COOLTIME		(1000 * 60)		// 1ºÐ
-#define ZCHAT_CLEAR_DELAY				(1000 * 10)		// ¹Ýº¹ ÀÎ½Ä Á¦°Å ½Ã°£..10ÃÊ
+#define ZCHAT_CHAT_ABUSE_COOLTIME		(1000 * 60)		// 1ï¿½ï¿½
+#define ZCHAT_CLEAR_DELAY				(1000 * 10)		// ï¿½Ýºï¿½ ï¿½Î½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½..10ï¿½ï¿½
 
 
 void ZChatOutput(const char* szMsg, ZChat::ZCHAT_MSG_TYPE msgtype, ZChat::ZCHAT_LOC loc,MCOLOR _color)
@@ -70,7 +70,7 @@ bool ZChat::CheckRepeatInput(const char* szMsg)
 
 	DWORD this_time = GetGlobalTimeMS();
 
-	if(this_time-m_nLastInputTime > ZCHAT_CLEAR_DELAY) {//10ÃÊ°¡ Áö³ª¸é °°Àº ¸Þ½ÃÁö¶ó°í ÀÎÁ¤¾ÈÇÔ..
+	if(this_time-m_nLastInputTime > ZCHAT_CLEAR_DELAY) {//10ï¿½Ê°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Þ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½..
 		m_nSameMsgCount = 0;
 	}
 
@@ -100,7 +100,7 @@ bool ZChat::Input(const char* szMsg)
 	}
 #endif
 	
-	// Ä¿¸Çµå ¸í·É¾î Ã³¸® //////////////////////
+	// Ä¿ï¿½Çµï¿½ ï¿½ï¿½ï¿½É¾ï¿½ Ã³ï¿½ï¿½ //////////////////////
 	bool bMsgIsCmd = false;
 	if (szMsg[0] == '/')
 	{
@@ -119,16 +119,18 @@ bool ZChat::Input(const char* szMsg)
 
 				int nCmdInputFlag = ZChatCmdManager::CIF_NORMAL;
 
-				// °ü¸®ÀÚÀÎÁö ÆÇº°
+				// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Çºï¿½
 				if ((ZGetMyInfo()->GetUGradeID() == MMUG_ADMIN) || 
 					(ZGetMyInfo()->GetUGradeID() == MMUG_DEVELOPER) ||
 					(ZGetMyInfo()->GetUGradeID() == MMUG_EVENTMASTER))
 				{
 					nCmdInputFlag |= ZChatCmdManager::CIF_ADMIN;
 				}
-				// Å×½ºÅÍÀÎÁö ÆÇº° - test¼­¹öÀÌ°í launchdevelop¸ðµåÀÏ °æ¿ì¿¡´Â Å×½ºÅÍ
+				// ï¿½×½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Çºï¿½ - testï¿½ï¿½ï¿½ï¿½ï¿½Ì°ï¿½ launchdevelopï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ì¿¡ï¿½ï¿½ ï¿½×½ï¿½ï¿½ï¿½
+				// OptimizaciÃ³n: Guardar ZGetGameClient() en variable local para evitar mÃºltiples llamadas
+				ZGameClient* pGameClient = ZGetGameClient();
 				if ((ZIsLaunchDevelop()) && 
-					((ZGetGameClient()->GetServerMode() == MSM_TEST) || (!ZGetGameClient()->IsConnected())) )
+					((pGameClient->GetServerMode() == MSM_TEST) || (!pGameClient->IsConnected())) )
 				{
 					nCmdInputFlag |= ZChatCmdManager::CIF_TESTER;
 				}
@@ -170,10 +172,10 @@ bool ZChat::Input(const char* szMsg)
 		return false;
 	}
 
-	// ¿å¹æÁö //////////////////////////////////
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ //////////////////////////////////
 	if (!CheckChatFilter(szMsg)) return false;
 
-	// ÆíÀÇ Ä¿¸Çµå ¸í·É¾î //////////////////////
+	// ï¿½ï¿½ï¿½ï¿½ Ä¿ï¿½Çµï¿½ ï¿½ï¿½ï¿½É¾ï¿½ //////////////////////
 	bool bTeamChat = false;
 	if (szMsg[0] == '!') {	// Team Chat
 		bTeamChat = true;
@@ -198,12 +200,16 @@ bool ZChat::Input(const char* szMsg)
 		break;
 	case GUNZ_LOBBY:
 		{
-			ZPostChannelChat(ZGetGameClient()->GetPlayerUID(), ZGetGameClient()->GetChannelUID(), szMsg);
+			// OptimizaciÃ³n: Guardar ZGetGameClient() en variable local para evitar mÃºltiples llamadas
+			ZGameClient* pGameClient = ZGetGameClient();
+			ZPostChannelChat(pGameClient->GetPlayerUID(), pGameClient->GetChannelUID(), szMsg);
 		}
 		break;
 	case GUNZ_STAGE:
 		{
-			ZPostStageChat(ZGetGameClient()->GetPlayerUID(), ZGetGameClient()->GetStageUID(), szMsg);
+			// OptimizaciÃ³n: Guardar ZGetGameClient() en variable local para evitar mÃºltiples llamadas
+			ZGameClient* pGameClient = ZGetGameClient();
+			ZPostStageChat(pGameClient->GetPlayerUID(), pGameClient->GetStageUID(), szMsg);
 		}
 		break;
 	}
@@ -275,7 +281,7 @@ void ZChat::Output(const char* szMsg, ZCHAT_MSG_TYPE msgtype, ZCHAT_LOC loc,MCOL
 		}
 		else if (((loc == CL_CURRENT) && (state==GUNZ_LOBBY)) || (loc==CL_LOBBY))
 		{
-			if(_color.GetARGB() == ZCOLOR_CHAT_SYSTEM )// ±âº»»öÀÎ °æ¿ì ·ÎºñÀÇ ±âº»»ö
+			if(_color.GetARGB() == ZCOLOR_CHAT_SYSTEM )// ï¿½âº»ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Îºï¿½ï¿½ï¿½ ï¿½âº»ï¿½ï¿½
 				LobbyChatOutput(szOutput);
 			else 
 				LobbyChatOutput(szOutput,_color);
@@ -400,7 +406,7 @@ bool ZChat::CheckChatFilter(const char* szMsg)
 #ifndef _DEBUG
 		m_nAbuseCounter++;
 
-		if ( m_nAbuseCounter >= 3)			// 3¹ø ¿¬¼Ó ¿åÇÏ¸é 1ºÐ°£ Ã¤ÆÃ±ÝÁö
+		if ( m_nAbuseCounter >= 3)			// 3ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ï¸ï¿½ 1ï¿½Ð°ï¿½ Ã¤ï¿½Ã±ï¿½ï¿½ï¿½
 			m_nLastAbuseTime = GetGlobalTimeMS();
 #endif
 
@@ -440,7 +446,7 @@ void ZChat::FilterWhisperKey(MWidget* pWidget)
 	char text[256];
 	strcpy_safe(text, pWidget->GetText());
 
-	if ((!_stricmp(text, "/r ")) || (!_stricmp(text, "/¤¡ ")))
+	if ((!_stricmp(text, "/r ")) || (!_stricmp(text, "/ï¿½ï¿½ ")))
 	{
 		char msg[128] = "";
 

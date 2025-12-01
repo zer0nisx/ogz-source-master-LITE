@@ -1,6 +1,3 @@
-// WorldEditView.cpp : implementation of the CWorldEditView class
-//
-
 #include "stdafx.h"
 #include "WorldEdit.h"
 #include "WorldEditDoc.h"
@@ -22,9 +19,6 @@ static char THIS_FILE[] = __FILE__;
 
 _USING_NAMESPACE_REALSPACE2
 
-/////////////////////////////////////////////////////////////////////////////
-// CWorldEditView
-
 IMPLEMENT_DYNCREATE(CWorldEditView, CView)
 
 BEGIN_MESSAGE_MAP(CWorldEditView, CView)
@@ -45,9 +39,6 @@ BEGIN_MESSAGE_MAP(CWorldEditView, CView)
 	ON_WM_DROPFILES()
 END_MESSAGE_MAP()
 
-/////////////////////////////////////////////////////////////////////////////
-// CWorldEditView construction/destruction
-
 CWorldEditView::~CWorldEditView()
 {
 	RCloseDisplay();
@@ -60,10 +51,6 @@ BOOL CWorldEditView::PreCreateWindow(CREATESTRUCT& cs)
 
 #define DEFAULTSIZE	100.f
 
-/////////////////////////////////////////////////////////////////////////////
-// CWorldEditView drawing
-
-
 static rvector g_LastPickPos;
 
 #include "ProgressDialog.h"
@@ -73,7 +60,7 @@ static void DoMovement(float DeltaTime)
 {
 	auto GetKey = [&](auto ch) {
 		return (GetAsyncKeyState(ch) & 0x8000) != 0;
-	};
+		};
 
 	auto Forward = Normalized(RCameraDirection);
 	auto Right = Normalized(CrossProduct(Forward, { 0, 0, -1 }));
@@ -102,14 +89,14 @@ void CWorldEditView::OnDraw(CDC* pDC)
 	ASSERT_VALID(pDoc);
 
 	auto Time = GetGlobalTimeMS();
-	DEFER(LastTime = Time;);
+	DEFER([&] { LastTime = Time; });
 
 	if (true)
 		DoMovement(min((Time - LastTime) / 1000.0f, 1.0f));
 
 	rmatrix id;
-	D3DXMatrixIdentity(&id);
-	RGetDevice()->SetTransform(D3DTS_WORLD, &id);
+	GetIdentityMatrix(id);
+	RGetDevice()->SetTransform(D3DTS_WORLD, static_cast<const D3DMATRIX*>(&id));
 
 	if (!g_bProgress && pDoc->m_pBspObject)
 	{
@@ -141,7 +128,7 @@ void CWorldEditView::OnDraw(CDC* pDC)
 			RGetDevice()->SetRenderState(D3DRS_LIGHTING, FALSE);
 			RGetDevice()->SetFVF(D3DFVF_XYZ | D3DFVF_DIFFUSE);
 
-			RBSPPICKINFO *ppi = &GetDocument()->m_LastPicked;
+			RBSPPICKINFO* ppi = &GetDocument()->m_LastPicked;
 			if (GetDocument()->m_bLastPicked)
 			{
 				ppi->pNode->DrawWireFrame(ppi->nIndex, 0xffffffff);
@@ -166,18 +153,14 @@ void CWorldEditView::OnDraw(CDC* pDC)
 
 				int nS = ppi->pInfo->nConvexPolygon;
 				pBsp->DrawNormal(nS, 100);
-
 			}
 		}
 	}
 
 	RFlip();
 
-	Sleep(0);
+	::Sleep(0);
 }
-
-/////////////////////////////////////////////////////////////////////////////
-// CWorldEditView diagnostics
 
 #ifdef _DEBUG
 void CWorldEditView::AssertValid() const
@@ -190,15 +173,12 @@ void CWorldEditView::Dump(CDumpContext& dc) const
 	CView::Dump(dc);
 }
 
-CWorldEditDoc* CWorldEditView::GetDocument() // non-debug version is inline
+CWorldEditDoc* CWorldEditView::GetDocument()
 {
 	ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(CWorldEditDoc)));
 	return (CWorldEditDoc*)m_pDocument;
 }
-#endif //_DEBUG
-
-/////////////////////////////////////////////////////////////////////////////
-// CWorldEditView message handlers
+#endif
 
 BOOL CWorldEditView::Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext)
 {
@@ -234,7 +214,7 @@ void CWorldEditView::Resize(CSize size)
 	if (pbsp) pbsp->OnRestore();
 }
 
-void CWorldEditView::GetWorldCoordinate(rvector *ret, CPoint pt)
+void CWorldEditView::GetWorldCoordinate(rvector* ret, CPoint pt)
 {
 	*ret = RGetIntersection(pt.x, pt.y, rplane(0, 0, 1, 0));
 }
@@ -269,14 +249,12 @@ void CWorldEditView::OnLButtonDown(UINT nFlags, CPoint point)
 		GetDocument()->m_bLastPicked =
 			GetDocument()->m_pBspObject->PickOcTree(pos, dir, &GetDocument()->m_LastPicked, RM_FLAG_ADDITIVE | RM_FLAG_HIDE);
 	}
-
 }
 
 void CWorldEditView::OnLButtonUp(UINT nFlags, CPoint point)
 {
 	CView::OnLButtonUp(nFlags, point);
 
-	// pick test
 	RBSPPICKINFO bpi;
 	if (GetDocument()->m_pBspObject)
 	{
@@ -293,7 +271,7 @@ void CWorldEditView::OnResetCamera()
 {
 	CWorldEditDoc* pDoc = GetDocument();
 	ASSERT_VALID(pDoc);
-	rboundingbox *pbb, defaultbb;
+	rboundingbox* pbb, defaultbb;
 	defaultbb.vmin = { 0, 0, 0 };
 	defaultbb.vmax = { DEFAULTSIZE, DEFAULTSIZE, DEFAULTSIZE };
 
@@ -304,7 +282,7 @@ void CWorldEditView::OnResetCamera()
 
 	auto size = pbb->vmax - pbb->vmin;
 
-	rvector targetpos = .5f*(pbb->vmax + pbb->vmin);
+	rvector targetpos = .5f * (pbb->vmax + pbb->vmin);
 	targetpos.z = 0;
 	rvector sourcepos = targetpos + rvector(0, 100, 100);
 	RSetCamera(sourcepos, targetpos, rvector(0, 0, 1));
@@ -317,7 +295,7 @@ void CWorldEditView::OnMouseMove(UINT nFlags, CPoint point)
 {
 	CView::OnMouseMove(nFlags, point);
 
-	DEFER(LastFrameCursorPosition = point;);
+	DEFER([&] { LastFrameCursorPosition = point; });
 
 	if ((MK_LBUTTON & nFlags) != 0)
 	{
@@ -368,16 +346,16 @@ void CWorldEditView::OnMouseMove(UINT nFlags, CPoint point)
 			if (relpos.y < 0)
 				anglez = PI_FLOAT - anglez;
 
-			anglex += -0.01f*Diff.y;
+			anglex += -0.01f * Diff.y;
 			anglex = min(max(anglex, 0.001f), PI_FLOAT - 0.001f);
-			anglez += -0.01f*Diff.x;
+			anglez += -0.01f * Diff.x;
 
-			relpos = length*rvector(sin(anglez)*sin(anglex), cos(anglez)*sin(anglex), cos(anglex));
+			relpos = length * rvector(sin(anglez) * sin(anglex), cos(anglez) * sin(anglex), cos(anglex));
 
 			rvector newcamerapos = m_LastWorldPosition + relpos;
 			RSetCamera(newcamerapos, m_LastWorldPosition, rvector(0, 0, 1));
 		}
-		else // No special keys pressed
+		else
 		{
 			CPoint Diff = point - LastFrameCursorPosition;
 
@@ -416,14 +394,9 @@ void CWorldEditView::OnMouseMove(UINT nFlags, CPoint point)
 				anglez = fAngleZ;
 			}
 
-			/*auto anglex = acos(dir.z);
-			auto anglez = asin(dir.x / sin(anglex));
-			if (dir.y < 0)
-				anglez = PI_FLOAT - anglez;*/
-
 			auto clamp = [&](auto&& val, auto&& low, auto&& high) {
 				return max(min(val, high), low);
-			};
+				};
 
 			anglex += 0.005f * Diff.y;
 			anglex = clamp(anglex, 0.001f, PI_FLOAT - 0.001f);
@@ -450,7 +423,7 @@ BOOL CWorldEditView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 	rvector dir = m_LastWorldPosition - RCameraPosition;
 	Normalize(dir);
 
-	RCameraPosition += dir*CAMERA_WHEEL_STEP*zDelta / (float)WHEEL_DELTA;
+	RCameraPosition += dir * CAMERA_WHEEL_STEP * zDelta / (float)WHEEL_DELTA;
 	RUpdateCamera();
 
 	return CView::OnMouseWheel(nFlags, zDelta, pt);
@@ -468,7 +441,7 @@ void CWorldEditView::OnWireframe()
 	m_bWireframe = !m_bWireframe;
 }
 
-void CWorldEditView::OnUpdateWireframe(CCmdUI *pCmdUI)
+void CWorldEditView::OnUpdateWireframe(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetCheck(m_bWireframe);
 }
@@ -478,7 +451,7 @@ void CWorldEditView::OnBoundingbox()
 	m_bDrawBoundingBox = !m_bDrawBoundingBox;
 }
 
-void CWorldEditView::OnUpdateBoundingbox(CCmdUI *pCmdUI)
+void CWorldEditView::OnUpdateBoundingbox(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetCheck(m_bDrawBoundingBox);
 }
@@ -488,7 +461,7 @@ void CWorldEditView::OnOcclusion()
 	m_bDrawOcclusion = !m_bDrawOcclusion;
 }
 
-void CWorldEditView::OnUpdateOcclusion(CCmdUI *pCmdUI)
+void CWorldEditView::OnUpdateOcclusion(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetCheck(m_bDrawOcclusion);
 }
@@ -498,26 +471,26 @@ void CWorldEditView::OnShowlightmap()
 	m_bShowLightmap = !m_bShowLightmap;
 }
 
-void CWorldEditView::OnUpdateShowlightmap(CCmdUI *pCmdUI)
+void CWorldEditView::OnUpdateShowlightmap(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetCheck(m_bShowLightmap);
 }
 
 void CWorldEditView::OnDropFiles(HDROP hDropInfo)
 {
-	char szFileName[_MAX_PATH];
-	DragQueryFile(hDropInfo, 0, szFileName, sizeof(szFileName));
+	wchar_t szFileName[_MAX_PATH];
+	DragQueryFileW(hDropInfo, 0, szFileName, _MAX_PATH);
 
 	int nLen;
-	while ((nLen = strlen(szFileName)) > 0)
+	while ((nLen = wcslen(szFileName)) > 0)
 	{
-		if (strnicmp(szFileName + nLen - 3, ".rs", 3) == 0)
+		if (_wcsnicmp(szFileName + nLen - 3, L".rs", 3) == 0)
 		{
 			AfxGetApp()->OpenDocumentFile(szFileName);
 			return;
 		}
 
-		char *lastdot = strrchr(szFileName, '.');
+		wchar_t* lastdot = wcsrchr(szFileName, L'.');
 		if (!lastdot) return;
 
 		*lastdot = 0;

@@ -3,6 +3,7 @@
 #include <crtdbg.h>
 #include <mbstring.h>
 #include <tchar.h>
+#include <new>  // Para std::bad_alloc
 #include "mDebug.h"
 #include "mprofiler.h"
 #include "VertexTypes.h"
@@ -10,7 +11,7 @@
 #ifdef _USE_GDIPLUS
 #include "unknwn.h"
 #include "gdiplus.h"
-	 using namespace Gdiplus;
+using namespace Gdiplus;
 #pragma comment(lib, "gdiplus.lib")
 #pragma comment(lib, "Gdi32.lib")
 #endif
@@ -24,6 +25,10 @@ RFontTexture::RFontTexture()
 { 
 	m_pTexture = NULL;
 	m_CellInfo = NULL;
+	m_hDC = NULL;
+	m_pBitmapBits = NULL;
+	m_hbmBitmap = NULL;
+	m_hPrevBitmap = NULL;
 }
 
 RFontTexture::~RFontTexture()
@@ -31,19 +36,38 @@ RFontTexture::~RFontTexture()
 	Destroy();
 }
 
-bool RFontTexture::Create() 
+bool RFontTexture::Create()
 {
+	// CORRECCIÓN: Verificar que el dispositivo DirectX esté disponible
+	if (!RGetDevice()) {
+		mlog("RFontTexture::Create() - RGetDevice() is NULL\n");
+		return false;
+	}
+
 	m_nWidth = RFONT_TEXTURE_SIZE;
 	m_nHeight = RFONT_TEXTURE_SIZE;
-	HRESULT hr = RGetDevice()->CreateTexture(m_nWidth, m_nHeight, 1, 0, D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, &m_pTexture,NULL);
-	if(hr!=D3D_OK) return false;
+	HRESULT hr = RGetDevice()->CreateTexture(m_nWidth, m_nHeight, 1, 0, D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, &m_pTexture, NULL);
+	if (hr != D3D_OK) {
+		mlog("RFontTexture::Create() - Failed to create texture (HRESULT: 0x%08X)\n", hr);
+		return false;
+	}
 
 	m_nX = m_nWidth / RFONT_CELL_SIZE;
 	m_nY = m_nHeight / RFONT_CELL_SIZE;
 
 	m_nCell = m_nX * m_nY;
-	m_CellInfo = new RFONTTEXTURECELLINFO[m_nCell];
-	for(int i=0;i<m_nCell;i++) {
+	
+	// CORRECCIÓN: Manejar excepciones de new
+	try {
+		m_CellInfo = new RFONTTEXTURECELLINFO[m_nCell];
+	}
+	catch (std::bad_alloc&) {
+		mlog("RFontTexture::Create() - Failed to allocate memory for CellInfo\n");
+		SAFE_RELEASE(m_pTexture);
+		return false;
+	}
+	
+	for (int i = 0; i < m_nCell; i++) {
 		m_CellInfo[i].nID = 0;
 		m_CellInfo[i].nIndex = i;
 		m_PriorityQueue.push_back(&m_CellInfo[i]);
@@ -51,27 +75,51 @@ bool RFontTexture::Create()
 
 	m_LastUsedID = 0;
 
+	// CORRECCIÓN: Verificar que CreateCompatibleDC no retorne NULL
 	m_hDC = CreateCompatibleDC(NULL);
+	if (m_hDC == NULL) {
+		mlog("RFontTexture::Create() - Failed to create compatible DC (Error: %d)\n", GetLastError());
+		SAFE_RELEASE(m_pTexture);
+		SAFE_DELETE_ARRAY(m_CellInfo);
+		return false;
+	}
 
 	////////////////////////////////////////////////--------------------------------------------------------
 	// Bitmap Creation
 	BITMAPINFO bmi;
 	ZeroMemory(&bmi.bmiHeader, sizeof(BITMAPINFOHEADER));
-	bmi.bmiHeader.biSize        = sizeof(BITMAPINFOHEADER);
-	bmi.bmiHeader.biWidth       =  (int)RFONT_CELL_SIZE;
-	bmi.bmiHeader.biHeight      = -(int)RFONT_CELL_SIZE;
-	bmi.bmiHeader.biPlanes      = 1;
+	bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+	bmi.bmiHeader.biWidth = (int)RFONT_CELL_SIZE;
+	bmi.bmiHeader.biHeight = -(int)RFONT_CELL_SIZE;
+	bmi.bmiHeader.biPlanes = 1;
 	bmi.bmiHeader.biCompression = BI_RGB;
-	bmi.bmiHeader.biBitCount    = 32;
+	bmi.bmiHeader.biBitCount = 32;
 
 	m_hbmBitmap = CreateDIBSection(m_hDC, &bmi, DIB_RGB_COLORS, (VOID**)&m_pBitmapBits, NULL, 0);
-	if( m_pBitmapBits == NULL )
+	if (m_pBitmapBits == NULL || m_hbmBitmap == NULL)
 	{
+		mlog("RFontTexture::Create() - Failed to create DIB section (Error: %d)\n", GetLastError());
+		// CORRECCIÓN: Limpiar todos los recursos creados antes de retornar
 		DeleteDC(m_hDC);
+		m_hDC = NULL;
+		SAFE_RELEASE(m_pTexture);
+		SAFE_DELETE_ARRAY(m_CellInfo);
 		return false;
 	}
 
-	HBITMAP m_hPrevBitmap = (HBITMAP)SelectObject(m_hDC, m_hbmBitmap);
+	// CORRECCIÓN: Usar el miembro de la clase, no declarar una variable local
+	m_hPrevBitmap = (HBITMAP)SelectObject(m_hDC, m_hbmBitmap);
+	if (m_hPrevBitmap == NULL) {
+		mlog("RFontTexture::Create() - Failed to select bitmap into DC (Error: %d)\n", GetLastError());
+		// Limpiar recursos
+		DeleteObject(m_hbmBitmap);
+		m_hbmBitmap = NULL;
+		DeleteDC(m_hDC);
+		m_hDC = NULL;
+		SAFE_RELEASE(m_pTexture);
+		SAFE_DELETE_ARRAY(m_CellInfo);
+		return false;
+	}
 
 	SetMapMode(m_hDC, MM_TEXT);
 
@@ -79,10 +127,9 @@ bool RFontTexture::Create()
 }
 
 void RFontTexture::Destroy() {
-	
-	if(m_hDC) {
+	if (m_hDC) {
 		SelectObject(m_hDC, m_hPrevBitmap);
-		if(m_hbmBitmap)
+		if (m_hbmBitmap)
 		{
 			DeleteObject(m_hbmBitmap);
 			m_hbmBitmap = NULL;
@@ -94,25 +141,24 @@ void RFontTexture::Destroy() {
 	SAFE_DELETE_ARRAY(m_CellInfo);
 }
 
-void BlitRect(BYTE* pDest, int x1,int y1,int x2,int y2,int w, int h, u32* pBitmapBits, INT Pitch)
+void BlitRect(BYTE* pDest, int x1, int y1, int x2, int y2, int w, int h, u32* pBitmapBits, INT Pitch)
 {
-	if(pDest==NULL) return;
+	if (pDest == NULL) return;
 
 	u32* pDestTemp = NULL;
 
-	int by=0;
-	int bx=0;
+	int by = 0;
+	int bx = 0;
 
-	for(int y=y1; y<y2; y++) {
-		pDestTemp = (u32*)(pDest+(y*Pitch));
+	for (int y = y1; y < y2; y++) {
+		pDestTemp = (u32*)(pDest + (y * Pitch));
 		bx = 0;
-		for(int x=x1; x<x2; x++) {
-
+		for (int x = x1; x < x2; x++) {
 			u32 dwPixel = pBitmapBits[(w * by) + (bx)];
-			if ( dwPixel & 0x00ffffff)
+			if (dwPixel & 0x00ffffff)
 				dwPixel |= 0xff000000;
 
-			*(pDestTemp+x) = dwPixel;
+			*(pDestTemp + x) = dwPixel;
 
 			bx++;
 		}
@@ -120,31 +166,30 @@ void BlitRect(BYTE* pDest, int x1,int y1,int x2,int y2,int w, int h, u32* pBitma
 	}
 }
 
-
-bool RFontTexture::UploadTexture(RCHARINFO *pCharInfo,u32* pBitmapBits,int w,int h)
+bool RFontTexture::UploadTexture(RCHARINFO* pCharInfo, u32* pBitmapBits, int w, int h)
 {
 	D3DLOCKED_RECT d3dlr;
-	HRESULT hr = m_pTexture->LockRect(0,&d3dlr,NULL,NULL);
+	HRESULT hr = m_pTexture->LockRect(0, &d3dlr, NULL, NULL);
 
-	if(hr == D3D_OK)
+	if (hr == D3D_OK)
 	{
 		m_LastUsedID++;
 
-		RFONTTEXTURECELLINFO *pInfo = *(m_PriorityQueue.begin());
+		RFONTTEXTURECELLINFO* pInfo = *(m_PriorityQueue.begin());
 		pInfo->nID = m_LastUsedID;
 		pInfo->itr = m_PriorityQueue.begin();
 
 		int x = pInfo->nIndex % GetCellCountX();
 		int y = pInfo->nIndex / GetCellCountX();
 
-		int _x = x*RFONT_CELL_SIZE;
-		int _y = y*RFONT_CELL_SIZE;
+		int _x = x * RFONT_CELL_SIZE;
+		int _y = y * RFONT_CELL_SIZE;
 
-		BlitRect((BYTE*)d3dlr.pBits, _x, _y, _x+w, _y+h, RFONT_CELL_SIZE, RFONT_CELL_SIZE, pBitmapBits, d3dlr.Pitch);
+		BlitRect((BYTE*)d3dlr.pBits, _x, _y, _x + w, _y + h, RFONT_CELL_SIZE, RFONT_CELL_SIZE, pBitmapBits, d3dlr.Pitch);
 
 		hr = m_pTexture->UnlockRect(0);
 
-		m_PriorityQueue.splice(m_PriorityQueue.end(),m_PriorityQueue,m_PriorityQueue.begin());
+		m_PriorityQueue.splice(m_PriorityQueue.end(), m_PriorityQueue, m_PriorityQueue.begin());
 
 		pCharInfo->nFontTextureID = pInfo->nID;
 		pCharInfo->nFontTextureIndex = pInfo->nIndex;
@@ -158,15 +203,15 @@ bool RFontTexture::UploadTexture(RCHARINFO *pCharInfo,u32* pBitmapBits,int w,int
 
 bool RFontTexture::IsNeedUpdate(int nIndex, int nID)
 {
-	if(nIndex==-1) return true;
-	if(m_CellInfo[nIndex].nID == nID) {
-		m_PriorityQueue.splice(m_PriorityQueue.end(),m_PriorityQueue,m_CellInfo[nIndex].itr);
+	if (nIndex == -1) return true;
+	if (m_CellInfo[nIndex].nID == nID) {
+		m_PriorityQueue.splice(m_PriorityQueue.end(), m_PriorityQueue, m_CellInfo[nIndex].itr);
 		return false;
 	}
 	return true;
 }
 
-bool RFontTexture::MakeFontBitmap(HFONT hFont, RCHARINFO *pInfo, const wchar_t* szText,
+bool RFontTexture::MakeFontBitmap(HFONT hFont, RCHARINFO* pInfo, const wchar_t* szText,
 	int nOutlineStyle, u32 nColorArg1, u32 nColorArg2)
 {
 	HFONT hPrevFont = (HFONT)SelectObject(m_hDC, hFont);
@@ -180,7 +225,7 @@ bool RFontTexture::MakeFontBitmap(HFONT hFont, RCHARINFO *pInfo, const wchar_t* 
 	Graphics graphics(m_hDC);
 	Gdiplus::Font font(m_hDC, hFont);
 
-	graphics.Clear(Color(0,0,0,0));
+	graphics.Clear(Color(0, 0, 0, 0));
 
 	const StringFormat* pTypoFormat = StringFormat::GenericTypographic();
 
@@ -199,7 +244,7 @@ bool RFontTexture::MakeFontBitmap(HFONT hFont, RCHARINFO *pInfo, const wchar_t* 
 		GetTextMetrics(m_hDC, &tm);
 
 		int nHeight;
-		nHeight = min( (int)tm.tmHeight, (int)RFONT_CELL_SIZE-2);
+		nHeight = min((int)tm.tmHeight, (int)RFONT_CELL_SIZE - 2);
 
 		path.AddString(szText, -1, &fontFamily, FontStyleBold, Gdiplus::REAL(nHeight), PointF(-1.0f, -1.0f), pTypoFormat);
 
@@ -221,24 +266,24 @@ bool RFontTexture::MakeFontBitmap(HFONT hFont, RCHARINFO *pInfo, const wchar_t* 
 		graphics.DrawString(szText, -1, &font, PointF(0.0f, 0.0f), pTypoFormat, &solidBrush1);
 
 		char chChar = (char)szText[0];
-		if ( (chChar >= '0') && (chChar <= '9'))
+		if ((chChar >= '0') && (chChar <= '9'))
 			nWidth++;
 	}
-#else	
+#else
 
-	SetTextColor(m_hDC, RGB(255,255,255));
+	SetTextColor(m_hDC, RGB(255, 255, 255));
 	SetBkColor(m_hDC, 0x00000000);
 	SetTextAlign(m_hDC, TA_TOP);
-	ExtTextOut(m_hDC, 0, 0, ETO_OPAQUE, NULL, szText, _tcslen(szText), NULL);
+	// CORRECCIÓN: Usar wcslen directamente ya que szText es const wchar_t*
+	ExtTextOutW(m_hDC, 0, 0, ETO_OPAQUE, NULL, szText, wcslen(szText), NULL);
 
 #endif
 
-	bool bRet = UploadTexture(pInfo,m_pBitmapBits,nWidth,RFONT_CELL_SIZE);
-	
+	bool bRet = UploadTexture(pInfo, m_pBitmapBits, nWidth, RFONT_CELL_SIZE);
+
 	SelectObject(m_hDC, hPrevFont);
 
 	return bRet;
-
 }
 
 int RFontTexture::GetCharWidth(HFONT hFont, const char* szChar)
@@ -259,7 +304,7 @@ int RFontTexture::GetCharWidth(HFONT hFont, const wchar_t* szChar)
 	return size.cx;
 }
 
-bool RFontTexture::MakeFontBitmap(HFONT hFont, RCHARINFO * pInfo, const char * szText,
+bool RFontTexture::MakeFontBitmap(HFONT hFont, RCHARINFO* pInfo, const char* szText,
 	int nOutlineStyle, u32 nColorArg1, u32 nColorArg2)
 {
 	wchar_t WideText[256];
@@ -308,7 +353,7 @@ bool RFont::Create(const TCHAR* szFontName, int nHeight, bool bBold, bool bItali
 	SetMapMode(hDC, MM_TEXT);
 	nHeight *= GetDeviceCaps(hDC, LOGPIXELSY);
 	nHeight /= 72;
-	
+
 	m_nHeight = nHeight;
 
 	m_ColorArg1 = nColorArg1;
@@ -363,56 +408,56 @@ bool RFont::m_bInFont = false;
 
 bool RFont::BeginFont()
 {
-	if(m_bInFont) return true;
+	if (m_bInFont) return true;
 
 	auto pDevice = RGetDevice();
 
-	pDevice->SetRenderState( D3DRS_ALPHABLENDENABLE, TRUE);
-	pDevice->SetRenderState( D3DRS_SRCBLEND,   D3DBLEND_SRCALPHA );
-	pDevice->SetRenderState( D3DRS_DESTBLEND,  D3DBLEND_INVSRCALPHA );
-	pDevice->SetRenderState( D3DRS_ALPHATESTENABLE,  FALSE );
-	pDevice->SetRenderState( D3DRS_ALPHAREF,         0x08 );
-	pDevice->SetRenderState( D3DRS_ALPHAFUNC,  D3DCMP_GREATEREQUAL );
+	pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+	pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+	pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+	pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
+	pDevice->SetRenderState(D3DRS_ALPHAREF, 0x08);
+	pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATEREQUAL);
 
 	constexpr bool bFiltering = true;
 
 	if (bFiltering) {
-		pDevice->SetSamplerState( 0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR );
-		pDevice->SetSamplerState( 0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR );
+		pDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+		pDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
 	}
-	else{
-		pDevice->SetSamplerState( 0, D3DSAMP_MINFILTER, D3DTEXF_POINT );
-		pDevice->SetSamplerState( 0, D3DSAMP_MAGFILTER, D3DTEXF_POINT );
+	else {
+		pDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_POINT);
+		pDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
 	}
 
-	pDevice->SetRenderState( D3DRS_LIGHTING,   FALSE );
-	pDevice->SetRenderState( D3DRS_SPECULARENABLE,   FALSE );
-	pDevice->SetRenderState( D3DRS_FILLMODE,   D3DFILL_SOLID );
-	pDevice->SetRenderState( D3DRS_CULLMODE,   D3DCULL_NONE );
-	pDevice->SetRenderState( D3DRS_STENCILENABLE,    FALSE );
-	pDevice->SetRenderState( D3DRS_CLIPPING,         TRUE );
-	pDevice->SetRenderState( D3DRS_CLIPPLANEENABLE,  FALSE );
-	pDevice->SetRenderState( D3DRS_VERTEXBLEND,      FALSE );
-	pDevice->SetRenderState( D3DRS_INDEXEDVERTEXBLENDENABLE, FALSE );
-	pDevice->SetRenderState( D3DRS_FOGENABLE,        FALSE );
+	pDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
+	pDevice->SetRenderState(D3DRS_SPECULARENABLE, FALSE);
+	pDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
+	pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+	pDevice->SetRenderState(D3DRS_STENCILENABLE, FALSE);
+	pDevice->SetRenderState(D3DRS_CLIPPING, TRUE);
+	pDevice->SetRenderState(D3DRS_CLIPPLANEENABLE, FALSE);
+	pDevice->SetRenderState(D3DRS_VERTEXBLEND, FALSE);
+	pDevice->SetRenderState(D3DRS_INDEXEDVERTEXBLENDENABLE, FALSE);
+	pDevice->SetRenderState(D3DRS_FOGENABLE, FALSE);
 
-	pDevice->SetTextureStageState( 0, D3DTSS_COLOROP,   D3DTOP_MODULATE );
-	pDevice->SetTextureStageState( 0, D3DTSS_COLORARG1, D3DTA_TEXTURE );
-	pDevice->SetTextureStageState( 0, D3DTSS_COLORARG2, D3DTA_DIFFUSE );
+	pDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+	pDevice->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+	pDevice->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
 
-	pDevice->SetTextureStageState( 0, D3DTSS_ALPHAOP,   D3DTOP_MODULATE );
-	pDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
-	pDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
+	pDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+	pDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+	pDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
 
-	pDevice->SetSamplerState( 0, D3DSAMP_MIPFILTER, D3DTEXF_NONE );
+	pDevice->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
 
-	pDevice->SetTextureStageState( 0, D3DTSS_TEXCOORDINDEX, 0 );
-	pDevice->SetTextureStageState( 0, D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_DISABLE );
-	pDevice->SetTextureStageState( 1, D3DTSS_COLOROP,   D3DTOP_DISABLE );
-	pDevice->SetTextureStageState( 1, D3DTSS_ALPHAOP,   D3DTOP_DISABLE );
+	pDevice->SetTextureStageState(0, D3DTSS_TEXCOORDINDEX, 0);
+	pDevice->SetTextureStageState(0, D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_DISABLE);
+	pDevice->SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_DISABLE);
+	pDevice->SetTextureStageState(1, D3DTSS_ALPHAOP, D3DTOP_DISABLE);
 
 	RGetDevice()->SetFVF(D3DFVF_FONT2DVERTEX);
-	RGetDevice()->SetTexture(0,g_FontTexture.GetTexture());
+	RGetDevice()->SetTexture(0, g_FontTexture.GetTexture());
 
 	g_nFontCount = 0;
 
@@ -423,21 +468,20 @@ bool RFont::BeginFont()
 
 bool RFont::EndFont()
 {
-	if(!m_bInFont) return true;
+	if (!m_bInFont) return true;
 
-	if(g_nFontCount)
+	if (g_nFontCount)
 	{
-		auto hr = RGetDevice()->DrawIndexedPrimitiveUP(D3DPT_TRIANGLELIST,0,g_nFontCount*4,g_nFontCount*2,
-			g_FontIndexBuffer,D3DFMT_INDEX16,g_FontVertexBuffer,sizeof(FONT2DVERTEX));
+		auto hr = RGetDevice()->DrawIndexedPrimitiveUP(D3DPT_TRIANGLELIST, 0, g_nFontCount * 4, g_nFontCount * 2,
+			g_FontIndexBuffer, D3DFMT_INDEX16, g_FontVertexBuffer, sizeof(FONT2DVERTEX));
 
-		ASSERT(hr==D3D_OK);
+		ASSERT(hr == D3D_OK);
 
 		g_nFontCount = 0;
 	}
 
-	
-	RGetDevice()->SetSamplerState( 0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR );
-	RGetDevice()->SetSamplerState( 0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR );
+	RGetDevice()->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+	RGetDevice()->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
 
 	m_bInFont = false;
 	return true;
@@ -491,7 +535,7 @@ void RFont::DrawTextImpl(float x, float y, const BasicStringView<CharT>& Text,
 
 		auto i = m_CharInfoMap.find(key);
 
-		RCHARINFO *pInfo = NULL;
+		RCHARINFO* pInfo = NULL;
 		if (i == m_CharInfoMap.end()) {
 			pInfo = new RCHARINFO;
 			bool bRet = m_pFontTexture->MakeFontBitmap(m_hFont, pInfo, szChar,
@@ -532,10 +576,10 @@ void RFont::DrawTextImpl(float x, float y, const BasicStringView<CharT>& Text,
 				int nCellX = pInfo->nFontTextureIndex % m_pFontTexture->GetCellCountX();
 				int nCellY = pInfo->nFontTextureIndex / m_pFontTexture->GetCellCountX();
 
-				float fMinX = (float)(.5f + nCellX*RFONT_CELL_SIZE) / (float)m_pFontTexture->GetWidth();
-				float fMaxX = (float)(.5f + nCellX*RFONT_CELL_SIZE + nWidth) / (float)m_pFontTexture->GetWidth();
-				float fMinY = (float)(.5f + nCellY*RFONT_CELL_SIZE) / (float)m_pFontTexture->GetHeight();
-				float fMaxY = (float)(.5f + (nCellY + 1)*RFONT_CELL_SIZE) / (float)m_pFontTexture->GetHeight();
+				float fMinX = (float)(.5f + nCellX * RFONT_CELL_SIZE) / (float)m_pFontTexture->GetWidth();
+				float fMaxX = (float)(.5f + nCellX * RFONT_CELL_SIZE + nWidth) / (float)m_pFontTexture->GetWidth();
+				float fMinY = (float)(.5f + nCellY * RFONT_CELL_SIZE) / (float)m_pFontTexture->GetHeight();
+				float fMaxY = (float)(.5f + (nCellY + 1) * RFONT_CELL_SIZE) / (float)m_pFontTexture->GetHeight();
 
 				vertices[0].tu = fMinX; vertices[0].tv = fMinY;
 				vertices[1].tu = fMinX; vertices[1].tv = fMaxY;
@@ -544,7 +588,7 @@ void RFont::DrawTextImpl(float x, float y, const BasicStringView<CharT>& Text,
 
 				vertices[0].color = vertices[1].color = vertices[2].color = vertices[3].color = dwColor;
 
-				for (int i = 0; i<6; i++) {
+				for (int i = 0; i < 6; i++) {
 					indices[i] += g_nFontCount * 4;
 				}
 
@@ -554,10 +598,9 @@ void RFont::DrawTextImpl(float x, float y, const BasicStringView<CharT>& Text,
 			}
 
 			if (m_nOutlineStyle == 1)
-				x += min(int(pInfo->nWidth*fScale + 1), RFONT_CELL_SIZE);
+				x += min(int(pInfo->nWidth * fScale + 1), RFONT_CELL_SIZE);
 			else
-				x += (pInfo->nWidth*fScale);
-
+				x += (pInfo->nWidth * fScale);
 		}
 
 		p = pp;
@@ -596,9 +639,9 @@ int RFont::GetTextWidthImpl(const CharT* szText, int nSize)
 			szChar[0] = *p;
 			szChar[1] = 0;
 		}
-		else{
+		else {
 			szChar[0] = *p;
-			szChar[1] = *(p+1);
+			szChar[1] = *(p + 1);
 			szChar[2] = 0;
 		}
 		_ASSERT(pp - p == 2 || pp - p == 1);
@@ -607,7 +650,7 @@ int RFont::GetTextWidthImpl(const CharT* szText, int nSize)
 
 		auto i = m_CharInfoMap.find(key);
 
-		RCHARINFO *pInfo = NULL;
+		RCHARINFO* pInfo = NULL;
 
 		int nCurWidth;
 		if (i == m_CharInfoMap.end()) {
@@ -633,12 +676,12 @@ int RFont::GetTextWidthImpl(const CharT* szText, int nSize)
 	return nWidth;
 }
 
-int RFont::GetTextWidth(const char * szText, int nSize)
+int RFont::GetTextWidth(const char* szText, int nSize)
 {
 	return GetTextWidthImpl(szText, nSize);
 }
 
-int RFont::GetTextWidth(const wchar_t * szText, int nSize)
+int RFont::GetTextWidth(const wchar_t* szText, int nSize)
 {
 	return GetTextWidthImpl(szText, nSize);
 }

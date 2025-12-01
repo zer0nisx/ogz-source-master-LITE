@@ -20,7 +20,6 @@ enum {
 
 class ZShop
 {
-private:
 protected:
 	int m_nPage;
 	bool m_bCreated;

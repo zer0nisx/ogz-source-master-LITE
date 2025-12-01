@@ -54,6 +54,7 @@ public:
 
 	void DrawShadow();
 	void Draw_SetLight(const rvector& vPosition);
+	void Draw_SetLight_ForNPC(const rvector& vPosition);  // Versión optimizada para NPCs (sin SetGunLight, solo 1 luz del mapa)
 
 	bool IsDoubleGun();
 

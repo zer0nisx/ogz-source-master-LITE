@@ -398,46 +398,53 @@ ZGame::~ZGame()
 
 bool ZGame::Create(MZFileSystem* pfs, ZLoadingProgress* pLoading)
 {
-	mlog("ZGame::Create() begin , type = %d\n", ZGetGameClient()->GetMatchStageSetting()->GetGameType());
+	// Optimización: Guardar accesores en variables locales para evitar múltiples llamadas
+	ZGameClient* pGameClient = ZGetGameClient();
+	ZGameTypeManager* pGameTypeManager = ZGetGameTypeManager();
+	ZQuest* pQuest = ZGetQuest();
+	ZWorldManager* pWorldManager = ZGetWorldManager();
+
+	mlog("ZGame::Create() begin , type = %d\n", pGameClient->GetMatchStageSetting()->GetGameType());
 
 	SetReadyState(ZGAME_READYSTATE_INIT);
 
 #ifdef _QUEST
 	{
-		ZGetQuest()->OnGameCreate();
+		pQuest->OnGameCreate();
 	}
 #endif
 
 	if (ZGetApplication()->GetLaunchMode() != ZApplication::ZLAUNCH_MODE_STANDALONE_AI &&
-		ZGetGameTypeManager()->IsQuestDerived(ZGetGameClient()->GetMatchStageSetting()->GetGameType())) {
-		for (int i = 0; i < ZGetQuest()->GetGameInfo()->GetMapSectorCount(); i++)
+		pGameTypeManager->IsQuestDerived(pGameClient->GetMatchStageSetting()->GetGameType())) {
+		MQuestGameInfo* pGameInfo = pQuest->GetGameInfo();
+		for (int i = 0; i < pGameInfo->GetMapSectorCount(); i++)
 		{
-			MQuestMapSectorInfo* pSecInfo = ZGetQuest()->GetSectorInfo(ZGetQuest()->GetGameInfo()->GetMapSectorID(i));
-			ZGetWorldManager()->AddWorld(pSecInfo->szTitle);
+			MQuestMapSectorInfo* pSecInfo = pQuest->GetSectorInfo(pGameInfo->GetMapSectorID(i));
+			pWorldManager->AddWorld(pSecInfo->szTitle);
 #ifdef _DEBUG
 			mlog("map(%s)\n", pSecInfo ? pSecInfo->szTitle : "null");
 #endif
 		}
 	}
 	else {
-		ZGetWorldManager()->AddWorld(ZGetGameClient()->GetMatchStageSetting()->GetMapName());
+		pWorldManager->AddWorld(pGameClient->GetMatchStageSetting()->GetMapName());
 	}
 
-	if (!ZGetWorldManager()->LoadAll(pLoading))
+	if (!pWorldManager->LoadAll(pLoading))
 	{
-		ZGetWorldManager()->Clear();
+		pWorldManager->Clear();
 		return false;
 	}
 
-	ZGetWorldManager()->SetCurrent(0);
+	pWorldManager->SetCurrent(0);
 
 	mlog("ZGame::Create() :: ReloadAllAnimation Begin \n");
 	ZGetMeshMgr()->ReloadAllAnimation();
 	mlog("ZGame::Create() :: ReloadAllAnimation End \n");
 
-	if (ZGetGameClient()->IsForcedEntry())
+	if (pGameClient->IsForcedEntry())
 	{
-		ZPostRequestPeerList(ZGetGameClient()->GetPlayerUID(), ZGetGameClient()->GetStageUID());
+		ZPostRequestPeerList(pGameClient->GetPlayerUID(), pGameClient->GetStageUID());
 	}
 
 	SetFOV(ToRadian(ZGetConfiguration()->GetFOV()));
@@ -481,7 +488,8 @@ bool ZGame::Create(MZFileSystem* pfs, ZLoadingProgress* pLoading)
 
 	mlog("ZGame::Create() m_CharacterManager.Clear done \n");
 
-	m_pMyCharacter = (ZMyCharacter*)m_CharacterManager.Add(ZGetGameClient()->GetPlayerUID(), rvector(0.0f, 0.0f, 0.0f), true);
+	// Reutilizar pGameClient ya definido arriba en el método
+	m_pMyCharacter = (ZMyCharacter*)m_CharacterManager.Add(pGameClient->GetPlayerUID(), rvector(0.0f, 0.0f, 0.0f), true);
 
 	ZGetFlashBangEffect()->SetBuffer();
 	ZGetScreenEffectManager()->SetGuageExpFromMyInfo();
@@ -519,9 +527,10 @@ bool ZGame::Create(MZFileSystem* pfs, ZLoadingProgress* pLoading)
 #endif
 
 	m_pMyCharacter->GetStatus()->nLoadingPercent = 100;
-	ZPostLoadingComplete(ZGetGameClient()->GetPlayerUID(), 100);
+	ZGameClient* pGameClient = ZGetGameClient();
+	ZPostLoadingComplete(pGameClient->GetPlayerUID(), 100);
 
-	ZPostStageEnterBattle(ZGetGameClient()->GetPlayerUID(), ZGetGameClient()->GetStageUID());
+	ZPostStageEnterBattle(pGameClient->GetPlayerUID(), pGameClient->GetStageUID());
 
 	char tmpbuf[128];
 	_strtime_s(tmpbuf);
@@ -576,7 +585,8 @@ void ZGame::Destroy()
 		ZGetGameInterface()->SerializeStageInterface();
 	}
 
-	ZPostStageLeaveBattle(ZGetGameClient()->GetPlayerUID(), ZGetGameClient()->GetStageUID());
+	ZGameClient* pGameClient = ZGetGameClient();
+	ZPostStageLeaveBattle(pGameClient->GetPlayerUID(), pGameClient->GetStageUID());
 
 	ReleaseFlashBangEffect();
 
@@ -745,11 +755,15 @@ void ZGame::CheckMyCharDead(float fElapsed)
 {
 	if (!m_pMyCharacter || m_pMyCharacter->IsDead()) return;
 
+	// Optimización: Guardar accesores en variables locales para evitar múltiples llamadas
+	ZGameClient* pGameClient = ZGetGameClient();
+	ZGameTypeManager* pGameTypeManager = ZGetGameTypeManager();
+
 	MUID uidAttacker = MUID(0, 0);
 
 	if (m_pMyCharacter->GetPosition().z < DIE_CRITICAL_LINE)
 	{
-		if (ZGetGameClient()->GetMatchStageSetting()->GetGameType() == MMATCH_GAMETYPE_SKILLMAP)
+		if (pGameClient->GetMatchStageSetting()->GetGameType() == MMATCH_GAMETYPE_SKILLMAP)
 		{
 			static_cast<ZRuleSkillmap*>(GetMatch()->GetRule())->OnFall();
 		}
@@ -769,7 +783,7 @@ void ZGame::CheckMyCharDead(float fElapsed)
 		}
 	}
 
-	if (ZGetGameClient()->GetMatchStageSetting()->GetNetcode() == NetcodeType::ServerBased)
+	if (pGameClient->GetMatchStageSetting()->GetNetcode() == NetcodeType::ServerBased)
 		return;
 
 	if (!m_pMyCharacter->IsDead() && (m_pMyCharacter->GetHP() <= 0))
@@ -785,7 +799,7 @@ void ZGame::CheckMyCharDead(float fElapsed)
 
 		ZPostDie(uidAttacker);
 
-		if (!ZGetGameTypeManager()->IsQuestDerived(ZGetGameClient()->GetMatchStageSetting()->GetGameType()))
+		if (!pGameTypeManager->IsQuestDerived(pGameClient->GetMatchStageSetting()->GetGameType()))
 		{
 			ZPostGameKill(uidAttacker);
 		}
@@ -1059,7 +1073,10 @@ static void ZTranslateCommand(MCommand* pCmd, std::string& strLog)
 {
 	char szBuf[256] = "";
 
-	auto nGlobalClock = ZGetGame()->GetTickTime();
+	// Optimización: Guardar ZGetGame() en variable local para evitar múltiples llamadas
+	ZGame* pGame = ZGetGame();
+	if (!pGame) return;
+	auto nGlobalClock = pGame->GetTickTime();
 	itoa_safe(nGlobalClock, szBuf, 10);
 	strLog = szBuf;
 	strLog += ": ";
@@ -1765,12 +1782,14 @@ void ZGame::OnPeerBasicInfo(MCommand* pCommand, bool bAddHistory, bool bUpdate)
 
 	MUID uid = pCommand->GetSenderUID();
 
-	MMatchPeerInfo* pPeer = ZGetGameClient()->FindPeer(uid);
+	// Optimización: Guardar ZGetGameClient() en variable local para evitar múltiples llamadas
+	ZGameClient* pGameClient = ZGetGameClient();
+	MMatchPeerInfo* pPeer = pGameClient->FindPeer(uid);
 	if (pPeer) {
 		if (pPeer->IsOpened() == false) {
-			MCommand* pCmd = ZGetGameClient()->CreateCommand(MC_PEER_OPENED, ZGetGameClient()->GetPlayerUID());
+			MCommand* pCmd = pGameClient->CreateCommand(MC_PEER_OPENED, pGameClient->GetPlayerUID());
 			pCmd->AddParameter(new MCmdParamUID(pPeer->uidChar));
-			ZGetGameClient()->Post(pCmd);
+			pGameClient->Post(pCmd);
 
 			pPeer->SetOpened(true);
 		}
@@ -2177,7 +2196,8 @@ bool ZGame::CheckWall(ZObject* pObj1, ZObject* pObj2, bool bCoherentToPeer)
 void ZGame::OnExplosionGrenade(MUID uidOwner, rvector pos, float fDamage, float fRange,
 	float fMinDamageRatio, float fKnockBack, MMatchTeam nTeamID)
 {
-	if (ZGetGame()->GetMatch()->GetMatchType() == MMATCH_GAMETYPE_SKILLMAP)
+	// Optimización: Usar GetMatch() directamente (estamos dentro de ZGame)
+	if (GetMatch()->GetMatchType() == MMATCH_GAMETYPE_SKILLMAP)
 		return;
 
 	for (auto* Target : MakePairValueAdapter(m_ObjectManager))
@@ -3693,8 +3713,10 @@ static bool AcceptChat(ZCharacter* pChar, bool TeamChat)
 			strcmp(pChar->GetUserName(), ZGetMyInfo()->GetCharName()) == 0;
 	}
 
-	return (!ZGetGameClient()->IsLadderGame() && !ZGetGameClient()->GetRejectTeamChat()) ||
-		(ZGetGameClient()->IsLadderGame() && !ZGetGameClient()->GetRejectClanChat()) ||
+	// Optimización: Guardar ZGetGameClient() en variable local para evitar múltiples llamadas
+	ZGameClient* pGameClient = ZGetGameClient();
+	return (!pGameClient->IsLadderGame() && !pGameClient->GetRejectTeamChat()) ||
+		(pGameClient->IsLadderGame() && !pGameClient->GetRejectClanChat()) ||
 		(strcmp(pChar->GetUserName(), ZGetMyInfo()->GetCharName()) == 0);
 }
 
@@ -4000,7 +4022,8 @@ void ZGame::PostNewBasicInfo()
 	CharInfo.Slot = m_pMyCharacter->GetItems()->GetSelectedWeaponParts();
 	CharInfo.HasCamDir = m_pMyCharacter->IsDirLocked();
 
-	auto Blob = PackNewBasicInfo(CharInfo, BasicInfoState, ZGetGame()->GetTime());
+	// Optimización: Usar GetTime() directamente (estamos dentro de ZGame)
+	auto Blob = PackNewBasicInfo(CharInfo, BasicInfoState, GetTime());
 	assert(Blob);
 	if (!Blob)
 		return;

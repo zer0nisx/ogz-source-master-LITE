@@ -24,6 +24,7 @@
 #define ID_VIEWINFO                     147
 #define IDD_DIALOG2                     148
 #define IDD_DIALOG_INFO                 148
+#define IDD_DIALOG_LIGHTMAP             149
 #define IDC_LIST1                       1005
 #define IDC_BUTTON1                     1007
 #define IDC_BUTTON2                     1008

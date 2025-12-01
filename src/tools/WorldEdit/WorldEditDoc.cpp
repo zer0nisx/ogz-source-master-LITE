@@ -85,10 +85,11 @@ BOOL CWorldEditDoc::OnOpenDocument(LPCTSTR lpszPathName)
 	m_pBspObject.reset();
 
 	m_pBspObject = std::make_unique<RBspObject>();
-	if(!m_pBspObject->Open(lpszPathName, RBspObject::ROpenMode::Editor))
+	CStringA strPathName(lpszPathName);
+	if(!m_pBspObject->Open(strPathName, RBspObject::ROpenMode::Editor))
 	{
 		m_pBspObject.reset();
-		AfxMessageBox("Failed to open map!");
+		AfxMessageBox(L"Failed to open map!");
 		return FALSE;
 	}
 
@@ -111,5 +112,6 @@ bool CWorldEditDoc::ReOpen()
 	m_pBspObject.reset();
 
 	m_pBspObject = std::make_unique<RBspObject>();
-	return m_pBspObject->Open(GetPathName(),RBspObject::ROpenMode::Editor);
+	CStringA strPathName(GetPathName());
+	return m_pBspObject->Open(strPathName,RBspObject::ROpenMode::Editor);
 }

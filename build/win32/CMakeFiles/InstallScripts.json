@@ -26,7 +26,8 @@
 		"C:/ogz-source-master-LITE/build/win32/Mint2/cmake_install.cmake",
 		"C:/ogz-source-master-LITE/build/win32/RealSound/cmake_install.cmake",
 		"C:/ogz-source-master-LITE/build/win32/Gunz/cmake_install.cmake",
-		"C:/ogz-source-master-LITE/build/win32/PartsIndexer/cmake_install.cmake"
+		"C:/ogz-source-master-LITE/build/win32/PartsIndexer/cmake_install.cmake",
+		"C:/ogz-source-master-LITE/build/win32/tools/WorldEdit/cmake_install.cmake"
 	],
 	"Parallel" : false
 }

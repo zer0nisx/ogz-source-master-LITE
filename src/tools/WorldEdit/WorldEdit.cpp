@@ -64,7 +64,7 @@ BOOL CWorldEditApp::InitInstance()
 	//  the specific initialization routines you do not need.
 
 #ifdef _AFXDLL
-	Enable3dControls();			// Call this when using MFC in a shared DLL
+	// Enable3dControls() is deprecated and no longer needed
 #else
 //	Enable3dControlsStatic();	// Call this when linking to MFC statically
 #endif
@@ -167,10 +167,10 @@ void CWorldEditApp::OnFileOpen()
 {
 	CFileDialog FileDialog(
 		TRUE,
-		"rs",
+		L"rs",
 		NULL,
 		OFN_HIDEREADONLY,
-		"Realspace Scene File (*.rs)|*.rs|*xml|All Files (*.*)|*.*||");
+		L"Realspace Scene File (*.rs)|*.rs|*xml|All Files (*.*)|*.*||");
 
 	if(FileDialog.DoModal()==IDOK)
 		OpenDocumentFile(FileDialog.GetPathName());

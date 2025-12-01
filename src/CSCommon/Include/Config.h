@@ -27,7 +27,7 @@
 #define TIMESCALE
 
 // Controls whether the locator IP(s) are loaded from config.xml or system.mrs/system.xml
-#define LOAD_LOCATOR_FROM_CONFIG_XML
+//#define LOAD_LOCATOR_FROM_CONFIG_XML
 
 // The interval between client transmission of MC_PEER_BASICINFO packets in milliseconds.
 // Basicinfo packets contain several core pieces of physical information:

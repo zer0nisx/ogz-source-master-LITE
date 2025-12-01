@@ -88,3 +88,6 @@ C:/ogz-source-master-LITE/build/win32/Gunz/CMakeFiles/INSTALL.dir
 C:/ogz-source-master-LITE/build/win32/PartsIndexer/CMakeFiles/PartsIndexer.dir
 C:/ogz-source-master-LITE/build/win32/PartsIndexer/CMakeFiles/RUN_TESTS.dir
 C:/ogz-source-master-LITE/build/win32/PartsIndexer/CMakeFiles/INSTALL.dir
+C:/ogz-source-master-LITE/build/win32/tools/WorldEdit/CMakeFiles/WorldEdit.dir
+C:/ogz-source-master-LITE/build/win32/tools/WorldEdit/CMakeFiles/RUN_TESTS.dir
+C:/ogz-source-master-LITE/build/win32/tools/WorldEdit/CMakeFiles/INSTALL.dir

@@ -167,11 +167,13 @@ bool ZGameInterface::OnCommand(MCommand* pCommand)
 					ZGetMyInfo()->SetLevelPercent((int)pMyExtraCharInfo->nLevelPercent);
 				}
 
-				// if playing a clanwar type server decide if go to clan channel upon login
-				if ( ( (ZGetGameClient()->GetServerMode() != MSM_CLAN) && (ZGetGameClient()->GetServerMode() != MSM_TEST) ) || (!ZGetMyInfo()->IsClanJoined()) )
-				{
-					ZPostRequestRecommendChannel();
-				}
+			// if playing a clanwar type server decide if go to clan channel upon login
+			// Optimización: Guardar ZGetGameClient() en variable local para evitar múltiples llamadas
+			ZGameClient* pGameClient = ZGetGameClient();
+			if ( ( (pGameClient->GetServerMode() != MSM_CLAN) && (pGameClient->GetServerMode() != MSM_TEST) ) || (!ZGetMyInfo()->IsClanJoined()) )
+			{
+				ZPostRequestRecommendChannel();
+			}
 				else
 				{
 					ZPostChannelRequestJoinFromChannelName(ZGetGameClient()->GetPlayerUID(), 

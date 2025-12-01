@@ -1434,7 +1434,9 @@ void ZCombatInterface::DrawScoreBoard(MDrawContext* pDC)
 	}
 	else
 	{
-		sprintf_safe(szText, "(%03d) %s", ZGetGameClient()->GetStageNumber(), ZGetGameClient()->GetStageName());
+		// Optimización: Guardar ZGetGameClient() en variable local para evitar múltiples llamadas
+		ZGameClient* pGameClient = ZGetGameClient();
+		sprintf_safe(szText, "(%03d) %s", pGameClient->GetStageNumber(), pGameClient->GetStageName());
 	}
 	TextRelative(pDC, 0.26f, 0.22f, szText);
 
@@ -1497,7 +1499,9 @@ void ZCombatInterface::DrawScoreBoard(MDrawContext* pDC)
 	// pGame ya está definido arriba en DrawScoreBoard()
 	if (ZGetGameTypeManager()->IsQuestDerived(pGame->GetMatch()->GetMatchType()))
 	{
-		sprintf_safe(szText, "%s : %d", ZMsg(MSG_WORD_REMAINNPC), ZGetQuest()->GetGameInfo()->GetNPCCount() - ZGetQuest()->GetGameInfo()->GetNPCKilled());
+		// Optimización: Guardar ZGetQuest()->GetGameInfo() en variable local para evitar múltiples llamadas
+		MQuestGameInfo* pGameInfo = ZGetQuest()->GetGameInfo();
+		sprintf_safe(szText, "%s : %d", ZMsg(MSG_WORD_REMAINNPC), pGameInfo->GetNPCCount() - pGameInfo->GetNPCKilled());
 		TextRelative(pDC, x, y, szText);
 		y -= linespace2;
 	}
@@ -1565,7 +1569,11 @@ void ZCombatInterface::DrawScoreBoard(MDrawContext* pDC)
 	}
 	// pGame ya está definido arriba en DrawScoreBoard()
 	else if (ZGetGameTypeManager()->IsQuestDerived(pGame->GetMatch()->GetMatchType()))
-		sprintf_safe(szText, "%s : %d / %d", ZMsg(MSG_WORD_RPROGRESS), ZGetQuest()->GetGameInfo()->GetCurrSectorIndex() + 1, ZGetQuest()->GetGameInfo()->GetMapSectorCount());
+	{
+		// Optimización: Guardar ZGetQuest()->GetGameInfo() en variable local para evitar múltiples llamadas
+		MQuestGameInfo* pGameInfo = ZGetQuest()->GetGameInfo();
+		sprintf_safe(szText, "%s : %d / %d", ZMsg(MSG_WORD_RPROGRESS), pGameInfo->GetCurrSectorIndex() + 1, pGameInfo->GetMapSectorCount());
+	}
 	else if (!bClanGame)
 	{
 		// pGame ya está definido arriba en DrawScoreBoard()

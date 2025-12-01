@@ -59,6 +59,7 @@ if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   include("C:/ogz-source-master-LITE/build/win32/RealSound/cmake_install.cmake")
   include("C:/ogz-source-master-LITE/build/win32/Gunz/cmake_install.cmake")
   include("C:/ogz-source-master-LITE/build/win32/PartsIndexer/cmake_install.cmake")
+  include("C:/ogz-source-master-LITE/build/win32/tools/WorldEdit/cmake_install.cmake")
 
 endif()
 

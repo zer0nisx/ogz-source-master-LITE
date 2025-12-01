@@ -113,7 +113,8 @@ void ZActor::OnDraw()
 {
 	if (!HasVMesh()) return;
 
-	Draw_SetLight(m_Position);
+	// OPTIMIZACIÓN: Usar versión optimizada para NPCs (sin SetGunLight, solo 1 luz del mapa)
+	Draw_SetLight_ForNPC(m_Position);
 
 	if (IsDieAnimationDone())
 	{
@@ -144,10 +145,10 @@ void ZActor::OnDraw()
 		bShowDebug = ZGetConfiguration()->GetShowDebugInfo();
 	}
 	// TEMPORAL: Siempre mostrar en builds de debug para facilitar el desarrollo
-	#ifdef _DEBUG
+#ifdef _DEBUG
 	bShowDebug = true;
-	#endif
-	
+#endif
+
 	if (bShowDebug)
 	{
 		DrawDebugHitbox();
@@ -261,11 +262,11 @@ void ZActor::InitFromNPCType(MQUEST_NPC nNPCType, float fTC, int nQL)
 		}
 	}
 
-		m_pBrain = ZBrain::CreateBrain(nNPCType);
-		m_pBrain->Init(this);
+	m_pBrain = ZBrain::CreateBrain(nNPCType);
+	m_pBrain->Init(this);
 
-		_ASSERT(m_pNPCInfo != NULL);
-	}
+	_ASSERT(m_pNPCInfo != NULL);
+}
 
 void ZActor::DrawDebugHitbox()
 {
@@ -299,7 +300,7 @@ void ZActor::DrawDebugHitbox()
 	{
 		float angle1 = (float(i) / CIRCLE_SEGMENTS) * 2.0f * 3.14159f;
 		float angle2 = (float(i + 1) / CIRCLE_SEGMENTS) * 2.0f * 3.14159f;
-		
+
 		rvector p1 = topCenter + rvector(cosf(angle1) * fRadius, sinf(angle1) * fRadius, 0);
 		rvector p2 = topCenter + rvector(cosf(angle2) * fRadius, sinf(angle2) * fRadius, 0);
 		RDrawLine(p1, p2, HITBOX_COLOR);
@@ -311,7 +312,7 @@ void ZActor::DrawDebugHitbox()
 	{
 		float angle1 = (float(i) / CIRCLE_SEGMENTS) * 2.0f * 3.14159f;
 		float angle2 = (float(i + 1) / CIRCLE_SEGMENTS) * 2.0f * 3.14159f;
-		
+
 		rvector p1 = bottomCenter + rvector(cosf(angle1) * fRadius, sinf(angle1) * fRadius, 0);
 		rvector p2 = bottomCenter + rvector(cosf(angle2) * fRadius, sinf(angle2) * fRadius, 0);
 		RDrawLine(p1, p2, HITBOX_COLOR);
@@ -712,13 +713,13 @@ void ZActor::ProcessMovement(float fDelta)
 		{
 			rvector dir = rvector(GetVelocity().x, GetVelocity().y, 0);
 			float fSpeed = Magnitude(dir);
-			
+
 			if (fSpeed > 0.0f)
 			{
 				// Detener gradualmente la velocidad horizontal en el aire
 				float fStopSpeed = 2000.f * fDelta;
 				fSpeed = std::max(fSpeed - fStopSpeed, 0.0f);
-				
+
 				if (fSpeed > 0.0f)
 				{
 					Normalize(dir);

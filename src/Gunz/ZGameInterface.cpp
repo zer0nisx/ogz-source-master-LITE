@@ -2135,7 +2135,9 @@ void ZGameInterface::OnDrawStateLobbyNStage(MDrawContext* pDC)
 		if (pLabel) pLabel->SetText(buf);
 
 		pLabel = (MLabel*)pRes->FindWidget("Lobby_ChannelName");
-		sprintf_safe(buf, "%s > %s > %s", ZGetGameClient()->GetServerName(), ZMsg(MSG_WORD_LOBBY), ZGetGameClient()->GetChannelName());
+		// Optimización: Guardar ZGetGameClient() en variable local para evitar múltiples llamadas
+		ZGameClient* pGameClient = ZGetGameClient();
+		sprintf_safe(buf, "%s > %s > %s", pGameClient->GetServerName(), ZMsg(MSG_WORD_LOBBY), pGameClient->GetChannelName());
 		if (pLabel)
 			pLabel->SetText(buf);
 	}
@@ -2994,7 +2996,8 @@ void ZGameInterface::Sell()
 		MUID uidItem = pListItem->GetUID();
 
 		ZPostRequestSellItem(ZGetGameClient()->GetPlayerUID(), uidItem);
-		ZPostRequestCharacterItemList(ZGetGameClient()->GetPlayerUID());
+		// Error #4: NO solicitar lista aquí - el servidor la envía automáticamente
+		// (ver VALIDACION_SERVIDOR_SHOP.md para más detalles)
 	}
 	else
 	{
@@ -3012,10 +3015,10 @@ void ZGameInterface::SellQuestItem()
 		{
 			ZPostRequestSellQuestItem(ZGetGameClient()->GetPlayerUID(), pListItem->GetItemID(), m_nSellQuestItemCount);
 
+			// Error #5: Limpiar lógica redundante - solo deshabilitar el botón
 			MWidget* pWidget = m_IDLResource.FindWidget("SellQuestItemConfirmCaller");
 			if (pWidget)
 			{
-				pWidget->Show(false);
 				pWidget->Enable(false);
 				pWidget->Show(true);
 			}
@@ -3040,13 +3043,22 @@ void ZGameInterface::SetSellQuestItemConfirmFrame()
 				pPicture->SetBitmap(pListItem->GetBitmap(0));
 
 			ZMyQuestItemNode* pQuestItemNode = ZGetMyInfo()->GetItemList()->GetQuestItemMap().Find(pListItem->GetItemID());
-			if (pQuestItemNode)
+			// Error #2: Verificar pQuestItemNode antes de acceder a GetDesc()
+			if (!pQuestItemNode)
 			{
-				if (m_nSellQuestItemCount > pQuestItemNode->m_nCount)
-					m_nSellQuestItemCount = pQuestItemNode->m_nCount;
+				// Item no encontrado en el inventario
+				return;
 			}
 
+			if (m_nSellQuestItemCount > pQuestItemNode->m_nCount)
+				m_nSellQuestItemCount = pQuestItemNode->m_nCount;
+
 			MQuestItemDesc* pQuestItemDesc = pQuestItemNode->GetDesc();
+			if (!pQuestItemDesc)
+			{
+				// Descripción no encontrada
+				return;
+			}
 
 			MLabel* pLabel = (MLabel*)m_IDLResource.FindWidget("SellQuestItem_Calculate");
 			if (pLabel && pQuestItemDesc)
@@ -3127,7 +3139,19 @@ void ZGameInterface::Buy()
 		}
 
 		MUID uidItem = pListItem->GetUID();
-		nItemID = ZGetShop()->GetItemID(pListItem->GetUID().Low - 1);
+		// Mejorar validación del índice (Error #3)
+		int nIndex = (int)uidItem.Low - 1;
+		if (nIndex < 0)
+		{
+			ZApplication::GetGameInterface()->ShowErrorMessage(MERR_INVALID_ITEM);
+			return;
+		}
+		nItemID = ZGetShop()->GetItemID(nIndex);
+		if (nItemID == 0)
+		{
+			ZApplication::GetGameInterface()->ShowErrorMessage(MERR_INVALID_ITEM);
+			return;
+		}
 
 		MMatchItemDesc* pItemDesc = MGetMatchItemDescMgr()->GetItemDesc(nItemID);
 
@@ -3137,6 +3161,7 @@ void ZGameInterface::Buy()
 			MQuestItemDesc* pQuestItemDesc = GetQuestItemDescMgr().FindQItemDesc(nItemID);
 			if (0 == pQuestItemDesc)
 			{
+				ZApplication::GetGameInterface()->ShowErrorMessage(MERR_INVALID_ITEM);
 				return;
 			}
 
@@ -3144,6 +3169,12 @@ void ZGameInterface::Buy()
 			return;
 		}
 #endif
+		// Error #1: Verificar NULL antes de usar pItemDesc
+		if (pItemDesc == NULL)
+		{
+			ZApplication::GetGameInterface()->ShowErrorMessage(MERR_INVALID_ITEM);
+			return;
+		}
 		if (pItemDesc->IsCashItem())
 		{
 			TCHAR szURL[256];
@@ -4071,8 +4102,12 @@ static bool InitializeItemDescriptions(bool Shop, ZIDLResource* pResource)
 static void PostStageState(bool Shop)
 {
 	if (ZGetGameInterface()->GetState() == GUNZ_STAGE)
-		ZPostStageState(ZGetGameClient()->GetPlayerUID(), ZGetGameClient()->GetStageUID(),
+	{
+		// Optimización: Guardar ZGetGameClient() en variable local para evitar múltiples llamadas
+		ZGameClient* pGameClient = ZGetGameClient();
+		ZPostStageState(pGameClient->GetPlayerUID(), pGameClient->GetStageUID(),
 			Shop ? MOSS_SHOP : MOSS_EQUIPMENT);
+	}
 }
 
 static void InitializeEquipmentInformation(ZIDLResource* pResource)
@@ -4145,7 +4180,11 @@ static void HideShopOrEquipmentDialog(bool Shop)
 	bool InStage = ZGetGameInterface()->GetState() == GUNZ_STAGE;
 
 	if (InStage)
-		ZPostStageState(ZGetGameClient()->GetPlayerUID(), ZGetGameClient()->GetStageUID(), MOSS_NONREADY);
+	{
+		// Optimización: Guardar ZGetGameClient() en variable local para evitar múltiples llamadas
+		ZGameClient* pGameClient = ZGetGameClient();
+		ZPostStageState(pGameClient->GetPlayerUID(), pGameClient->GetStageUID(), MOSS_NONREADY);
+	}
 
 	// Hide the shop or equipment widget.
 	MWidget* pWidget = ZGetIDLResource()->FindWidget(Shop ? "Shop" : "Equipment");
@@ -4624,9 +4663,11 @@ void ZGameInterface::LeaveBattle()
 		return;
 	}
 
-	ZPostStageLeaveBattle(ZGetGameClient()->GetPlayerUID(), ZGetGameClient()->GetStageUID());
+	// Optimización: Guardar ZGetGameClient() en variable local para evitar múltiples llamadas
+	ZGameClient* pGameClient = ZGetGameClient();
+	ZPostStageLeaveBattle(pGameClient->GetPlayerUID(), pGameClient->GetStageUID());
 	if (m_bLeaveStageReserved) {
-		ZPostStageLeave(ZGetGameClient()->GetPlayerUID(), ZGetGameClient()->GetStageUID());
+		ZPostStageLeave(pGameClient->GetPlayerUID(), pGameClient->GetStageUID());
 		SetState(GUNZ_LOBBY);
 	}
 	else {
@@ -4771,7 +4812,9 @@ void ZGameInterface::InitClanLobbyUI(bool bClanBattleEnable)
 	pWidget = m_IDLResource.FindWidget("QuickJoin2");
 	if (pWidget) pWidget->Show(!bClanBattleEnable);
 
-	bool bClanServer = ((ZGetGameClient()->GetServerMode() == MSM_CLAN) || (ZGetGameClient()->GetServerMode() == MSM_TEST));
+	// Optimización: Guardar ZGetGameClient() en variable local para evitar múltiples llamadas
+	ZGameClient* pGameClient = ZGetGameClient();
+	bool bClanServer = ((pGameClient->GetServerMode() == MSM_CLAN) || (pGameClient->GetServerMode() == MSM_TEST));
 
 	pWidget = m_IDLResource.FindWidget("PrivateChannelInput");
 	if (pWidget) pWidget->Show(bClanServer);

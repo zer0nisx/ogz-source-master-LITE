@@ -69,7 +69,7 @@ CMainFrame::~CMainFrame()
 
 int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
-	SetTitle("WorldEdit ( build " __DATE__ " " __TIME__ " )");
+	SetTitle(L"WorldEdit ( build " __DATE__ L" " __TIME__ L" )");
 	lpCreateStruct->dwExStyle |= WS_EX_ACCEPTFILES;
 
 	if (CFrameWnd::OnCreate(lpCreateStruct) == -1)
@@ -236,7 +236,7 @@ bool UpdateProgress(float fProgress)
 }
 
 
-//// thread Æã¼Ç¶«½Ã..
+//// thread ï¿½ï¿½Ç¶ï¿½ï¿½ï¿½..
 char lightmapfilename[256];
 int nMaxSize;
 int nMinSize;
@@ -271,21 +271,26 @@ void CMainFrame::OnMenuitemGenerateLightmap()
 	dialog.m_SuperSample="2";
 	
 	rvector diff=pDoc->m_pBspObject->GetDimension();
-	float fmax=max(max(diff.x,diff.y),diff.z);
+	float fmax=(float)max(max(diff.x,diff.y),diff.z);
 	float fDefaultToler=fmax/250.f;
-	dialog.m_Toler.Format("%5.1f",fDefaultToler);
+	dialog.m_Toler.Format(L"%5.1f",fDefaultToler);
 
-	sprintf_safe(lightmapfilename,"%s.lm", static_cast<const char*>(pDoc->GetPathName()) );
+	CStringA strPathName(pDoc->GetPathName());
+	sprintf_safe(lightmapfilename,"%s.lm", strPathName);
 
 	if(dialog.DoModal()==IDOK && ConfirmOverwrite(lightmapfilename))
 	{
 		CTime t1 = CTime::GetCurrentTime();
 
 
-		nMaxSize=atoi(dialog.m_MaxSize);
-		nMinSize=atoi(dialog.m_MinSize);
-		nSuperSample=atoi(dialog.m_SuperSample);
-		fToler=(float)atof(dialog.m_Toler);
+		CStringA strMaxSize(dialog.m_MaxSize);
+		CStringA strMinSize(dialog.m_MinSize);
+		CStringA strSuperSample(dialog.m_SuperSample);
+		CStringA strToler(dialog.m_Toler);
+		nMaxSize=atoi(strMaxSize);
+		nMinSize=atoi(strMinSize);
+		nSuperSample=atoi(strSuperSample);
+		fToler=(float)atof(strToler);
 
 		CProgressDialog pdlg;
 		g_pDlg=&pdlg;
@@ -296,18 +301,18 @@ void CMainFrame::OnMenuitemGenerateLightmap()
 
 		WaitForSingleObject(thread->m_hThread,INFINITE);
 
-		sndPlaySound("done.wav",SND_ASYNC);
+		sndPlaySoundW(L"done.wav",SND_ASYNC);
 
 		if(bSuccess)
 		{
 			CTime t2 = CTime::GetCurrentTime();
 			CTimeSpan ts = t2 - t1;
-			CString s = ts.Format( "Total days: %D, hours: %H, mins: %M, secs: %S" );
+			CString s = ts.Format( L"Total days: %D, hours: %H, mins: %M, secs: %S" );
 
 			AfxMessageBox(s);
 		}else
 		{
-			AfxMessageBox("Failed to generate lightmap, potentially check mlog.txt for info");
+			AfxMessageBox(L"Failed to generate lightmap, potentially check mlog.txt for info");
 		}                        
 
 		g_nProgressCount = 0;
@@ -327,13 +332,16 @@ void CMainFrame::OnMenuitemGeneratePathdata()
 	dialog.m_Toler="0.01";
 
 	char pathfilename[256];
-	sprintf_safe(pathfilename,"%s.pat", static_cast<const char*>(pDoc->GetPathName()) );
+	CStringA strPathName2(pDoc->GetPathName());
+	sprintf_safe(pathfilename,"%s.pat", strPathName2);
 
 	if(dialog.DoModal()==IDOK && ConfirmOverwrite(pathfilename))
 	{
-		float fAngle=(float)atof(dialog.m_WalkableAngle);
-		fAngle=max(90.f-fAngle,0)/180.f*PI_FLOAT;
-		float fToler=(float)atof(dialog.m_Toler);
+		CStringA strWalkableAngle(dialog.m_WalkableAngle);
+		CStringA strToler(dialog.m_Toler);
+		float fAngle=(float)atof(strWalkableAngle);
+		fAngle=max(90.f-fAngle,0.f)/180.f*PI_FLOAT;
+		fToler=(float)atof(strToler);
 
 		// TODO: Figure stuff out here
 //		pDoc->m_pBspObject->GeneratePathData(pathfilename,fAngle,fToler);
@@ -414,9 +422,10 @@ bool CMainFrame::ConfirmOverwrite(const char *filename)
 {
 	if(IsExist(filename))
 	{
-		char buffer[256];
-		sprintf(buffer,"Overwrite file : %s ?",filename);
-		if(MessageBox(buffer,"Confirm",MB_YESNO | MB_ICONQUESTION ) != IDYES )
+		CString strBuffer;
+		CString strFilename(filename);
+		strBuffer.Format(L"Overwrite file : %s ?",strFilename);
+		if(MessageBox(strBuffer,L"Confirm",MB_YESNO | MB_ICONQUESTION ) != IDYES )
 			return false;
 	}
 

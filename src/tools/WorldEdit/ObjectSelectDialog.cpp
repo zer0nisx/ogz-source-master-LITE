@@ -54,10 +54,14 @@ void CObjectSelectDialog::Initilize()
 
 	for(int i=0;i<mfs.GetFileCount();i++)
 	{
-		const char *filename=mfs.GetFileName(i);
+		const StringView& filenameView = mfs.GetFileName(i);
+		const char *filename = filenameView.data();
 		char ext[_MAX_EXT];
 		GetPureExtension(ext,filename);
-		if(stricmp(ext,".elu")==0)
-			m_ObjectList.AddString(filename);
+		if(_stricmp(ext,".elu")==0)
+		{
+			CString strFileName(filename);
+			m_ObjectList.AddString(strFileName);
+		}
 	}
 }

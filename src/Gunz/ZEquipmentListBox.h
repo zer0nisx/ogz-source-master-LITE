@@ -8,9 +8,9 @@
 MBitmap* GetItemIconBitmap(MMatchItemDesc* pItemDesc, bool bSmallIcon = false);
 bool ZGetIsCashItem(u32 nItemID);
 
-class ZEquipmentListItem : public MListItem{
+class ZEquipmentListItem : public MListItem {
 protected:
-	MBitmap*			m_pBitmap;
+	MBitmap* m_pBitmap;
 	int					m_nAIID;
 	u32		m_nItemID;
 public:
@@ -36,7 +36,7 @@ public:
 		m_nAIID = nAIID;
 		m_nItemID = nItemID;
 		m_pBitmap = pBitmap;
-		m_UID = MUID(0,0);
+		m_UID = MUID(0, 0);
 		strcpy_safe(m_szName, szName);
 		strcpy_safe(m_szLevel, szLevel);
 		m_szPrice[0] = 0;
@@ -47,7 +47,7 @@ public:
 		m_nAIID = 0;
 		m_nItemID = 0;
 		m_pBitmap = NULL;
-		m_UID = MUID(0,0);
+		m_UID = MUID(0, 0);
 		m_szName[0] = 0;
 		m_szLevel[0] = 0;
 		m_szPrice[0] = 0;
@@ -58,12 +58,12 @@ public:
 	}
 	virtual const char* GetString(int i)
 	{
-		if(i==1) return m_szName;
-		else if(i==2) return m_szLevel;
-		else if(i==3) {
-			if ( ZGetIsCashItem(GetItemID()) == true)
+		if (i == 1) return m_szName;
+		else if (i == 2) return m_szLevel;
+		else if (i == 3) {
+			if (ZGetIsCashItem(GetItemID()) == true)
 			{
-				return ZMsg( MSG_WORD_CASH);
+				return ZMsg(MSG_WORD_CASH);
 			}
 			else
 				return m_szPrice;
@@ -87,7 +87,6 @@ public:
 	u32 GetItemID() { return m_nItemID; }
 };
 
-
 class ZItemMenu;
 
 class ZEquipmentListBox : public MListBox
@@ -97,25 +96,25 @@ protected:
 	virtual bool OnEvent(MEvent* pEvent, MListener* pListener);
 
 protected:
-	MWidget*			m_pDescFrame;
+	MWidget* m_pDescFrame;
 protected:
-	ZItemMenu*			m_pItemMenu;
-	ZItemMenu* GetItemMenu()	{ return m_pItemMenu; }
+	ZItemMenu* m_pItemMenu;
+	ZItemMenu* GetItemMenu() { return m_pItemMenu; }
 
 public:
-	ZEquipmentListBox(const char* szName, MWidget* pParent=NULL, MListener* pListener=NULL);
+	ZEquipmentListBox(const char* szName, MWidget* pParent = NULL, MListener* pListener = NULL);
 	virtual ~ZEquipmentListBox(void);
 	void AttachMenu(ZItemMenu* pMenu);
 
 	void Add(const MUID& uidItem, u32 nItemID, MBitmap* pIconBitmap, const char* szName, const char* szLevel, const char* szPrice);
-	void Add(const MUID& uidItem, u32 nItemID, MBitmap* pIconBitmap, const char* szName, int nLevel,int nBountyPrice);
+	void Add(const MUID& uidItem, u32 nItemID, MBitmap* pIconBitmap, const char* szName, int nLevel, int nBountyPrice);
 	void Add(const int nAIID, u32 nItemID, MBitmap* pIconBitmap, const char* szName, int nLevel);
 
-	void SetDescriptionWidget(MWidget *pWidget)	{ m_pDescFrame = pWidget; }
+	void SetDescriptionWidget(MWidget* pWidget) { m_pDescFrame = pWidget; }
 
 public:
-	#define MINT_EQUIPMENTLISTBOX	"EquipmentListBox"
-	virtual const char* GetClassName(void){ return MINT_EQUIPMENTLISTBOX; }
+#define MINT_EQUIPMENTLISTBOX	"EquipmentListBox"
+	virtual const char* GetClassName(void) { return MINT_EQUIPMENTLISTBOX; }
 
 	u32	m_dwLastMouseMove;
 	int		m_nLastItem;
