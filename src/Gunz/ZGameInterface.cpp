@@ -3147,7 +3147,8 @@ void ZGameInterface::Buy()
 			return;
 		}
 		nItemID = ZGetShop()->GetItemID(nIndex);
-		if (nItemID == 0)
+		// Corrección #5: Verificar INVALID_ITEM_ID en lugar de 0
+		if (nItemID == 0xFFFFFFFF)  // INVALID_ITEM_ID
 		{
 			ZApplication::GetGameInterface()->ShowErrorMessage(MERR_INVALID_ITEM);
 			return;
@@ -4114,8 +4115,9 @@ static void InitializeEquipmentInformation(ZIDLResource* pResource)
 {
 	BEGIN_WIDGETLIST("EquipmentInformation", pResource, ZCharacterView*, pCharacterView);
 
+	// Corrección #2: Optimizar - guardar ZGetMyInfo() en variable local
 	ZMyInfo* pmi = ZGetMyInfo();
-	ZMyItemList* pil = ZGetMyInfo()->GetItemList();
+	ZMyItemList* pil = pmi->GetItemList();
 
 	u32 nEquipedItemID[MMCIP_END];
 

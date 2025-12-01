@@ -31,7 +31,7 @@ public:
 public:
 	ZShop();
 	virtual ~ZShop();
-	bool Create();
+	bool Create(bool bForceRefresh = false);
 	void Destroy();
 	void Clear();
 	void Serialize();

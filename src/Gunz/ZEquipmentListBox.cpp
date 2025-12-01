@@ -268,8 +268,14 @@ void CharacterEquipmentItemListBoxOnDrop(void* pSelf, MWidget* pSender, MBitmap*
 
 	ZItemSlotView* pItemSlotView = (ZItemSlotView*)pSender;
 
-	ZPostRequestTakeoffItem(ZGetGameClient()->GetPlayerUID(), pItemSlotView->GetParts());
-	ZPostRequestCharacterItemList(ZGetGameClient()->GetPlayerUID());
+	// Corrección #1 y #3: Optimizar y hacer consistente con Equip() y ZItemSlotView
+	// El servidor envía la lista automáticamente si UPDATE_STAGE_EQUIP_LOOK está definido
+	ZGameClient* pGameClient = ZGetGameClient();
+	ZPostRequestTakeoffItem(pGameClient->GetPlayerUID(), pItemSlotView->GetParts());
+	// The server sends this automatically if UPDATE_STAGE_EQUIP_LOOK is defined.
+#ifndef UPDATE_STAGE_EQUIP_LOOK
+	ZPostRequestCharacterItemList(pGameClient->GetPlayerUID());
+#endif
 }
 
 class MShopSaleItemListBoxListener : public MListener {
@@ -499,6 +505,9 @@ public:
 			if (pListItem != NULL)
 			{
 				nItemID = ZGetShop()->GetItemID(pListItem->GetUID().Low - 1);
+				// Corrección #5: Verificar INVALID_ITEM_ID (aunque GetItemDesc manejará NULL)
+				if (nItemID == 0xFFFFFFFF)  // INVALID_ITEM_ID
+					nItemID = 0;  // Para mantener compatibilidad con código existente
 			}
 
 			MMatchItemDesc* pItemDesc = MGetMatchItemDescMgr()->GetItemDesc(nItemID);

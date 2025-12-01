@@ -11,6 +11,9 @@
 #include "ZEquipmentListBox.h"
 #include "ZNetRepository.h"
 
+// Corrección #5: Valor de error específico para GetItemID()
+static const u32 INVALID_ITEM_ID = 0xFFFFFFFF;
+
 ZShop::ZShop() : m_nPage(0), m_bCreated(false)
 {
 	m_ListFilter = zshop_item_filter_all;
@@ -19,9 +22,10 @@ ZShop::ZShop() : m_nPage(0), m_bCreated(false)
 ZShop::~ZShop()
 {
 }
-bool ZShop::Create()
+bool ZShop::Create(bool bForceRefresh)
 {
-	if (m_bCreated) return false;
+	// Corrección #4: Permitir recrear con bForceRefresh
+	if (m_bCreated && !bForceRefresh) return false;
 
 	// Error #7: Optimizar - guardar ZGetGameClient() en variable local
 	ZGameClient* pGameClient = ZGetGameClient();
@@ -149,7 +153,9 @@ void ZShop::Serialize()
 
 u32 ZShop::GetItemID(int nIndex)
 {
-	if ((nIndex < 0) || (nIndex >= (int)m_ItemVector.size())) return 0;
+	// Corrección #5: Usar valor de error específico en lugar de 0
+	if ((nIndex < 0) || (nIndex >= (int)m_ItemVector.size())) 
+		return INVALID_ITEM_ID;
 
 	return m_ItemVector[nIndex];
 }
