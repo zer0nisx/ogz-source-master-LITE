@@ -10,8 +10,8 @@
 extern bool Enable_Cloth;
 
 u32 GetVisualWeaponID(u32 nMeleeItemID, u32 nPrimaryItemID,
-									u32 nSecondaryItemID, u32 nCustom1ItemID,
-									u32 nCustom2ItemID)
+	u32 nSecondaryItemID, u32 nCustom1ItemID,
+	u32 nCustom2ItemID)
 {
 	if (nPrimaryItemID != 0) return nPrimaryItemID;
 	else if (nSecondaryItemID != 0) return nSecondaryItemID;
@@ -29,22 +29,22 @@ void ZCharacterView::RepositionItemSlots()
 #define ARMORLIST_TOP_SPACE	10
 #define ARMORLIST_BOTTOM_SPACE	50
 #define LEFTITEM_COUNT	5
-	int nItemHeight = (r.h-ARMORLIST_TOP_SPACE-ARMORLIST_BOTTOM_SPACE)/LEFTITEM_COUNT;
+	int nItemHeight = (r.h - ARMORLIST_TOP_SPACE - ARMORLIST_BOTTOM_SPACE) / LEFTITEM_COUNT;
 	int nItemWidth = nItemHeight;
 
 #define ITEM_SPACE	6
-	for(int i=0; i<LEFTITEM_COUNT; i++){
-		MRECT ir(r.x+r.w-nItemWidth-ARMORLIST_TOP_SPACE, r.y+10+nItemHeight*i, nItemWidth, nItemHeight);
-		ir.w-=ITEM_SPACE;
-		ir.h-=ITEM_SPACE;
+	for (int i = 0; i < LEFTITEM_COUNT; i++) {
+		MRECT ir(r.x + r.w - nItemWidth - ARMORLIST_TOP_SPACE, r.y + 10 + nItemHeight * i, nItemWidth, nItemHeight);
+		ir.w -= ITEM_SPACE;
+		ir.h -= ITEM_SPACE;
 		m_ItemSlots[i].m_Rect = ir;
 	}
 
-	for(int i=0; i<MMCIP_END-LEFTITEM_COUNT; i++){
-		MRECT ir(r.x+nItemWidth*(i<3?i:i-3)+ARMORLIST_TOP_SPACE, r.y+r.h-nItemHeight*(i<3?2:1), nItemWidth, nItemHeight);
-		ir.w-=ITEM_SPACE;
-		ir.h-=ITEM_SPACE;
-		m_ItemSlots[i+LEFTITEM_COUNT].m_Rect = ir;
+	for (int i = 0; i < MMCIP_END - LEFTITEM_COUNT; i++) {
+		MRECT ir(r.x + nItemWidth * (i < 3 ? i : i - 3) + ARMORLIST_TOP_SPACE, r.y + r.h - nItemHeight * (i < 3 ? 2 : 1), nItemWidth, nItemHeight);
+		ir.w -= ITEM_SPACE;
+		ir.h -= ITEM_SPACE;
+		m_ItemSlots[i + LEFTITEM_COUNT].m_Rect = ir;
 	}
 }
 
@@ -56,32 +56,32 @@ void ZCharacterView::OnSize(int w, int h)
 void ZCharacterView::OnDraw(MDrawContext* pDC)
 {
 	DWORD dwCurTime = GetGlobalTimeMS();
-	if ( !m_bLButtonDown && m_bAutoRotate && m_bEnableRotate)
-		RotateRight( (float)( dwCurTime - m_dwTime) / 20.0f);
+	if (!m_bLButtonDown && m_bAutoRotate && m_bEnableRotate)
+		RotateRight((float)(dwCurTime - m_dwTime) / 20.0f);
 
 	m_dwTime = dwCurTime;
 
-	if( !Enable_Cloth )
+	if (!Enable_Cloth)
 	{
 		m_pTVisualMesh.m_pVisualMesh->DestroyCloth();
 	}
-	else if( m_pTVisualMesh.m_pVisualMesh->isChestClothMesh() )
+	else if (m_pTVisualMesh.m_pVisualMesh->isChestClothMesh())
 	{
-		srand( GetGlobalTimeMS());
+		srand(GetGlobalTimeMS());
 		int rint = rand() % 10;
 		force.x += rint - 7;
 		force.x = min(max(force.x, 5.f), maxForce * 0.3f);
-		srand( GetGlobalTimeMS());
-		rint = rand() % (int)(maxForce*0.3);
-		force.y += rint - 4;	
+		srand(GetGlobalTimeMS());
+		rint = rand() % (int)(maxForce * 0.3);
+		force.y += rint - 4;
 		force.y = min(max(force.y, 0.f), maxForce);
- 		force.z = -90;
+		force.z = -90;
 
-		m_pTVisualMesh.m_pVisualMesh->SetClothForce( force );
+		m_pTVisualMesh.m_pVisualMesh->SetClothForce(force);
 	}
 
-	bool bGame = g_pGame ? true:false;
-	m_pTVisualMesh.m_pVisualMesh->SetClothValue(bGame,0.f);
+	bool bGame = g_pGame ? true : false;
+	m_pTVisualMesh.m_pVisualMesh->SetClothValue(bGame, 0.f);
 
 	ZMeshView::OnDraw(pDC);
 }
@@ -114,39 +114,34 @@ ZCharacterView::ZCharacterView(const char* szName, MWidget* pParent, MListener* 
 	m_bVisibleEquipment = false;
 	m_nVisualWeaponParts = MMCIP_PRIMARY;
 
-
 	m_bAutoRotate = false;
 	m_dwTime = GetGlobalTimeMS();
 
-
-	for(int i=0; i<MMCIP_END; i++)
+	for (int i = 0; i < MMCIP_END; i++)
 	{
 		m_ItemSlots[i].m_nItemID = 0;
 	}
 
 	RepositionItemSlots();
-
 }
 
 ZCharacterView::~ZCharacterView(void)
 {
-
 }
 
 void ZCharacterView::InitCharParts(ZCharacterView* pCharView, MMatchCharItemParts nVisualWeaponParts)
 {
-	if(pCharView) {
-
+	if (pCharView) {
 		u32 itemids[MMCIP_END];
 		for (int i = 0; i < MMCIP_END; i++) itemids[i] = pCharView->m_ItemSlots[i].m_nItemID;
 
 		InitCharParts(pCharView->m_Info.nSex, pCharView->m_Info.nHair, pCharView->m_Info.nFace,
-						itemids, nVisualWeaponParts);
+			itemids, nVisualWeaponParts);
 	}
 }
 
-void ZCharacterView::InitCharParts(MMatchSex nSex, unsigned int nHair, unsigned int nFace, 
-				   u32* nEquipItemIDs, MMatchCharItemParts nVisualWeaponParts)
+void ZCharacterView::InitCharParts(MMatchSex nSex, unsigned int nHair, unsigned int nFace,
+	u32* nEquipItemIDs, MMatchCharItemParts nVisualWeaponParts)
 {
 	RMesh* pMesh = NULL;
 	if (nSex == MMS_MALE)
@@ -176,7 +171,7 @@ void ZCharacterView::InitCharParts(MMatchSex nSex, unsigned int nHair, unsigned 
 
 	if (nVisualWeaponParts == MMCIP_PRIMARY)
 	{
-		nWeaponID= GetVisualWeaponID(nEquipItemIDs[MMCIP_MELEE],
+		nWeaponID = GetVisualWeaponID(nEquipItemIDs[MMCIP_MELEE],
 			nEquipItemIDs[MMCIP_PRIMARY], nEquipItemIDs[MMCIP_SECONDARY],
 			nEquipItemIDs[MMCIP_CUSTOM1], nEquipItemIDs[MMCIP_CUSTOM2]);
 	}
@@ -187,19 +182,18 @@ void ZCharacterView::InitCharParts(MMatchSex nSex, unsigned int nHair, unsigned 
 
 	if (m_pTVisualMesh.GetVMesh())
 	{
-		ZChangeCharParts( m_pTVisualMesh.GetVMesh() , nSex, nHair, nFace, nEquipItemIDs );
-		ZChangeCharWeaponMesh( m_pTVisualMesh.GetVMesh(), nWeaponID);
+		ZChangeCharParts(m_pTVisualMesh.GetVMesh(), nSex, nHair, nFace, nEquipItemIDs);
+		ZChangeCharWeaponMesh(m_pTVisualMesh.GetVMesh(), nWeaponID);
 
 		m_pTVisualMesh.GetVMesh()->SetAnimation("login_idle");
 		m_pTVisualMesh.GetVMesh()->SetCheckViewFrustum(false);
 	}
 
-	if( Enable_Cloth )
+	if (Enable_Cloth)
 	{
-		m_pTVisualMesh.m_pVisualMesh->ChangeChestCloth(0.9f,1);
+		m_pTVisualMesh.m_pVisualMesh->ChangeChestCloth(0.9f, 1);
 	}
 }
-
 
 void ZCharacterView::SetParts(MMatchCharItemParts nParts, unsigned int nItemID)
 {
@@ -232,8 +226,8 @@ void ZCharacterView::SetParts(MMatchCharItemParts nParts, unsigned int nItemID)
 		ZChangeCharParts(m_pTVisualMesh.GetVMesh(), m_Info.nSex, m_Info.nHair, m_Info.nFace, itemids);
 	}
 
-	if( Enable_Cloth )
-		m_pTVisualMesh.m_pVisualMesh->ChangeChestCloth(0.9f,1);
+	if (Enable_Cloth)
+		m_pTVisualMesh.m_pVisualMesh->ChangeChestCloth(0.9f, 1);
 }
 
 void ZCharacterView::ChangeVisualWeaponParts(MMatchCharItemParts nVisualWeaponParts)
@@ -247,7 +241,7 @@ void ZCharacterView::ChangeVisualWeaponParts(MMatchCharItemParts nVisualWeaponPa
 
 	if (nVisualWeaponParts == MMCIP_PRIMARY)
 	{
-		nWeaponID= GetVisualWeaponID(itemids[MMCIP_MELEE],
+		nWeaponID = GetVisualWeaponID(itemids[MMCIP_MELEE],
 			itemids[MMCIP_PRIMARY], itemids[MMCIP_SECONDARY],
 			itemids[MMCIP_CUSTOM1], itemids[MMCIP_CUSTOM2]);
 	}
@@ -277,7 +271,7 @@ void ZCharacterView::SetSelectMyCharacter()
 
 	u32 nItemids[MMCIP_END];
 
-	if(pmi) 
+	if (pmi)
 	{
 		for (int i = 0; i < MMCIP_END; i++)
 		{
@@ -290,42 +284,42 @@ void ZCharacterView::SetSelectMyCharacter()
 
 void ZCharacterView::OnInvalidate()
 {
-	if(m_pTVisualMesh.m_pVisualMesh) 
+	if (m_pTVisualMesh.m_pVisualMesh)
 		m_pTVisualMesh.m_pVisualMesh->OnInvalidate();
 }
 void ZCharacterView::OnRestore()
 {
-	if(m_pTVisualMesh.m_pVisualMesh) 
+	if (m_pTVisualMesh.m_pVisualMesh)
 		m_pTVisualMesh.m_pVisualMesh->OnRestore();
 }
 
-void ZCharacterView::SetCharacter( MUID uid  )
+void ZCharacterView::SetCharacter(MUID uid)
 {
 	m_Info.UID = uid;
-	
+
 	MMatchObjCacheMap* pObjCacheMap = ZGetGameClient()->GetObjCacheMap();
-	for(MMatchObjCacheMap::iterator itor = pObjCacheMap->begin(); itor != pObjCacheMap->end(); ++itor)
+	for (MMatchObjCacheMap::iterator itor = pObjCacheMap->begin(); itor != pObjCacheMap->end(); ++itor)
 	{
 		MMatchObjCache* pObj = (*itor).second;
- 		if( pObj->GetUID() == m_Info.UID )
+		if (pObj->GetUID() == m_Info.UID)
 		{
-			InitCharParts( pObj->GetCostume()->nSex, pObj->GetCostume()->nHair, pObj->GetCostume()->nFace, 
-				pObj->GetCostume()->nEquipedItemID );
+			InitCharParts(pObj->GetCostume()->nSex, pObj->GetCostume()->nHair, pObj->GetCostume()->nFace,
+				pObj->GetCostume()->nEquipedItemID);
 
 			MCOLOR _color;
 			char sp_name[255];
 			MMatchUserGradeID gid;
 
-			if(GetUserInfoUID(m_Info.UID,_color,sp_name,gid)) {
-				SetText( sp_name );
+			if (GetUserInfoUID(m_Info.UID, _color, sp_name, gid)) {
+				SetText(sp_name);
 				m_Info.nLevel = 0;
 			}
 			else {
-				SetText( pObj->GetName() );
+				SetText(pObj->GetName());
 				m_Info.nLevel = pObj->GetLevel();
 			}
 
-			SetDrawInfo( true );
+			SetDrawInfo(true);
 		}
-	}	
+	}
 }
