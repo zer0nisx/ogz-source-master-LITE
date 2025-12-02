@@ -17,6 +17,7 @@
 #include "MMatchRuleDuel.h"
 #include "MMatchRuleSkillmap.h"
 #include "MMatchRuleGunGame.h"
+#include "MMatchRuleWeaponDrop.h"
 #include "MErrorTable.h"
 
 MMatchStage::MMatchStage() : MovingWeaponMgr(*this), m_WorldItemManager(this)
@@ -143,7 +144,7 @@ MMatchObjectMap::iterator MMatchStage::RemoveObject(const MUID& uid)
 
 	MMatchObject* pObj = MMatchServer::GetInstance()->GetObject(uid);
 	if (pObj) {
-		// ¾îµå¹Î À¯Àú °ü¸®
+		// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		if (IsAdminGrade(pObj->GetAccountInfo()->m_nUGrade))
 		{
 			m_nAdminObjectCount--;
@@ -415,6 +416,11 @@ MMatchRule* MMatchStage::CreateRule(MMATCH_GAMETYPE nGameType)
 			return (new MMatchRuleGunGame(this));
 		}
 		break;
+	case MMATCH_GAMETYPE_WEAPON_DROP:
+		{
+			return (new MMatchRuleWeaponDrop(this));
+		}
+		break;
 	default:
 		{
 			_ASSERT(0);
@@ -506,14 +512,14 @@ bool _GetUserGradeIDName(MMatchUserGradeID gid, char* sp_name, int maxlen)
 	if(gid == MMUG_DEVELOPER) 
 	{ 
 		if(sp_name) {
-			strcpy_safe(sp_name, maxlen, "°³¹ßÀÚ");
+			strcpy_safe(sp_name, maxlen, "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
 		}
 		return true; 
 	}
 	else if(gid == MMUG_ADMIN) {
 		
 		if(sp_name) { 
-			strcpy_safe(sp_name, maxlen, "¿î¿µÀÚ");
+			strcpy_safe(sp_name, maxlen, "ï¿½î¿µï¿½ï¿½");
 		}
 		return true; 
 	}
@@ -572,7 +578,7 @@ bool MMatchStage::StartGame()
 		MCommand* pCmdNotReady = MMatchServer::GetInstance()->CreateCommand( MC_GAME_START_FAIL, MUID(0, 0) );
 		if( 0 == pCmdNotReady )
 		{
-			mlog( "MMatchStage::StartGame - Ä¿¸Çµå »ý¼º ½ÇÆÐ.\n" );
+			mlog( "MMatchStage::StartGame - Ä¿ï¿½Çµï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.\n" );
 			bResult = false;
 		}
 		pCmdNotReady->AddParameter( new MCmdParamInt(ALL_PLAYER_NOT_READY) );
@@ -601,7 +607,7 @@ bool MMatchStage::StartGame()
 		MSTAGE_SETTING_NODE* pNode = GetStageSetting()->GetStageSetting();
 		if( 0 == pNode )
 		{
-			mlog( "MMatchServer::CharFinalize - ½ºÅ×ÀÌÁö ¼ÂÆÃ ³ëµå Ã£±â ½ÇÆÐ.\n" );
+			mlog( "MMatchServer::CharFinalize - ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ Ã£ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.\n" );
 			return false;
 		}
 
@@ -610,7 +616,7 @@ bool MMatchStage::StartGame()
 			MMatchRuleBaseQuest* pRuleQuest = reinterpret_cast< MMatchRuleBaseQuest* >( GetRule() );
 			if( 0 == pRuleQuest )
 			{
-				mlog( "MMatchStage::StartGame - Quest rule·Î Æ÷ÀÎÅÍ Çüº¯È¯ ½ÇÆÐ.\n" );
+				mlog( "MMatchStage::StartGame - Quest ruleï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½È¯ ï¿½ï¿½ï¿½ï¿½.\n" );
 				return false;
 			}
 
@@ -633,7 +639,7 @@ bool MMatchStage::StartGame()
 
 
 				#ifdef _DEBUG
-					mlog( "MMatchServer::OnStageStart - ½½·Ô Á¶°Ç °Ë»ç¿¡¼­ ½ÇÆÐÇÏ¿© °ÔÀÓÀ» ½ÃÀÛÇÒ¼ö ¾øÀ½.\n" );
+					mlog( "MMatchServer::OnStageStart - ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ë»ç¿¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ò¼ï¿½ ï¿½ï¿½ï¿½ï¿½.\n" );
 				#endif
 
 				return false;
@@ -825,13 +831,13 @@ void MMatchStage::RequestSpawnWorldItem(MMatchObject* pObj, const int nItemID,
 	m_WorldItemManager.SpawnDynamicItem(nItemID, x, y, z);
 }
 
-void MMatchStage::SpawnServerSideWorldItem(MMatchObject* pObj, const int nItemID, 
+short MMatchStage::SpawnServerSideWorldItem(MMatchObject* pObj, const int nItemID, 
 							const float x, const float y, const float z, 
 							int nLifeTime, int* pnExtraValues )
 {
-	if (GetState() != STAGE_STATE_RUN) return;
+	if (GetState() != STAGE_STATE_RUN) return 0;
 
-	m_WorldItemManager.SpawnDynamicItem(nItemID, x, y, z, nLifeTime, pnExtraValues );
+	return m_WorldItemManager.SpawnDynamicItem(nItemID, x, y, z, nLifeTime, pnExtraValues );
 }
 
 bool MMatchStage::IsApplyTeamBonus()
@@ -1170,4 +1176,14 @@ int MMatchStage::GetPlayers()
 	}
 
 	return nPlayers;
+}
+
+void MMatchStage::NotifyEquipItem(const MUID& uidPlayer, const MUID& uidItem, const MMatchCharItemParts parts)
+{
+	MMatchServer::GetInstance()->ResponseEquipItem(uidPlayer, uidItem, parts);
+}
+
+void MMatchStage::NotifyTakeoffItem(const MUID& uidPlayer, const MMatchCharItemParts parts)
+{
+	MMatchServer::GetInstance()->ResponseTakeoffItem(uidPlayer, parts);
 }

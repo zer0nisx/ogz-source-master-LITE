@@ -30,6 +30,7 @@
 class MMatchAuthBuilder;
 class MMatchScheduleMgr;
 class MNJ_DBAgentClient;
+class MMatchRule;
 
 #define MATCHSERVER_UID		MUID(0, 2)
 #define CHECKMEMORYNUMBER	888888
@@ -217,6 +218,7 @@ public:
 protected:
 	friend MVoteDiscuss;
 	friend MMatchStage;
+	friend MMatchRule;
 	friend MNJ_DBAgentClient;
 	friend MLadderMgr;
 	friend bool StageKick(MMatchServer* pServer, const MUID& uidPlayer, const MUID& uidStage,

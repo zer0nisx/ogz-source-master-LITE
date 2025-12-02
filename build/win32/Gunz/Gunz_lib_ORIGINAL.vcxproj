@@ -642,6 +642,8 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZRuleSurvival.h" />
     <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZRuleTraining.cpp" />
     <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZRuleTraining.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZRuleWeaponDrop.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZRuleWeaponDrop.h" />
     <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZScoreListBox.cpp" />
     <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZScoreListBox.h" />
     <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZScreenDebugger.cpp" />

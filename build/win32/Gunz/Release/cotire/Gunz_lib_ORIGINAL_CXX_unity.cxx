@@ -162,6 +162,7 @@
 #include "C:\ogz-source-master-LITE\src\Gunz\ZRuleSkillmap.cpp"
 #include "C:\ogz-source-master-LITE\src\Gunz\ZRuleSurvival.cpp"
 #include "C:\ogz-source-master-LITE\src\Gunz\ZRuleTraining.cpp"
+#include "C:\ogz-source-master-LITE\src\Gunz\ZRuleWeaponDrop.cpp"
 #include "C:\ogz-source-master-LITE\src\Gunz\ZScoreListBox.cpp"
 #include "C:\ogz-source-master-LITE\src\Gunz\ZScreenDebugger.cpp"
 #include "C:\ogz-source-master-LITE\src\Gunz\ZScreenEffectManager.cpp"

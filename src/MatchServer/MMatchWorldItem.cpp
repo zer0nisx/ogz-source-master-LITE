@@ -313,7 +313,7 @@ bool MMatchWorldItemManager::Obtain(MMatchObject* pObj, short nItemUID)
 
 	auto* Rule = m_pMatchStage->GetRule();
 	if (Rule)
-		Rule->OnObtainWorldItem(pObj, WorldItem.nItemID, WorldItem.nExtraValue);
+		Rule->OnObtainWorldItem(pObj, WorldItem.nItemID, WorldItem.nExtraValue, nItemUID);
 
 	RouteObtainWorldItem(pObj->GetUID(), static_cast<int>(nItemUID));
 
@@ -338,12 +338,14 @@ void MMatchWorldItemManager::SpawnDynamicItem(const int nItemID, const float x, 
 	AddItem(nItemID, -1, x, y, z);
 }
 
-void MMatchWorldItemManager::SpawnDynamicItem(const int nItemID, const float x, const float y, const float z, 
+short MMatchWorldItemManager::SpawnDynamicItem(const int nItemID, const float x, const float y, const float z, 
 											  int nLifeTime, int* pnExtraValues )
 {
-	if (m_pMatchStage == NULL) return;
+	if (m_pMatchStage == NULL) return 0;
 
+	short nUID = m_nUIDGenerate + 1; // Get the UID that will be assigned
 	AddItem(nItemID, -1, x, y, z, nLifeTime, pnExtraValues );
+	return nUID;
 }
 
 void MMatchWorldItemManager::RouteObtainWorldItem(const MUID& uidPlayer, int nWorldItemUID)

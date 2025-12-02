@@ -482,6 +482,33 @@ void RMesh::RenderNode(RMeshNode *pMeshNode, const rmatrix& world_mat)
 		}
 	}
 
+	// MEJORA: Logging y debugging del sistema de skinning
+#ifdef _DEBUG
+	static int g_CPUSkinningCount = 0;
+	static int g_GPUSkinningCount = 0;
+	static u64 g_LastSkinningLogTime = 0;
+	
+	if (bDrawCharPhysique)
+	{
+		g_GPUSkinningCount++;
+	}
+	else
+	{
+		g_CPUSkinningCount++;
+	}
+	
+	// Log cada 5 segundos
+	u64 currentTime = GetGlobalTimeMS();
+	if (g_LastSkinningLogTime == 0 || (currentTime - g_LastSkinningLogTime) > 5000)
+	{
+		mlog("Skinning Stats - GPU: %d, CPU: %d (Total: %d)\n", 
+			g_GPUSkinningCount, g_CPUSkinningCount, g_GPUSkinningCount + g_CPUSkinningCount);
+		g_LastSkinningLogTime = currentTime;
+		g_CPUSkinningCount = 0;
+		g_GPUSkinningCount = 0;
+	}
+#endif
+
 	if(bDrawCharPhysique) {
 		pMeshNode->RenderNodeVS(this, world_mat);
 	}
@@ -715,7 +742,7 @@ void RMeshRenderS(bool lit,int Rmode,rmatrix m,RMeshNode* pMNode,RMtrl* pMtrl,in
 bool RMeshRenderSBegin()
 {
 	if(g_rmesh_render_start_begin) {
-		mlog("RMeshRenderSEnd() À» ¸ÕÀú ÇÑ ÈÄ »ç¿ë\n");
+		mlog("RMeshRenderSEnd() ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½\n");
 		return false;
 	}
 

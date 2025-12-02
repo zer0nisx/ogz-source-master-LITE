@@ -234,52 +234,107 @@ void main(float4 Pos            : POSITION,
 	float light0Enabled = step(0.5f, Constants.x);  // >= 0.5 = Light0 activa
 	float light1Enabled = step(1.5f, Constants.x);  // >= 1.5 = Light1 activa
 	
+	// Calcular vector de vista (necesario para especular y rim lighting)
+	float3 viewDir = normalize(CameraPosition - TransformedPos);
+	
 	// Calcular iluminación difusa solo para luces habilitadas
 	oDiffuse = float4(0, 0, 0, 0);
 	
+	// Variables para reutilización de cálculos
+	float3 light0Dir = float3(0, 0, 0);
+	float distSq0 = 0.0f;
+	float3 normalizedLight0Dir = float3(0, 0, 0);
+	float NdotL0 = 0.0f;
+	float3 light1Dir = float3(0, 0, 0);
+	float distSq1 = 0.0f;
+	float3 normalizedLight1Dir = float3(0, 0, 0);
+	float NdotL1 = 0.0f;
+	
+	// MEJORA: Calcular valores para Light0 una vez y reutilizar
 	if (light0Enabled > 0.0f)
 	{
-		oDiffuse += GetLightDiffuse(TransformedPos, TransformedNormal,
-			Light0Position, Light0Diffuse, Light0Attenuation, Light0Range.x);
+		light0Dir = Light0Position - TransformedPos;
+		distSq0 = dot(light0Dir, light0Dir);
+		
+		// MEJORA: Early Exit mejorado - verificar rango ANTES de calcular resto
+		float lightRangeSq0 = Light0Range.x * Light0Range.x;
+		if (Light0Range.x <= 0.0f || distSq0 <= lightRangeSq0)
+		{
+			// Calcular valores solo si está en rango
+			const float MIN_DIST_SQ = 0.0001f;
+			float safeDistSq0 = max(distSq0, MIN_DIST_SQ);
+			float invDist0 = rsqrt(safeDistSq0);
+			normalizedLight0Dir = light0Dir * invDist0;
+			NdotL0 = max(dot(TransformedNormal, normalizedLight0Dir), 0.0f);
+			
+			// Usar función optimizada que reutiliza cálculos
+			oDiffuse += GetLightDiffuseOptimized(TransformedPos, TransformedNormal,
+				light0Dir, distSq0, normalizedLight0Dir, NdotL0,
+				Light0Diffuse, Light0Attenuation, Light0Range.x);
+		}
 	}
 	
+	// MEJORA: Calcular valores para Light1 una vez y reutilizar
 	if (light1Enabled > 0.0f)
 	{
-		oDiffuse += GetLightDiffuse(TransformedPos, TransformedNormal,
-			Light1Position, Light1Diffuse, Light1Attenuation, Light1Range.x);
+		light1Dir = Light1Position - TransformedPos;
+		distSq1 = dot(light1Dir, light1Dir);
+		
+		// MEJORA: Early Exit mejorado - verificar rango ANTES de calcular resto
+		float lightRangeSq1 = Light1Range.x * Light1Range.x;
+		if (Light1Range.x <= 0.0f || distSq1 <= lightRangeSq1)
+		{
+			// Calcular valores solo si está en rango
+			const float MIN_DIST_SQ = 0.0001f;
+			float safeDistSq1 = max(distSq1, MIN_DIST_SQ);
+			float invDist1 = rsqrt(safeDistSq1);
+			normalizedLight1Dir = light1Dir * invDist1;
+			NdotL1 = max(dot(TransformedNormal, normalizedLight1Dir), 0.0f);
+			
+			// Usar función optimizada que reutiliza cálculos
+			oDiffuse += GetLightDiffuseOptimized(TransformedPos, TransformedNormal,
+				light1Dir, distSq1, normalizedLight1Dir, NdotL1,
+				Light1Diffuse, Light1Attenuation, Light1Range.x);
+		}
 	}
 	
 	// Calcular iluminación especular si MaterialPower > 0
+	// MEJORA: Reutilizar cálculos ya hechos para lightDir, distSq, etc.
 	if (MaterialPower.x > 0.0f)
 	{
-		// Calcular vector de vista para iluminación especular
-		float3 viewDir = normalize(CameraPosition - TransformedPos);
-		
-		// OPTIMIZACIÓN: Early Exit - Solo calcular especular para luces habilitadas
-		if (light0Enabled > 0.0f)
+		// OPTIMIZACIÓN: Solo calcular especular para luces habilitadas y en rango
+		if (light0Enabled > 0.0f && (Light0Range.x <= 0.0f || distSq0 <= (Light0Range.x * Light0Range.x)))
 		{
-			// Calcular NdotL para Light0 (necesario para especular)
-			float3 light0Dir = normalize(Light0Position - TransformedPos);
-			float NdotL0 = max(dot(TransformedNormal, light0Dir), 0.0f);
-			
-			// Agregar especular de Light0 (con validación de rango)
-			oDiffuse += GetLightSpecular(TransformedPos, TransformedNormal, viewDir,
-				Light0Position, Light0Specular, Light0Attenuation,
-				MaterialSpecular, MaterialPower.x, NdotL0, Light0Range.x);
+			if (NdotL0 > 0.0f)
+			{
+				// Usar función optimizada que reutiliza cálculos
+				oDiffuse += GetLightSpecularOptimized(TransformedNormal, viewDir,
+					light0Dir, distSq0, normalizedLight0Dir, NdotL0,
+					Light0Specular, Light0Attenuation,
+					MaterialSpecular, MaterialPower.x, Light0Range.x);
+			}
 		}
 		
-		if (light1Enabled > 0.0f)
+		if (light1Enabled > 0.0f && (Light1Range.x <= 0.0f || distSq1 <= (Light1Range.x * Light1Range.x)))
 		{
-			// Calcular NdotL para Light1 (necesario para especular)
-			float3 light1Dir = normalize(Light1Position - TransformedPos);
-			float NdotL1 = max(dot(TransformedNormal, light1Dir), 0.0f);
-			
-			// Agregar especular de Light1 (con validación de rango)
-			oDiffuse += GetLightSpecular(TransformedPos, TransformedNormal, viewDir,
-				Light1Position, Light1Specular, Light1Attenuation,
-				MaterialSpecular, MaterialPower.x, NdotL1, Light1Range.x);
+			if (NdotL1 > 0.0f)
+			{
+				// Usar función optimizada que reutiliza cálculos
+				oDiffuse += GetLightSpecularOptimized(TransformedNormal, viewDir,
+					light1Dir, distSq1, normalizedLight1Dir, NdotL1,
+					Light1Specular, Light1Attenuation,
+					MaterialSpecular, MaterialPower.x, Light1Range.x);
+			}
 		}
 	}
+	
+	// MEJORA: Rim Lighting - efecto de borde brillante
+	// Calcular factor de rim basado en ángulo entre normal y vista
+	float rimFactor = 1.0 - dot(TransformedNormal, viewDir);
+	rimFactor = pow(max(rimFactor, 0.0), 2.0);  // Exponente 2 para rim suave
+	float rimIntensity = 0.3;  // Intensidad del rim (ajustable)
+	float4 rimColor = float4(1, 1, 1, 1) * rimFactor * rimIntensity;
+	oDiffuse += rimColor;
 	
 	// Aplicar color difuso del material
 	oDiffuse *= MaterialDiffuse;
@@ -293,20 +348,35 @@ void main(float4 Pos            : POSITION,
 	// Pasar coordenadas de textura
 	oT0 = T0;
 	
-	// Calcular fog basado en distancia desde cámara
-	// Fog linear: fogFactor = (FogEnd - dist) / (FogEnd - FogStart)
-	// Constants.y = FogStart, Constants.z = FogEnd, Constants.w = 1.0/(FogEnd-FogStart)
+	// MEJORA: Calcular fog basado en distancia desde cámara
+	// Soporta fog lineal y exponencial
+	// Constants.y = FogStart, Constants.z = FogEnd, Constants.w = 1.0/(FogEnd-FogStart) o densidad
 	// Si Constants.w es 0.0, no hay fog configurado (retornar 1.0)
 	float3 cameraToVertex = TransformedPos - CameraPosition;
 	float distToCamera = length(cameraToVertex);
 	
-	// Calcular factor de fog (1.0 = sin fog, 0.0 = fog completo)
-	// Si Constants.w es 0, no hay fog, usar lerp para seleccionar entre fogFactor y 1.0
-	float fogFactor = (Constants.z - distToCamera) * Constants.w;
-	fogFactor = saturate(fogFactor);  // Clamp entre 0.0 y 1.0
-	
-	// Si no hay fog configurado (Constants.w == 0), retornar 1.0
-	// Usar step para detectar si hay fog: step(0.0001, Constants.w) retorna 1 si Constants.w >= 0.0001
+	float fogFactor = 1.0f;
 	float fogEnabled = step(0.0001f, Constants.w);
+	
+	if (fogEnabled > 0.0f)
+	{
+		// MEJORA: Soporte para fog exponencial (más realista)
+		// Si FogStart == 0, usar fog exponencial
+		// Si FogStart > 0, usar fog lineal
+		float useExponentialFog = step(0.0001f, Constants.y);  // 0 si FogStart == 0, 1 si > 0
+		
+		// Fog lineal: fogFactor = (FogEnd - dist) / (FogEnd - FogStart)
+		float linearFogFactor = (Constants.z - distToCamera) * Constants.w;
+		linearFogFactor = saturate(linearFogFactor);
+		
+		// Fog exponencial: fogFactor = exp(-dist * densidad)
+		float fogDensity = Constants.w;  // En modo exponencial, Constants.w es la densidad
+		float exponentialFogFactor = exp(-distToCamera * fogDensity);
+		exponentialFogFactor = saturate(exponentialFogFactor);
+		
+		// Seleccionar según modo
+		fogFactor = lerp(exponentialFogFactor, linearFogFactor, useExponentialFog);
+	}
+	
 	oFog = lerp(1.0f, fogFactor, fogEnabled);
 }

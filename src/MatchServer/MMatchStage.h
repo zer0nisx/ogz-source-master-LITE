@@ -210,9 +210,13 @@ public:
 	void ObtainWorldItem(MMatchObject* pObj, const int nItemID);
 	void RequestSpawnWorldItem(MMatchObject* pObj, const int nItemID, 
 							   const float x, const float y, const float z);
-	void SpawnServerSideWorldItem(MMatchObject* pObj, const int nItemID, 
+	short SpawnServerSideWorldItem(MMatchObject* pObj, const int nItemID, 
 							   const float x, const float y, const float z, 
 							   int nLifeTime, int* pnExtraValues );
+
+	// Helper methods for MMatchRule to notify clients about item changes
+	void NotifyEquipItem(const MUID& uidPlayer, const MUID& uidItem, const MMatchCharItemParts parts);
+	void NotifyTakeoffItem(const MUID& uidPlayer, const MMatchCharItemParts parts);
 
 	bool IsApplyTeamBonus();
 	void AddTeamBonus(int nExp, MMatchTeam nTeam);

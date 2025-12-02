@@ -686,6 +686,15 @@ void MAddSharedCommandTable(MCommandManager* CommandManager, MSharedCommandType:
 		P(MPT_POS, "ItemPos");
 		C(MC_MATCH_REMOVE_WORLDITEM, "Match.Request.Spawn.WorldItem", "Request Spawn WorldItem", MCDT_MACHINE2MACHINE);
 		P(MPT_INT, "nWorldItemUID");
+		// Weapon Drop selection
+		C(MC_MATCH_WEAPON_DROP_SHOW_SELECTION, "Match.WeaponDrop.ShowSelection", "Show weapon selection menu", MCDT_MACHINE2MACHINE);
+		P(MPT_INT, "nWorldItemUID");
+		P(MPT_INT, "nWeaponCount");
+		// Variable number of weapons: each weapon has 2 parameters (ItemID, Slot)
+		C(MC_MATCH_REQUEST_SELECT_WEAPON, "Match.Request.SelectWeapon", "Request select weapon from box", MCDT_MACHINE2MACHINE);
+		P(MPT_UID, "uidChar");
+		P(MPT_INT, "nWorldItemUID");
+		P(MPT_INT, "nWeaponIndex");
 
 		C(MC_MATCH_RESET_TEAM_MEMBERS, "Match.Reset.TeamMembers", "Reset Team Members", MCDT_MACHINE2MACHINE);
 		P(MPT_BLOB, "TeamMemberData", MCPCBlobArraySize{ sizeof(MTD_ResetTeamMembersData) });

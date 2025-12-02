@@ -47,7 +47,7 @@ public:
 
 	bool Obtain(MMatchObject* pObj, short nItemUID);
 	void SpawnDynamicItem(const int nItemID, const float x, const float y, const float z);
-	void SpawnDynamicItem(const int nItemID, const float x, const float y, const float z, 
+	short SpawnDynamicItem(const int nItemID, const float x, const float y, const float z, 
 						  int nLifeTime, int* pnExtraValues );
 	void RouteAllItems(MMatchObject* pObj);
 };

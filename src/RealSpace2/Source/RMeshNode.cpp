@@ -208,7 +208,7 @@ bool RMeshNode::ConnectMtrl()
 		}
 	}
 
-	mlog( "%s MeshNode mtrl ¿¬°á½ÇÆÐ\n" , m_Name.c_str() );
+	mlog( "%s MeshNode mtrl ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½\n" , m_Name.c_str() );
 
 	return false;
 }
@@ -246,7 +246,7 @@ bool RMeshNode::SetBVertData(RBlendVertex* pBVert,int i,int j,int pv_index,int* 
 	}
 
 	if( pPhysique->m_num > 3 || pPhysique->m_num <= 0 ) {
-		mlog("%s mesh %s node %d face %d point -> physique 3 °³ ÀÌ»ó\n",m_pParentMesh->GetFileName() ,m_Name.c_str(),i,j);
+		mlog("%s mesh %s node %d face %d point -> physique 3 ï¿½ï¿½ ï¿½Ì»ï¿½\n",m_pParentMesh->GetFileName() ,m_Name.c_str(),i,j);
 		return false;
 	}
 
@@ -490,7 +490,7 @@ void RMeshNode::ConnectToNameID()
 	int id = RGetMeshNodeStringTable()->Get( m_Name );
 	
 	if(id==-1) {
-		mlog("µî·ÏºÒ°¡ ÆÄÃ÷ %s \n",m_Name.c_str());
+		mlog("ï¿½ï¿½ÏºÒ°ï¿½ ï¿½ï¿½ï¿½ï¿½ %s \n",m_Name.c_str());
 	}
 
 	m_NameID = id;
@@ -1239,7 +1239,7 @@ int RMeshNode::CalcVertexBuffer_VertexAni(int frame)
 			int nCnt = pANode->GetVecValue(frame,m_point_list);
 		}
 		else {
-			mlog("vertex ani ¿¡¼­ ¹öÅØ½º °¹¼ö°¡ Æ²¸²\n");
+			mlog("vertex ani ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ø½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Æ²ï¿½ï¿½\n");
 		}
 	}
 
@@ -1258,6 +1258,30 @@ void RMeshNode::CalcVertexBuffer_Physique(const rmatrix& world_mat, int frame)
 
 	RMesh* pMesh = m_pBaseMesh;
 
+	// MEJORA: CachÃ© de matrices transformadas por bone ID para evitar recalcular
+	// Usamos un array estÃ¡tico local para cachear matrices usadas en este frame
+	// MÃ¡ximo de bones Ãºnicos que pueden aparecer
+	static const int MAX_CACHED_BONES = 256;
+	static rmatrix cachedMatrices[MAX_CACHED_BONES];
+	static int cachedBoneIds[MAX_CACHED_BONES];
+	static int cachedCount = 0;
+	
+	// Resetear cachÃ© al inicio del cÃ¡lculo
+	cachedCount = 0;
+
+	// MEJORA: Buffers estÃ¡ticos para reutilizar memoria entre frames
+	static rvector* cachedPositions = NULL;
+	static int cachedPositionsSize = 0;
+	
+	// Redimensionar buffer estÃ¡tico si es necesario
+	if (cachedPositions == NULL || cachedPositionsSize < m_physique_num)
+	{
+		if (cachedPositions != NULL)
+			delete[] cachedPositions;
+		cachedPositionsSize = m_physique_num + 100;  // Buffer extra para crecimiento
+		cachedPositions = new rvector[cachedPositionsSize];
+	}
+
 	for(i=0;i<m_physique_num;i++) { // point_num
 
 		_vec_all = rvector(0,0,0);
@@ -1266,23 +1290,78 @@ void RMeshNode::CalcVertexBuffer_Physique(const rmatrix& world_mat, int frame)
 
 		if(p_num > MAX_PHYSIQUE_KEY) p_num = MAX_PHYSIQUE_KEY;
 
+		// MEJORA: Validar y normalizar pesos para evitar artefactos
+		float totalWeight = 0.0f;
+		float weights[MAX_PHYSIQUE_KEY];
+		
+		// Calcular suma de pesos primero
+		for(j=0;j<p_num;j++) {
+			weights[j] = m_physique[i].m_weight[j];
+			totalWeight += weights[j];
+		}
+		
+		// Normalizar si los pesos no suman 1.0 (con tolerancia)
+		const float WEIGHT_TOLERANCE = 0.001f;
+		if (totalWeight > WEIGHT_TOLERANCE && abs(totalWeight - 1.0f) > WEIGHT_TOLERANCE)
+		{
+			float invTotalWeight = 1.0f / totalWeight;
+			for(j=0;j<p_num;j++) {
+				weights[j] *= invTotalWeight;
+			}
+		}
+
 		for(j=0;j<p_num;j++) {// 4
 
 			p_id	= m_physique[i].m_parent_id[j];
-			weight	= m_physique[i].m_weight[j];
+			weight	= weights[j];  // Usar peso normalizado
 
 			pTMP = pMesh->m_data[p_id];
 
-			if( pTMP) 	t_mat = pTMP->m_mat_result;
-			else 		mlog("RMesh::CalcVertexBuffer() %s node : %d physique :num %d :not found !!! \n", GetName(), i, j);
+			if(!pTMP) {
+				mlog("RMesh::CalcVertexBuffer() %s node : %d physique :num %d :not found !!! \n", GetName(), i, j);
+				continue;
+			}
+
+			// MEJORA: Buscar en cachÃ© primero antes de calcular
+			rmatrix* pCachedMat = NULL;
+			for(int c = 0; c < cachedCount; c++)
+			{
+				if (cachedBoneIds[c] == p_id)
+				{
+					pCachedMat = &cachedMatrices[c];
+					break;
+				}
+			}
+			
+			// Si no estÃ¡ en cachÃ©, calcular y agregar (mantener lÃ³gica original)
+			if (pCachedMat == NULL && cachedCount < MAX_CACHED_BONES)
+			{
+				t_mat = pTMP->m_mat_result;  // Mantener lÃ³gica original
+				cachedMatrices[cachedCount] = t_mat;
+				cachedBoneIds[cachedCount] = p_id;
+				pCachedMat = &cachedMatrices[cachedCount];
+				cachedCount++;
+			}
+			else if (pCachedMat == NULL)
+			{
+				// CachÃ© lleno, calcular directamente
+				t_mat = pTMP->m_mat_result;
+				pCachedMat = &t_mat;
+			}
 
 			_vec = m_physique[i].m_offset[j];
 
-			_vec = TransformCoord(_vec, t_mat);
+			_vec = TransformCoord(_vec, *pCachedMat);
 			_vec_all += _vec * weight;
 		}
 
-		m_point_list[i] = _vec_all;
+		// Usar buffer cacheado en lugar de m_point_list directamente
+		cachedPositions[i] = _vec_all;
+	}
+	
+	// Copiar resultados del buffer cacheado a m_point_list
+	for(i=0;i<m_physique_num;i++) {
+		m_point_list[i] = cachedPositions[i];
 	}
 }
 

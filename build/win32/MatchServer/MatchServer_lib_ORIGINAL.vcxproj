@@ -425,6 +425,8 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchRuleSurvival.h" />
     <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchRuleTraining.cpp" />
     <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchRuleTraining.h" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchRuleWeaponDrop.cpp" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchRuleWeaponDrop.h" />
     <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchSchedule.cpp" />
     <ClInclude Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchSchedule.h" />
     <ClCompile Include="C:\ogz-source-master-LITE\src\MatchServer\MMatchServer.cpp" />

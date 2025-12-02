@@ -115,6 +115,13 @@
 			<MODELNAME>portal</MODELNAME>
 		</WORLDITEM>
 
+		<!-- Armas dropeadas en modo Weapon Drop -->
+		<WORLDITEM id="202" name="weapon_drop">
+			<TYPE>client</TYPE>
+			<TIME>300000</TIME>
+			<MODELNAME>itembox</MODELNAME>
+		</WORLDITEM>
+
 		
 		<MeshInfo>
 			<AddWorldItemElu name ="yellow">

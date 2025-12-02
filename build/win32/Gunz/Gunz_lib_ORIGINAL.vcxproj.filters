@@ -484,6 +484,9 @@
     <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZRuleTraining.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZRuleWeaponDrop.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZScoreListBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1132,6 +1135,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZRuleTraining.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZRuleWeaponDrop.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZScoreListBox.h">

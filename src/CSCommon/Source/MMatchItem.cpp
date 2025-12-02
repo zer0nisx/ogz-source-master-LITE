@@ -5,10 +5,10 @@
 #include "MMatchUtil.h"
 #include "MTime.h"
 #include "MDebug.h"
-
+#include <xmmintrin.h>
 #define DEFAULT_MELEE_WEAPON_RANGE 160
 
-MUID MMatchItemMap::m_uidGenerate = MUID(0,0);
+MUID MMatchItemMap::m_uidGenerate = MUID(0, 0);
 MCriticalSection MMatchItemMap::m_csUIDGenerateLock;
 
 MMatchItemDesc::MMatchItemDesc() : m_nID(0), m_nTotalPoint(0), m_nType(MMIT_MELEE), m_nResSex(0),
@@ -21,13 +21,13 @@ m_nMagazineImageID(0), m_nMaxBullet(0), m_nLimitSpeed(100), m_nLimitJump(0), m_n
 m_nEffectLevel(0), m_bIsCashItem(false), m_bDuplicate(true),
 m_szName(), m_szDesc(), m_szMeshName(), m_szReloadSndName(), m_szFireSndName(), m_szDryfireSndName(),
 m_Bonus()
-{}
+{
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // MMatchItemEffectDescMgr ////////////////////////////////////////////////////
 MMatchItemEffectDescMgr::MMatchItemEffectDescMgr()
 {
-
 }
 MMatchItemEffectDescMgr::~MMatchItemEffectDescMgr()
 {
@@ -63,7 +63,6 @@ void MMatchItemEffectDescMgr::ParseEffect(MXmlElement& element)
 	element.GetAttribute(&pNewEffectDesc->m_nFlash, MECTOK_FLASH);
 	element.GetAttribute(&pNewEffectDesc->m_nTear, MECTOK_TEAR);
 	element.GetAttribute(&pNewEffectDesc->m_nFlame, MECTOK_FLAME);
-
 
 	insert(value_type(pNewEffectDesc->m_nID, pNewEffectDesc));
 
@@ -104,7 +103,6 @@ bool MMatchItemEffectDescMgr::ReadXml(const char* szFileName)
 
 	xmlIniData.Destroy();
 	return true;
-
 }
 
 bool MMatchItemEffectDescMgr::ReadXml(MZFileSystem* pFileSystem, const char* szFileName)
@@ -139,7 +137,7 @@ bool MMatchItemEffectDescMgr::ReadXml(MZFileSystem* pFileSystem, const char* szF
 
 void MMatchItemEffectDescMgr::Clear()
 {
-	while(!empty())
+	while (!empty())
 	{
 		MMatchItemEffectDesc* pEffectDesc = (*begin()).second;
 		delete pEffectDesc; pEffectDesc = NULL;
@@ -165,7 +163,6 @@ MMatchItemEffectDescMgr* MMatchItemEffectDescMgr::GetInstance()
 // MMatchItemDescMgr //////////////////////////////////////////////////////////
 MMatchItemDescMgr::MMatchItemDescMgr() : m_nChecksum(0)
 {
-
 }
 MMatchItemDescMgr::~MMatchItemDescMgr()
 {
@@ -213,7 +210,7 @@ bool MMatchItemDescMgr::ReadXml(MZFileSystem* pFileSystem, const char* szFileNam
 	m_nChecksum = 0;
 
 	MXmlDocument xmlIniData;
-	if(!xmlIniData.LoadFromFile(szFileName, pFileSystem))
+	if (!xmlIniData.LoadFromFile(szFileName, pFileSystem))
 	{
 		return false;
 	}
@@ -241,7 +238,7 @@ bool MMatchItemDescMgr::ReadXml(MZFileSystem* pFileSystem, const char* szFileNam
 }
 void MMatchItemDescMgr::Clear()
 {
-	while(!empty())
+	while (!empty())
 	{
 		MMatchItemDesc* pItemDesc = (*begin()).second;
 		delete pItemDesc; pItemDesc = NULL;
@@ -258,12 +255,11 @@ MMatchItemDesc* MMatchItemDescMgr::GetItemDesc(u32 nID)
 	return NULL;
 }
 
-
 void MMatchItemDescMgr::ParseItem(MXmlElement& element)
 {
 	MMatchItemDesc* pNewDesc = new MMatchItemDesc;
 
-	// default °ª ÀÔ·Â
+	// default ï¿½ï¿½ ï¿½Ô·ï¿½
 	pNewDesc->m_bIsCashItem = false;
 	pNewDesc->m_nLimitSpeed = 100;
 	pNewDesc->m_nRange = DEFAULT_MELEE_WEAPON_RANGE;
@@ -307,7 +303,7 @@ void MMatchItemDescMgr::ParseItem(MXmlElement& element)
 		}
 		else if (!_stricmp(szAttrName, MICTOK_SLOT))
 		{
-			// ½½·Ô Å¸ÀÔ
+			// ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½
 			if (!_stricmp(szAttrValue, "none"))			pNewDesc->m_nSlot = MMIST_NONE;
 			else if (!_stricmp(szAttrValue, "melee"))	pNewDesc->m_nSlot = MMIST_MELEE;
 			else if (!_stricmp(szAttrValue, "range"))	pNewDesc->m_nSlot = MMIST_RANGE;
@@ -324,7 +320,7 @@ void MMatchItemDescMgr::ParseItem(MXmlElement& element)
 		}
 		else if (!_stricmp(szAttrName, MICTOK_WEAPON))
 		{
-			// ¹«±â Å¸ÀÔ
+			// ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½
 			if (strlen(szAttrValue) <= 0)					pNewDesc->m_nWeaponType = MWT_NONE;
 			else if (!_stricmp(szAttrValue, "dagger"))		pNewDesc->m_nWeaponType = MWT_DAGGER;
 			else if (!_stricmp(szAttrValue, "dualdagger"))	pNewDesc->m_nWeaponType = MWT_DUAL_DAGGER;
@@ -364,7 +360,7 @@ void MMatchItemDescMgr::ParseItem(MXmlElement& element)
 		}
 		else if (!_stricmp(szAttrName, MICTOK_EFFECT_LEVEL))
 		{
-			// ÀÌÆåÆ®·¹º§
+			// ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½
 			pNewDesc->m_nEffectLevel = atoi(szAttrValue);
 		}
 		else if (!_stricmp(szAttrName, MICTOK_WEIGHT))
@@ -393,7 +389,7 @@ void MMatchItemDescMgr::ParseItem(MXmlElement& element)
 		else if (!_stricmp(szAttrName, MICTOK_EFFECT_ID))
 		{
 			//n = atoi(szAttrValue);
-			// ÀÌÆåÆ® Ã³¸® ÇØ¾ß ÇÔ
+			// ï¿½ï¿½ï¿½ï¿½Æ® Ã³ï¿½ï¿½ ï¿½Ø¾ï¿½ ï¿½ï¿½
 		}
 		else if (!_stricmp(szAttrName, MICTOK_DELAY))
 		{
@@ -480,7 +476,7 @@ void MMatchItemDescMgr::ParseItem(MXmlElement& element)
 		}
 		else if (!_stricmp(szAttrName, MICTOK_COLOR))
 		{
-			// color Ã³¸®ÇØ¾ß ÇÔ..-_-z
+			// color Ã³ï¿½ï¿½ï¿½Ø¾ï¿½ ï¿½ï¿½..-_-z
 		}
 		else if (!_stricmp(szAttrName, MICTOK_DESC))
 		{
@@ -530,27 +526,26 @@ void MMatchItemDescMgr::ParseItem(MXmlElement& element)
 		{
 			pNewDesc->m_Bonus.m_fXP_QuestBonus = (float)(atoi(szAttrValue)) / 100.0f;
 		}
-		else if( !_stricmp(szAttrName, MICTOK_BONUS_BP_SOLO) )
+		else if (!_stricmp(szAttrName, MICTOK_BONUS_BP_SOLO))
 		{
-			pNewDesc->m_Bonus.m_fBP_SoloBonus = static_cast< float >( atoi(szAttrValue) ) / 100.0f;
+			pNewDesc->m_Bonus.m_fBP_SoloBonus = static_cast<float>(atoi(szAttrValue)) / 100.0f;
 		}
-		else if( !_stricmp(szAttrName, MICTOK_BONUS_BP_TEAM) )
+		else if (!_stricmp(szAttrName, MICTOK_BONUS_BP_TEAM))
 		{
-			pNewDesc->m_Bonus.m_fBP_TeamBonus = static_cast< float >( atoi(szAttrValue) ) / 100.0f;
+			pNewDesc->m_Bonus.m_fBP_TeamBonus = static_cast<float>(atoi(szAttrValue)) / 100.0f;
 		}
-		else if( !_stricmp(szAttrName, MICTOK_BONUS_BP_QUEST) )
+		else if (!_stricmp(szAttrName, MICTOK_BONUS_BP_QUEST))
 		{
-			pNewDesc->m_Bonus.m_fBP_QuestBonus = static_cast< float >( atoi(szAttrValue) ) / 100.0f;
+			pNewDesc->m_Bonus.m_fBP_QuestBonus = static_cast<float>(atoi(szAttrValue)) / 100.0f;
 		}
-		else if( !_stricmp(szAttrName, MICTOK_BONUS_DUPLICATE) )
+		else if (!_stricmp(szAttrName, MICTOK_BONUS_DUPLICATE))
 		{
-			if( 0 == _stricmp("false", szAttrValue) )
+			if (0 == _stricmp("false", szAttrValue))
 				pNewDesc->m_bDuplicate = false;
 			else
 				pNewDesc->m_bDuplicate = true;
 		}
 	}
-
 
 #ifdef _DEBUG
 	iterator tempitor = find(pNewDesc->m_nID);
@@ -580,11 +575,11 @@ void MSetMatchItemDescMgr(MMatchItemDescMgr* New)
 	CurrentMatchItemDescMgr = New;
 }
 
-
 ///////////////////////////////////////////////////////////////////////////////
 // MMatchItem /////////////////////////////////////////////////////////////////
 MMatchItem::MMatchItem() : MBaseItem(), m_nCIID(0), m_pDesc(NULL), m_bEquiped(false), m_nRentItemRegTime(0)
-{}
+{
+}
 
 bool MMatchItem::Create(const MUID& uid, MMatchItemDesc* pDesc, int nCount)
 {
@@ -599,7 +594,7 @@ void MMatchItem::Destroy()
 {
 	m_pDesc = NULL;
 	m_nCount = 0;
-	m_uidItem = MUID(0,0);
+	m_uidItem = MUID(0, 0);
 }
 
 MMatchItemType MMatchItem::GetItemType()
@@ -612,7 +607,7 @@ MMatchItemType MMatchItem::GetItemType()
 // MMatchItemMap //////////////////////////////////////////////////////////////
 MMatchItemMap::MMatchItemMap()
 {
-	m_bDoneDbAccess = false;	
+	m_bDoneDbAccess = false;
 	m_bHasRentItem = false;
 }
 MMatchItemMap::~MMatchItemMap()
@@ -624,14 +619,14 @@ bool MMatchItemMap::CreateItem(MUID& uid, int nCIID, int nItemDescID, bool bRent
 {
 	MMatchItemDesc* pDesc = NULL;
 	pDesc = MGetMatchItemDescMgr()->GetItemDesc(nItemDescID);
-	if (pDesc == NULL) 
+	if (pDesc == NULL)
 	{
 		_ASSERT(0);
 		return false;
 	}
 
 	MMatchItem* pNewItem = new MMatchItem();
-	if (pNewItem == NULL) 
+	if (pNewItem == NULL)
 	{
 		_ASSERT(0);
 		return false;
@@ -681,18 +676,17 @@ MMatchItem* MMatchItemMap::GetItem(MUID& uidItem)
 }
 
 void MMatchItemMap::Clear()
-{	
+{
 	m_bDoneDbAccess = false;
 	m_bHasRentItem = false;
 
-	while(!empty())
+	while (!empty())
 	{
 		MMatchItem* pItem = (*begin()).second;
 		delete pItem; pItem = NULL;
 		erase(begin());
 	}
 }
-
 
 ///////////////////////////////////////////////////////////////////////////////
 // MMatchEquipedItem //////////////////////////////////////////////////////////
@@ -704,7 +698,11 @@ bool MMatchEquipedItem::SetItem(MMatchCharItemParts parts, MMatchItem* pMatchIte
 	}
 
 	m_pParts[parts] = pMatchItem;
-	pMatchItem->SetEquiped(true);
+
+	if (pMatchItem != NULL)
+	{
+		pMatchItem->SetEquiped(true);
+	}
 
 	return true;
 }
@@ -722,7 +720,7 @@ void MMatchEquipedItem::GetTotalWeight(int* poutWeight, int* poutMaxWeight)
 			maxwt += (m_pParts[i]->GetDesc()->m_nMaxWT);
 		}
 	}
-	
+
 	*poutWeight = weight;
 	*poutMaxWeight = maxwt;
 }
@@ -744,7 +742,6 @@ void MMatchEquipedItem::Clear()
 		m_pParts[i] = NULL;
 	}
 }
-
 
 bool MMatchEquipedItem::IsEquipedItem(MMatchItem* pCheckItem, MMatchCharItemParts& outParts)
 {
@@ -891,7 +888,6 @@ MMatchItemSlotType	GetSuitableItemSlot(MMatchCharItemParts nParts)
 	return MMIST_END;
 }
 
-
 bool IsWeaponItemSlotType(MMatchItemSlotType nSlotType)
 {
 	if ((nSlotType == MMIST_MELEE) || (nSlotType == MMIST_RANGE) ||
@@ -908,56 +904,54 @@ bool IsWeaponCharItemParts(MMatchCharItemParts nParts)
 	return false;
 }
 
-
 char* GetItemSlotTypeStr(MMatchItemSlotType nSlotType)
 {
-	static char st_SlotTypeStr[MMIST_END][32] = { "¾øÀ½",		// MMIST_NONE
-												"±ÙÁ¢¹«±â",		// MMIST_MELEE
-												"¿ø°Å¸®¹«±â",	// MMIST_RANGE
-												"¾ÆÀÌÅÛ",		// MMIST_CUSTOM
-												"¸Ó¸®",			// MMIST_HEAD
-												"°¡½¿",			// MMIST_CHEST
-												"¼Õ",			// MMIST_HANDS
-												"´Ù¸®",			// MMIST_LEGS
-												"¹ß",			// MMIST_FEET
-												"¼Õ°¡¶ô",		// MMIST_FINGER
-												"Æ¯º°"};		// MMIST_EXTRA
+	static char st_SlotTypeStr[MMIST_END][32] = { "ï¿½ï¿½ï¿½ï¿½",		// MMIST_NONE
+												"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½",		// MMIST_MELEE
+												"ï¿½ï¿½ï¿½Å¸ï¿½ï¿½ï¿½ï¿½ï¿½",	// MMIST_RANGE
+												"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½",		// MMIST_CUSTOM
+												"ï¿½Ó¸ï¿½",			// MMIST_HEAD
+												"ï¿½ï¿½ï¿½ï¿½",			// MMIST_CHEST
+												"ï¿½ï¿½",			// MMIST_HANDS
+												"ï¿½Ù¸ï¿½",			// MMIST_LEGS
+												"ï¿½ï¿½",			// MMIST_FEET
+												"ï¿½Õ°ï¿½ï¿½ï¿½",		// MMIST_FINGER
+												"Æ¯ï¿½ï¿½" };		// MMIST_EXTRA
 
 	return st_SlotTypeStr[nSlotType];
 }
 
 char* GetCharItemPartsStr(MMatchCharItemParts nParts)
 {
-	static char st_CharItemPartsStr[MMCIP_END][32] = { "¸Ó¸®",	// MMCIP_HEAD
-														"°¡½¿",		// MMCIP_CHEST
-														"¼Õ",		// MMCIP_HANDS
-														"´Ù¸®",		// MMCIP_LEGS
-														"¹ß",		// MMCIP_FEET
-														"¿ÞÂÊ¼Õ°¡¶ô",	// MMCIP_FINGERL
-														"¿À¸¥ÂÊ¼Õ°¡¶ô", // MMCIP_FINGERR
-														"±ÙÁ¢¹«±â",		// MMCIP_MELEE
-														"ÁÖ¹«±â",		// MMCIP_PRIMARY
-														"º¸Á¶¹«±â",		// MMCIP_SECONDARY
-														"¾ÆÀÌÅÛ1",		// MMCIP_CUSTOM1
-														"¾ÆÀÌÅÛ2"		// MMCIP_CUSTOM2
-														};
+	static char st_CharItemPartsStr[MMCIP_END][32] = { "ï¿½Ó¸ï¿½",	// MMCIP_HEAD
+														"ï¿½ï¿½ï¿½ï¿½",		// MMCIP_CHEST
+														"ï¿½ï¿½",		// MMCIP_HANDS
+														"ï¿½Ù¸ï¿½",		// MMCIP_LEGS
+														"ï¿½ï¿½",		// MMCIP_FEET
+														"ï¿½ï¿½ï¿½Ê¼Õ°ï¿½ï¿½ï¿½",	// MMCIP_FINGERL
+														"ï¿½ï¿½ï¿½ï¿½ï¿½Ê¼Õ°ï¿½ï¿½ï¿½", // MMCIP_FINGERR
+														"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½",		// MMCIP_MELEE
+														"ï¿½Ö¹ï¿½ï¿½ï¿½",		// MMCIP_PRIMARY
+														"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½",		// MMCIP_SECONDARY
+														"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1",		// MMCIP_CUSTOM1
+														"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½2"		// MMCIP_CUSTOM2
+	};
 
 	return st_CharItemPartsStr[nParts];
 }
-
 
 MMatchWeaponType GetWeaponType(MMatchMeleeItemType nMeleeItemType)
 {
 	switch (nMeleeItemType)
 	{
-	case MIT_DAGGER:		return MWT_DAGGER; 
+	case MIT_DAGGER:		return MWT_DAGGER;
 	case MIT_DUAL_DAGGER:	return MWT_DUAL_DAGGER;
 	case MIT_KATANA:		return MWT_KATANA;
 	case MIT_GREAT_SWORD:	return MWT_GREAT_SWORD;
 	case MIT_DOUBLE_KATANA:	return MWT_DOUBLE_KATANA;
 	default:
-			// ¾ø´Â Å¸ÀÔ
-			_ASSERT(0);
+		// ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½
+		_ASSERT(0);
 	}
 
 	return MWT_NONE;
@@ -967,7 +961,6 @@ MMatchWeaponType GetWeaponType(MMatchRangeItemType nRangeItemType)
 {
 	switch (nRangeItemType)
 	{
-
 	case RIT_PISTOL:		return MWT_PISTOL;
 	case RIT_PISTOLx2:		return MWT_PISTOLx2;
 
@@ -985,8 +978,8 @@ MMatchWeaponType GetWeaponType(MMatchRangeItemType nRangeItemType)
 	case RIT_ROCKET:		return MWT_ROCKET;
 	case RIT_SNIFER:		return MWT_SNIFER;
 	default:
-			// ¾ø´Â Å¸ÀÔ
-			_ASSERT(0);
+		// ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½
+		_ASSERT(0);
 	}
 
 	return MWT_NONE;
@@ -1009,10 +1002,10 @@ MMatchWeaponType GetWeaponType(MMatchCustomItemType nCustomItemType)
 	case MMCIT_FOOD:				return MWT_FOOD;
 
 	default:
-		{
-			// ¾ø´Â Å¸ÀÔ
-			_ASSERT(0);
-		}
+	{
+		// ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½
+		_ASSERT(0);
+	}
 	}
 	return MWT_NONE;
 }
@@ -1021,10 +1014,10 @@ bool IsEnchantItem(MMatchItemDesc* pItemDesc)
 {
 	if (pItemDesc->m_nType == MMIT_CUSTOM)
 	{
-		if ((pItemDesc->m_nWeaponType == MWT_ENCHANT_FIRE) || 
-			(pItemDesc->m_nWeaponType == MWT_ENCHANT_COLD) || 
-			(pItemDesc->m_nWeaponType == MWT_ENCHANT_LIGHTNING) || 
-			(pItemDesc->m_nWeaponType == MWT_ENCHANT_POISON) )
+		if ((pItemDesc->m_nWeaponType == MWT_ENCHANT_FIRE) ||
+			(pItemDesc->m_nWeaponType == MWT_ENCHANT_COLD) ||
+			(pItemDesc->m_nWeaponType == MWT_ENCHANT_LIGHTNING) ||
+			(pItemDesc->m_nWeaponType == MWT_ENCHANT_POISON))
 			return true;
 	}
 

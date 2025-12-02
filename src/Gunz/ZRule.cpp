@@ -11,10 +11,11 @@
 #include "ZRuleDuel.h"
 #include "ZRuleSkillmap.h"
 #include "ZRuleGunGame.h"
+#include "ZRuleWeaponDrop.h"
 
 ZRule::ZRule(ZMatch* pMatch)
 {
-	m_pMatch = pMatch;				// ÃÊ±âÈ­ =_=
+	m_pMatch = pMatch;				// ï¿½Ê±ï¿½È­ =_=
 }
 
 ZRule::~ZRule()
@@ -98,9 +99,14 @@ ZRule* ZRule::CreateRule(ZMatch* pMatch, MMATCH_GAMETYPE nGameType)
 			return (new ZRuleGunGame(pMatch));
 		}
 		break;
+	case MMATCH_GAMETYPE_WEAPON_DROP:
+		{
+			return (new ZRuleWeaponDrop(pMatch));
+		}
+		break;
 	default:
 		{
-			// °ÔÀÓ Å¸ÀÔÀÌ ¾ø½À´Ï´Ù.
+			// ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.
 			_ASSERT(0);
 		}
 	}

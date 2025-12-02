@@ -568,6 +568,13 @@ inline void ZPostRequestObtainWorldItem(const MUID& uidChar, const int nItemUID)
 		MCommandParameterInt(nItemUID));
 }
 
+inline void ZPostRequestSelectWeapon(short nWorldItemUID, int nWeaponIndex)
+{
+	ZPOSTCMD3(MC_MATCH_REQUEST_SELECT_WEAPON, MCommandParameterUID(ZGetMyUID()),
+		MCommandParameterInt(nWorldItemUID),
+		MCommandParameterInt(nWeaponIndex));
+}
+
 inline void ZPostRequestSpawnWorldItem(const MUID& uidChar, const int nItemID, const rvector& pos)
 {
 	ZPOSTCMD3(MC_MATCH_REQUEST_SPAWN_WORLDITEM, MCommandParameterUID(uidChar),

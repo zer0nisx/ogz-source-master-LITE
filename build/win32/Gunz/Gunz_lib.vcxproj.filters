@@ -531,6 +531,9 @@
     <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZRuleTraining.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZRuleWeaponDrop.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZScoreListBox.h">
       <Filter>Header Files</Filter>
     </ClInclude>

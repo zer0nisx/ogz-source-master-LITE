@@ -9,43 +9,43 @@ using namespace std;
 
 class MMatchRuleDuel : public MMatchRule {
 private:
-	list<MUID>		WaitQueue;										///< ´ë±â¿­ Å¥
-	bool			isChangeChampion;								///< ½ÂÀÚ°¡ ¹Ù²¼´Â°¡
-	bool			isRoundEnd;										///< ¶ó¿îµå ³¡³ª´Â°¡
-	bool			isTimeover;										///< Å¸ÀÓ¿À¹ö µÆ´Â°¡
-	int				nVictory;										///< ¿¬½Â¼ö
+	list<MUID>		WaitQueue;										///< ï¿½ï¿½â¿­ Å¥
+	bool			isChangeChampion;								///< ï¿½ï¿½ï¿½Ú°ï¿½ ï¿½Ù²ï¿½ï¿½Â°ï¿½
+	bool			isRoundEnd;										///< ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Â°ï¿½
+	bool			isTimeover;										///< Å¸ï¿½Ó¿ï¿½ï¿½ï¿½ ï¿½Æ´Â°ï¿½
+	int				nVictory;										///< ï¿½ï¿½ï¿½Â¼ï¿½
 protected:	
-	virtual bool RoundCount();										///< ¶ó¿îµå Ä«¿îÆ®. ¸ðµç ¶ó¿îµå°¡ ³¡³ª¸é false¸¦ ¹ÝÈ¯ÇÑ´Ù.
+	virtual bool RoundCount();										///< ï¿½ï¿½ï¿½ï¿½ Ä«ï¿½ï¿½Æ®. ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½å°¡ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ falseï¿½ï¿½ ï¿½ï¿½È¯ï¿½Ñ´ï¿½.
 
-	virtual void OnBegin();											///< ÀüÃ¼ °ÔÀÓ ½ÃÀÛ½Ã È£Ãâ
-	virtual void OnEnd();											///< ÀüÃ¼ °ÔÀÓ Á¾·á½Ã È£Ãâ
-	virtual void OnRoundBegin();									///< ¶ó¿îµå ½ÃÀÛÇÒ ¶§ È£Ãâ
-	virtual void OnRoundEnd();										/// ¶ó¿îµå ³¡³¯ ¶§ È£Ãâ
-	virtual void OnRoundTimeOut();									///< ¶ó¿îµå°¡ Å¸ÀÓ¾Æ¿ôÀ¸·Î Á¾·áµÉ ‹š OnRoundEnd() ÀüÀÌ´Ù.
+	virtual void OnBegin();											///< ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Û½ï¿½ È£ï¿½ï¿½
+	virtual void OnEnd();											///< ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ È£ï¿½ï¿½
+	virtual void OnRoundBegin();									///< ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ È£ï¿½ï¿½
+	virtual void OnRoundEnd();										/// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ È£ï¿½ï¿½
+	virtual void OnRoundTimeOut();									///< ï¿½ï¿½ï¿½å°¡ Å¸ï¿½Ó¾Æ¿ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ OnRoundEnd() ï¿½ï¿½ï¿½Ì´ï¿½.
 
-	virtual bool OnCheckRoundFinish();								///< ¶ó¿îµå°¡ ³¡³µ´ÂÁö Ã¼Å©
+	virtual bool OnCheckRoundFinish();								///< ï¿½ï¿½ï¿½å°¡ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã¼Å©
 
-	virtual void OnGameKill(const MUID& uidAttacker, const MUID& uidVictim);	///< Å³ÇßÀ»¶§ µµÀüÀÚÀÇ Å³ÀÎÁö Ã¨ÇÇ¾ðÀÇ Å³ÀÎÁö Ã¼Å©
+	virtual void OnGameKill(const MUID& uidAttacker, const MUID& uidVictim);	///< Å³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å³ï¿½ï¿½ï¿½ï¿½ Ã¨ï¿½Ç¾ï¿½ï¿½ï¿½ Å³ï¿½ï¿½ï¿½ï¿½ Ã¼Å©
 
-	virtual bool OnCheckEnableBattleCondition();					///< °ÔÀÓ °¡´ÉÇÑÁö Ã¼Å©
+	virtual bool OnCheckEnableBattleCondition();					///< ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã¼Å©
 
-	/// °ÔÀÓÁß ³­ÀÔÇÒ¶§ È£ÃâµÈ´Ù.
+	/// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ò¶ï¿½ È£ï¿½ï¿½È´ï¿½.
 	virtual void OnEnterBattle(MUID& uidChar);
-	// °ÔÀÓÁß ³ª°¬À»¶§ È£ÃâµÈ´Ù.
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È£ï¿½ï¿½È´ï¿½.
 	virtual void OnLeaveBattle(MUID& uidChar);	
 
-	virtual void OnTeam(const MUID &uidPlayer, MMatchTeam nTeam) override;
+	virtual void OnTeam(const MUID &uidPlayer, enum MMatchTeam nTeam) override;
 
-	void		 SpawnPlayers();									///< ÇÃ·¹ÀÌ¾îµéÀ» ½ºÆù½ÃÅ²´Ù.
+	void		 SpawnPlayers();									///< ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å²ï¿½ï¿½.
 
 	void		LogInfo();
 
-	void		SendQueueInfo(bool isRoundEnd = false);				///< ÇÃ·¹ÀÌ¾îµé¿¡°Ô Å¥ Á¤º¸¸¦ Àü´Þ
+	void		SendQueueInfo(bool isRoundEnd = false);				///< ï¿½Ã·ï¿½ï¿½Ì¾ï¿½é¿¡ï¿½ï¿½ Å¥ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
 public:
-	int				GetVictory() { return nVictory;	}					///< ¿¬½Â¼ö ¸®ÅÏ
-	MUID			uidChampion;									///< 1À§ÁßÀÎ »ç¶÷
-	MUID			uidChallenger;									///< µµÀüÀÚ
+	int				GetVictory() { return nVictory;	}					///< ï¿½ï¿½ï¿½Â¼ï¿½ ï¿½ï¿½ï¿½ï¿½
+	MUID			uidChampion;									///< 1ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
+	MUID			uidChallenger;									///< ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 	MMatchRuleDuel(MMatchStage* pStage);
 	virtual ~MMatchRuleDuel() { }

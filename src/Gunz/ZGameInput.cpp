@@ -19,6 +19,8 @@
 #include "RGMain.h"
 #include "RBspObject.h"
 #include "MTextArea.h"
+#include "ZRuleWeaponDrop.h"
+#include "MBaseGameType.h"
 
 #undef _DONOTUSE_DINPUT_MOUSE
 
@@ -343,7 +345,43 @@ bool ZGameInput::OnEvent(MEvent* pEvent)
 		case '7':
 		case '8':
 		case '9':
+		{
+			// Check if weapon selection menu is active
+			if (ZGetGameInterface()->GetGame() && ZGetGameInterface()->GetGame()->GetMatch())
+			{
+				ZMatch* pMatch = ZGetGameInterface()->GetGame()->GetMatch();
+				if (pMatch && pMatch->GetMatchType() == MMATCH_GAMETYPE_WEAPON_DROP)
+				{
+					ZRule* pRule = pMatch->GetRule();
+					ZRuleWeaponDrop* pWeaponDropRule = dynamic_cast<ZRuleWeaponDrop*>(pRule);
+					if (pWeaponDropRule && pWeaponDropRule->IsSelectionMenuActive())
+					{
+						int nIndex = -1;
+						if (pEvent->nKey >= '1' && pEvent->nKey <= '9')
+							nIndex = pEvent->nKey - '1';
+						else if (pEvent->nKey == '0')
+							nIndex = 9;
+						
+						// nIndex validation is done in SelectWeapon(), but we can optimize by checking here
+						if (nIndex >= 0)
+						{
+							pWeaponDropRule->SelectWeapon(nIndex);
+							return true;
+						}
+					}
+				}
+			}
 
+			if (pCombatInterface->GetObserver()->IsVisible())
+				pCombatInterface->GetObserver()->OnKeyEvent(pEvent->bCtrl, pEvent->nKey);
+
+			if (ZGetGameClient()->CanVote() ||
+				ZGetGameInterface()->GetCombatInterface()->GetVoteInterface()->GetShowTargetList())
+			{
+				ZGetGameInterface()->GetCombatInterface()->GetVoteInterface()->VoteInput(pEvent->nKey);
+			}
+		}
+		break;
 		case 'A':
 		case 'B':
 		case 'C':
@@ -362,6 +400,23 @@ bool ZGameInput::OnEvent(MEvent* pEvent)
 			}
 			break;
 		case VK_ESCAPE:
+		{
+			// Check if weapon selection menu is active
+			if (ZGetGameInterface()->GetGame() && ZGetGameInterface()->GetGame()->GetMatch())
+			{
+				ZMatch* pMatch = ZGetGameInterface()->GetGame()->GetMatch();
+				if (pMatch && pMatch->GetMatchType() == MMATCH_GAMETYPE_WEAPON_DROP)
+				{
+					ZRule* pRule = pMatch->GetRule();
+					ZRuleWeaponDrop* pWeaponDropRule = dynamic_cast<ZRuleWeaponDrop*>(pRule);
+					if (pWeaponDropRule && pWeaponDropRule->IsSelectionMenuActive())
+					{
+						pWeaponDropRule->HideWeaponSelectionMenu();
+						return true;
+					}
+				}
+			}
+
 			if (ZGetGameInterface()->GetCombatInterface()->GetVoteInterface()->GetShowTargetList()) {
 				ZGetGameInterface()->GetCombatInterface()->GetVoteInterface()->CancelVote();
 			}
@@ -371,6 +426,7 @@ bool ZGameInput::OnEvent(MEvent* pEvent)
 			}
 
 			return true;
+		}
 		case 'M':
 			if (g_pGame->IsReplay() && pCombatInterface->GetObserver()->IsVisible())
 			{

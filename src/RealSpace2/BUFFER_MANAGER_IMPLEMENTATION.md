@@ -107,3 +107,5 @@ El buffer manager NO se usa cuando:
 
 
 
+
+
