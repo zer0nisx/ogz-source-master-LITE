@@ -4,6 +4,9 @@
 #include <vector>
 #include <string>
 #include <map>
+#include <memory>
+#include <atomic>
+#include <shared_mutex>  // Para std::shared_timed_mutex
 #include "RBaseTexture.h"
 #include "RTypes.h"
 #include <d3d9.h>
@@ -68,11 +71,12 @@ public:
 
 	bool	m_bUse;
 
-	bool	m_bAniTex;
-	int 	m_nAniTexCnt;
-	int 	m_nAniTexSpeed;
-	int 	m_nAniTexGap;
-	u64		m_backup_time;
+	// Variables de textura animada (thread-safe para acceso concurrente)
+	std::atomic<bool>	m_bAniTex;
+	std::atomic<int>	m_nAniTexCnt;
+	std::atomic<int>	m_nAniTexSpeed;
+	std::atomic<int>	m_nAniTexGap;
+	std::atomic<u64>	m_backup_time;  // CRÍTICO: leído/escrito desde múltiples threads
 
 	bool	m_bObjectMtrl;// effect ,interface , object
 
@@ -83,17 +87,33 @@ public:
 
 #define MAX_MTRL_NODE 100
 
-class RMtrlMgr final : public std::list<RMtrl*>
+class RMtrlMgr final
 {
+private:
+	std::list<std::unique_ptr<RMtrl>> m_materials;
+	bool m_bObjectMtrl{};// effect ,interface , object
+	int m_id_last{};
+	
+	// Mutex para operaciones read-heavy (múltiples lectores, un escritor)
+	mutable std::shared_timed_mutex m_mutex;
+
 public:
 	RMtrlMgr();
 	RMtrlMgr(const RMtrlMgr&) = delete;
-	~RMtrlMgr();
+	~RMtrlMgr() = default;  // unique_ptr destruye automáticamente
 
-	int		Add(char* name,int u_id = -1);
+	// Crear nuevo material
+	int		Add(char* name, int u_id = -1);
+	
+	// Agregar material existente (toma ownership)
+	int		Add(std::unique_ptr<RMtrl> tex);
+	
+	// Compatibilidad: acepta raw pointer (toma ownership)
+	// DEPRECATED: Usar Add(std::unique_ptr<RMtrl>) en su lugar
 	int		Add(RMtrl* tex);
 
 	void	Del(int id);
+	void	Del(RMtrl* tex);
 
 	int		LoadList(char* name);
 	int		SaveList(char* name);
@@ -107,21 +127,16 @@ public:
 
 	void	SetObjectTexture(bool bObject) { m_bObjectMtrl = bObject; }
 
-	RMtrl*	Get_s(int mtrl_id,int sub_id);
+	RMtrl*	Get_s(int mtrl_id, int sub_id) const;
 
-	LPDIRECT3DTEXTURE9 Get(int id);
-	LPDIRECT3DTEXTURE9 Get(int id,int sub_id);
-	LPDIRECT3DTEXTURE9 GetUser(int id);
-	LPDIRECT3DTEXTURE9 Get(char* name);
+	LPDIRECT3DTEXTURE9 Get(int id) const;
+	LPDIRECT3DTEXTURE9 Get(int id, int sub_id) const;
+	LPDIRECT3DTEXTURE9 GetUser(int id) const;
+	LPDIRECT3DTEXTURE9 Get(char* name) const;
 
-	RMtrl*  GetMtrl(char* name);
-	RMtrl*  GetToolMtrl(char* name);
+	RMtrl*  GetMtrl(char* name) const;
+	RMtrl*  GetToolMtrl(char* name) const;
 
-	void	Del(RMtrl* tex);
-	int		GetNum();
-
-	std::vector<RMtrl*>	m_node_table;
-
-	bool	m_bObjectMtrl{};// effect ,interface , object
-	int		m_id_last{};
+	int		GetNum() const;
+	size_t	size() const { return m_materials.size(); }
 };

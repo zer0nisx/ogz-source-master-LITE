@@ -37,7 +37,7 @@
 //
 // When a player equips a particular clothing item, we look up their base mesh, and then look up
 // the parts name in the base mesh's parts list. If the elu file it resides in is not already
-// loaded, we load it and grab the mesh node corresponding to the requested part. However, 
+// loaded, we load it and grab the mesh node corresponding to the requested part. However,
 // since elu files often contain the mesh nodes for several parts, it might already be loaded
 // for a different part. If it is already loaded, we find the existing mesh, and grab the mesh node
 // from that.
@@ -78,8 +78,8 @@ public:
 
 	// Callback should have the signature `void(RMeshNodePtr Node, const char* NodeName)`.
 	template <typename T>
-	void Get(const char *MeshName, const char *NodeName, void* Obj, T&& Callback);
-	void Release(RMeshNode *pNode);
+	void Get(const char* MeshName, const char* NodeName, void* Obj, T&& Callback);
+	void Release(RMeshNode* pNode);
 
 	bool RemoveObject(void* Obj, bool All = true);
 
@@ -119,7 +119,7 @@ private:
 		AllocatedMeshesType AllocatedMeshes;
 		AllocatedNodesType AllocatedNodes;
 	};
-	
+
 	// Maps a base mesh name (e.g. "heroman1" for the normal male mesh) to a BaseMeshData.
 	// This is necessary because parts can have the same names for different base meshes.
 	// E.g., both the female and male black dragon headpieces are called "eq_head_blackdragon".
@@ -140,7 +140,7 @@ private:
 		LoadMesh,
 		NotFound,
 	};
-	GetResult GetCached(const char *szMeshName, const char *szNodeName,
+	GetResult GetCached(const char* szMeshName, const char* szNodeName,
 		RMeshNodePtr& NodeOutput, LoadInfoType& LoadInfoOutput);
 	RMeshNode* Load(const LoadInfoType& LoadInfo);
 	using CallbackType = std::function<void(RMeshNodePtr, const char*)>;
@@ -166,7 +166,7 @@ private:
 MeshManager* GetMeshManager();
 
 template <typename T>
-void MeshManager::Get(const char *MeshName, const char *NodeName, void* Obj,
+void MeshManager::Get(const char* MeshName, const char* NodeName, void* Obj,
 	T&& Callback)
 {
 	RMeshNodePtr Node;

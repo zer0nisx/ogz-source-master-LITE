@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <unordered_map>
+#include <atomic>
 
 #include "RMeshNode.h"
 #include "RAnimationMgr.h"
@@ -446,7 +447,8 @@ public:
 
 	int	 m_nSpRenderMode;
 
-	bool m_isMeshLoaded;
+	// Estado de carga (thread-safe para sincronización entre threads)
+	std::atomic<bool> m_isMeshLoaded;
 
 	////////////////////////////////////
 	// tool
