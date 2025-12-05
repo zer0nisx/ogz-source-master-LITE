@@ -3,6 +3,8 @@
 #include <vector>
 #include <unordered_map>
 #include <atomic>
+#include <memory>  // Para std::unique_ptr
+#include <functional>  // Para std::function (deleter)
 
 #include "RMeshNode.h"
 #include "RAnimationMgr.h"
@@ -92,7 +94,27 @@ public:
 	int			m_size;
 };
 
-class RRenderNodeList : public std::list<RRenderNode*>
+// C++14: Usar unique_ptr para RAII automático
+// Nota: Algunos objetos viven en arrays estáticos, usar deleter no-op
+struct RRenderNodeDeleter {
+	void operator()(RRenderNode* p) const {
+		// Deleter por defecto: eliminar el objeto
+		delete p;
+	}
+};
+
+struct RRenderNodeNoOpDeleter {
+	void operator()(RRenderNode*) const {
+		// No-op deleter: no hacer nada (para objetos en arrays estáticos)
+	}
+};
+
+// Usar deleter por defecto para objetos creados con new
+using RRenderNodePtr = std::unique_ptr<RRenderNode, RRenderNodeDeleter>;
+// Para objetos en arrays estáticos, usar este tipo
+using RRenderNodeNoOpPtr = std::unique_ptr<RRenderNode, RRenderNodeNoOpDeleter>;
+
+class RRenderNodeList : public std::list<RRenderNodePtr>
 {
 public:
 	void Render() {
@@ -100,36 +122,17 @@ public:
 		if(empty())
 			return;
 
-		std::list<RRenderNode*>::iterator node = begin();
-
-		RRenderNode* pNode;
-
-		while( node != end() ) {
-
-			pNode = (*node);
-
-			if(pNode)
-				(pNode)->Render();
-
-			node++;
+		// C++14: Iterar sobre unique_ptr
+		for(auto& node : *this) {
+			if(node) {
+				node->Render();  // unique_ptr tiene operator->
+			}
 		}
 	}
 
 	void Clear() {
 
-		if(empty()) return;
-
-		std::list<RRenderNode*>::iterator node = begin();
-
-		RRenderNode* pNode;
-
-		for(node = begin(); node != end(); ) {
-			pNode = (*node);
-			delete pNode;
-			pNode = NULL;
-			node = erase(node);
-		}
-
+		// C++14: No necesita delete - unique_ptr se destruye automáticamente
 		clear();
 	}
 
@@ -417,8 +420,6 @@ public:
 	RVisualMesh*	m_pVisualMesh;
 	RAnimation*		m_pAniSet[2];
 
-	RMeshMgr*		m_parts_mgr;
-
 	RAnimationMgr	m_ani_mgr;
 
 	bool			m_isNPCMesh;
@@ -449,6 +450,9 @@ public:
 
 	// Estado de carga (thread-safe para sincronización entre threads)
 	std::atomic<bool> m_isMeshLoaded;
+
+	// Parts manager (C++14: unique_ptr para RAII automático)
+	std::unique_ptr<RMeshMgr> m_parts_mgr;
 
 	////////////////////////////////////
 	// tool

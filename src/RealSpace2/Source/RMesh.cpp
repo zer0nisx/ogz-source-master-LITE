@@ -76,10 +76,11 @@ void RMesh::Init()
 
 	m_bUnUsededCheck = false;
 
-	m_pAniSet[0] = NULL;
-	m_pAniSet[1] = NULL;
+	m_pAniSet[0] = nullptr;
+	m_pAniSet[1] = nullptr;
 
-	m_parts_mgr = NULL;
+	// unique_ptr se inicializa a nullptr automáticamente, pero lo hacemos explícito
+	m_parts_mgr = nullptr;
 
 	m_base_mtrl_mesh = NULL;
 
@@ -124,10 +125,8 @@ void RMesh::Destroy()
 {
 	DelMeshList();
 
-	if(m_parts_mgr) {
-		delete m_parts_mgr;
-		m_parts_mgr = NULL;
-	}
+	// C++14: unique_ptr se destruye automáticamente, pero podemos reset explícitamente
+	m_parts_mgr.reset();
 
 	m_isMeshLoaded.store(false, std::memory_order_release);
 }
@@ -342,7 +341,7 @@ RMeshNode* RMesh::GetMeshData(const char* name)
 RMeshNode* RMesh::GetPartsNode(const char* name)
 {
 	if(!m_parts_mgr)
-		return NULL;
+		return nullptr;
 
 	return m_parts_mgr->GetPartsNode(name);
 }

@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <tchar.h>
+#include <vector>  // Para std::vector (C++14)
 
 #include "MXml.h"
 
@@ -99,7 +100,8 @@ bool RMesh::ReadXmlElement(MXmlElement* PNode, const char* Path)
 			Node.GetAttribute(FileName, "filename");
 
 			if(!m_parts_mgr) {
-				m_parts_mgr = new RMeshMgr;
+				// C++14: Usar std::make_unique para RAII automático
+				m_parts_mgr = std::make_unique<RMeshMgr>();
 			}
 
 			if(Path[0]) {
@@ -886,12 +888,13 @@ bool RMesh::ReadElu(const char* fname)
 			}
 			else {									//ver3 ����
 
-				RFaceInfoOld* pInfo = new RFaceInfoOld[pMeshNode->m_face_num];
-				MZF_READ(pInfo,sizeof(RFaceInfoOld)*pMeshNode->m_face_num);
+				// C++14: Usar std::vector en lugar de new[] para RAII automático
+				std::vector<RFaceInfoOld> pInfo(pMeshNode->m_face_num);
+				MZF_READ(pInfo.data(), sizeof(RFaceInfoOld)*pMeshNode->m_face_num);
 
-				ConvertOldFaceInfo(pMeshNode->m_face_list,pInfo,pMeshNode->m_face_num);
+				ConvertOldFaceInfo(pMeshNode->m_face_list, pInfo.data(), pMeshNode->m_face_num);
 
-				delete[] pInfo;
+				// No necesita delete[] - std::vector se destruye automáticamente
 			}
 		}
 
@@ -951,8 +954,10 @@ bool RMesh::ReadElu(const char* fname)
 
 			if(pMeshNode->m_point_num&&pMeshNode->m_point_num) 
 			{
-				rvector* pPointNormal = new rvector [pMeshNode->m_point_num];
-				memset(pPointNormal,0,sizeof(rvector)*pMeshNode->m_point_num);
+				// C++14: Usar std::vector en lugar de new[] para RAII automático
+				std::vector<rvector> pPointNormal(pMeshNode->m_point_num);
+				// std::vector inicializa a cero automáticamente, pero si necesitas memset explícito:
+				memset(pPointNormal.data(), 0, sizeof(rvector)*pMeshNode->m_point_num);
 			
 
 				for(k=0;k<pMeshNode->m_face_num;k++) {
@@ -973,7 +978,7 @@ bool RMesh::ReadElu(const char* fname)
 					}
 				}
 
-				delete [] pPointNormal;
+				// No necesita delete[] - std::vector se destruye automáticamente
 
 			}
 		}
