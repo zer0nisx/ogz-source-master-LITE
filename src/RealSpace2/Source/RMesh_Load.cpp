@@ -127,7 +127,7 @@ bool RMesh::ReadXmlElement(MXmlElement* PNode, const char* Path)
 		}
 		else if(strcmp(NodeName, "AddAnimation")==0) {
 
-			SoundFileName[0] = NULL;
+			SoundFileName[0] = '\0';  // Inicializar string vacío
 			Node.GetAttribute(IDName, "name");
 			Node.GetAttribute(FileName, "filename");
 			Node.GetAttribute(MotionTypeID, "motion_type");
@@ -179,10 +179,10 @@ bool RMesh::ReadXmlElement(MXmlElement* PNode, const char* Path)
 
 				pAni->SetAnimationLoopType( MLoopType );
 
-				if(SoundFileName[0]==NULL) {
+				if(SoundFileName[0]=='\0') {
 					int len = (int) strlen(FileName);
 					strncpy_safe(SoundFileName,FileName,len-8);
-					SoundFileName[len-8] = NULL;
+					SoundFileName[len-8] = '\0';  // Terminar string
 
 					strcpy_safe(PathSoundFileName,"/sound/effect/");
 					strcat_safe(PathSoundFileName,SoundFileName);
@@ -203,7 +203,7 @@ bool RMesh::ReadXml(const char* filename)
 	MXmlElement		PNode,Node;
 
 	char Path[256];
-	Path[0] = NULL;
+	Path[0] = '\0';  // Inicializar string vacío
 
 	std::string BackupName = filename;
 
@@ -663,8 +663,8 @@ bool RMesh::ReadElu(const char* fname)
 	char Path[256];
 	char Name[256];
 
-	Path[0] = NULL;
-	Name[0] = NULL;
+	Path[0] = '\0';  // Inicializar string vacío
+	Name[0] = '\0';  // Inicializar string vacío
 
 	GetPath(fname,Path);
 
@@ -1106,7 +1106,7 @@ bool RMesh::DelNode(RMeshNode* data)
 
 void RMesh::MakeAllNodeVertexBuffer()
 {
-	RMeshNode* pMeshNode=NULL;
+	RMeshNode* pMeshNode=nullptr;
 	DWORD flag = 0;
 
 	bool isShader = RIsSupportVS();
@@ -1138,7 +1138,7 @@ void RMesh::MakeAllNodeVertexBuffer()
 
 void RMesh::ConnectMatrix()
 {
-	RMeshNode* pMeshNode=NULL;
+	RMeshNode* pMeshNode=nullptr;
 
 	for(int i=0;i<m_data_num;i++) {
 
