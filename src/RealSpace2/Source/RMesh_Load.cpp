@@ -45,7 +45,7 @@ bool RMesh::ReadXmlElement(MXmlElement* PNode, const char* Path)
 	char GameMotion[256];
 	char PathSoundFileName[256];
 
-	RMesh* pMesh = NULL;
+	RMesh* pMesh = nullptr;
 
 	int nMTypeID = -1;
 	bool bSoundMap = false;
@@ -166,7 +166,7 @@ bool RMesh::ReadXmlElement(MXmlElement* PNode, const char* Path)
 			else 
 				strcpy_safe(PathFileName,FileName);
 
-			RAnimation* pAni = NULL;
+			RAnimation* pAni = nullptr;
 
 			if(nGameMotion==1) {
 				pAni = m_ani_mgr.AddGameLoad(IDName,PathFileName,-1,nMTypeID);
@@ -500,7 +500,7 @@ void RMesh::CheckNameToType(RMeshNode* pMeshNode)
 
 	if(NCMPNAME("Bip",3)) {
 
-		// ÇÏÃ¼³ëµå Ç¥½Ã..
+		// ï¿½ï¿½Ã¼ï¿½ï¿½ï¿½ Ç¥ï¿½ï¿½..
 
 		if(NCMPNAME("Bip01 L",7)) {
 
@@ -702,7 +702,7 @@ bool RMesh::ReadElu(const char* fname)
 	int i,j,k;
 
 	for(i=0;i<t_hd.mtrl_num;i++) {
-		RMtrl* node = new RMtrl;
+		auto node = std::make_unique<RMtrl>();
 
 		MZF_READ(&node->m_mtrl_id    ,4 );
 		MZF_READ(&node->m_sub_mtrl_id,4 );
@@ -776,7 +776,7 @@ bool RMesh::ReadElu(const char* fname)
 
 		node->CheckAniTexture();
 
-		m_mtrl_list_ex.Add(node);
+		m_mtrl_list_ex.Add(std::move(node));
 	}
 
 	bool bNeedScaleMat = false;
@@ -880,11 +880,11 @@ bool RMesh::ReadElu(const char* fname)
 				MZF_READ(pMeshNode->m_face_normal_list,sizeof(RFaceNormalInfo)*pMeshNode->m_face_num);
 
 			}
-			else if(t_hd.ver > EXPORTER_MESH_VER2) {//ver3 ºÎÅÍ
+			else if(t_hd.ver > EXPORTER_MESH_VER2) {//ver3 ï¿½ï¿½ï¿½ï¿½
 
 				MZF_READ(pMeshNode->m_face_list,sizeof(RFaceInfo)*pMeshNode->m_face_num);
 			}
-			else {									//ver3 ÀÌÇÏ
+			else {									//ver3 ï¿½ï¿½ï¿½ï¿½
 
 				RFaceInfoOld* pInfo = new RFaceInfoOld[pMeshNode->m_face_num];
 				MZF_READ(pInfo,sizeof(RFaceInfoOld)*pMeshNode->m_face_num);
@@ -1056,7 +1056,9 @@ bool RMesh::ReadElu(const char* fname)
 
 	CheckNodeAlphaMtrl();
 	MakeAllNodeVertexBuffer();
-	m_isMeshLoaded = true;
+	// Marcar como cargado con release semantics
+	// Esto garantiza que todos los writes anteriores son visibles antes de que otros threads lean
+	m_isMeshLoaded.store(true, std::memory_order_release);
 
 	MEndProfile(RMeshReadElu);
 
@@ -1129,7 +1131,7 @@ void RMesh::MakeAllNodeVertexBuffer()
 			if(RIsHardwareTNL())	flag = USE_VERTEX_HW | USE_VERTEX_SW;
 			else 					flag = USE_VERTEX_SW;
 					
-			pMeshNode->MakeNodeBuffer( flag ); // vertex ani ÀÎ°æ¿ì¸¸ soft ¹öÆÛ »ý¼º..
+			pMeshNode->MakeNodeBuffer( flag ); // vertex ani ï¿½Î°ï¿½ì¸¸ soft ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½..
 		}
 	}
 }
@@ -1142,7 +1144,7 @@ void RMesh::ConnectMatrix()
 
 		pMeshNode = m_data[i];
 
-		if(pMeshNode == NULL) continue;
+		if(pMeshNode == nullptr) continue;
 
 		if (pMeshNode->m_Parent[0] != 0) {
 			CalcLocalMatrix(pMeshNode);
@@ -1178,7 +1180,7 @@ void RMesh::ConnectMatrix()
 		{ 
 			int id = _FindMeshId(pMeshNode->m_Parent);
 
-			RMeshNode* pPN = NULL;
+			RMeshNode* pPN = nullptr;
 
 			if(id != -1) 
 				pPN = m_data[id];
@@ -1199,7 +1201,7 @@ bool RMesh::CalcLocalMatrix(RMeshNode* pNode)
 		return false;
 
 	rmatrix inv = IdentityMatrix();
-	RMeshNode* pPN = NULL;
+	RMeshNode* pPN = nullptr;
 	int id = _FindMeshId(pNode->m_Parent);
 
 	if(id != -1) {
@@ -1258,14 +1260,14 @@ bool RMesh::ConnectPhysiqueParent(RMeshNode* pNode)
 }
 
 
-//ÆÄÃ÷±³È¯¶§¹®¿¡ ¹Ì¸®¿¬»êÇÏ´Â°ÍÀÌ ÀÇ¹Ì°¡ ¾øÀ½..
-// ·Îµù½ÃÁ¡¿¡ ÀÚ½ÅÀÇ ¸ÓÅÍ¸®¾ó¿¡ ´ëÇØ¼­ ¾ËÆÄÀÎ°¡ Á¶»ç..
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¯ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï´Â°ï¿½ï¿½ï¿½ ï¿½Ç¹Ì°ï¿½ ï¿½ï¿½ï¿½ï¿½..
+// ï¿½Îµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ú½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Í¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ø¼ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Î°ï¿½ ï¿½ï¿½ï¿½ï¿½..
 void RMesh::CheckNodeAlphaMtrl() {
 
 	RMeshNodeHashList_Iter it_obj =  m_list.begin();
 
-	RMeshNode*	pMeshNode = NULL;
-	RMtrlMgr*  pMtrlList = NULL;
+	RMeshNode*	pMeshNode = nullptr;
+	RMtrlMgr*  pMtrlList = nullptr;
 
 	RMtrl* pMtrl,*pSMtrl;
 
@@ -1302,9 +1304,9 @@ void RMesh::CheckNodeAlphaMtrl() {
 
 void RMesh::ClearVoidMtrl()
 {
-	RMeshNode*	pMeshNode = NULL;
-	RMtrl*		pMtrl = NULL;
-	RMtrl*		pSMtrl = NULL;
+	RMeshNode*	pMeshNode = nullptr;
+	RMtrl*		pMtrl = nullptr;
+	RMtrl*		pSMtrl = nullptr;
 
 	int mtrl_size = m_mtrl_list_ex.size();
 

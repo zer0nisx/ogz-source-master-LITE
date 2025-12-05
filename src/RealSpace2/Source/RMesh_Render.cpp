@@ -40,7 +40,8 @@ _NAMESPACE_REALSPACE2_BEGIN
 
 int g_poly_render_cnt;
 
-#define RENDER_NODE_MAX 1000
+// Constante para tamaño máximo de nodos de renderizado (C++14 constexpr)
+constexpr int RENDER_NODE_MAX = 1000;
 
 static int			g_render_cnt=0;
 static RRenderNode	g_render_node[ RENDER_NODE_MAX ];
@@ -62,7 +63,7 @@ void RMesh::Render(const rmatrix* world_mat, bool NoPartsChange)
 
 RMeshNode* RMesh::FindNode(RMeshPartsPosInfoType type)
 {
-	RMeshNode* pNode = NULL;
+	RMeshNode* pNode = nullptr;
 
 	RMeshNodeHashList_Iter it_obj =  m_list.begin();
 
@@ -76,7 +77,7 @@ RMeshNode* RMesh::FindNode(RMeshPartsPosInfoType type)
 		it_obj++;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 bool RMesh::CalcParts(RMeshNode* pPartsMeshNode,RMeshNode* pMeshNode,bool NoPartsChange)
@@ -105,8 +106,8 @@ void RMesh::RenderSub(const rmatrix& world_mat, bool NoPartsChange)
 
 	__BP(199, "RMesh::RenderSub::State b");
 
-	RMeshNode* pMeshNode = NULL;
-	RMeshNode* pPartsMeshNode = NULL;
+	RMeshNode* pMeshNode = nullptr;
+	RMeshNode* pPartsMeshNode = nullptr;
 
 	if(m_pVisualMesh && !m_LitVertexModel) { 
 		m_pVisualMesh->UpdateLight();
@@ -149,7 +150,7 @@ void RMesh::RenderSub(const rmatrix& world_mat, bool NoPartsChange)
 		}
 
 		if(m_pVisualMesh) {
-			if(NoPartsChange)	pPartsMeshNode = NULL;
+			if(NoPartsChange)	pPartsMeshNode = nullptr;
 			else				pPartsMeshNode = m_pVisualMesh->GetParts(pMeshNode->m_PartsType);
 
 			m_pVisualMesh->UpdateWeaponDummyMatrix(pMeshNode);
@@ -159,7 +160,7 @@ void RMesh::RenderSub(const rmatrix& world_mat, bool NoPartsChange)
 				continue;
 			} 
 			else {
-				if( pPartsMeshNode==NULL ) {
+				if( pPartsMeshNode==nullptr ) {
 					pPartsMeshNode = pMeshNode;
 				} 
 				else if( pPartsMeshNode->m_PartsType != pMeshNode->m_PartsType)
@@ -303,7 +304,7 @@ class CIndexBufferMake
 public:
 	CIndexBufferMake() {
 
-		m_pFaceIndex = NULL;
+		m_pFaceIndex = nullptr;
 		m_tAddPos = 0;
 	}
 
@@ -564,8 +565,8 @@ bool RMesh::CalcIntersectsTriangle(const v3& origin, const v3& dir, RPickInfo* p
 {
 	float best_t = 9999.f;
 
-	RMeshNode* pFindMeshNode = NULL;
-	RMeshNode* pPartsMeshNode = NULL;
+	RMeshNode* pFindMeshNode = nullptr;
+	RMeshNode* pPartsMeshNode = nullptr;
 
 	rvector		vFindVec[3];
 	
@@ -660,7 +661,7 @@ int RRenderNodeMgr::Add(rmatrix& m,int mode,RMeshNode* pMNode,int nMtrl)
 {
 	bool lit = false;
 
-	if(pMNode==NULL)
+	if(pMNode==nullptr)
 		return m_nTotalCount;
 
 	RRenderNode* pNode = new RRenderNode;
@@ -727,7 +728,7 @@ void RMeshRenderS(bool lit,int Rmode,rmatrix m,RMeshNode* pMNode,RMtrl* pMtrl,in
 {
 	RRenderNode* pRNode = GetNewRenderNode();
 
-	if(pRNode==NULL) return;
+	if(pRNode==nullptr) return;
 
 	pRNode->Set(Rmode,m,pMNode,pMtrl,begin,size,vis_alpha);
 

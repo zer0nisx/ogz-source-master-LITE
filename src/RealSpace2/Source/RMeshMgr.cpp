@@ -60,7 +60,7 @@ int RMeshMgr::Add(const char* name, const char* modelname, bool namesort)
 	node->m_id = m_id_last;
 
 	if(m_id_last > MAX_NODE_TABLE)
-		mlog("MeshNode ¿¹¾à »çÀÌÁî¸¦ ´Ã¸®´Â°ÍÀÌ ÁÁ°ÚÀ½...\n");
+		mlog("MeshNode ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½î¸¦ ï¿½Ã¸ï¿½ï¿½Â°ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½...\n");
 
 	m_list.push_back(node);
 	m_id_last++;
@@ -249,7 +249,7 @@ int RMeshMgr::AddXml(MXmlElement* pNode, const char* Path, const char* modelname
 	node->m_id = m_id_last;
 
 	if(m_id_last > MAX_NODE_TABLE)
-		mlog("MeshNode ¿¹¾à »çÀÌÁî¸¦ ´Ã¸®´Â°ÍÀÌ ÁÁ°ÚÀ½...\n");
+		mlog("MeshNode ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½î¸¦ ï¿½Ã¸ï¿½ï¿½Â°ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½...\n");
 
 	m_list.push_back(node);
 	m_id_last++;
@@ -447,8 +447,9 @@ RMesh*	RMeshMgr::Load(const char* name)
 	RMesh* pMesh = Get(name);
 
 	if(pMesh) {
-
-		if(pMesh->m_isMeshLoaded==false) {
+		// Leer estado de carga con acquire semantics
+		// Esto garantiza que leemos el estado actualizado desde otros threads
+		if(pMesh->m_isMeshLoaded.load(std::memory_order_acquire) == false) {
 		
 			if (!pMesh->ReadXml( pMesh->GetFileName() )) {
 				mlog("xml %s file loading failure !!!\n",name);

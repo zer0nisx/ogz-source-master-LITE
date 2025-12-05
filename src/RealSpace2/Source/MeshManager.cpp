@@ -2,7 +2,10 @@
 #include "MeshManager.h"
 #include "rapidxml.hpp"
 #include <fstream>
+#include <chrono>
 #include "defer.h"
+
+using namespace std::chrono_literals;  // Para usar literals como 1ms
 
 TaskManager::TaskManager()
 {
@@ -292,7 +295,7 @@ void MeshManager::AwaitMeshLoad(const LoadInfoType& LoadInfo, void* Obj,
 	{
 		while (LoadInfo.MeshAlloc->References.load(std::memory_order_acquire) == -1)
 		{
-			std::this_thread::sleep_for(std::chrono::milliseconds(1));
+			std::this_thread::sleep_for(1ms);  // C++14 chrono literal
 		}
 		auto Node = LoadInfo.MeshAlloc->Mesh.GetMeshData(LoadInfo.NodeName);
 		{

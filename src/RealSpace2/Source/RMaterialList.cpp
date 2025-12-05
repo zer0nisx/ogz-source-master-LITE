@@ -40,7 +40,7 @@ bool RMaterialList::Open(rapidxml::xml_node<>& parent)
 
 			auto ReadVector = [&](auto& v) {
 				sscanf(szContents, "%f %f %f", &v.x, &v.y, &v.z);
-			};
+				};
 
 			if (_stricmp(szTagName, RTOK_AMBIENT) == 0)
 				ReadVector(Material.Ambient);
@@ -76,45 +76,45 @@ bool RMaterialList::Save(MXmlElement* pElement)
 
 		char buffer[256];
 
-		MXmlElement		aElement,aChild;
-		aElement=aMaterialListElement.CreateChildElement(RTOK_MATERIAL);
-		aElement.AddAttribute(RTOK_NAME,Material.Name.c_str());
+		MXmlElement		aElement, aChild;
+		aElement = aMaterialListElement.CreateChildElement(RTOK_MATERIAL);
+		aElement.AddAttribute(RTOK_NAME, Material.Name.c_str());
 
 		aElement.AppendText("\n\t\t\t");
-		aChild=aElement.CreateChildElement(RTOK_DIFFUSE);
-		aChild.SetContents(Format(buffer,Material.Diffuse));
+		aChild = aElement.CreateChildElement(RTOK_DIFFUSE);
+		aChild.SetContents(Format(buffer, Material.Diffuse));
 
 		aElement.AppendText("\n\t\t\t");
-		aChild=aElement.CreateChildElement(RTOK_AMBIENT);
-		aChild.SetContents(Format(buffer,Material.Ambient));
+		aChild = aElement.CreateChildElement(RTOK_AMBIENT);
+		aChild.SetContents(Format(buffer, Material.Ambient));
 
 		aElement.AppendText("\n\t\t\t");
-		aChild=aElement.CreateChildElement(RTOK_SPECULAR);
-		aChild.SetContents(Format(buffer,Material.Specular));
+		aChild = aElement.CreateChildElement(RTOK_SPECULAR);
+		aChild.SetContents(Format(buffer, Material.Specular));
 
 		aElement.AppendText("\n\t\t\t");
-		aChild=aElement.CreateChildElement(RTOK_DIFFUSEMAP);
+		aChild = aElement.CreateChildElement(RTOK_DIFFUSEMAP);
 		aChild.SetContents(Material.DiffuseMap.c_str());
 
 		{
 			MXmlElement aFlagElement;
 
-			if((Material.dwFlags & RM_FLAG_ADDITIVE) !=0)
+			if ((Material.dwFlags & RM_FLAG_ADDITIVE) != 0)
 			{
 				aElement.AppendText("\n\t\t\t");
 				aElement.CreateChildElement(RTOK_ADDITIVE);
 			}
-			if((Material.dwFlags & RM_FLAG_TWOSIDED) !=0)
+			if ((Material.dwFlags & RM_FLAG_TWOSIDED) != 0)
 			{
 				aElement.AppendText("\n\t\t\t");
 				aElement.CreateChildElement(RTOK_TWOSIDED);
 			}
-			if((Material.dwFlags & RM_FLAG_USEOPACITY) !=0)
+			if ((Material.dwFlags & RM_FLAG_USEOPACITY) != 0)
 			{
 				aElement.AppendText("\n\t\t\t");
 				aElement.CreateChildElement(RTOK_USEOPACITY);
 			}
-			if((Material.dwFlags & RM_FLAG_USEALPHATEST) !=0)
+			if ((Material.dwFlags & RM_FLAG_USEALPHATEST) != 0)
 			{
 				aElement.AppendText("\n\t\t\t");
 				aElement.CreateChildElement(RTOK_USEALPHATEST);

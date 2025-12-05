@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <tchar.h>
+#include <utility>  // Para std::exchange
 
 #include "MXml.h"
 
@@ -113,7 +114,7 @@ void RMesh::Init()
 
 	m_nSpRenderMode = 0;
 
-	m_isMeshLoaded = false;
+	m_isMeshLoaded = false;  // atomic se inicializa así
 
 	m_pToolSelectNode = NULL;
 
@@ -128,7 +129,7 @@ void RMesh::Destroy()
 		m_parts_mgr = NULL;
 	}
 
-	m_isMeshLoaded = false;
+	m_isMeshLoaded.store(false, std::memory_order_release);
 }
 
 void RMesh::ReloadAnimation() 
@@ -155,7 +156,11 @@ float RMesh::GetMeshNodeVis(RMeshNode* pNode)
 
 void RMesh::SetVisualMesh(RVisualMesh* vm) 
 { 
-	m_pVisualMesh = vm; 
+	// std::exchange: intercambia el valor y retorna el anterior
+	// Útil si necesitáramos cleanup del anterior (por ahora solo asignamos)
+	auto old = std::exchange(m_pVisualMesh, vm);
+	// old contiene el valor anterior (no usado actualmente, pero disponible para cleanup futuro)
+	(void)old;  // Suprimir warning de variable no usada
 }
 
 RVisualMesh* RMesh::GetVisualMesh() 
@@ -563,7 +568,11 @@ void RMesh::ReconnectAnimation(RAnimation* AniSet, size_t Index, bool HoldFrame)
 		ConnectAnimation(AniSet);
 	}
 
-	m_pAniSet[Index] = AniSet;
+	// std::exchange: intercambia el valor y retorna el anterior
+	auto old = std::exchange(m_pAniSet[Index], AniSet);
+	// old contiene el valor anterior (no usado actualmente, pero disponible para cleanup futuro)
+	(void)old;  // Suprimir warning de variable no usada
+	
 	if (!HoldFrame)
 		m_frame[Index] = 0;
 
@@ -662,8 +671,12 @@ bool RMesh::SetAnimation(char* name, char* ani_name_upper) {
 void RMesh::ClearAnimation()
 {
 	m_is_use_ani_set = false;
-	m_pAniSet[0] = NULL;
-	m_pAniSet[1] = NULL;
+	// std::exchange: intercambia el valor y retorna el anterior
+	// Usar nullptr en lugar de NULL para compatibilidad con std::exchange
+	auto old0 = std::exchange(m_pAniSet[0], nullptr);
+	auto old1 = std::exchange(m_pAniSet[1], nullptr);
+	// old0 y old1 contienen los valores anteriores (no usados actualmente)
+	(void)old0; (void)old1;  // Suprimir warning de variables no usadas
 }
 
 bool RMesh::Pick(int mx, int my, RPickInfo* pInfo, rmatrix* world_mat)

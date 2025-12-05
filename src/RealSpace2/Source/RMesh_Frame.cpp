@@ -31,7 +31,7 @@ RMeshNode* RMesh::UpdateNodeAniMatrix(RMeshNode* pNode)
 	if(m_pVisualMesh) {
 		pTMeshNode = m_pVisualMesh->GetParts(pNode->m_PartsType);
 
-		if( pTMeshNode==NULL ) {
+		if( pTMeshNode==nullptr ) {
 			pTMeshNode = pNode;
 		}
 		else if( pTMeshNode->m_PartsType != pNode->m_PartsType) {
@@ -123,8 +123,8 @@ void RMesh::GetNodeAniMatrix(RMeshNode* pMeshNode,rmatrix& ani_mat)
 
 void RMesh::_RGetAniMat(RMeshNode* pMeshNode,int frame,rmatrix& t_ani_mat)
 {
-	if(pMeshNode==NULL) {
-		mlog("_RGetAniMat() pMeshNode==NULL\n");
+	if(pMeshNode==nullptr) {
+		mlog("_RGetAniMat() pMeshNode==nullptr\n");
 		return;
 	}
 
@@ -145,7 +145,7 @@ void RMesh::_RGetRotAniMat(RMeshNode* pMeshNode,int frame,rmatrix& t_ani_mat)
 {
 	rmatrix buffer,Inv;
 
-	if(pMeshNode==NULL)
+	if(pMeshNode==nullptr)
 		return;
 
 	RAnimationNode* pANode = pMeshNode->m_pAnimationNode;
@@ -184,7 +184,7 @@ void RMesh::_RGetRotAniMat(RMeshNode* pMeshNode,int frame,rmatrix& t_ani_mat)
 
 void RMesh::_RGetPosAniMat(RMeshNode* pMeshNode,int frame,rmatrix& t_ani_mat)
 {
-	if(pMeshNode==NULL)
+	if(pMeshNode==nullptr)
 		return;
 
 	rmatrix buffer;
@@ -223,11 +223,12 @@ void RMesh::_RGetPosAniMat(RMeshNode* pMeshNode,int frame,rmatrix& t_ani_mat)
 	}
 }
 
-#define MAX_XA_LEFT		90.f
-#define MAX_XA_RIGHT	-90.f
+// Constantes de límites de rotación (C++14 constexpr)
+constexpr float MAX_XA_LEFT = 90.f;
+constexpr float MAX_XA_RIGHT = -90.f;
 
-#define MAX_YA_FRONT	50.f
-#define MAX_YA_BACK		-70.f
+constexpr float MAX_YA_FRONT = 50.f;
+constexpr float MAX_YA_BACK = -70.f;
 
 void RMesh::CalcLookAtParts(rmatrix& pAniMat,RMeshNode* pMeshNode,RVisualMesh* pVisualMesh)
 {
@@ -267,7 +268,7 @@ void RMesh::CalcLookAtParts(rmatrix& pAniMat,RMeshNode* pMeshNode,RVisualMesh* p
 
 RAnimation* RMesh::GetNodeAniSet(RMeshNode* pNode)
 {
-	if(!pNode) return NULL;
+	if(!pNode) return nullptr;
 
 	RAnimation* pAniSet = m_pAniSet[0];
 
@@ -299,7 +300,7 @@ static void GetMat(rmatrix& m, rvector& dir1, rvector& dir2)
 
 static void CalcNodeMatrix(RVisualMesh* pVMesh , RMeshNode* pNode ,bool upLimit)
 {
-	if( pNode==NULL ) return;
+	if( pNode==nullptr ) return;
 
 	rvector vTargetPos = pVMesh->m_vTargetPos;
 	rmatrix world = pVMesh->m_WorldMat;
@@ -351,9 +352,9 @@ void RMesh::RenderFrame()
 	if(!m_pAniSet[0])
 		return;
 
-	RMeshNode* pHeadMeshNode = NULL;
-	RMeshNode* pSpine1MeshNode = NULL;
-	RMeshNode* pSpine2MeshNode = NULL;
+	RMeshNode* pHeadMeshNode = nullptr;
+	RMeshNode* pSpine1MeshNode = nullptr;
+	RMeshNode* pSpine2MeshNode = nullptr;
 
 	while (it_obj !=  m_list.end()) {
 

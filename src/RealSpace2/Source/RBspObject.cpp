@@ -72,7 +72,7 @@ struct OpenNodesState
 };
 
 #ifdef _WIN32
-void DrawBoundingBox(rboundingbox *bb, u32 color)
+void DrawBoundingBox(rboundingbox* bb, u32 color)
 {
 	int i, j;
 
@@ -130,17 +130,17 @@ void RSBspNode::DrawBoundingBox(u32 color)
 
 void RSBspNode::DrawWireFrame(int nPolygon, u32 color)
 {
-	RPOLYGONINFO *info = &pInfo[nPolygon];
+	RPOLYGONINFO* info = &pInfo[nPolygon];
 
 	for (int i = 0; i < info->nVertices; i++)
 		RDrawLine(*info->pVertices[i].Coord(), *info->pVertices[(i + 1) % info->nVertices].Coord(), color);
 }
 #endif
 
-RSBspNode* RSBspNode::GetLeafNode(const rvector &pos)
+RSBspNode* RSBspNode::GetLeafNode(const rvector& pos)
 {
 	if (nPolygon) return this;
-	if (plane.a*pos.x + plane.b*pos.y + plane.c*pos.z + plane.d>0)
+	if (plane.a * pos.x + plane.b * pos.y + plane.c * pos.z + plane.d > 0)
 		return m_pPositive->GetLeafNode(pos);
 	else
 		return m_pNegative->GetLeafNode(pos);
@@ -155,7 +155,8 @@ bool RBspObject::m_bisDrawLightMap = true;
 RBspObject::RBspObject(bool PhysOnly)
 	: PhysOnly(PhysOnly)
 #ifndef _WIN32
-{}
+{
+}
 #else
 	, DrawObj{ GetGraphicsAPI(), *this }
 	, m_bBspVertexBufferFromManager(false)
@@ -216,7 +217,7 @@ void RBspObject::SetDrawLightMap(bool b) {
 void RBspObject::DrawNormal(int nIndex, float fSize)
 {
 #ifdef _WIN32
-	RCONVEXPOLYGONINFO *pInfo = &ConvexPolygons[nIndex];
+	RCONVEXPOLYGONINFO* pInfo = &ConvexPolygons[nIndex];
 
 	RGetDevice()->SetFVF(D3DFVF_XYZ | D3DFVF_DIFFUSE);
 
@@ -226,7 +227,7 @@ void RBspObject::DrawNormal(int nIndex, float fSize)
 		RDrawLine(pInfo->pVertices[j], pInfo->pVertices[(j + 1) % pInfo->nVertices], 0xff808080);
 
 		// Draw normal
-		RDrawLine(pInfo->pVertices[j], pInfo->pVertices[j] + fSize*pInfo->pNormals[j], 0xff00ff);
+		RDrawLine(pInfo->pVertices[j], pInfo->pVertices[j] + fSize * pInfo->pNormals[j], 0xff00ff);
 	}
 #endif
 }
@@ -236,7 +237,7 @@ void RBspObject::SetDiffuseMap(int nMaterial)
 #ifdef _WIN32
 	LPDIRECT3DDEVICE9 pd3dDevice = RGetDevice();
 
-	RBaseTexture *pTex = Materials[nMaterial].texture;
+	RBaseTexture* pTex = Materials[nMaterial].texture;
 	if (pTex)
 	{
 		pd3dDevice->SetTexture(0, pTex->GetTexture());
@@ -279,7 +280,7 @@ static void DrawImpl(RSBspNode& Node, int Material, T& DrawFunc)
 	auto DrawNode = [&](auto Branch) {
 		if (Node.*Branch)
 			DrawImpl(*(Node.*Branch), Material, DrawFunc);
-	};
+		};
 
 	DrawNode(&RSBspNode::m_pPositive);
 	DrawNode(&RSBspNode::m_pNegative);
@@ -296,27 +297,27 @@ void RBspObject::UpdateUBO()
 void RBspObject::Draw(RSBspNode* Node, int Material)
 {
 	DrawImpl(*Node, Material, [&](auto& Node, auto Count)
-	{
-		auto hr = RGetDevice()->DrawIndexedPrimitive(
-			D3DPT_TRIANGLELIST,
-			0, 0, OcVertices.size(),
-			Node.pDrawInfo[Material].nIndicesOffset, Count);
-		assert(SUCCEEDED(hr));
-	});
+		{
+			auto hr = RGetDevice()->DrawIndexedPrimitive(
+				D3DPT_TRIANGLELIST,
+				0, 0, OcVertices.size(),
+				Node.pDrawInfo[Material].nIndicesOffset, Count);
+			assert(SUCCEEDED(hr));
+		});
 }
 
-void RBspObject::DrawNoTNL(RSBspNode *Node, int Material)
+void RBspObject::DrawNoTNL(RSBspNode* Node, int Material)
 {
 	DrawImpl(*Node, Material, [&](auto& Node, int Count)
-	{
-		int index = Node.pDrawInfo[Material].nIndicesOffset;
-		auto hr = RGetDevice()->DrawIndexedPrimitiveUP(
-			D3DPT_TRIANGLELIST, 0,
-			Node.pDrawInfo[Material].nVertice, Count,
-			OcIndices.data() + index, D3DFMT_INDEX16,
-			Node.pDrawInfo[Material].pVertices, sizeof(BSPVERTEX));
-		assert(SUCCEEDED(hr));
-	});
+		{
+			int index = Node.pDrawInfo[Material].nIndicesOffset;
+			auto hr = RGetDevice()->DrawIndexedPrimitiveUP(
+				D3DPT_TRIANGLELIST, 0,
+				Node.pDrawInfo[Material].nVertice, Count,
+				OcIndices.data() + index, D3DFMT_INDEX16,
+				Node.pDrawInfo[Material].pVertices, sizeof(BSPVERTEX));
+			assert(SUCCEEDED(hr));
+		});
 }
 
 template <u32 Flags, bool ShouldHaveFlags, bool SetAlphaTestFlags>
@@ -453,7 +454,7 @@ bool RBspObject::Draw()
 		DrawObj.DrawStatic<RBspObjectDrawVulkan>();
 		return true;
 	}
-	
+
 	g_nFrameNumber++;
 #ifdef _DEBUG
 	g_nPoly = 0;
@@ -576,7 +577,7 @@ void RBspObject::SetObjectLight(const rvector& vPos)
 	float fdistance = 0.f;
 	float fIntensity = 0.f;
 
-	RLIGHT *first = nullptr;
+	RLIGHT* first = nullptr;
 
 	D3DLIGHT9 light{};
 
@@ -606,19 +607,19 @@ void RBspObject::SetObjectLight(const rvector& vPos)
 	{
 		light.Position = first->Position;
 
-		light.Ambient.r = min(first->Color.x*first->fIntensity * 0.25f, 1.f);
-		light.Ambient.g = min(first->Color.y*first->fIntensity * 0.25f, 1.f);
-		light.Ambient.b = min(first->Color.z*first->fIntensity * 0.25f, 1.f);
+		light.Ambient.r = min(first->Color.x * first->fIntensity * 0.25f, 1.f);
+		light.Ambient.g = min(first->Color.y * first->fIntensity * 0.25f, 1.f);
+		light.Ambient.b = min(first->Color.z * first->fIntensity * 0.25f, 1.f);
 
-		light.Diffuse.r = min(first->Color.x*first->fIntensity * 0.25f, 1.f);
-		light.Diffuse.g = min(first->Color.y*first->fIntensity * 0.25f, 1.f);
-		light.Diffuse.b = min(first->Color.z*first->fIntensity * 0.25f, 1.f);
+		light.Diffuse.r = min(first->Color.x * first->fIntensity * 0.25f, 1.f);
+		light.Diffuse.g = min(first->Color.y * first->fIntensity * 0.25f, 1.f);
+		light.Diffuse.b = min(first->Color.z * first->fIntensity * 0.25f, 1.f);
 
 		light.Specular.r = 1.f;
 		light.Specular.g = 1.f;
 		light.Specular.b = 1.f;
 
-		light.Range = first->fAttnEnd*1.0f;
+		light.Range = first->fAttnEnd * 1.0f;
 
 		RGetDevice()->SetLight(0, &light);
 		RGetDevice()->LightEnable(0, TRUE);
@@ -691,9 +692,9 @@ void RBspObject::DrawObjects()
 
 			rvector lightmapcolor(1, 1, 1);
 
-			light.Diffuse.r = ObjectInfo.pLight->Color.x*ObjectInfo.pLight->fIntensity;
-			light.Diffuse.g = ObjectInfo.pLight->Color.y*ObjectInfo.pLight->fIntensity;
-			light.Diffuse.b = ObjectInfo.pLight->Color.z*ObjectInfo.pLight->fIntensity;
+			light.Diffuse.r = ObjectInfo.pLight->Color.x * ObjectInfo.pLight->fIntensity;
+			light.Diffuse.g = ObjectInfo.pLight->Color.y * ObjectInfo.pLight->fIntensity;
+			light.Diffuse.b = ObjectInfo.pLight->Color.z * ObjectInfo.pLight->fIntensity;
 
 			light.Range = ObjectInfo.pLight->fAttnEnd;
 
@@ -738,7 +739,7 @@ void RBspObject::DrawOcclusions()
 }
 
 #ifndef _PUBLISH
-void RBspObject::DrawColNodePolygon(const rvector &pos)
+void RBspObject::DrawColNodePolygon(const rvector& pos)
 {
 	ColRoot[0].DrawPos(pos);
 }
@@ -774,7 +775,6 @@ void RBspObject::DrawCollision_Polygon()
 	pd3dDevice->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
 	pd3dDevice->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
 	pd3dDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
-
 }
 
 void RBspObject::DrawCollision_Solid()
@@ -808,7 +808,6 @@ void RBspObject::DrawCollision_Solid()
 	pd3dDevice->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
 	pd3dDevice->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
 	pd3dDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
-
 }
 
 void RBspObject::DrawNavi_Polygon()
@@ -822,7 +821,7 @@ void RBspObject::DrawNavi_Links()
 }
 
 #else
-void RBspObject::DrawColNodePolygon(const rvector &pos) {}
+void RBspObject::DrawColNodePolygon(const rvector& pos) {}
 void RBspObject::DrawCollision_Polygon() {}
 void RBspObject::DrawCollision_Solid() {}
 void RBspObject::DrawNavi_Polygon() {}
@@ -831,7 +830,7 @@ void RBspObject::DrawNavi_Links() {}
 #endif
 
 template <bool UseOccluders>
-void RBspObject::ChooseNodes(RSBspNode *bspNode, const rfrustum& LocalViewFrustum)
+void RBspObject::ChooseNodes(RSBspNode* bspNode, const rfrustum& LocalViewFrustum)
 {
 	if (!isInViewFrustumWithFarZ(bspNode->bbTree, LocalViewFrustum))
 		return;
@@ -850,7 +849,7 @@ void RBspObject::ChooseNodes(RSBspNode *bspNode, const rfrustum& LocalViewFrustu
 		ChooseNodes<UseOccluders>(bspNode->m_pPositive, LocalViewFrustum);
 }
 
-int RBspObject::ChooseNodes(RSBspNode *bspNode, const rvector &center, float fRadius)
+int RBspObject::ChooseNodes(RSBspNode* bspNode, const rvector& center, float fRadius)
 {
 	if (bspNode == NULL) return 0;
 
@@ -867,7 +866,7 @@ int RBspObject::ChooseNodes(RSBspNode *bspNode, const rvector &center, float fRa
 	return 0;
 }
 
-bool RBspObject::ReadString(MZFile *pfile, char *buffer, int nBufferSize)
+bool RBspObject::ReadString(MZFile* pfile, char* buffer, int nBufferSize)
 {
 	int nCount = 0;
 	do {
@@ -881,7 +880,7 @@ bool RBspObject::ReadString(MZFile *pfile, char *buffer, int nBufferSize)
 	return true;
 }
 
-static void DeleteVoidNodes(RSBspNode *pNode)
+static void DeleteVoidNodes(RSBspNode* pNode)
 {
 	if (pNode->m_pPositive)
 		DeleteVoidNodes(pNode->m_pPositive);
@@ -898,16 +897,16 @@ static void DeleteVoidNodes(RSBspNode *pNode)
 		SAFE_DELETE(pNode->m_pNegative);
 }
 
-static void RecalcBoundingBox(RSBspNode *pNode)
+static void RecalcBoundingBox(RSBspNode* pNode)
 {
 	if (pNode->nPolygon)
 	{
-		rboundingbox *bb = &pNode->bbTree;
+		rboundingbox* bb = &pNode->bbTree;
 		bb->vmin.x = bb->vmin.y = bb->vmin.z = FLT_MAX;
 		bb->vmax.x = bb->vmax.y = bb->vmax.z = -FLT_MAX;
 		for (int i = 0; i < pNode->nPolygon; i++)
 		{
-			RPOLYGONINFO *pInfo = &pNode->pInfo[i];
+			RPOLYGONINFO* pInfo = &pNode->pInfo[i];
 
 			for (int j = 0; j < pInfo->nVertices; j++)
 			{
@@ -955,8 +954,8 @@ static bool CompareEnd(const char* src, size_t srclen, const char* target, size_
 	return true;
 }
 
-bool RBspObject::Open(const char *filename, ROpenMode nOpenFlag, RFPROGRESSCALLBACK pfnProgressCallback,
-	void *CallbackParam, bool PhysOnly)
+bool RBspObject::Open(const char* filename, ROpenMode nOpenFlag, RFPROGRESSCALLBACK pfnProgressCallback,
+	void* CallbackParam, bool PhysOnly)
 {
 	this->PhysOnly = PhysOnly;
 	m_OpenMode = nOpenFlag;
@@ -974,7 +973,7 @@ bool RBspObject::Open(const char *filename, ROpenMode nOpenFlag, RFPROGRESSCALLB
 		return false;
 	}
 	if (pfnProgressCallback) pfnProgressCallback(CallbackParam, .3f);
-	
+
 	if (!IsRS3Map)
 	{
 		BspCounts Counts;
@@ -1083,7 +1082,7 @@ bool RBspObject::CreateIndexBuffer()
 	size_t bufferSize = sizeof(OcIndices[0]) * OcIndices.size();
 	LPDIRECT3DINDEXBUFFER9 pIB = RBufferManager::GetInstance().GetIndexBuffer(
 		bufferSize, D3DFMT_INDEX16, D3DUSAGE_WRITEONLY);
-	
+
 	if (pIB)
 	{
 		// Usar buffer del manager
@@ -1192,7 +1191,6 @@ bool RBspObject::Open_MaterialList(rapidxml::xml_node<>& parent)
 	return true;
 }
 
-
 bool RBspObject::Open_LightList(rapidxml::xml_node<>& parent)
 {
 	RLightList llist;
@@ -1264,7 +1262,7 @@ bool RBspObject::Open_ObjectList(rapidxml::xml_node<>& parent)
 		m_MeshList.SetMapObject(true);
 
 		ObjectInfo.nMeshID = m_MeshList.Add(fname);
-		RMesh *pmesh = m_MeshList.GetFast(ObjectInfo.nMeshID);
+		RMesh* pmesh = m_MeshList.GetFast(ObjectInfo.nMeshID);
 
 		if (!pmesh)
 		{
@@ -1307,7 +1305,7 @@ bool RBspObject::Open_ObjectList(rapidxml::xml_node<>& parent)
 
 		ObjectInfo.pVisualMesh->CalcBox();
 
-		rvector center = (ObjectInfo.pVisualMesh->m_vBMax + ObjectInfo.pVisualMesh->m_vBMin)*.5f;
+		rvector center = (ObjectInfo.pVisualMesh->m_vBMax + ObjectInfo.pVisualMesh->m_vBMin) * .5f;
 
 		auto& LightList = GetObjectLightList();
 
@@ -1368,15 +1366,15 @@ bool RBspObject::Set_Fog(rapidxml::xml_node<>& parent)
 	m_FogInfo.bFogEnable = true;
 
 	auto GetFloatAttr = [&](const char* name) -> float
-	{
-		auto* attr = parent.first_attribute(name);
-		if (!attr)
-			return 0;
-		auto* value = attr->value();
-		if (!value)
-			return 0;
-		return static_cast<float>(atof(value));
-	};
+		{
+			auto* attr = parent.first_attribute(name);
+			if (!attr)
+				return 0;
+			auto* value = attr->value();
+			if (!value)
+				return 0;
+			return static_cast<float>(atof(value));
+		};
 	m_FogInfo.fNear = GetFloatAttr("min");
 	m_FogInfo.fFar = GetFloatAttr("max");
 
@@ -1451,7 +1449,7 @@ bool RBspObject::Set_AmbSound(rapidxml::xml_node<>& parent)
 
 			auto get_vector = [&](auto& vec) {
 				sscanf(prop_value, "%f %f %f", EXPAND_VECTOR(&vec));
-			};
+				};
 
 			if (_stricmp("MIN_POSITION", prop_name) == 0)
 				get_vector(asinfo.min);
@@ -1470,7 +1468,7 @@ bool RBspObject::Set_AmbSound(rapidxml::xml_node<>& parent)
 
 #define LOGERROR(msg, ...) MLog("%s -- " msg, __FUNCTION__, __VA_ARGS__)
 
-bool RBspObject::OpenDescription(const char *filename)
+bool RBspObject::OpenDescription(const char* filename)
 {
 	MZFile mzf;
 	if (!mzf.Open(filename, g_pFileSystem))
@@ -1571,7 +1569,7 @@ bool RBspObject::LoadRS3Map(rapidxml::xml_node<>& parent, const std::string& dir
 	for (auto* node_path = map_name_node->next_sibling("PATH"); node_path; node_path = node_path->next_sibling("PATH"))
 		State.Paths.push_back(directory + node_path->value());
 
-	auto scene = std::string{ map_name } +".scene.xml";
+	auto scene = std::string{ map_name } + ".scene.xml";
 	if (!rsx::loadTree(State, scene.c_str(), StaticObjectLightList))
 	{
 		MLog("RBspObject::LoadRS3Map -- Failed to load scene.xml");
@@ -1580,7 +1578,7 @@ bool RBspObject::LoadRS3Map(rapidxml::xml_node<>& parent, const std::string& dir
 
 	StaticMapLightList = StaticObjectLightList;
 
-	auto prop = std::string{ map_name } +".prop.xml";
+	auto prop = std::string{ map_name } + ".prop.xml";
 	if (!rsx::loadPropTree(State, prop.c_str()))
 	{
 		MLog("RBspObject::LoadRS3Map -- Failed to load prop.xml");
@@ -1638,7 +1636,7 @@ bool RBspObject::LoadRS3Map(rapidxml::xml_node<>& parent, const std::string& dir
 #endif
 }
 
-bool RBspObject::OpenRs(const char *filename, BspCounts& Counts)
+bool RBspObject::OpenRs(const char* filename, BspCounts& Counts)
 {
 	MZFile file;
 	if (!file.Open(filename, g_pFileSystem))
@@ -1706,7 +1704,7 @@ bool RBspObject::OpenRs(const char *filename, BspCounts& Counts)
 	return true;
 }
 
-bool RBspObject::OpenBsp(const char *filename, const BspCounts& Counts)
+bool RBspObject::OpenBsp(const char* filename, const BspCounts& Counts)
 {
 	MZFile file;
 	if (!file.Open(filename, g_pFileSystem))
@@ -1750,7 +1748,7 @@ bool RBspObject::OpenBsp(const char *filename, const BspCounts& Counts)
 	return true;
 }
 
-int RBspObject::Open_ColNodes(RSolidBspNode *pNode, MZFile *pfile, int Depth)
+int RBspObject::Open_ColNodes(RSolidBspNode* pNode, MZFile* pfile, int Depth)
 {
 	pfile->Read(&pNode->m_Plane, sizeof(rplane));
 	pfile->Read(&pNode->m_bSolid, sizeof(bool));
@@ -1758,14 +1756,14 @@ int RBspObject::Open_ColNodes(RSolidBspNode *pNode, MZFile *pfile, int Depth)
 	int OrigDepth = Depth;
 
 	auto Open = [&](auto Branch)
-	{
-		bool flag;
-		pfile->Read(&flag, sizeof(bool));
-		if (!flag) return;
-		++Depth;
-		pNode->*Branch = &ColRoot[Depth];
-		Depth += Open_ColNodes(pNode->*Branch, pfile, Depth);
-	};
+		{
+			bool flag;
+			pfile->Read(&flag, sizeof(bool));
+			if (!flag) return;
+			++Depth;
+			pNode->*Branch = &ColRoot[Depth];
+			Depth += Open_ColNodes(pNode->*Branch, pfile, Depth);
+		};
 
 	Open(&RSolidBspNode::m_pPositive);
 	Open(&RSolidBspNode::m_pNegative);
@@ -1792,7 +1790,7 @@ int RBspObject::Open_ColNodes(RSolidBspNode *pNode, MZFile *pfile, int Depth)
 	return Depth - OrigDepth;
 }
 
-bool RBspObject::OpenCol(const char *filename)
+bool RBspObject::OpenCol(const char* filename)
 {
 	MZFile file;
 	if (!file.Open(filename, g_pFileSystem))
@@ -1817,18 +1815,18 @@ bool RBspObject::OpenCol(const char *filename)
 	assert(nBspNodeCount == ret + 1);
 
 	file.Close();
-#ifndef _PUBLISH	
+#ifndef _PUBLISH
 	ColRoot[0].ConstructBoundingBox();
 #endif
 	return true;
 }
 
-bool RBspObject::OpenNav(const char *filename)
+bool RBspObject::OpenNav(const char* filename)
 {
 	return m_NavigationMesh.Open(filename, g_pFileSystem);
 }
 
-bool SaveMemoryBmp(int x, int y, void *data, void **retmemory, int *nsize);
+bool SaveMemoryBmp(int x, int y, void* data, void** retmemory, int* nsize);
 
 bool RBspObject::OpenLightmap()
 {
@@ -1912,7 +1910,7 @@ bool RBspObject::OpenLightmap()
 #endif
 }
 
-bool RBspObject::Open_ConvexPolygons(MZFile *pfile)
+bool RBspObject::Open_ConvexPolygons(MZFile* pfile)
 {
 	int nConvexVertices;
 
@@ -1937,8 +1935,8 @@ bool RBspObject::Open_ConvexPolygons(MZFile *pfile)
 	ConvexVertices.resize(nConvexVertices);
 	ConvexNormals.resize(nConvexVertices);
 
-	rvector *pLoadingVertex = ConvexVertices.data();
-	rvector *pLoadingNormal = ConvexNormals.data();
+	rvector* pLoadingVertex = ConvexVertices.data();
+	rvector* pLoadingNormal = ConvexNormals.data();
 
 	for (size_t i = 0; i < ConvexPolygons.size(); i++)
 	{
@@ -1971,7 +1969,7 @@ void RBspObject::CreatePolygonTable()
 	CreatePolygonTable(OcRoot.data(), &Indices);
 }
 
-void RBspObject::CreatePolygonTable(RSBspNode *pNode, u16** Indices)
+void RBspObject::CreatePolygonTable(RSBspNode* pNode, u16** Indices)
 {
 #ifdef _WIN32
 	if (pNode->m_pPositive)
@@ -1985,7 +1983,7 @@ void RBspObject::CreatePolygonTable(RSBspNode *pNode, u16** Indices)
 		for (int i = 0; i < pNode->nPolygon; i++)
 		{
 			auto* pInd = *Indices;
-			RPOLYGONINFO *pInfo = &pNode->pInfo[i];
+			RPOLYGONINFO* pInfo = &pNode->pInfo[i];
 
 			pInfo->nIndicesPos = *Indices - OcIndices.data();
 			if (RIsHardwareTNL())
@@ -2018,7 +2016,7 @@ void RBspObject::CreatePolygonTable(RSBspNode *pNode, u16** Indices)
 
 			if (nMatIndex != lastmat)
 			{
-				RDrawInfo *pdi = &pNode->pDrawInfo[lastmat];
+				RDrawInfo* pdi = &pNode->pDrawInfo[lastmat];
 
 				if (lastmat != -1 && lastmat >= 0 && lastmat < nCount)
 				{
@@ -2033,7 +2031,7 @@ void RBspObject::CreatePolygonTable(RSBspNode *pNode, u16** Indices)
 					{
 						for (int l = 0; l < pNode->pInfo[k].nVertices - 2; l++)
 						{
-							rplane *pPlane = &pNode->pInfo[k].plane;
+							rplane* pPlane = &pNode->pInfo[k].plane;
 							pdi->pPlanes[nPlaneIndex] = *pPlane;
 							rvector normal = rvector(pPlane->a, pPlane->b, pPlane->c);
 
@@ -2071,9 +2069,9 @@ void RBspObject::CreatePolygonTable(RSBspNode *pNode, u16** Indices)
 						u16 base = 0;
 						for (int k = lastj; k < j; k++)
 						{
-							memcpy(pdi->pVertices + base, pNode->pInfo[k].pVertices, sizeof(BSPVERTEX)*pNode->pInfo[k].nVertices);
+							memcpy(pdi->pVertices + base, pNode->pInfo[k].pVertices, sizeof(BSPVERTEX) * pNode->pInfo[k].nVertices);
 
-							u16 *pInd = OcIndices.data() + pNode->pInfo[k].nIndicesPos;
+							u16* pInd = OcIndices.data() + pNode->pInfo[k].nIndicesPos;
 							for (int l = 0; l < pNode->pInfo[k].nVertices - 2; l++)
 							{
 								*pInd++ = base + 0;
@@ -2085,7 +2083,6 @@ void RBspObject::CreatePolygonTable(RSBspNode *pNode, u16** Indices)
 					}
 
 					if (j == pNode->nPolygon) break;
-
 				}
 				else {
 					_ASSERT(FALSE);
@@ -2101,7 +2098,7 @@ void RBspObject::CreatePolygonTable(RSBspNode *pNode, u16** Indices)
 #endif
 }
 
-void RBspObject::Sort_Nodes(RSBspNode *pNode)
+void RBspObject::Sort_Nodes(RSBspNode* pNode)
 {
 	if (pNode->m_pPositive)
 		Sort_Nodes(pNode->m_pPositive);
@@ -2111,11 +2108,11 @@ void RBspObject::Sort_Nodes(RSBspNode *pNode)
 
 	if (pNode->nPolygon)
 	{
-		for (int j = 0; j<pNode->nPolygon - 1; j++)
+		for (int j = 0; j < pNode->nPolygon - 1; j++)
 		{
 			for (int k = j + 1; k < pNode->nPolygon; k++)
 			{
-				RPOLYGONINFO *pj = pNode->pInfo + j, *pk = pNode->pInfo + k;
+				RPOLYGONINFO* pj = pNode->pInfo + j, * pk = pNode->pInfo + k;
 
 				if (pj->nLightmapTexture > pk->nLightmapTexture
 					|| (pj->nLightmapTexture == pk->nLightmapTexture
@@ -2131,7 +2128,7 @@ void RBspObject::Sort_Nodes(RSBspNode *pNode)
 	}
 }
 
-OpenNodesState RBspObject::Open_Nodes(RSBspNode *pNode, MZFile *pfile, OpenNodesState State)
+OpenNodesState RBspObject::Open_Nodes(RSBspNode* pNode, MZFile* pfile, OpenNodesState State)
 {
 	int OrigPolygonID = 0;
 
@@ -2139,14 +2136,14 @@ OpenNodesState RBspObject::Open_Nodes(RSBspNode *pNode, MZFile *pfile, OpenNodes
 	pfile->Read(&pNode->plane, sizeof(rplane));
 
 	auto Open = [&](RSBspNode*& Branch)
-	{
-		bool flag;
-		pfile->Read(&flag, sizeof(bool));
-		if (!flag) return;
-		++State.Node;
-		Branch = State.Node;
-		State = Open_Nodes(Branch, pfile, State);
-	};
+		{
+			bool flag;
+			pfile->Read(&flag, sizeof(bool));
+			if (!flag) return;
+			++State.Node;
+			Branch = State.Node;
+			State = Open_Nodes(Branch, pfile, State);
+		};
 
 	Open(pNode->m_pPositive);
 	Open(pNode->m_pNegative);
@@ -2157,7 +2154,7 @@ OpenNodesState RBspObject::Open_Nodes(RSBspNode *pNode, MZFile *pfile, OpenNodes
 	{
 		pNode->pInfo = State.Info; State.Info += pNode->nPolygon;
 
-		RPOLYGONINFO *pInfo = pNode->pInfo;
+		RPOLYGONINFO* pInfo = pNode->pInfo;
 
 		int i;
 		for (i = 0; i < pNode->nPolygon; i++)
@@ -2169,7 +2166,7 @@ OpenNodesState RBspObject::Open_Nodes(RSBspNode *pNode, MZFile *pfile, OpenNodes
 			pfile->Read(&pInfo->dwFlags, sizeof(u32));
 			pfile->Read(&pInfo->nVertices, sizeof(int));
 
-			BSPVERTEX *pVertex = pInfo->pVertices = State.Vertices;
+			BSPVERTEX* pVertex = pInfo->pVertices = State.Vertices;
 
 			for (int j = 0; j < pInfo->nVertices; j++)
 			{
@@ -2242,7 +2239,7 @@ bool RBspObject::CreateVertexBuffer()
 	size_t bufferSize = GetStride() * OcVertices.size();
 	LPDIRECT3DVERTEXBUFFER9 pVB = RBufferManager::GetInstance().GetVertexBuffer(
 		bufferSize, GetFVF(), D3DUSAGE_WRITEONLY);
-	
+
 	if (pVB)
 	{
 		// Usar buffer del manager
@@ -2284,7 +2281,7 @@ bool RBspObject::UpdateVertexBuffer()
 }
 #endif
 
-u32 RBspObject::GetLightmap(rvector &Pos, RSBspNode *pNode, int nIndex)
+u32 RBspObject::GetLightmap(rvector& Pos, RSBspNode* pNode, int nIndex)
 {
 	return 0xffffffff;
 }
@@ -2292,7 +2289,7 @@ u32 RBspObject::GetLightmap(rvector &Pos, RSBspNode *pNode, int nIndex)
 rvector RBspObject::GetDimension() const
 {
 	if (OcRoot.empty())
-		return v3{0, 0, 0};
+		return v3{ 0, 0, 0 };
 
 	return OcRoot[0].bbTree.vmax - OcRoot[0].bbTree.vmin;
 }
@@ -2368,8 +2365,8 @@ void RBspObject::DrawSolidNode()
 }
 #endif
 
-bool RBspObject::CheckWall(const rvector &origin, rvector &targetpos, float Radius, float Height,
-	RCOLLISIONMETHOD method, int nDepth, rplane *impactplane)
+bool RBspObject::CheckWall(const rvector& origin, rvector& targetpos, float Radius, float Height,
+	RCOLLISIONMETHOD method, int nDepth, rplane* impactplane)
 {
 #ifdef _WIN32
 	if (Collision)
@@ -2386,15 +2383,15 @@ bool RBspObject::CheckWall(const rvector &origin, rvector &targetpos, float Radi
 			if (impactplane)
 				*impactplane = PlaneFromPointNormal(targetpos, normal);
 			return true;
-		};
+			};
 		if (method == RCW_CYLINDER)
 			return CheckPrimitive([&](auto& normal) {
-				return Collision->CheckCylinder(origin, targetpos, Radius, Height,
-					&targetpos, &normal); });
+			return Collision->CheckCylinder(origin, targetpos, Radius, Height,
+				&targetpos, &normal); });
 		if (method == RCW_SPHERE)
 			return CheckPrimitive([&](auto& normal) {
-				return Collision->CheckSphere(origin, targetpos, Radius,
-					&targetpos, &normal); });
+			return Collision->CheckSphere(origin, targetpos, Radius,
+				&targetpos, &normal); });
 		assert(!"Unknown collision method");
 		return false;
 	}
@@ -2404,7 +2401,7 @@ bool RBspObject::CheckWall(const rvector &origin, rvector &targetpos, float Radi
 		Radius, Height, method, nDepth, impactplane);
 }
 
-bool RBspObject::CheckSolid(const rvector &pos, float Radius, float Height, RCOLLISIONMETHOD method)
+bool RBspObject::CheckSolid(const rvector& pos, float Radius, float Height, RCOLLISIONMETHOD method)
 {
 #ifdef _WIN32
 	if (Collision)
@@ -2425,7 +2422,7 @@ bool RBspObject::CheckSolid(const rvector &pos, float Radius, float Height, RCOL
 		return ColRoot[0].GetColPlanes_Cylinder(&impactPlanes, pos, pos, Radius, Height);
 }
 
-rvector RBspObject::GetFloor(const rvector &origin, float Radius, float Height, rplane *impactplane)
+rvector RBspObject::GetFloor(const rvector& origin, float Radius, float Height, rplane* impactplane)
 {
 	auto targetpos = origin + rvector(0, 0, -10000);
 
@@ -2454,7 +2451,7 @@ rvector RBspObject::GetFloor(const rvector &origin, float Radius, float Height, 
 	return floor;
 }
 
-RBSPMATERIAL *RBspObject::GetMaterial(int nIndex)
+RBSPMATERIAL* RBspObject::GetMaterial(int nIndex)
 {
 	assert(nIndex >= 0 && static_cast<size_t>(nIndex) < Materials.size());
 	return &Materials[nIndex];
@@ -2468,7 +2465,7 @@ RBaseTexture* RBspObject::GetBaseTexture(int n) {
 	return nullptr;
 }
 
-bool RBspObject::IsVisible(const rboundingbox &bb) const
+bool RBspObject::IsVisible(const rboundingbox& bb) const
 {
 	return m_OcclusionList.IsVisible(bb);
 }
@@ -2538,7 +2535,7 @@ bool RBspObject::Pick(std::vector<RSBspNode>& Nodes,
 		Normalize(pi.Dir);
 	pi.PassFlag = PassFlag;
 	pi.Out = Out;
-	
+
 	pi.LengthSquared = MagnitudeSq(pi.To - pi.From);
 	pi.InverseDir = 1 / dir;
 	pi.Plane = PlaneFromPointNormal(pi.From, pi.Dir);
@@ -2547,23 +2544,23 @@ bool RBspObject::Pick(std::vector<RSBspNode>& Nodes,
 	return Pick<Shadow>(Nodes.data(), src, dest, pi);
 }
 
-bool RBspObject::Pick(const rvector &pos, const rvector &dir, RBSPPICKINFO *Out, u32 PassFlag) {
+bool RBspObject::Pick(const rvector& pos, const rvector& dir, RBSPPICKINFO* Out, u32 PassFlag) {
 	return Pick(BspRoot, pos, pos + dir * 10000.f, dir, PassFlag, Out);
 }
-bool RBspObject::PickTo(const rvector &pos, const rvector &to, RBSPPICKINFO *Out, u32 PassFlag) {
+bool RBspObject::PickTo(const rvector& pos, const rvector& to, RBSPPICKINFO* Out, u32 PassFlag) {
 	return Pick(BspRoot, pos, to, Normalized(to - pos), PassFlag, Out);
 }
-bool RBspObject::PickOcTree(const rvector &pos, const rvector &dir, RBSPPICKINFO *Out, u32 PassFlag) {
+bool RBspObject::PickOcTree(const rvector& pos, const rvector& dir, RBSPPICKINFO* Out, u32 PassFlag) {
 	return Pick(OcRoot, pos, pos + dir * 10000.f, dir, PassFlag, Out);
 }
-bool RBspObject::PickShadow(const rvector &pos, const rvector &to, RBSPPICKINFO *Out) {
+bool RBspObject::PickShadow(const rvector& pos, const rvector& to, RBSPPICKINFO* Out) {
 	return Pick<true>(BspRoot, pos, to, Normalized(to - pos), DefaultPassFlag, Out);
 }
 
 #define PICK_TOLERENCE 0.01f
 #define PICK_SIGN(x) ( (x)<-PICK_TOLERENCE ? -1 : (x)>PICK_TOLERENCE ? 1 : 0 )
 
-static bool pick_checkplane(int side, const rplane &plane, const rvector &v0, const rvector &v1, rvector *w0, rvector *w1)
+static bool pick_checkplane(int side, const rplane& plane, const rvector& v0, const rvector& v1, rvector* w0, rvector* w1)
 {
 	float dotv0 = DotProduct(plane, v0);
 	float dotv1 = DotProduct(plane, v1);
@@ -2612,7 +2609,7 @@ bool RBspObject::CheckLeafNode(RSBspNode* pNode, const v3& v0, const v3& v1, Pic
 
 	for (int i = 0; i < pNode->nPolygon; i++)
 	{
-		RPOLYGONINFO *pInfo = &pNode->pInfo[i];
+		RPOLYGONINFO* pInfo = &pNode->pInfo[i];
 
 		if ((pInfo->dwFlags & pi.PassFlag) != 0)
 			continue;
@@ -2661,7 +2658,7 @@ bool RBspObject::CheckBranches(RSBspNode* pNode, const v3& v0, const v3& v1, Pic
 			//Square(t) < pi.LengthSquared &&
 			pick_checkplane(side, pNode->plane, v0, v1, &w0, &w1) &&
 			Pick<Shadow>(branch, w0, w1, pi);
-	};
+		};
 	auto CheckPositive = [&] { return CheckBranch(1, pNode->m_pPositive); };
 	auto CheckNegative = [&] { return CheckBranch(-1, pNode->m_pNegative); };
 
@@ -2672,7 +2669,7 @@ bool RBspObject::CheckBranches(RSBspNode* pNode, const v3& v0, const v3& v1, Pic
 }
 
 template <bool Shadow>
-bool RBspObject::Pick(RSBspNode *pNode, const rvector &v0, const rvector &v1, PickInfo& pi)
+bool RBspObject::Pick(RSBspNode* pNode, const rvector& v0, const rvector& v1, PickInfo& pi)
 {
 	if (!pNode)
 		return false;
@@ -2683,10 +2680,10 @@ bool RBspObject::Pick(RSBspNode *pNode, const rvector &v0, const rvector &v1, Pi
 	return CheckBranches<Shadow>(pNode, v0, v1, pi);
 }
 
-RBaseTexture *RBspObject::m_pShadeMap;
+RBaseTexture* RBspObject::m_pShadeMap;
 
 #ifdef _WIN32
-bool RBspObject::CreateShadeMap(const char *szShadeMap)
+bool RBspObject::CreateShadeMap(const char* szShadeMap)
 {
 	if (m_pShadeMap)
 		DestroyShadeMap();
@@ -2711,7 +2708,7 @@ struct LIGHTBSPVERTEX {
 #define LIGHTVERTEXBUFFER_SIZE	1024
 
 u32 m_dwLightVBBase = 0;
-LIGHTBSPVERTEX *m_pLightVertex;
+LIGHTBSPVERTEX* m_pLightVertex;
 
 #ifdef _WIN32
 bool RBspObject::CreateDynamicLightVertexBuffer()
@@ -2763,7 +2760,7 @@ bool RBspObject::LockLightVB()
 D3DLIGHT9* g_pTargetLight;
 u32 g_dwTargetLightColor;
 
-bool RBspObject::DrawLight(RSBspNode *pNode, int nMaterial)
+bool RBspObject::DrawLight(RSBspNode* pNode, int nMaterial)
 {
 	if (pNode->nFrameCount != g_nFrameNumber) return true;
 
@@ -2777,14 +2774,13 @@ bool RBspObject::DrawLight(RSBspNode *pNode, int nMaterial)
 			g_nPoly += nCount;
 #endif
 
-			RDrawInfo *pdi = &pNode->pDrawInfo[nMaterial];
+			RDrawInfo* pdi = &pNode->pDrawInfo[nMaterial];
 			int index = pdi->nIndicesOffset;
 
 			int i;
 			for (i = 0; i < nCount; i++)
 			{
-
-				rplane *pPlane = &pdi->pPlanes[i];
+				rplane* pPlane = &pdi->pPlanes[i];
 
 				u16 indices[3] = { OcIndices[index++], OcIndices[index++], OcIndices[index++] };
 
@@ -2797,10 +2793,10 @@ bool RBspObject::DrawLight(RSBspNode *pNode, int nMaterial)
 				if (fPlaneDotCoord < -BACK_FACE_DISTANCE) continue;
 				if (fPlaneDotCoord < 0) fPlaneDotCoord = -fPlaneDotCoord / BACK_FACE_DISTANCE * g_pTargetLight->Range;
 
-				LIGHTBSPVERTEX *v = m_pLightVertex + m_dwLightVBBase * 3;
+				LIGHTBSPVERTEX* v = m_pLightVertex + m_dwLightVBBase * 3;
 
 				for (int j = 0; j < 3; j++) {
-					BSPVERTEX *pv = &OcVertices[indices[j]];
+					BSPVERTEX* pv = &OcVertices[indices[j]];
 					v[j].coord = *pv->Coord();
 					v[j].tu2 = pv->tu1;
 					v[j].tv2 = pv->tv1;
@@ -2820,7 +2816,6 @@ bool RBspObject::DrawLight(RSBspNode *pNode, int nMaterial)
 					float fIntensity = min(1.f, max(0.f, 1.f - fPlaneDotCoord / g_pTargetLight->Range));
 
 					v[j].dwColor = u32(fIntensity * 255) << 24 | g_dwTargetLightColor;
-
 				}
 
 				m_dwLightVBBase++;
@@ -2848,7 +2843,7 @@ bool RBspObject::DrawLight(RSBspNode *pNode, int nMaterial)
 	return true;
 }
 
-void RBspObject::DrawLight(D3DLIGHT9 *pLight)
+void RBspObject::DrawLight(D3DLIGHT9* pLight)
 {
 	LPDIRECT3DDEVICE9 pd3dDevice = RGetDevice();
 	if (!VertexBuffer)
@@ -2885,7 +2880,7 @@ void RBspObject::DrawLight(D3DLIGHT9 *pLight)
 		if ((Materials[i % Materials.size()].dwFlags & RM_FLAG_ADDITIVE) == 0)
 		{
 			int nMaterial = i % Materials.size();
-			RBaseTexture *pTex = Materials[nMaterial].texture;
+			RBaseTexture* pTex = Materials[nMaterial].texture;
 			if (pTex)
 			{
 				pd3dDevice->SetTexture(1, pTex->GetTexture());
@@ -2908,14 +2903,14 @@ void RBspObject::DrawLight(D3DLIGHT9 *pLight)
 }
 #endif
 
-void RBspObject::GetNormal(int nConvexPolygon, const rvector &position, rvector *normal)
+void RBspObject::GetNormal(int nConvexPolygon, const rvector& position, rvector* normal)
 {
-	RCONVEXPOLYGONINFO *poly = ConvexPolygons.data() + nConvexPolygon;
+	RCONVEXPOLYGONINFO* poly = ConvexPolygons.data() + nConvexPolygon;
 	int au, av, ax;
 
-	if (fabs(poly->plane.a)>fabs(poly->plane.b) && fabs(poly->plane.a)>fabs(poly->plane.c))
+	if (fabs(poly->plane.a) > fabs(poly->plane.b) && fabs(poly->plane.a) > fabs(poly->plane.c))
 		ax = 0;
-	else if (fabs(poly->plane.b)>fabs(poly->plane.c))
+	else if (fabs(poly->plane.b) > fabs(poly->plane.c))
 		ax = 1;
 	else
 		ax = 2;
@@ -2926,7 +2921,7 @@ void RBspObject::GetNormal(int nConvexPolygon, const rvector &position, rvector 
 	*normal = RealSpace2::GetNormal(poly, position, au, av);
 }
 
-bool RBspObject::GenerateLightmap(const char * filename,
+bool RBspObject::GenerateLightmap(const char* filename,
 	int MaxLightmapSize, int MinLightmapSize,
 	int Supersample,
 	float Tolerance,
