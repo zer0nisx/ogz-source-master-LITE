@@ -2,13 +2,14 @@
 #include "RParticleSystem.h"
 #include "RealSpace2.h"
 #include "MDebug.h"
+#include <algorithm>  // Para std::remove_if
 
 _USING_NAMESPACE_REALSPACE2
 _NAMESPACE_REALSPACE2_BEGIN
 
 const u32 POINTVERTEX::FVF = D3DFVF_XYZ | D3DFVF_DIFFUSE;
 
-LPDIRECT3DVERTEXBUFFER9 RParticleSystem::m_pVB=NULL;
+LPDIRECT3DVERTEXBUFFER9 RParticleSystem::m_pVB=nullptr;
 DWORD RParticleSystem::m_dwBase=DISCARD_COUNT;
 
 bool RParticle::Update(float fTimeElapsed)
@@ -50,11 +51,8 @@ void RParticles::Destroy()
 
 void RParticles::Clear()
 {
-    while(size())
-	{
-		delete *begin();
-		erase(begin());
-    }
+	// C++14: unique_ptr se destruye automáticamente
+	m_particles.clear();
 }
 
 
@@ -96,9 +94,9 @@ bool RParticles::Draw()
 	pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG1, D3DTA_DIFFUSE );
 //*/
 
-	for(iterator i=begin();i!=end();i++)
+	for(auto& particle_ptr : m_particles)
 	{
-		RParticle*   pParticle=*i;
+		RParticle* pParticle = particle_ptr.get();  // Obtener raw pointer
 		rvector vPos(pParticle->position);
 
 		rvector vVel(pParticle->velocity);
@@ -160,21 +158,10 @@ bool RParticles::Draw()
 
 bool RParticles::Update(float fTime)
 {
-	for(iterator i=begin();i!=end();)
-	{
-		RParticle *pp=*i;
-		if ( (pp->ftime > LIFETIME ) || (pp->Update(fTime) == false) )
-		{
-			delete pp;
-			iterator j=i;
-			i++;
-			erase(j);
-		}
-		else
-		{
-            i++;
-		}
-	}
+	// C++14: Usar remove_if con unique_ptr
+	m_particles.remove_if([fTime](const std::unique_ptr<RParticle>& pp) {
+		return (pp->ftime > LIFETIME) || (pp->Update(fTime) == false);
+	});
 	return true;
 }
 
@@ -189,11 +176,8 @@ RParticleSystem::~RParticleSystem()
 
 void RParticleSystem::Destroy()
 {
-	while(size())
-	{
-		delete *begin();
-		erase(begin());
-	}
+	// C++14: unique_ptr se destruye automáticamente
+	m_particles.clear();
 
 	Invalidate();
 }
@@ -266,9 +250,9 @@ void RParticleSystem::EndState()
 bool RParticleSystem::Draw()
 {
 	BeginState();
-	for(iterator i=begin();i!=end();i++)
+	for(auto& particles_ptr : m_particles)
 	{
-		RParticles *pParticles=*i;
+		RParticles* pParticles = particles_ptr.get();  // Obtener raw pointer
 		pParticles->Draw();
 	}
 	EndState();
@@ -277,9 +261,9 @@ bool RParticleSystem::Draw()
 
 bool RParticleSystem::Update(float fTime)
 {
-	for(iterator i=begin();i!=end();i++)
+	for(auto& particles_ptr : m_particles)
 	{
-		RParticles *pParticles=*i;
+		RParticles* pParticles = particles_ptr.get();  // Obtener raw pointer
 		pParticles->Update(fTime);
 	}
 
@@ -288,14 +272,21 @@ bool RParticleSystem::Update(float fTime)
 
 RParticles *RParticleSystem::AddParticles(const char *szTextureName,float fSize)
 {
-	RParticles *pp=new RParticles;
+	// C++14: Usar std::make_unique para RAII automático
+	auto pp = std::make_unique<RParticles>();
+	
 	if( !(pp->Create(szTextureName,fSize)) )
 	{
-		return NULL ;
+		return nullptr;
 	}
-	push_back(pp);
 	
-	return pp;
+	// Guardar raw pointer antes de mover
+	RParticles* raw_ptr = pp.get();
+	
+	// Mover a la lista (transfiere ownership)
+	m_particles.push_back(std::move(pp));
+	
+	return raw_ptr;  // Retornar raw pointer para compatibilidad
 }
 
 _NAMESPACE_REALSPACE2_END
