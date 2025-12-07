@@ -2,8 +2,8 @@
 
 #include "ZEffectBase.h"
 
-LPDIRECT3DVERTEXBUFFER9	ZEffectBase::m_pVB = NULL;
-LPDIRECT3DINDEXBUFFER9	ZEffectBase::m_pIB = NULL;
+D3DPtr<IDirect3DVertexBuffer9>	ZEffectBase::m_pVB;
+D3DPtr<IDirect3DIndexBuffer9>	ZEffectBase::m_pIB;
 DWORD	ZEffectBase::m_dwBase = EFFECTBASE_DISCARD_COUNT;
 
 
@@ -61,14 +61,14 @@ bool ZEffectBase::Create(const char *szTextureName)
 
 void ZEffectBase::OnRestore()
 {
-	SAFE_RELEASE(m_pVB);
+	m_pVB.reset();
 	if(FAILED(RGetDevice()->CreateVertexBuffer(
-		sizeof(ZEFFECTCUSTOMVERTEX) * EFFECTBASE_DISCARD_COUNT * 4 , D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY , ZEFFECTBASE_D3DFVF, D3DPOOL_DEFAULT, &m_pVB,NULL)))
+		sizeof(ZEFFECTCUSTOMVERTEX) * EFFECTBASE_DISCARD_COUNT * 4 , D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY , ZEFFECTBASE_D3DFVF, D3DPOOL_DEFAULT, MakeWriteProxy(m_pVB),NULL)))
 		return ;
 
-	SAFE_RELEASE(m_pIB);
+	m_pIB.reset();
 	if(FAILED(RGetDevice()->CreateIndexBuffer(
-		sizeof(WORD) * EFFECTBASE_DISCARD_COUNT * 6 , D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY , D3DFMT_INDEX16 , D3DPOOL_DEFAULT, &m_pIB,NULL)))
+		sizeof(WORD) * EFFECTBASE_DISCARD_COUNT * 6 , D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY , D3DFMT_INDEX16 , D3DPOOL_DEFAULT, MakeWriteProxy(m_pIB),NULL)))
 		return ;
 
 	m_dwBase = EFFECTBASE_DISCARD_COUNT; 
@@ -76,8 +76,8 @@ void ZEffectBase::OnRestore()
 
 void ZEffectBase::OnInvalidate()
 {
-	SAFE_RELEASE(m_pVB);
-	SAFE_RELEASE(m_pIB);
+	m_pVB.reset();
+	m_pIB.reset();
 }
 
 
@@ -89,8 +89,8 @@ void ZEffectBase::BeginState()
 	LPDIRECT3DDEVICE9 pDevice = RGetDevice();
 
 	RSetTransform(D3DTS_WORLD, id);
-	pDevice->SetStreamSource(0,m_pVB,0,sizeof(ZEFFECTCUSTOMVERTEX));
-	pDevice->SetIndices(m_pIB);
+	pDevice->SetStreamSource(0,m_pVB.get(),0,sizeof(ZEFFECTCUSTOMVERTEX));
+	pDevice->SetIndices(m_pIB.get());
 	pDevice->SetFVF(ZEFFECTBASE_D3DFVF);
 	pDevice->SetTexture(0,m_pBaseTexture ? m_pBaseTexture->GetTexture() : NULL );
 }

@@ -8,6 +8,7 @@ using namespace std;
 
 #include "RBaseTexture.h"
 #include "RealSpace2.h"
+#include "MUtil.h"
 _USING_NAMESPACE_REALSPACE2
 
 #define EFFECTBASE_DISCARD_COUNT	2048
@@ -36,8 +37,8 @@ protected:
 
 	RBaseTexture	*m_pBaseTexture;
 
-	static LPDIRECT3DVERTEXBUFFER9	m_pVB;
-	static LPDIRECT3DINDEXBUFFER9	m_pIB;
+	static D3DPtr<IDirect3DVertexBuffer9>	m_pVB;
+	static D3DPtr<IDirect3DIndexBuffer9>	m_pIB;
 
 	static DWORD	m_dwBase;
 
