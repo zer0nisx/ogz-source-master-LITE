@@ -9,8 +9,8 @@
 #include "ZSoundEngine.h"
 #include "ZEffectManager.h"
 #include "RBspObject.h"
-#include <algorithm>  // Para std::advance
-#include <iterator>   // Para std::advance (opcional pero buena práctica)
+#include <algorithm>
+#include <iterator>
 
 struct WaterVertex
 {
@@ -83,7 +83,7 @@ ZWaterList::~ZWaterList()
 
 void ZWaterList::Clear()
 {
-	clear();  // ✅ unique_ptr destruye automáticamente
+	clear();
 }
 
 void ZWaterList::Update()
@@ -94,7 +94,7 @@ void ZWaterList::Update()
 
 	for (iterator iter = begin(); iter != end(); ++iter)
 	{
-		ZWater* pWater = iter->get();  // Obtener puntero raw del unique_ptr
+		ZWater* pWater = iter->get();
 		if (pWater != NULL) pWater->Update();
 	}
 }
@@ -104,7 +104,7 @@ void ZWaterList::Render()
 	PreRender();
 	for (iterator iter = begin(); iter != end(); ++iter)
 	{
-		ZWater* pWater = iter->get();  // Obtener puntero raw del unique_ptr
+		ZWater* pWater = iter->get();
 		if (pWater != NULL) pWater->Render();
 	}
 	PostRender();
@@ -141,7 +141,7 @@ bool ZWaterList::CheckSpearing(const rvector& o, const rvector& e,
 	rvector pos;
 	for (iterator iter = begin(); iter != end(); ++iter)
 	{
-		pWater = iter->get();  // Obtener puntero raw del unique_ptr
+		pWater = iter->get();
 		if (pWater != NULL)
 		{
 			if (pWater->CheckSpearing(o, e, iPower, fArea, &pos))
@@ -163,7 +163,7 @@ bool ZWaterList::Pick(rvector& o, rvector& d, rvector* pPos)
 	ZWater* pWater;
 	for (iterator iter = begin(); iter != end(); ++iter)
 	{
-		pWater = iter->get();  // Obtener puntero raw del unique_ptr
+		pWater = iter->get();
 		if (pWater != NULL)
 		{
 			if (pWater->Pick(o, d, pPos))
@@ -178,7 +178,7 @@ ZWater* ZWaterList::Get(int iIndex)
 	if (iIndex < 0 || size() <= (unsigned int)iIndex) return nullptr;
 	auto iter = begin();
 	std::advance(iter, iIndex);
-	return iter->get();  // Retorna puntero raw (no-owning)
+	return iter->get();
 }
 
 void ZWaterList::PreRender()
@@ -259,9 +259,7 @@ bool ZWaterList::SetSurface(bool b)
 
 ZWater::ZWater()
 {
-	// m_pIndexBuffer ya es nullptr por defecto (unique_ptr)
 	m_pTexture = nullptr;
-	// m_pVerts y m_pFaces son vectores vacíos por defecto
 	m_nVerts = 0;
 	m_nFaces = 0;
 	m_nWaterType = 0;
@@ -270,14 +268,11 @@ ZWater::ZWater()
 
 ZWater::~ZWater()
 {
-	// ✅ Todo se destruye automáticamente:
-	// - unique_ptr llama a Release() automáticamente para m_pIndexBuffer
-	// - std::vector destruye elementos automáticamente para m_pVerts y m_pFaces
 }
 
 bool ZWater::SetMesh(RMeshNode* meshNode)
 {
-	m_pIndexBuffer.reset();  // Liberar buffer anterior si existe
+	m_pIndexBuffer.reset();
 	_ASSERT(meshNode != NULL);
 	if (meshNode == NULL) return false;
 
@@ -288,7 +283,6 @@ bool ZWater::SetMesh(RMeshNode* meshNode)
 	MakeWorldMatrix(&m_worldMat, offset, rvector(0, -1, 0), rvector(0, 0, 1));
 	m_worldMat = meshNode->m_mat_result * m_worldMat;
 
-	// ✅ Resize vector automáticamente
 	m_pVerts.resize(m_nVerts);
 	for (int i = 0; i < m_nVerts; ++i)
 	{
@@ -329,7 +323,6 @@ bool ZWater::SetMesh(RMeshNode* meshNode)
 		m_mtrl.Specular.a = 0;	m_mtrl.Specular.r = 0;	m_mtrl.Specular.g = 0;	m_mtrl.Specular.b = 0;
 	}
 
-	// ✅ Usar std::vector temporal para índices
 	std::vector<WORD> indexList(m_nFaces * 3);
 	for (int i = 0; i < m_nFaces; ++i)
 	{
@@ -339,14 +332,13 @@ bool ZWater::SetMesh(RMeshNode* meshNode)
 		}
 	}
 
-	// Crear el buffer temporalmente y luego transferir ownership al unique_ptr
 	LPDIRECT3DINDEXBUFFER9 pTmp = nullptr;
 	if (FAILED(g_pDevice->CreateIndexBuffer(m_nFaces * 3 * sizeof(WORD), D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_MANAGED, &pTmp, NULL)))
 	{
 		mlog("Fail to Create Index Buffer \n");
 		return false;
 	}
-	m_pIndexBuffer.reset(pTmp);  // Transferir ownership al unique_ptr
+	m_pIndexBuffer.reset(pTmp);
 
 	VOID* pIndexes;
 	if (FAILED(m_pIndexBuffer->Lock(0, m_nFaces * 3 * sizeof(WORD), (VOID**)&pIndexes, 0)))
@@ -360,8 +352,6 @@ bool ZWater::SetMesh(RMeshNode* meshNode)
 		mlog("Fail to UnLock Index Buffer \n");
 		return false;
 	}
-	// ✅ indexList (std::vector) se destruye automáticamente
-
 	return true;
 }
 
@@ -378,49 +368,38 @@ void NormalizePlane(rplane& plane)
 
 void RCalculateViewFrustum(rfrustum& frustum, const rmatrix& viewMatrix, const rmatrix& projMatrix)
 {
-	// 1. Combinar las matrices para obtener la matriz de transformación final (Clip Matrix)
 	rmatrix clipMatrix = viewMatrix * projMatrix;
 
-	// 2. Extraer los 6 planos de la matriz combinada.
-	// Las fórmulas se derivan de las propiedades de la matriz de transformación.
-
-	// Plano Izquierdo (Left)
 	frustum[0].a = clipMatrix._14 + clipMatrix._11;
 	frustum[0].b = clipMatrix._24 + clipMatrix._21;
 	frustum[0].c = clipMatrix._34 + clipMatrix._31;
 	frustum[0].d = clipMatrix._44 + clipMatrix._41;
 
-	// Plano Derecho (Right)
 	frustum[1].a = clipMatrix._14 - clipMatrix._11;
 	frustum[1].b = clipMatrix._24 - clipMatrix._21;
 	frustum[1].c = clipMatrix._34 - clipMatrix._31;
 	frustum[1].d = clipMatrix._44 - clipMatrix._41;
 
-	// Plano Inferior (Bottom)
 	frustum[2].a = clipMatrix._14 + clipMatrix._12;
 	frustum[2].b = clipMatrix._24 + clipMatrix._22;
 	frustum[2].c = clipMatrix._34 + clipMatrix._32;
 	frustum[2].d = clipMatrix._44 + clipMatrix._42;
 
-	// Plano Superior (Top)
 	frustum[3].a = clipMatrix._14 - clipMatrix._12;
 	frustum[3].b = clipMatrix._24 - clipMatrix._22;
 	frustum[3].c = clipMatrix._34 - clipMatrix._32;
 	frustum[3].d = clipMatrix._44 - clipMatrix._42;
 
-	// Plano Cercano (Near)
 	frustum[4].a = clipMatrix._13;
 	frustum[4].b = clipMatrix._23;
 	frustum[4].c = clipMatrix._33;
 	frustum[4].d = clipMatrix._43;
 
-	// Plano Lejano (Far)
 	frustum[5].a = clipMatrix._14 - clipMatrix._13;
 	frustum[5].b = clipMatrix._24 - clipMatrix._23;
 	frustum[5].c = clipMatrix._34 - clipMatrix._33;
 	frustum[5].d = clipMatrix._44 - clipMatrix._43;
 
-	// 3. Normalizar todos los planos. ¡Este paso es muy importante!
 	for (int i = 0; i < 6; i++) {
 		NormalizePlane(frustum[i]);
 	}
@@ -443,7 +422,7 @@ bool ZWater::RenderReflectionSurface()
 
 	auto viewMat = ViewMatrix(cameraPos, cameraDir, cameraUp);
 	rfrustum reflectionFrustum;
-	RCalculateViewFrustum(reflectionFrustum, viewMat, projOrg); // Se calcula a partir de la nueva vista y la proyección original.
+	RCalculateViewFrustum(reflectionFrustum, viewMat, projOrg);
 
 	RSetTransform(D3DTS_VIEW, viewMat);
 	RViewFrustum = reflectionFrustum;
@@ -469,8 +448,6 @@ bool ZWater::RenderReflectionSurface()
 	{
 		g_pDevice->SetRenderState(D3DRS_CLIPPLANEENABLE, TRUE);
 
-		// Clip plane exactamente en el nivel del agua para evitar reflejar partes sumergidas
-		// El offset negativo pequeño asegura que las partes bajo el agua NO se reflejen
 		rplane p = rplane(0, 0, 1, -m_fbaseZpos - 0.05f);
 		g_pDevice->SetClipPlane(0, (float*)p);
 	}
@@ -480,7 +457,6 @@ bool ZWater::RenderReflectionSurface()
 
 	if (RIsAvailUserClipPlane())
 	{
-		// Renderizar todos los objetos (personajes, NPCs, etc.)
 		ZGetGame()->m_ObjectManager.Draw();
 
 		ZGetEffectManager()->Draw(GetGlobalTimeMS());
@@ -497,7 +473,6 @@ bool ZWater::RenderReflectionSurface()
 	RSetTransform(D3DTS_VIEW, viewOrg);
 	RViewFrustum = frustumOrg;
 
-	//	RSetTransform(D3DTS_VIEW, viewOrg);
 	SAFE_RELEASE(g_pSufBackBuffer);
 	SAFE_RELEASE(g_pSufDepthBuffer);
 
@@ -687,7 +662,7 @@ void ZWater::Render()
 	RSetTransform(D3DTS_WORLD, mat);
 
 	g_pDevice->SetStreamSource(0, g_pVBForWaterMesh, 0, sizeof(WaterVertex));
-	g_pDevice->SetIndices(m_pIndexBuffer.get());  // Obtener puntero raw del unique_ptr
+	g_pDevice->SetIndices(m_pIndexBuffer.get());
 	g_pDevice->SetFVF(WATERVERTEX_TYPE);
 	g_pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, m_nVerts, 0, m_nFaces);
 }
