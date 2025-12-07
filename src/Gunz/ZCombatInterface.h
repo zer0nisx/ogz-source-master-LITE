@@ -11,6 +11,8 @@
 #include "ZCrossHair.h"
 #include "ZMiniMap.h"
 #include "ZVoteInterface.h"
+#include "MUID.h"
+#include <map>
 
 class ZCharacter;
 class ZScreenEffect;
@@ -125,6 +127,9 @@ public:
 	bool IsShowResult() const { return m_bShowResult; }
 	bool IsShowScoreBoard() const { return m_bDrawScoreBoard; }
 
+	// Sistema de Barra de HP para NPCs
+	void NotifyNPCDamaged(MUID uidNPC);  // Notificar que un NPC recibió daño (pública para ZActor)
+
 	ZCombatChat			m_Chat;
 	ZCombatChat			m_AdminMsg;
 	u32					m_nReservedOutTime;
@@ -213,6 +218,19 @@ protected:
 	void DrawTDMScore(MDrawContext* pDC);
 
 	void DrawNPCName(MDrawContext* pDC);
+	void DrawNPCHPBar(MDrawContext* pDC);
+
+	// Sistema de tracking de NPCs que han recibido daño
+	struct NPCHPBarInfo
+	{
+		float fLastDamageTime;  // Tiempo en que recibió el último daño
+		float fCurrentHP;       // HP actual (para animación suave)
+		float fMaxHP;           // HP máximo
+	};
+
+	std::map<MUID, NPCHPBarInfo> m_NPCHPBarMap;  // Mapa de NPCs con barras de HP visibles
+
+	void UpdateNPCHPBars(float fDeltaTime);  // Actualizar timers de las barras
 };
 
 void TextRelative(MDrawContext* pDC, float x, float y, const char *szText, bool bCenter = false);

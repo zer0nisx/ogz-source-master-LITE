@@ -18,6 +18,8 @@
 #include "RBspObject.h"
 #include "ZConfiguration.h"
 #include "RealSpace2.h"
+#include "ZGlobal.h"
+#include "ZCombatInterface.h"
 
 MImplementRTTI(ZActor, ZCharacterObjectHistory);
 
@@ -998,6 +1000,13 @@ void ZActor::OnDamaged(ZObject* pAttacker, rvector srcPos, ZDAMAGETYPE damageTyp
 	}
 
 	ZObject::OnDamaged(pAttacker, srcPos, damageType, weaponType, fDamage, fPiercingRatio, nMeleeType);
+
+	// Notificar a ZCombatInterface que este NPC recibió daño para mostrar la barra de HP
+	ZCombatInterface* pCombatInterface = ZGetCombatInterface();
+	if (pCombatInterface)
+	{
+		pCombatInterface->NotifyNPCDamaged(GetUID());
+	}
 }
 
 void ZActor::OnKnockback(const rvector& dir, float fForce)

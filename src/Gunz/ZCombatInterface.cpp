@@ -504,6 +504,12 @@ void ZCombatInterface::OnDraw(MDrawContext* pDC)
 	GetVoteInterface()->DrawVoteTargetlist(pDC);
 	GetVoteInterface()->DrawVoteMessage(pDC);
 
+	// Dibujar nombres de NPCs - DESHABILITADO (mostraba nombres incorrectos)
+	// DrawNPCName(pDC);
+	
+	// Dibujar barras de HP de NPCs
+	DrawNPCHPBar(pDC);
+
 	m_pWeaponScreenEffect->Draw(pDC);
 
 	ZGetScreenEffectManager()->Draw();
@@ -1148,6 +1154,10 @@ void ZCombatInterface::Update()
 	}
 
 	UpdateCombo(pCharacter);
+
+	// Actualizar barras de HP de NPCs (limpiar expiradas)
+	float fDeltaTime = 0.016f; // ~60 FPS (se puede obtener del juego si está disponible)
+	UpdateNPCHPBars(fDeltaTime);
 
 	m_Chat.Update();
 	m_AdminMsg.Update();
@@ -3075,4 +3085,150 @@ void ZCombatInterface::ShowChatOutput(bool bShow)
 {
 	m_Chat.ShowOutput(bShow);
 	ZGetConfiguration()->SetViewGameChat(bShow);
+}
+
+// ============================================================================
+// Sistema de Barra de HP Dinámica para NPCs
+// ============================================================================
+
+void ZCombatInterface::NotifyNPCDamaged(MUID uidNPC)
+{
+	ZGame* pGame = ZGetGame();
+	if (!pGame) return;
+
+	ZActor* pActor = (ZActor*)ZGetObjectManager()->GetObject(uidNPC);
+	if (!pActor || !pActor->IsNPC()) return;
+
+	float fCurrentTime = pGame->GetTime();
+
+	// Crear o actualizar la entrada en el mapa
+	NPCHPBarInfo& barInfo = m_NPCHPBarMap[uidNPC];
+	barInfo.fLastDamageTime = fCurrentTime;
+	barInfo.fCurrentHP = (float)pActor->GetHP();
+	barInfo.fMaxHP = (float)pActor->GetActualMaxHP();
+}
+
+void ZCombatInterface::UpdateNPCHPBars(float fDeltaTime)
+{
+	ZGame* pGame = ZGetGame();
+	if (!pGame) return;
+
+	float fCurrentTime = pGame->GetTime();
+	const float fHideDelay = 5.0f; // Ocultar después de 5 segundos
+
+	// Limpiar barras expiradas y actualizar HP actual
+	for (auto it = m_NPCHPBarMap.begin(); it != m_NPCHPBarMap.end();)
+	{
+		MUID uidNPC = it->first;
+		NPCHPBarInfo& barInfo = it->second;
+
+		// Verificar si el NPC todavía existe
+		ZActor* pActor = (ZActor*)ZGetObjectManager()->GetObject(uidNPC);
+		if (!pActor || pActor->IsDead())
+		{
+			it = m_NPCHPBarMap.erase(it);
+			continue;
+		}
+
+		// Actualizar HP actual (animación suave)
+		float fTargetHP = (float)pActor->GetHP();
+		float fDiff = fTargetHP - barInfo.fCurrentHP;
+		if (abs(fDiff) > 0.1f)
+		{
+			barInfo.fCurrentHP += fDiff * min(1.0f, fDeltaTime * 10.0f); // Interpolación suave
+		}
+		else
+		{
+			barInfo.fCurrentHP = fTargetHP;
+		}
+
+		// Verificar si debe ocultarse (más de 5 segundos sin daño)
+		float fTimeSinceDamage = fCurrentTime - barInfo.fLastDamageTime;
+		if (fTimeSinceDamage >= fHideDelay)
+		{
+			it = m_NPCHPBarMap.erase(it);
+		}
+		else
+		{
+			++it;
+		}
+	}
+}
+
+void ZCombatInterface::DrawNPCHPBar(MDrawContext* pDC)
+{
+	ZGame* pGame = ZGetGame();
+	if (!pGame || m_NPCHPBarMap.empty()) return;
+
+	const float fBarWidth = 80.0f;
+	const float fBarHeight = 6.0f;
+	const float fBarOffsetY = 30.0f; // Offset desde la cabeza
+
+	for (auto& pair : m_NPCHPBarMap)
+	{
+		MUID uidNPC = pair.first;
+		const NPCHPBarInfo& barInfo = pair.second;
+
+		ZActor* pActor = (ZActor*)ZGetObjectManager()->GetObject(uidNPC);
+		if (!pActor || !pActor->IsVisible() || pActor->IsDead()) continue;
+
+		RVisualMesh* pVMesh = pActor->m_pVMesh;
+		if (!pVMesh) continue;
+
+		// Obtener posición de la cabeza
+		rvector headPos = pVMesh->GetHeadPosition();
+		
+		// Verificar si está en el view frustum
+		rvector pos = pActor->GetPosition();
+		RealSpace2::rboundingbox box;
+		box.vmax = pos + rvector(50.f, 50.f, 190.f);
+		box.vmin = pos + rvector(-50.f, -50.f, 0.f);
+
+		if (!isInViewFrustum(box, RGetViewFrustum())) continue;
+
+		// Calcular posición en pantalla
+		rvector screenPos = RGetTransformCoord(headPos + rvector(0, 0, fBarOffsetY));
+
+		// Calcular porcentaje de HP
+		float fHPPercent = 0.0f;
+		if (barInfo.fMaxHP > 0.0f)
+		{
+			fHPPercent = max(0.0f, min(1.0f, barInfo.fCurrentHP / barInfo.fMaxHP));
+		}
+
+		// Calcular ancho de la barra de HP
+		float fHPBarWidth = fBarWidth * fHPPercent;
+
+		// Posición X centrada
+		int nBarX = (int)(screenPos.x - fBarWidth / 2.0f);
+		int nBarY = (int)screenPos.y;
+
+		// Dibujar fondo de la barra (negro/borde)
+		pDC->SetBitmap(NULL);
+		pDC->SetColor(MCOLOR(0xFF000000)); // Negro para el borde
+		pDC->FillRectangle(nBarX - 1, nBarY - 1, (int)fBarWidth + 2, (int)fBarHeight + 2);
+
+		// Dibujar fondo gris
+		pDC->SetColor(MCOLOR(0xFF404040)); // Gris oscuro
+		pDC->FillRectangle(nBarX, nBarY, (int)fBarWidth, (int)fBarHeight);
+
+		// Dibujar barra de HP (color según porcentaje)
+		MCOLOR hpColor;
+		if (fHPPercent > 0.7f)
+			hpColor = MCOLOR(0xFF00FF00); // Verde
+		else if (fHPPercent > 0.3f)
+			hpColor = MCOLOR(0xFFFFFF00); // Amarillo
+		else
+			hpColor = MCOLOR(0xFFFF0000); // Rojo
+
+		pDC->SetColor(hpColor);
+		if (fHPBarWidth > 0.0f)
+		{
+			pDC->FillRectangle(nBarX, nBarY, (int)fHPBarWidth, (int)fBarHeight);
+		}
+
+		// Dibujar borde exterior
+		pDC->SetColor(MCOLOR(0xFFFFFFFF)); // Blanco para el borde
+		pDC->Rectangle(nBarX, nBarY, (int)fBarWidth, (int)fBarHeight);
+	}
 }

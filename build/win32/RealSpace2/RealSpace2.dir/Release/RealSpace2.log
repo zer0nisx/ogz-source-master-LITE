@@ -1,7 +1,5 @@
-﻿  Generating CXX unity source C:\ogz-source-master-LITE\build\win32\RealSpace2\Release\cotire\RealSpace2_ORIGINAL_CXX_unity.cxx
-  Building Custom Rule C:/ogz-source-master-LITE/src/RealSpace2/CMakeLists.txt
-  RealSpace2_ORIGINAL_CXX_unity.cxx
+﻿  RealSpace2_ORIGINAL_CXX_unity.cxx
 C:\ogz-source-master-LITE\src\RealSpace2\Source\LightmapGenerator.cpp(60,24): warning C4244: 'inicializando': conversión de 'double' a 'float'; posible pérdida de datos
-  (compilando archivo de origen "../RealSpace2/Release/cotire/RealSpace2_ORIGINAL_CXX_unity.cxx")
+  (compilando archivo de origen "Release/cotire/RealSpace2_ORIGINAL_CXX_unity.cxx")
   
   RealSpace2.vcxproj -> C:\ogz-source-master-LITE\build\win32\lib\Release\RealSpace2.lib

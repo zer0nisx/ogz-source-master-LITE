@@ -7,6 +7,7 @@
 #include "RUtil.h"
 #include "RBspObject.h"
 #include "RealSpace2.h"
+#include "RParticleCollision.h"
 
 ZWorld::ZWorld()
 {
