@@ -504,28 +504,14 @@ void ZCharacterObject::Draw_SetLight_ForNPC(const rvector& vPosition)
 	RGetDevice()->SetRenderState(D3DRS_AMBIENT, AmbientColor);
 	RGetShaderMgr()->setAmbient(AmbientColor);
 
-	// OPTIMIZACIÓN: Early exit si no hay luces dinámicas habilitadas
-	if (!ZGetConfiguration()->GetVideo()->bDynamicLight)
-	{
-		m_pVMesh->SetLight(0, nullptr, false);
-		m_pVMesh->SetLight(1, nullptr, false);
-		m_pVMesh->SetLight(2, nullptr, false);
-		RGetDevice()->SetRenderState(D3DRS_LIGHTING, FALSE);
-		return;
-	}
-
-	// NPCs no tienen armas, así que no hay luz de arma
+	// OPTIMIZACIÓN: NPCs solo usan iluminación ambiente (sin luces direccionales del mapa)
+	// Esto evita iterar sobre todas las luces del mapa y hacer raycasts costosos
+	// La iluminación ambiente (0xCCCCCC = 80% brillo) es suficiente para una buena visibilidad
 	m_pVMesh->SetLight(0, nullptr, false);
-
-	// OPTIMIZACIÓN: Solo buscar 1 luz del mapa (no 2 como en jugadores)
-	rvector char_pos = vPosition;
-	char_pos.z += 180.f;
-	SetMapLight(char_pos, m_pVMesh, 1, nullptr);
-
-	// No hay segunda luz para NPCs
+	m_pVMesh->SetLight(1, nullptr, false);
 	m_pVMesh->SetLight(2, nullptr, false);
-
-	RGetDevice()->SetRenderState(D3DRS_LIGHTING, TRUE);
+	
+	RGetDevice()->SetRenderState(D3DRS_LIGHTING, FALSE);
 }
 
 void ZCharacterObject::DrawShadow()

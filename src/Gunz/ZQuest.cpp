@@ -290,7 +290,10 @@ bool ZQuest::OnNPCSpawn(MCommand* pCommand)
 			if (!pNPCMesh->m_isMeshLoaded)
 			{
 				ZGetNpcMeshMgr()->Load(pNPCInfo->szMeshName);
-				ZGetNpcMeshMgr()->ReloadAllAnimation();
+				// OPTIMIZACIÓN: No recargar todas las animaciones aquí
+				// Las animaciones ya se cargaron en LoadNPCMeshes() al inicio de la quest
+				// ReloadAllAnimation() es extremadamente costoso y no es necesario aquí
+				// Si el mesh no está cargado, solo cargar el mesh específico
 			}
 		}
 	}

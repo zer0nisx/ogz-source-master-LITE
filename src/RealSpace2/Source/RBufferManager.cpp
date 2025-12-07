@@ -7,7 +7,38 @@ _NAMESPACE_REALSPACE2_BEGIN
 
 RBufferManager::~RBufferManager()
 {
-	OnInvalidate();
+	// CORRECCIÓN: Liberar todos los buffers explícitamente
+	
+	// Liberar buffers del pool
+	for (auto& pair : m_BufferPool)
+	{
+		auto& pool = pair.second;
+		for (auto& info : pool)
+		{
+			if (info.pVB)
+				SAFE_RELEASE(info.pVB);
+			if (info.pIB)
+				SAFE_RELEASE(info.pIB);
+		}
+	}
+	m_BufferPool.clear();
+	
+	// Liberar buffers activos
+	for (auto& pair : m_ActiveVBuffers)
+	{
+		if (pair.second.pVB)
+			SAFE_RELEASE(pair.second.pVB);
+	}
+	m_ActiveVBuffers.clear();
+	
+	for (auto& pair : m_ActiveIBuffers)
+	{
+		if (pair.second.pIB)
+			SAFE_RELEASE(pair.second.pIB);
+	}
+	m_ActiveIBuffers.clear();
+	
+	m_TotalMemory = 0;
 }
 
 D3DPOOL RBufferManager::GetOptimalPool() const
@@ -259,14 +290,20 @@ void RBufferManager::CleanupUnusedBuffers(DWORD CurrentFrame, DWORD MaxAge)
 					memoryFreed += it->Size;
 					buffersFreed++;
 				}
-				it = pool.erase(it);
-			}
-			else
-			{
-				++it;
-			}
+			it = pool.erase(it);
+		}
+		else
+		{
+			++it;
 		}
 	}
+	
+	// CORRECCIÓN: Restar memoria liberada del total
+	if (memoryFreed > 0)
+	{
+		m_TotalMemory -= memoryFreed;
+	}
+}
 }
 
 void RBufferManager::OnInvalidate()
