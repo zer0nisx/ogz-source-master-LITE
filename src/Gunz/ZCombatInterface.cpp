@@ -3160,9 +3160,10 @@ void ZCombatInterface::DrawNPCHPBar(MDrawContext* pDC)
 	ZGame* pGame = ZGetGame();
 	if (!pGame || m_NPCHPBarMap.empty()) return;
 
-	const float fBarWidth = 80.0f;
-	const float fBarHeight = 6.0f;
-	const float fBarOffsetY = 30.0f; // Offset desde la cabeza
+	// Diseño más "game" - barras más grandes y estilizadas
+	const float fBarWidth = 100.0f;
+	const float fBarHeight = 8.0f;
+	const float fBarOffsetY = 35.0f; // Offset desde la cabeza
 
 	for (auto& pair : m_NPCHPBarMap)
 	{
@@ -3203,32 +3204,70 @@ void ZCombatInterface::DrawNPCHPBar(MDrawContext* pDC)
 		int nBarX = (int)(screenPos.x - fBarWidth / 2.0f);
 		int nBarY = (int)screenPos.y;
 
-		// Dibujar fondo de la barra (negro/borde)
 		pDC->SetBitmap(NULL);
-		pDC->SetColor(MCOLOR(0xFF000000)); // Negro para el borde
+
+		// === DISEÑO ESTILIZADO "GAME" ===
+		
+		// 1. Sombra exterior (para efecto 3D)
+		pDC->SetColor(MCOLOR(0x80000000)); // Negro semi-transparente
+		pDC->FillRectangle(nBarX + 2, nBarY + 2, (int)fBarWidth, (int)fBarHeight);
+
+		// 2. Borde exterior oscuro (para definir la barra)
+		pDC->SetColor(MCOLOR(0xFF1A1A1A)); // Negro muy oscuro
+		pDC->FillRectangle(nBarX - 2, nBarY - 2, (int)fBarWidth + 4, (int)fBarHeight + 4);
+
+		// 3. Borde interior (gris blanco suave)
+		pDC->SetColor(MCOLOR(0xFFAAAAAA)); // Gris claro suave
 		pDC->FillRectangle(nBarX - 1, nBarY - 1, (int)fBarWidth + 2, (int)fBarHeight + 2);
 
-		// Dibujar fondo gris
-		pDC->SetColor(MCOLOR(0xFF404040)); // Gris oscuro
+		// 4. Fondo de la barra (gris oscuro con gradiente simulado)
+		pDC->SetColor(MCOLOR(0xFF2A2A2A)); // Gris muy oscuro
 		pDC->FillRectangle(nBarX, nBarY, (int)fBarWidth, (int)fBarHeight);
 
-		// Dibujar barra de HP (color según porcentaje)
+		// 5. Barra de HP con colores más vibrantes y efecto de brillo
 		MCOLOR hpColor;
+		MCOLOR hpColorBright; // Color más brillante para el gradiente
+		
 		if (fHPPercent > 0.7f)
-			hpColor = MCOLOR(0xFF00FF00); // Verde
-		else if (fHPPercent > 0.3f)
-			hpColor = MCOLOR(0xFFFFFF00); // Amarillo
-		else
-			hpColor = MCOLOR(0xFFFF0000); // Rojo
-
-		pDC->SetColor(hpColor);
-		if (fHPBarWidth > 0.0f)
 		{
-			pDC->FillRectangle(nBarX, nBarY, (int)fHPBarWidth, (int)fBarHeight);
+			hpColor = MCOLOR(0xFF00CC00);      // Verde vibrante
+			hpColorBright = MCOLOR(0xFF66FF66); // Verde claro
+		}
+		else if (fHPPercent > 0.3f)
+		{
+			hpColor = MCOLOR(0xFFFFCC00);      // Amarillo/Naranja vibrante
+			hpColorBright = MCOLOR(0xFFFFFF66); // Amarillo claro
+		}
+		else
+		{
+			hpColor = MCOLOR(0xFFFF3300);      // Rojo vibrante
+			hpColorBright = MCOLOR(0xFFFF6666); // Rojo claro
 		}
 
-		// Dibujar borde exterior
-		pDC->SetColor(MCOLOR(0xFFFFFFFF)); // Blanco para el borde
+		// Dibujar barra de HP principal
+		if (fHPBarWidth > 0.0f)
+		{
+			// Fondo de la barra de HP (color oscuro)
+			pDC->SetColor(hpColor);
+			pDC->FillRectangle(nBarX + 1, nBarY + 1, (int)fHPBarWidth - 2, (int)fBarHeight - 2);
+
+			// Efecto de brillo superior (simula gradiente - más sutil)
+			if (fHPBarWidth > 3.0f)
+			{
+				pDC->SetColor(MCOLOR(0x20FFFFFF)); // Blanco muy semi-transparente (más suave)
+				pDC->FillRectangle(nBarX + 1, nBarY + 1, (int)fHPBarWidth - 2, 2);
+			}
+
+			// Resaltado superior con color brillante
+			if (fHPBarWidth > 4.0f)
+			{
+				pDC->SetColor(hpColorBright);
+				pDC->FillRectangle(nBarX + 2, nBarY + 2, (int)fHPBarWidth - 4, 1);
+			}
+		}
+
+		// 6. Borde interior (gris blanco suave)
+		pDC->SetColor(MCOLOR(0xFFCCCCCC)); // Gris blanco suave
 		pDC->Rectangle(nBarX, nBarY, (int)fBarWidth, (int)fBarHeight);
 	}
 }
