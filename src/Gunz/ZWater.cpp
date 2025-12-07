@@ -9,6 +9,8 @@
 #include "ZSoundEngine.h"
 #include "ZEffectManager.h"
 #include "RBspObject.h"
+#include <algorithm>  // Para std::advance
+#include <iterator>   // Para std::advance (opcional pero buena práctica)
 
 struct WaterVertex
 {
@@ -19,7 +21,7 @@ struct WaterVertex
 
 #define MAXNUM_WATER_MESH_VERTEX	2000
 #define WATERVERTEX_TYPE	(D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_TEX2)
-#define WATERTEXTURE_SIZE	512
+#define WATERTEXTURE_SIZE	1024
 #define WAVE_PITCH			50
 #define WATER_UPDATE_INTERVAL 30
 const char* waterHitSoundName = "fx_bullethit_mt_wat";
@@ -81,11 +83,7 @@ ZWaterList::~ZWaterList()
 
 void ZWaterList::Clear()
 {
-	for (iterator iter = begin(); iter != end(); )
-	{
-		SAFE_DELETE(*iter);
-		iter = erase(iter);
-	}
+	clear();  // ✅ unique_ptr destruye automáticamente
 }
 
 void ZWaterList::Update()
@@ -96,7 +94,7 @@ void ZWaterList::Update()
 
 	for (iterator iter = begin(); iter != end(); ++iter)
 	{
-		ZWater* pWater = *iter;
+		ZWater* pWater = iter->get();  // Obtener puntero raw del unique_ptr
 		if (pWater != NULL) pWater->Update();
 	}
 }
@@ -106,7 +104,7 @@ void ZWaterList::Render()
 	PreRender();
 	for (iterator iter = begin(); iter != end(); ++iter)
 	{
-		ZWater* pWater = *iter;
+		ZWater* pWater = iter->get();  // Obtener puntero raw del unique_ptr
 		if (pWater != NULL) pWater->Render();
 	}
 	PostRender();
@@ -143,7 +141,7 @@ bool ZWaterList::CheckSpearing(const rvector& o, const rvector& e,
 	rvector pos;
 	for (iterator iter = begin(); iter != end(); ++iter)
 	{
-		pWater = *iter;
+		pWater = iter->get();  // Obtener puntero raw del unique_ptr
 		if (pWater != NULL)
 		{
 			if (pWater->CheckSpearing(o, e, iPower, fArea, &pos))
@@ -165,7 +163,7 @@ bool ZWaterList::Pick(rvector& o, rvector& d, rvector* pPos)
 	ZWater* pWater;
 	for (iterator iter = begin(); iter != end(); ++iter)
 	{
-		pWater = *iter;
+		pWater = iter->get();  // Obtener puntero raw del unique_ptr
 		if (pWater != NULL)
 		{
 			if (pWater->Pick(o, d, pPos))
@@ -177,11 +175,10 @@ bool ZWaterList::Pick(rvector& o, rvector& d, rvector* pPos)
 
 ZWater* ZWaterList::Get(int iIndex)
 {
-	if (0 > iIndex || size() <= (unsigned int)iIndex) return NULL;
-	iterator iter = begin();
-	ZWater* pWater = *iter;
-	pWater += iIndex;
-	return pWater;
+	if (iIndex < 0 || size() <= (unsigned int)iIndex) return nullptr;
+	auto iter = begin();
+	std::advance(iter, iIndex);
+	return iter->get();  // Retorna puntero raw (no-owning)
 }
 
 void ZWaterList::PreRender()
@@ -262,10 +259,9 @@ bool ZWaterList::SetSurface(bool b)
 
 ZWater::ZWater()
 {
-	m_pIndexBuffer = 0;
-	m_pTexture = 0;
-	m_pVerts = 0;
-	m_pFaces = 0;
+	// m_pIndexBuffer ya es nullptr por defecto (unique_ptr)
+	m_pTexture = nullptr;
+	// m_pVerts y m_pFaces son vectores vacíos por defecto
 	m_nVerts = 0;
 	m_nFaces = 0;
 	m_nWaterType = 0;
@@ -274,14 +270,14 @@ ZWater::ZWater()
 
 ZWater::~ZWater()
 {
-	SAFE_RELEASE(m_pIndexBuffer);
-	SAFE_DELETE_ARRAY(m_pVerts);
-	SAFE_DELETE_ARRAY(m_pFaces);
+	// ✅ Todo se destruye automáticamente:
+	// - unique_ptr llama a Release() automáticamente para m_pIndexBuffer
+	// - std::vector destruye elementos automáticamente para m_pVerts y m_pFaces
 }
 
 bool ZWater::SetMesh(RMeshNode* meshNode)
 {
-	SAFE_RELEASE(m_pIndexBuffer);
+	m_pIndexBuffer.reset();  // Liberar buffer anterior si existe
 	_ASSERT(meshNode != NULL);
 	if (meshNode == NULL) return false;
 
@@ -292,12 +288,13 @@ bool ZWater::SetMesh(RMeshNode* meshNode)
 	MakeWorldMatrix(&m_worldMat, offset, rvector(0, -1, 0), rvector(0, 0, 1));
 	m_worldMat = meshNode->m_mat_result * m_worldMat;
 
-	m_pVerts = new rvector[m_nVerts];
+	// ✅ Resize vector automáticamente
+	m_pVerts.resize(m_nVerts);
 	for (int i = 0; i < m_nVerts; ++i)
 	{
 		m_pVerts[i] = Transform(meshNode->m_point_list[i], m_worldMat);
 	}
-	m_pFaces = new RFaceInfo[m_nFaces];
+	m_pFaces.resize(m_nFaces);
 	for (int i = 0; i < m_nFaces; ++i)
 	{
 		m_pFaces[i] = meshNode->m_face_list[i];
@@ -332,7 +329,8 @@ bool ZWater::SetMesh(RMeshNode* meshNode)
 		m_mtrl.Specular.a = 0;	m_mtrl.Specular.r = 0;	m_mtrl.Specular.g = 0;	m_mtrl.Specular.b = 0;
 	}
 
-	WORD* indexList = new WORD[m_nFaces * 3];
+	// ✅ Usar std::vector temporal para índices
+	std::vector<WORD> indexList(m_nFaces * 3);
 	for (int i = 0; i < m_nFaces; ++i)
 	{
 		for (int j = 0; j < 3; ++j)
@@ -340,24 +338,29 @@ bool ZWater::SetMesh(RMeshNode* meshNode)
 			indexList[3 * i + j] = meshNode->m_face_list[i].m_point_index[j];
 		}
 	}
-	if (FAILED(g_pDevice->CreateIndexBuffer(m_nFaces * 3 * sizeof(WORD), D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_MANAGED, &m_pIndexBuffer, NULL)))
+
+	// Crear el buffer temporalmente y luego transferir ownership al unique_ptr
+	LPDIRECT3DINDEXBUFFER9 pTmp = nullptr;
+	if (FAILED(g_pDevice->CreateIndexBuffer(m_nFaces * 3 * sizeof(WORD), D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_MANAGED, &pTmp, NULL)))
 	{
 		mlog("Fail to Create Index Buffer \n");
 		return false;
 	}
+	m_pIndexBuffer.reset(pTmp);  // Transferir ownership al unique_ptr
+
 	VOID* pIndexes;
 	if (FAILED(m_pIndexBuffer->Lock(0, m_nFaces * 3 * sizeof(WORD), (VOID**)&pIndexes, 0)))
 	{
 		mlog("Fail to Lock Index Buffer \n");
 		return false;
 	}
-	memcpy(pIndexes, indexList, m_nFaces * 3 * sizeof(WORD));
+	memcpy(pIndexes, indexList.data(), m_nFaces * 3 * sizeof(WORD));
 	if (FAILED(m_pIndexBuffer->Unlock()))
 	{
 		mlog("Fail to UnLock Index Buffer \n");
 		return false;
 	}
-	SAFE_DELETE_ARRAY(indexList);
+	// ✅ indexList (std::vector) se destruye automáticamente
 
 	return true;
 }
@@ -466,7 +469,9 @@ bool ZWater::RenderReflectionSurface()
 	{
 		g_pDevice->SetRenderState(D3DRS_CLIPPLANEENABLE, TRUE);
 
-		rplane p = rplane(0, 0, 1, -m_fbaseZpos + 0.1f);
+		// Clip plane exactamente en el nivel del agua para evitar reflejar partes sumergidas
+		// El offset negativo pequeño asegura que las partes bajo el agua NO se reflejen
+		rplane p = rplane(0, 0, 1, -m_fbaseZpos - 0.05f);
 		g_pDevice->SetClipPlane(0, (float*)p);
 	}
 
@@ -475,6 +480,9 @@ bool ZWater::RenderReflectionSurface()
 
 	if (RIsAvailUserClipPlane())
 	{
+		// Renderizar todos los objetos (personajes, NPCs, etc.)
+		ZGetGame()->m_ObjectManager.Draw();
+
 		ZGetEffectManager()->Draw(GetGlobalTimeMS());
 		ZGetGame()->GetWorld()->GetFlags()->Draw();
 	}
@@ -679,7 +687,7 @@ void ZWater::Render()
 	RSetTransform(D3DTS_WORLD, mat);
 
 	g_pDevice->SetStreamSource(0, g_pVBForWaterMesh, 0, sizeof(WaterVertex));
-	g_pDevice->SetIndices(m_pIndexBuffer);
+	g_pDevice->SetIndices(m_pIndexBuffer.get());  // Obtener puntero raw del unique_ptr
 	g_pDevice->SetFVF(WATERVERTEX_TYPE);
 	g_pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, m_nVerts, 0, m_nFaces);
 }

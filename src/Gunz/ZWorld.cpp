@@ -72,7 +72,6 @@ bool ZWorld::Create(ZLoadingProgress *pLoading)
 	char szMapPath[64]; szMapPath[0] = 0;
 	ZGetCurrMapPath(szMapPath);
 
-	ZWater*		water_instance;
 	RMapObjectList* map_object_list		= m_pBsp->GetMapObjectList();
 	RMeshMgr* mesh_mgr					= m_pBsp->GetMeshManager();
 	
@@ -136,25 +135,25 @@ bool ZWorld::Create(ZLoadingProgress *pLoading)
 			RMesh* mesh = mesh_mgr->GetFast(id);
 			RMeshNode* node = mesh->m_data[0];
 
-			water_instance = new ZWater;
+			auto water_instance = std::make_unique<ZWater>();
 
-			water_instance->SetMesh(node);
-			m_waters.push_back( water_instance );
+			if (!water_instance->SetMesh(node)) {
+				++it;
+				continue;  // Error en SetMesh, continuar con el siguiente
+			}
 
-				 if(nWater==1) water_instance->m_nWaterType = WaterType1;
+			if(nWater==1) water_instance->m_nWaterType = WaterType1;
 			else if(nWater==3) water_instance->m_nWaterType = WaterType2;
-
 
 			if(nWater==2) 
 			{
 				water_instance->m_isRender = false;
 				pMesh->m_LitVertexModel = true;	
 			}
-			else 
-			{
-				it = map_object_list->erase(it);
-				continue;
-			}
+			
+			m_waters.push_back(std::move(water_instance));  // Transferir ownership a la lista
+			it = map_object_list->erase(it);
+			continue;
 		}
 
 		++it;
