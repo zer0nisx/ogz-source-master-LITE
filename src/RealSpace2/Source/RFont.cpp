@@ -23,7 +23,7 @@ constexpr auto RFONT_CELL_SIZE = 32;
 
 RFontTexture::RFontTexture() 
 { 
-	m_pTexture = NULL;
+	// m_pTexture es nullptr por defecto (unique_ptr)
 	m_CellInfo = NULL;
 	m_hDC = NULL;
 	m_pBitmapBits = NULL;
@@ -46,7 +46,7 @@ bool RFontTexture::Create()
 
 	m_nWidth = RFONT_TEXTURE_SIZE;
 	m_nHeight = RFONT_TEXTURE_SIZE;
-	HRESULT hr = RGetDevice()->CreateTexture(m_nWidth, m_nHeight, 1, 0, D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, &m_pTexture, NULL);
+	HRESULT hr = RGetDevice()->CreateTexture(m_nWidth, m_nHeight, 1, 0, D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, MakeWriteProxy(m_pTexture), NULL);
 	if (hr != D3D_OK) {
 		mlog("RFontTexture::Create() - Failed to create texture (HRESULT: 0x%08X)\n", hr);
 		return false;
@@ -63,7 +63,7 @@ bool RFontTexture::Create()
 	}
 	catch (std::bad_alloc&) {
 		mlog("RFontTexture::Create() - Failed to allocate memory for CellInfo\n");
-		SAFE_RELEASE(m_pTexture);
+		m_pTexture.reset();
 		return false;
 	}
 	
@@ -79,7 +79,7 @@ bool RFontTexture::Create()
 	m_hDC = CreateCompatibleDC(NULL);
 	if (m_hDC == NULL) {
 		mlog("RFontTexture::Create() - Failed to create compatible DC (Error: %d)\n", GetLastError());
-		SAFE_RELEASE(m_pTexture);
+		m_pTexture.reset();
 		SAFE_DELETE_ARRAY(m_CellInfo);
 		return false;
 	}
@@ -102,7 +102,7 @@ bool RFontTexture::Create()
 		// CORRECCIÓN: Limpiar todos los recursos creados antes de retornar
 		DeleteDC(m_hDC);
 		m_hDC = NULL;
-		SAFE_RELEASE(m_pTexture);
+		m_pTexture.reset();
 		SAFE_DELETE_ARRAY(m_CellInfo);
 		return false;
 	}
@@ -116,7 +116,7 @@ bool RFontTexture::Create()
 		m_hbmBitmap = NULL;
 		DeleteDC(m_hDC);
 		m_hDC = NULL;
-		SAFE_RELEASE(m_pTexture);
+		m_pTexture.reset();
 		SAFE_DELETE_ARRAY(m_CellInfo);
 		return false;
 	}
@@ -137,7 +137,7 @@ void RFontTexture::Destroy() {
 		DeleteDC(m_hDC);
 		m_hDC = NULL;
 	}
-	SAFE_RELEASE(m_pTexture);
+	m_pTexture.reset();
 	SAFE_DELETE_ARRAY(m_CellInfo);
 }
 

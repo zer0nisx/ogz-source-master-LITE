@@ -11,7 +11,7 @@ _NAMESPACE_REALSPACE2_BEGIN
 
 const u32 POINTVERTEX::FVF = D3DFVF_XYZ | D3DFVF_DIFFUSE;
 
-LPDIRECT3DVERTEXBUFFER9 RParticleSystem::m_pVB=nullptr;
+D3DPtr<IDirect3DVertexBuffer9> RParticleSystem::m_pVB;
 DWORD RParticleSystem::m_dwBase=DISCARD_COUNT;
 
 bool RParticle::Update(float fTimeElapsed)
@@ -216,7 +216,7 @@ bool RParticleSystem::Restore()
 	HRESULT hr;
 	if(FAILED(hr = pd3dDevice->CreateVertexBuffer( DISCARD_COUNT * 
 		sizeof(POINTVERTEX), D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY | D3DUSAGE_POINTS, 
-		POINTVERTEX::FVF, D3DPOOL_DEFAULT, &RParticleSystem::m_pVB ,NULL)))
+		POINTVERTEX::FVF, D3DPOOL_DEFAULT, MakeWriteProxy(RParticleSystem::m_pVB) ,NULL)))
 	{
 		return false;
 	}
@@ -227,7 +227,7 @@ bool RParticleSystem::Restore()
 
 bool RParticleSystem::Invalidate()
 {
-	SAFE_RELEASE( RParticleSystem::m_pVB );
+	RParticleSystem::m_pVB.reset();
 	return true;
 }
 
@@ -254,7 +254,7 @@ void RParticleSystem::BeginState()
 
 
 	// Set up the vertex buffer to be rendered
-	pd3dDevice->SetStreamSource( 0, RParticleSystem::m_pVB, 0, sizeof(POINTVERTEX) );
+	pd3dDevice->SetStreamSource( 0, RParticleSystem::m_pVB.get(), 0, sizeof(POINTVERTEX) );
 	pd3dDevice->SetFVF( POINTVERTEX::FVF );
 
 	rmatrix World;

@@ -4,6 +4,7 @@
 #include "ZEffectBillboard.h"
 #include "MZFileSystem.h"
 #include "RTypes.h"
+#include "MUtil.h"
 
 struct BillboardVertex {
 	FLOAT	x, y, z;
@@ -13,7 +14,7 @@ struct BillboardVertex {
 
 constexpr u32 BillboardFVF = D3DFVF_XYZ | D3DFVF_DIFFUSE | D3DFVF_TEX1;
 
-static LPDIRECT3DVERTEXBUFFER9 g_pVB;
+static D3DPtr<IDirect3DVertexBuffer9> g_pVB;
 
 bool CreateCommonRectVertexBuffer()
 {
@@ -24,7 +25,7 @@ bool CreateCommonRectVertexBuffer()
 		{ 1, -1, 0, 0xFFFFFFFF, 0, 0},
 	};
 
-	if (FAILED(RGetDevice()->CreateVertexBuffer(sizeof(Billboard), 0, BillboardFVF, D3DPOOL_MANAGED, &g_pVB, NULL)))
+	if (FAILED(RGetDevice()->CreateVertexBuffer(sizeof(Billboard), 0, BillboardFVF, D3DPOOL_MANAGED, MakeWriteProxy(g_pVB), NULL)))
 		return false;
 
 	BYTE* pVertices;
@@ -38,12 +39,12 @@ bool CreateCommonRectVertexBuffer()
 
 void RealeaseCommonRectVertexBuffer()
 {
-	SAFE_RELEASE(g_pVB);
+	g_pVB.reset();
 }
 
 static LPDIRECT3DVERTEXBUFFER9 GetCommonRectVertexBuffer()
 {
-	return g_pVB;
+	return g_pVB.get();
 }
 
 ZEffectBillboardSource::ZEffectBillboardSource(const char* szTextureFileName)

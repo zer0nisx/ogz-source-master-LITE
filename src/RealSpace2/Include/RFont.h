@@ -6,6 +6,7 @@
 #include <string>
 #include "RealSpace2.h"
 #include "MemPool.h"
+#include "MUtil.h"
 
 _NAMESPACE_REALSPACE2_BEGIN
 
@@ -36,7 +37,7 @@ class RFontTexture
 	HBITMAP m_hPrevBitmap;
 
 
-	LPDIRECT3DTEXTURE9		m_pTexture;
+	D3DPtr<IDirect3DTexture9>	m_pTexture;
 	int m_nWidth;
 	int	m_nHeight;
 	int m_nX,m_nY;
@@ -55,7 +56,7 @@ public:
 	bool Create();
 	void Destroy();
 
-	LPDIRECT3DTEXTURE9 GetTexture() { return m_pTexture; }
+	LPDIRECT3DTEXTURE9 GetTexture() { return m_pTexture.get(); }
 
 	int GetCharWidth(HFONT hFont, const char* szChar);
 	int GetCharWidth(HFONT hFont, const wchar_t* szChar);

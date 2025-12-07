@@ -4,6 +4,7 @@
 #include "RBaseTexture.h"
 #include <list>
 #include <memory>  // Para std::unique_ptr, std::make_unique
+#include "MUtil.h"  // Para D3DPtr
 
 // Forward declarations
 namespace RealSpace2 {
@@ -136,7 +137,7 @@ public:
 	static bool Restore();
 	static bool Invalidate();
 
-	static LPDIRECT3DVERTEXBUFFER9 m_pVB;
+	static D3DPtr<IDirect3DVertexBuffer9> m_pVB;
 	static DWORD m_dwBase;
 };
 
