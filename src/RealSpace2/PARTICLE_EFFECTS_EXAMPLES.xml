@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- 
+    Ejemplos de Efectos de Partículas para Mapas
+    Basado en recursos disponibles en SFX/
+    
+    Posición del personaje de referencia: 4188, -3079, -429
+-->
+<XML id="PARTICLESYSTEM">
+    
+    <!-- ============================================ -->
+    <!-- EFECTOS AMBIENTALES GENERALES -->
+    <!-- ============================================ -->
+    
+    <EMITTERLIST>
+        
+        <!-- 1. NIEVE (para mapas de nieve) -->
+        <EMITTER name="snow_main" type="box" enabled="true">
+            <POSITION x="0" y="0" z="1500" />
+            <SIZE x="16000" y="16000" z="100" />
+            <PARTICLES>
+                <TEXTURE>sfx/water_splash.bmp</TEXTURE>
+                <SIZE>25.0</SIZE>
+                <SPAWN_RATE>400</SPAWN_RATE>
+                <VELOCITY_MIN x="-40" y="-40" z="-250" />
+                <VELOCITY_MAX x="40" y="40" z="-150" />
+                <ACCELERATION x="0" y="0" z="-5" />
+                <LIFETIME>500.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 2. LLUVIA -->
+        <EMITTER name="rain_main" type="box" enabled="false">
+            <POSITION x="0" y="0" z="2000" />
+            <SIZE x="20000" y="20000" z="0" />
+            <PARTICLES>
+                <TEXTURE>sfx/water_splash.bmp</TEXTURE>
+                <SIZE>5.0</SIZE>
+                <SPAWN_RATE>1000</SPAWN_RATE>
+                <VELOCITY_MIN x="-5" y="-5" z="-200" />
+                <VELOCITY_MAX x="5" y="5" z="-150" />
+                <ACCELERATION x="0" y="0" z="0" />
+                <LIFETIME>300.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 3. HUMO AMBIENTAL (desde puntos específicos) -->
+        <EMITTER name="ambient_smoke_1" type="point" enabled="false">
+            <POSITION x="4188" y="-3079" z="-200" />
+            <PARTICLES>
+                <TEXTURE>SFX/smoke01.tga</TEXTURE>
+                <SIZE>30.0</SIZE>
+                <SPAWN_RATE>20</SPAWN_RATE>
+                <VELOCITY_MIN x="-10" y="-10" z="20" />
+                <VELOCITY_MAX x="10" y="10" z="50" />
+                <ACCELERATION x="0" y="0" z="-2" />
+                <LIFETIME>800.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 4. CHISPAS (efecto de fuego/combustión) -->
+        <EMITTER name="sparks_1" type="point" enabled="false">
+            <POSITION x="4188" y="-3079" z="-300" />
+            <PARTICLES>
+                <TEXTURE>SFX/gz_sfx_tracer.bmp</TEXTURE>
+                <SIZE>8.0</SIZE>
+                <SPAWN_RATE>100</SPAWN_RATE>
+                <VELOCITY_MIN x="-50" y="-50" z="30" />
+                <VELOCITY_MAX x="50" y="50" z="100" />
+                <ACCELERATION x="0" y="0" z="-20" />
+                <LIFETIME>200.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 5. POLVO/ARENA (para ambientes desérticos) -->
+        <EMITTER name="dust_wind" type="box" enabled="false">
+            <POSITION x="0" y="0" z="100" />
+            <SIZE x="20000" y="20000" z="50" />
+            <PARTICLES>
+                <TEXTURE>sfx/water_splash.bmp</TEXTURE>
+                <SIZE>15.0</SIZE>
+                <SPAWN_RATE>200</SPAWN_RATE>
+                <VELOCITY_MIN x="-30" y="-30" z="-10" />
+                <VELOCITY_MAX x="30" y="30" z="10" />
+                <ACCELERATION x="0" y="0" z="-1" />
+                <LIFETIME>400.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 6. CENIZAS (efecto post-explosión) -->
+        <EMITTER name="ash_fall" type="box" enabled="false">
+            <POSITION x="0" y="0" z="1000" />
+            <SIZE x="10000" y="10000" z="200" />
+            <PARTICLES>
+                <TEXTURE>SFX/smoke01.tga</TEXTURE>
+                <SIZE>20.0</SIZE>
+                <SPAWN_RATE>150</SPAWN_RATE>
+                <VELOCITY_MIN x="-20" y="-20" z="-80" />
+                <VELOCITY_MAX x="20" y="20" z="-40" />
+                <ACCELERATION x="0" y="0" z="-3" />
+                <LIFETIME>600.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 7. BURBUJAS (para áreas acuáticas) -->
+        <EMITTER name="water_bubbles" type="box" enabled="false">
+            <POSITION x="0" y="0" z="-500" />
+            <SIZE x="5000" y="5000" z="200" />
+            <PARTICLES>
+                <TEXTURE>sfx/water_splash.bmp</TEXTURE>
+                <SIZE>10.0</SIZE>
+                <SPAWN_RATE>50</SPAWN_RATE>
+                <VELOCITY_MIN x="-5" y="-5" z="30" />
+                <VELOCITY_MAX x="5" y="5" z="60" />
+                <ACCELERATION x="0" y="0" z="5" />
+                <LIFETIME>300.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 8. HOJAS CAYENDO (para ambientes naturales) -->
+        <EMITTER name="falling_leaves" type="box" enabled="false">
+            <POSITION x="0" y="0" z="800" />
+            <SIZE x="15000" y="15000" z="100" />
+            <PARTICLES>
+                <TEXTURE>sfx/water_splash.bmp</TEXTURE>
+                <SIZE>12.0</SIZE>
+                <SPAWN_RATE>80</SPAWN_RATE>
+                <VELOCITY_MIN x="-15" y="-15" z="-60" />
+                <VELOCITY_MAX x="15" y="15" z="-30" />
+                <ACCELERATION x="0" y="0" z="-2" />
+                <LIFETIME>400.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 9. NEBLINA BAJA (efecto atmosférico) -->
+        <EMITTER name="ground_fog" type="box" enabled="false">
+            <POSITION x="0" y="0" z="50" />
+            <SIZE x="20000" y="20000" z="100" />
+            <PARTICLES>
+                <TEXTURE>SFX/smoke01.tga</TEXTURE>
+                <SIZE>40.0</SIZE>
+                <SPAWN_RATE>30</SPAWN_RATE>
+                <VELOCITY_MIN x="-5" y="-5" z="5" />
+                <VELOCITY_MAX x="5" y="5" z="15" />
+                <ACCELERATION x="0" y="0" z="0" />
+                <LIFETIME>1000.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 10. PARTÍCULAS MÁGICAS/ENERGÍA (efecto fantástico) -->
+        <EMITTER name="magic_particles" type="sphere" enabled="false">
+            <POSITION x="4188" y="-3079" z="-200" />
+            <RADIUS>500</RADIUS>
+            <PARTICLES>
+                <TEXTURE>SFX/gz_sfx_tracer.bmp</TEXTURE>
+                <SIZE>6.0</SIZE>
+                <SPAWN_RATE>60</SPAWN_RATE>
+                <VELOCITY_MIN x="-20" y="-20" z="-20" />
+                <VELOCITY_MAX x="20" y="20" z="20" />
+                <ACCELERATION x="0" y="0" z="0" />
+                <LIFETIME>500.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 11. HUMO DE CHIMENEA (emisión desde punto específico) -->
+        <EMITTER name="chimney_smoke" type="point" enabled="false">
+            <POSITION x="4188" y="-3079" z="200" />
+            <PARTICLES>
+                <TEXTURE>SFX/smoke01.tga</TEXTURE>
+                <SIZE>35.0</SIZE>
+                <SPAWN_RATE>15</SPAWN_RATE>
+                <VELOCITY_MIN x="-3" y="-3" z="40" />
+                <VELOCITY_MAX x="3" y="3" z="60" />
+                <ACCELERATION x="0" y="0" z="-1" />
+                <LIFETIME>1200.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 12. POLVO DE EXPLOSIÓN (efecto de impacto) -->
+        <EMITTER name="explosion_dust" type="sphere" enabled="false">
+            <POSITION x="4188" y="-3079" z="-429" />
+            <RADIUS>200</RADIUS>
+            <PARTICLES>
+                <TEXTURE>SFX/smoke01.tga</TEXTURE>
+                <SIZE>25.0</SIZE>
+                <SPAWN_RATE>200</SPAWN_RATE>
+                <VELOCITY_MIN x="-100" y="-100" z="-50" />
+                <VELOCITY_MAX x="100" y="100" z="100" />
+                <ACCELERATION x="0" y="0" z="-10" />
+                <LIFETIME>300.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+    </EMITTERLIST>
+    
+    <!-- ============================================ -->
+    <!-- CONFIGURACIÓN DE COLISIONES -->
+    <!-- ============================================ -->
+    
+    <COLLISIONLIST>
+        
+        <!-- Detección automática con el mapa (HABILITADA POR DEFECTO) -->
+        <AUTO_MAP_COLLISION>
+            true
+            <!-- Rebote al colisionar con el mapa -->
+            <BOUNCE>0.2</BOUNCE>
+            <!-- Fricción al colisionar con el mapa -->
+            <FRICTION>0.8</FRICTION>
+            <!-- Eliminar partículas al colisionar (true = desaparecen, false = rebotan) -->
+            <KILL_ON_COLLISION>true</KILL_ON_COLLISION>
+        </AUTO_MAP_COLLISION>
+        
+        <!-- Zona de colisión personalizada: Superficie de agua -->
+        <COLLISION_ZONE name="water_surface" enabled="false">
+            <TYPE>plane</TYPE>
+            <POSITION x="0" y="0" z="0" />
+            <NORMAL x="0" y="0" z="1" />
+            <BOUNCE>0.0</BOUNCE>
+            <FRICTION>1.0</FRICTION>
+            <KILL_ON_COLLISION>true</KILL_ON_COLLISION>
+        </COLLISION_ZONE>
+        
+        <!-- Zona de colisión: Suelo (si quieres comportamiento diferente) -->
+        <COLLISION_ZONE name="ground_plane" enabled="false">
+            <TYPE>plane</TYPE>
+            <POSITION x="0" y="0" z="-1000" />
+            <NORMAL x="0" y="0" z="1" />
+            <BOUNCE>0.0</BOUNCE>
+            <FRICTION>1.0</FRICTION>
+            <KILL_ON_COLLISION>true</KILL_ON_COLLISION>
+        </COLLISION_ZONE>
+        
+    </COLLISIONLIST>
+    
+</XML>
+

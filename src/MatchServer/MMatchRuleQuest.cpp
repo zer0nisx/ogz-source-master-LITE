@@ -947,17 +947,55 @@ void MMatchRuleQuest::OnObtainWorldItem(MMatchObject* pObj, int nItemID, int* pn
 	if (0 == pObj)
 		return;
 
-	if (m_nCombatState != MQUEST_COMBAT_PLAY) return;
+	// ⚠️ DEBUG: Log inicial para ver si la función se está llamando
+	mlog("OnObtainWorldItem - ItemID: %d, CombatState: %d\n", nItemID, m_nCombatState);
 
-	int nQuestItemID = pnExtraValues[0];
-	int nRentPeriodHour = pnExtraValues[1];
+	if (m_nCombatState != MQUEST_COMBAT_PLAY) 
+	{
+		mlog("⚠️ OnObtainWorldItem: CombatState no es PLAY, retornando. State: %d\n", m_nCombatState);
+		return;
+	}
+
+	// ⚠️ DEBUG: Log para diagnosticar el problema del chest
+	if (nItemID == QUEST_WORLDITEM_ITEMBOX_ID)
+	{
+		int nQuestItemID = pnExtraValues ? pnExtraValues[0] : -999;
+		int nRentPeriodHour = pnExtraValues ? pnExtraValues[1] : -999;
+		
+		mlog("🔍 CHEST RECOGIDO - ItemID: %d, ExtraValues[0]: %d, ExtraValues[1]: %d, pnExtraValues: %p\n", 
+			 nItemID, nQuestItemID, nRentPeriodHour, pnExtraValues);
+		
+		// Si el chest no tiene item asignado, no se procesa nada
+		if (nQuestItemID == 0 || nQuestItemID == -999)
+		{
+			mlog("❌ PROBLEMA: Chest recogido SIN item asignado! ExtraValues[0]=%d. No se entrega nada.\n", nQuestItemID);
+			return;
+		}
+	}
+
+	int nQuestItemID = pnExtraValues ? pnExtraValues[0] : 0;
+	int nRentPeriodHour = pnExtraValues ? pnExtraValues[1] : 0;
+
+	// Si no hay item, no hacer nada
+	if (nQuestItemID == 0)
+	{
+		mlog("⚠️ OnObtainWorldItem: nQuestItemID es 0, retornando sin procesar\n");
+		return;
+	}
+
+	mlog("✅ Procesando item obtenido: ItemID=%d, nQuestItemID=%d\n", nItemID, nQuestItemID);
 
 	if (m_pQuestLevel->OnItemObtained(pObj, (u32)nQuestItemID))
 	{
+		mlog("✅ Item marcado como obtenido, enviando comando al cliente\n");
 		if (IsQuestItemID(nQuestItemID))
 			RouteObtainQuestItem((u32)nQuestItemID);
 		else
 			RouteObtainZItem((u32)nQuestItemID);
+	}
+	else
+	{
+		mlog("⚠️ OnItemObtained retornó false, no se envía comando al cliente\n");
 	}
 }
 

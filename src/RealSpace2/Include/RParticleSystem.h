@@ -5,6 +5,15 @@
 #include <list>
 #include <memory>  // Para std::unique_ptr, std::make_unique
 
+// Forward declarations
+namespace RealSpace2 {
+	class RParticleEmitterManager;
+	class RParticleCollisionManager;
+	class BulletCollision;
+}
+
+_USING_NAMESPACE_REALSPACE2
+
 #define DISCARD_COUNT	2048
 #define FLUSH_COUNT		512
 
@@ -44,7 +53,7 @@ public:
 	void Clear();
 
 	virtual bool Draw();
-	virtual bool Update(float fTime);
+	virtual bool Update(float fTime, RealSpace2::RParticleCollisionManager* pCollisionManager = nullptr);
 
 	// Métodos de compatibilidad con std::list
 	size_t size() const { return m_particles.size(); }
@@ -77,11 +86,16 @@ protected:
 
 };
 
+
 // C++14: Usar unique_ptr para RAII automático
 class RParticleSystem {
 private:
 	// C++14: Contenedor con unique_ptr en lugar de raw pointers
 	std::list<std::unique_ptr<RParticles>> m_particles;
+	
+	// NUEVO: Gestores de emisores y colisiones
+	std::unique_ptr<RealSpace2::RParticleEmitterManager> m_pEmitterManager;
+	std::unique_ptr<RealSpace2::RParticleCollisionManager> m_pCollisionManager;
 
 public:
 	RParticleSystem();
@@ -94,6 +108,14 @@ public:
 
 	// Agregar partículas (retorna raw pointer para compatibilidad)
 	RParticles *AddParticles(const char *szTextureName,float fSize);
+	
+	// NUEVO: Métodos para emisores y colisiones
+	bool LoadEmittersFromXML(const char* filename);
+	bool LoadCollisionsFromXML(const char* filename);
+	void SetMapCollision(RealSpace2::BulletCollision* pCollision);
+	
+	RealSpace2::RParticleEmitterManager* GetEmitterManager() { return m_pEmitterManager.get(); }
+	RealSpace2::RParticleCollisionManager* GetCollisionManager() { return m_pCollisionManager.get(); }
 	
 	// Métodos de compatibilidad con std::list
 	size_t size() const { return m_particles.size(); }

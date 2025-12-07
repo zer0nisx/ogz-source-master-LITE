@@ -6,6 +6,7 @@
 #include "ZInitialLoading.h"
 #include "RUtil.h"
 #include "RBspObject.h"
+#include "RealSpace2.h"
 
 ZWorld::ZWorld()
 {
@@ -173,6 +174,28 @@ bool ZWorld::Create(ZLoadingProgress *pLoading)
 	sprintf_safe(szBuf, "%s%s/smoke.xml", szMapPath,
 		ZGetGameClient()->GetMatchStageSetting()->GetMapName());
 	m_pMapDesc->LoadSmokeDesc(szBuf);
+
+	// NUEVO: Cargar sistema de partículas del mapa
+	if (RGetParticleSystem()) {
+		sprintf_safe(szBuf, "%s%s/%s_particles.xml", szMapPath,
+			ZGetGameClient()->GetMatchStageSetting()->GetMapName(),
+			ZGetGameClient()->GetMatchStageSetting()->GetMapName());
+		
+		// Intentar cargar emisores y colisiones desde archivo XML separado
+		RGetParticleSystem()->LoadEmittersFromXML(szBuf);
+		RGetParticleSystem()->LoadCollisionsFromXML(szBuf);
+		
+		// Conectar colisión del mapa y habilitar detección automática
+#ifdef _WIN32
+		if (m_pBsp) {
+			RGetParticleSystem()->SetMapCollision(m_pBsp->GetCollision());
+			// Habilitar detección automática de colisiones con el mapa (por defecto)
+			if (RGetParticleSystem()->GetCollisionManager()) {
+				RGetParticleSystem()->GetCollisionManager()->SetAutoMapCollision(true);
+			}
+		}
+#endif
+	}
 
 	FogInfo finfo = GetBsp()->GetFogInfo();
 	m_bFog = finfo.bFogEnable;

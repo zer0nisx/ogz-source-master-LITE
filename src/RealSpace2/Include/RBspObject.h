@@ -264,6 +264,10 @@ public:
 	RMapObjectList* GetMapObjectList() { return &m_ObjectList; }
 	RDummyList* GetDummyList() { return &m_DummyList; }
 	RBaseTexture* GetBaseTexture(int n);
+	
+#ifdef _WIN32
+	BulletCollision* GetCollision() { return Collision.get(); }
+#endif
 
 	RLightList& GetMapLightList() { return StaticMapLightList; }
 	RLightList& GetObjectLightList() { return StaticObjectLightList; }

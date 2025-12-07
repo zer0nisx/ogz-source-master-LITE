@@ -195,6 +195,12 @@
     <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\ROcclusionList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RParticleCollision.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RParticleEmitter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RParticleSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>

@@ -365,6 +365,8 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RNavigationMesh.h" />
     <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RNavigationNode.h" />
     <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\ROcclusionList.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RParticleCollision.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RParticleEmitter.h" />
     <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RParticleSystem.h" />
     <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RRoam.h" />
     <ClInclude Include="C:\ogz-source-master-LITE\src\RealSpace2\Include\RS2.h" />
@@ -453,6 +455,8 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="C:\ogz-source-master-LITE\src\RealSpace2\Source\RNavigationMesh.cpp" />
     <ClCompile Include="C:\ogz-source-master-LITE\src\RealSpace2\Source\RNavigationNode.cpp" />
     <ClCompile Include="C:\ogz-source-master-LITE\src\RealSpace2\Source\ROcclusionList.cpp" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\RealSpace2\Source\RParticleCollision.cpp" />
+    <ClCompile Include="C:\ogz-source-master-LITE\src\RealSpace2\Source\RParticleEmitter.cpp" />
     <ClCompile Include="C:\ogz-source-master-LITE\src\RealSpace2\Source\RParticleSystem.cpp" />
     <ClCompile Include="C:\ogz-source-master-LITE\src\RealSpace2\Source\RRoam.cpp" />
     <ClCompile Include="C:\ogz-source-master-LITE\src\RealSpace2\Source\RS2Vulkan.cpp" />

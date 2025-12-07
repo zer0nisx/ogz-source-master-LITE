@@ -1,4 +1,6 @@
-﻿  cml_ORIGINAL_CXX_unity.cxx
+﻿  Generating CXX unity source C:\ogz-source-master-LITE\build\win32\cml\Release\cotire\cml_ORIGINAL_CXX_unity.cxx
+  Building Custom Rule C:/ogz-source-master-LITE/src/cml/CMakeLists.txt
+  cml_ORIGINAL_CXX_unity.cxx
 C:\ogz-source-master-LITE\src\cml\Include\MMatrix.h(283,15): warning C4244: 'inicializando': conversión de 'double' a 'float'; posible pérdida de datos
   (compilando archivo de origen "Release/cotire/cml_ORIGINAL_CXX_unity.cxx")
   

@@ -1,5 +1,7 @@
 #include "stdafx.h"
 #include "RParticleSystem.h"
+#include "RParticleEmitter.h"
+#include "RParticleCollision.h"
 #include "RealSpace2.h"
 #include "MDebug.h"
 #include <algorithm>  // Para std::remove_if
@@ -156,8 +158,22 @@ bool RParticles::Draw()
 	return true;
 }
 
-bool RParticles::Update(float fTime)
+bool RParticles::Update(float fTime, RParticleCollisionManager* pCollisionManager)
 {
+	// Actualizar física y verificar colisiones
+	for (auto& particle_ptr : m_particles) {
+		RParticle* p = particle_ptr.get();
+		
+		// Verificar colisiones antes de actualizar
+		if (pCollisionManager) {
+			rvector hitPos, normal;
+			pCollisionManager->CheckCollision(p, fTime, &hitPos, &normal);
+		}
+		
+		// Actualizar física
+		p->Update(fTime);
+	}
+	
 	// C++14: Usar remove_if con unique_ptr
 	m_particles.remove_if([fTime](const std::unique_ptr<RParticle>& pp) {
 		return (pp->ftime > LIFETIME) || (pp->Update(fTime) == false);
@@ -167,6 +183,9 @@ bool RParticles::Update(float fTime)
 
 RParticleSystem::RParticleSystem()
 {
+	// Crear gestores de emisores y colisiones
+	m_pEmitterManager = std::make_unique<RParticleEmitterManager>(this);
+	m_pCollisionManager = std::make_unique<RParticleCollisionManager>();
 }
 
 RParticleSystem::~RParticleSystem()
@@ -178,6 +197,14 @@ void RParticleSystem::Destroy()
 {
 	// C++14: unique_ptr se destruye automáticamente
 	m_particles.clear();
+	
+	// Limpiar gestores
+	if (m_pEmitterManager) {
+		m_pEmitterManager->Clear();
+	}
+	if (m_pCollisionManager) {
+		m_pCollisionManager->Clear();
+	}
 
 	Invalidate();
 }
@@ -261,10 +288,17 @@ bool RParticleSystem::Draw()
 
 bool RParticleSystem::Update(float fTime)
 {
+	// Actualizar emisores (spawnean nuevas partículas)
+	if (m_pEmitterManager) {
+		m_pEmitterManager->Update(fTime);
+	}
+	
+	// Actualizar partículas (física + colisiones)
+	RParticleCollisionManager* pCollisionMgr = m_pCollisionManager.get();
 	for(auto& particles_ptr : m_particles)
 	{
 		RParticles* pParticles = particles_ptr.get();  // Obtener raw pointer
-		pParticles->Update(fTime);
+		pParticles->Update(fTime, pCollisionMgr);
 	}
 
 	return true;
@@ -287,6 +321,31 @@ RParticles *RParticleSystem::AddParticles(const char *szTextureName,float fSize)
 	m_particles.push_back(std::move(pp));
 	
 	return raw_ptr;  // Retornar raw pointer para compatibilidad
+}
+
+bool RParticleSystem::LoadEmittersFromXML(const char* filename)
+{
+	if (!m_pEmitterManager) {
+		MLog("RParticleSystem::LoadEmittersFromXML -- EmitterManager not initialized\n");
+		return false;
+	}
+	return m_pEmitterManager->LoadFromXML(filename);
+}
+
+bool RParticleSystem::LoadCollisionsFromXML(const char* filename)
+{
+	if (!m_pCollisionManager) {
+		MLog("RParticleSystem::LoadCollisionsFromXML -- CollisionManager not initialized\n");
+		return false;
+	}
+	return m_pCollisionManager->LoadFromXML(filename);
+}
+
+void RParticleSystem::SetMapCollision(BulletCollision* pCollision)
+{
+	if (m_pCollisionManager) {
+		m_pCollisionManager->SetMapCollision(pCollision);
+	}
 }
 
 _NAMESPACE_REALSPACE2_END

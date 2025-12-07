@@ -1,0 +1,967 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- 
+    TODOS LOS EFECTOS DE PARTÍCULAS DISPONIBLES
+    Basado en recursos de SFX/
+    
+    Posición de referencia: 4188, -3079, -429
+    Cada efecto tiene su textura especificada en los comentarios
+-->
+<XML id="PARTICLESYSTEM">
+    
+    <EMITTERLIST>
+        
+        <!-- ============================================ -->
+        <!-- EFECTOS DE AGUA -->
+        <!-- ============================================ -->
+        
+        <!-- 1. NIEVE -->
+        <!-- TEXTURA: sfx/water_splash.bmp -->
+        <EMITTER name="snow_main" type="box" enabled="false">
+            <POSITION x="0" y="0" z="1500" />
+            <SIZE x="16000" y="16000" z="100" />
+            <PARTICLES>
+                <TEXTURE>sfx/water_splash.bmp</TEXTURE>
+                <SIZE>25.0</SIZE>
+                <SPAWN_RATE>400</SPAWN_RATE>
+                <VELOCITY_MIN x="-40" y="-40" z="-250" />
+                <VELOCITY_MAX x="40" y="40" z="-150" />
+                <ACCELERATION x="0" y="0" z="-5" />
+                <LIFETIME>500.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 2. LLUVIA -->
+        <!-- TEXTURA: sfx/water_splash.bmp -->
+        <EMITTER name="rain_main" type="box" enabled="false">
+            <POSITION x="0" y="0" z="2000" />
+            <SIZE x="20000" y="20000" z="0" />
+            <PARTICLES>
+                <TEXTURE>sfx/water_splash.bmp</TEXTURE>
+                <SIZE>5.0</SIZE>
+                <SPAWN_RATE>1000</SPAWN_RATE>
+                <VELOCITY_MIN x="-5" y="-5" z="-200" />
+                <VELOCITY_MAX x="5" y="5" z="-150" />
+                <ACCELERATION x="0" y="0" z="0" />
+                <LIFETIME>300.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 3. BURBUJAS DE AGUA -->
+        <!-- TEXTURA: sfx/water_splash.bmp o SFX/gd_effect_006.tga -->
+        <EMITTER name="water_bubbles" type="box" enabled="false">
+            <POSITION x="0" y="0" z="-500" />
+            <SIZE x="5000" y="5000" z="200" />
+            <PARTICLES>
+                <TEXTURE>sfx/water_splash.bmp</TEXTURE>
+                <SIZE>10.0</SIZE>
+                <SPAWN_RATE>50</SPAWN_RATE>
+                <VELOCITY_MIN x="-5" y="-5" z="30" />
+                <VELOCITY_MAX x="5" y="5" z="60" />
+                <ACCELERATION x="0" y="0" z="5" />
+                <LIFETIME>300.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 4. SALPICADURAS DE AGUA -->
+        <!-- TEXTURA: SFX/gd_effect_006.tga -->
+        <EMITTER name="water_splash" type="point" enabled="false">
+            <POSITION x="4188" y="-3079" z="0" />
+            <PARTICLES>
+                <TEXTURE>SFX/gd_effect_006.tga</TEXTURE>
+                <SIZE>20.0</SIZE>
+                <SPAWN_RATE>30</SPAWN_RATE>
+                <VELOCITY_MIN x="-30" y="-30" z="20" />
+                <VELOCITY_MAX x="30" y="30" z="80" />
+                <ACCELERATION x="0" y="0" z="-10" />
+                <LIFETIME>200.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- ============================================ -->
+        <!-- EFECTOS DE HUMO -->
+        <!-- ============================================ -->
+        
+        <!-- 5. HUMO AMBIENTAL (smoke01) -->
+        <!-- TEXTURA: SFX/smoke01.tga -->
+        <EMITTER name="ambient_smoke_01" type="point" enabled="false">
+            <POSITION x="4188" y="-3079" z="-200" />
+            <PARTICLES>
+                <TEXTURE>SFX/smoke01.tga</TEXTURE>
+                <SIZE>30.0</SIZE>
+                <SPAWN_RATE>20</SPAWN_RATE>
+                <VELOCITY_MIN x="-10" y="-10" z="20" />
+                <VELOCITY_MAX x="10" y="10" z="50" />
+                <ACCELERATION x="0" y="0" z="-2" />
+                <LIFETIME>800.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 6. HUMO AMBIENTAL (smoke02) -->
+        <!-- TEXTURA: SFX/smoke02.tga -->
+        <EMITTER name="ambient_smoke_02" type="point" enabled="false">
+            <POSITION x="4188" y="-3079" z="-200" />
+            <PARTICLES>
+                <TEXTURE>SFX/smoke02.tga</TEXTURE>
+                <SIZE>35.0</SIZE>
+                <SPAWN_RATE>15</SPAWN_RATE>
+                <VELOCITY_MIN x="-8" y="-8" z="25" />
+                <VELOCITY_MAX x="8" y="8" z="55" />
+                <ACCELERATION x="0" y="0" z="-1.5" />
+                <LIFETIME>900.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 7. HUMO AMBIENTAL (smoke03) -->
+        <!-- TEXTURA: SFX/smoke03.tga -->
+        <EMITTER name="ambient_smoke_03" type="point" enabled="false">
+            <POSITION x="4188" y="-3079" z="-200" />
+            <PARTICLES>
+                <TEXTURE>SFX/smoke03.tga</TEXTURE>
+                <SIZE>32.0</SIZE>
+                <SPAWN_RATE>18</SPAWN_RATE>
+                <VELOCITY_MIN x="-9" y="-9" z="22" />
+                <VELOCITY_MAX x="9" y="9" z="52" />
+                <ACCELERATION x="0" y="0" z="-1.8" />
+                <LIFETIME>850.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 8. HUMO AMBIENTAL (smoke04) -->
+        <!-- TEXTURA: SFX/smoke04.tga -->
+        <EMITTER name="ambient_smoke_04" type="point" enabled="false">
+            <POSITION x="4188" y="-3079" z="-200" />
+            <PARTICLES>
+                <TEXTURE>SFX/smoke04.tga</TEXTURE>
+                <SIZE>28.0</SIZE>
+                <SPAWN_RATE>22</SPAWN_RATE>
+                <VELOCITY_MIN x="-11" y="-11" z="18" />
+                <VELOCITY_MAX x="11" y="11" z="48" />
+                <ACCELERATION x="0" y="0" z="-2.2" />
+                <LIFETIME>750.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 9. HUMO DE CHIMENEA -->
+        <!-- TEXTURA: SFX/smoke01.tga -->
+        <EMITTER name="chimney_smoke" type="point" enabled="false">
+            <POSITION x="4188" y="-3079" z="200" />
+            <PARTICLES>
+                <TEXTURE>SFX/smoke01.tga</TEXTURE>
+                <SIZE>35.0</SIZE>
+                <SPAWN_RATE>15</SPAWN_RATE>
+                <VELOCITY_MIN x="-3" y="-3" z="40" />
+                <VELOCITY_MAX x="3" y="3" z="60" />
+                <ACCELERATION x="0" y="0" z="-1" />
+                <LIFETIME>1200.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 10. HUMO DE CAÑÓN (muzzle_smoke01) -->
+        <!-- TEXTURA: SFX/muzzle_smoke01.tga -->
+        <EMITTER name="muzzle_smoke_01" type="point" enabled="false">
+            <POSITION x="4188" y="-3079" z="-300" />
+            <PARTICLES>
+                <TEXTURE>SFX/muzzle_smoke01.tga</TEXTURE>
+                <SIZE>25.0</SIZE>
+                <SPAWN_RATE>50</SPAWN_RATE>
+                <VELOCITY_MIN x="-20" y="-20" z="10" />
+                <VELOCITY_MAX x="20" y="20" z="40" />
+                <ACCELERATION x="0" y="0" z="-3" />
+                <LIFETIME>300.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 11. HUMO DE CAÑÓN (muzzle_smoke02) -->
+        <!-- TEXTURA: SFX/muzzle_smoke02.tga -->
+        <EMITTER name="muzzle_smoke_02" type="point" enabled="false">
+            <POSITION x="4188" y="-3079" z="-300" />
+            <PARTICLES>
+                <TEXTURE>SFX/muzzle_smoke02.tga</TEXTURE>
+                <SIZE>27.0</SIZE>
+                <SPAWN_RATE>45</SPAWN_RATE>
+                <VELOCITY_MIN x="-22" y="-22" z="12" />
+                <VELOCITY_MAX x="22" y="22" z="42" />
+                <ACCELERATION x="0" y="0" z="-3.2" />
+                <LIFETIME>320.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 12. HUMO DE CAÑÓN (muzzle_smoke03) -->
+        <!-- TEXTURA: SFX/muzzle_smoke03.tga -->
+        <EMITTER name="muzzle_smoke_03" type="point" enabled="false">
+            <POSITION x="4188" y="-3079" z="-300" />
+            <PARTICLES>
+                <TEXTURE>SFX/muzzle_smoke03.tga</TEXTURE>
+                <SIZE>23.0</SIZE>
+                <SPAWN_RATE>55</SPAWN_RATE>
+                <VELOCITY_MIN x="-18" y="-18" z="8" />
+                <VELOCITY_MAX x="18" y="18" z="38" />
+                <ACCELERATION x="0" y="0" z="-2.8" />
+                <LIFETIME>280.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 13. HUMO DE CAÑÓN (muzzle_smoke04) -->
+        <!-- TEXTURA: SFX/muzzle_smoke04.tga -->
+        <EMITTER name="muzzle_smoke_04" type="point" enabled="false">
+            <POSITION x="4188" y="-3079" z="-300" />
+            <PARTICLES>
+                <TEXTURE>SFX/muzzle_smoke04.tga</TEXTURE>
+                <SIZE>29.0</SIZE>
+                <SPAWN_RATE>40</SPAWN_RATE>
+                <VELOCITY_MIN x="-25" y="-25" z="15" />
+                <VELOCITY_MAX x="25" y="25" z="45" />
+                <ACCELERATION x="0" y="0" z="-3.5" />
+                <LIFETIME>350.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 14. HUMO DE ESCOPETA (muzzle_smoke41) -->
+        <!-- TEXTURA: SFX/muzzle_smoke41.tga -->
+        <EMITTER name="shotgun_smoke_41" type="point" enabled="false">
+            <POSITION x="4188" y="-3079" z="-300" />
+            <PARTICLES>
+                <TEXTURE>SFX/muzzle_smoke41.tga</TEXTURE>
+                <SIZE>30.0</SIZE>
+                <SPAWN_RATE>60</SPAWN_RATE>
+                <VELOCITY_MIN x="-30" y="-30" z="5" />
+                <VELOCITY_MAX x="30" y="30" z="35" />
+                <ACCELERATION x="0" y="0" z="-4" />
+                <LIFETIME>250.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 15. HUMO DE ESCOPETA (muzzle_smoke42) -->
+        <!-- TEXTURA: SFX/muzzle_smoke42.tga -->
+        <EMITTER name="shotgun_smoke_42" type="point" enabled="false">
+            <POSITION x="4188" y="-3079" z="-300" />
+            <PARTICLES>
+                <TEXTURE>SFX/muzzle_smoke42.tga</TEXTURE>
+                <SIZE>32.0</SIZE>
+                <SPAWN_RATE>55</SPAWN_RATE>
+                <VELOCITY_MIN x="-32" y="-32" z="7" />
+                <VELOCITY_MAX x="32" y="32" z="37" />
+                <ACCELERATION x="0" y="0" z="-4.2" />
+                <LIFETIME>270.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 16. HUMO DE COHETE -->
+        <!-- TEXTURA: SFX/smoke_rocket.tga -->
+        <EMITTER name="rocket_smoke" type="point" enabled="false">
+            <POSITION x="4188" y="-3079" z="-300" />
+            <PARTICLES>
+                <TEXTURE>SFX/smoke_rocket.tga</TEXTURE>
+                <SIZE>40.0</SIZE>
+                <SPAWN_RATE>80</SPAWN_RATE>
+                <VELOCITY_MIN x="-15" y="-15" z="50" />
+                <VELOCITY_MAX x="15" y="15" z="100" />
+                <ACCELERATION x="0" y="0" z="-5" />
+                <LIFETIME>500.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 17. HUMO DE METEORO -->
+        <!-- TEXTURA: SFX/ef_methor_smoke.tga -->
+        <EMITTER name="meteor_smoke" type="point" enabled="false">
+            <POSITION x="4188" y="-3079" z="1000" />
+            <PARTICLES>
+                <TEXTURE>SFX/ef_methor_smoke.tga</TEXTURE>
+                <SIZE>50.0</SIZE>
+                <SPAWN_RATE>100</SPAWN_RATE>
+                <VELOCITY_MIN x="-40" y="-40" z="-200" />
+                <VELOCITY_MAX x="40" y="40" z="-100" />
+                <ACCELERATION x="0" y="0" z="-15" />
+                <LIFETIME>600.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- ============================================ -->
+        <!-- EFECTOS DE FUEGO/CHISPAS -->
+        <!-- ============================================ -->
+        
+        <!-- 18. CHISPAS (tracer) -->
+        <!-- TEXTURA: SFX/gz_sfx_tracer.bmp -->
+        <EMITTER name="sparks_tracer" type="point" enabled="false">
+            <POSITION x="4188" y="-3079" z="-300" />
+            <PARTICLES>
+                <TEXTURE>SFX/gz_sfx_tracer.bmp</TEXTURE>
+                <SIZE>8.0</SIZE>
+                <SPAWN_RATE>100</SPAWN_RATE>
+                <VELOCITY_MIN x="-50" y="-50" z="30" />
+                <VELOCITY_MAX x="50" y="50" z="100" />
+                <ACCELERATION x="0" y="0" z="-20" />
+                <LIFETIME>200.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 19. FUEGO DE RIFLE (mf01) -->
+        <!-- TEXTURA: SFX/gz_sfx_mf01.bmp -->
+        <EMITTER name="rifle_fire_01" type="point" enabled="false">
+            <POSITION x="4188" y="-3079" z="-300" />
+            <PARTICLES>
+                <TEXTURE>SFX/gz_sfx_mf01.bmp</TEXTURE>
+                <SIZE>15.0</SIZE>
+                <SPAWN_RATE>120</SPAWN_RATE>
+                <VELOCITY_MIN x="-10" y="-10" z="40" />
+                <VELOCITY_MAX x="10" y="10" z="80" />
+                <ACCELERATION x="0" y="0" z="-5" />
+                <LIFETIME>150.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 20. FUEGO DE RIFLE (mf02) -->
+        <!-- TEXTURA: SFX/gz_sfx_mf02.bmp -->
+        <EMITTER name="rifle_fire_02" type="point" enabled="false">
+            <POSITION x="4188" y="-3079" z="-300" />
+            <PARTICLES>
+                <TEXTURE>SFX/gz_sfx_mf02.bmp</TEXTURE>
+                <SIZE>16.0</SIZE>
+                <SPAWN_RATE>115</SPAWN_RATE>
+                <VELOCITY_MIN x="-12" y="-12" z="42" />
+                <VELOCITY_MAX x="12" y="12" z="82" />
+                <ACCELERATION x="0" y="0" z="-5.2" />
+                <LIFETIME>155.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 21. FUEGO DE RIFLE (mf03) -->
+        <!-- TEXTURA: SFX/gz_sfx_mf03.bmp -->
+        <EMITTER name="rifle_fire_03" type="point" enabled="false">
+            <POSITION x="4188" y="-3079" z="-300" />
+            <PARTICLES>
+                <TEXTURE>SFX/gz_sfx_mf03.bmp</TEXTURE>
+                <SIZE>14.0</SIZE>
+                <SPAWN_RATE>125</SPAWN_RATE>
+                <VELOCITY_MIN x="-8" y="-8" z="38" />
+                <VELOCITY_MAX x="8" y="8" z="78" />
+                <ACCELERATION x="0" y="0" z="-4.8" />
+                <LIFETIME>145.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 22. FUEGO DE RIFLE (mf04) -->
+        <!-- TEXTURA: SFX/gz_sfx_mf04.bmp -->
+        <EMITTER name="rifle_fire_04" type="point" enabled="false">
+            <POSITION x="4188" y="-3079" z="-300" />
+            <PARTICLES>
+                <TEXTURE>SFX/gz_sfx_mf04.bmp</TEXTURE>
+                <SIZE>17.0</SIZE>
+                <SPAWN_RATE>110</SPAWN_RATE>
+                <VELOCITY_MIN x="-15" y="-15" z="45" />
+                <VELOCITY_MAX x="15" y="15" z="85" />
+                <ACCELERATION x="0" y="0" z="-5.5" />
+                <LIFETIME>160.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 23. FUEGO DE RIFLE ALTERNATIVO (mf11) -->
+        <!-- TEXTURA: SFX/gz_sfx_mf11.bmp -->
+        <EMITTER name="rifle_fire_alt_11" type="point" enabled="false">
+            <POSITION x="4188" y="-3079" z="-300" />
+            <PARTICLES>
+                <TEXTURE>SFX/gz_sfx_mf11.bmp</TEXTURE>
+                <SIZE>15.5</SIZE>
+                <SPAWN_RATE>118</SPAWN_RATE>
+                <VELOCITY_MIN x="-11" y="-11" z="41" />
+                <VELOCITY_MAX x="11" y="11" z="81" />
+                <ACCELERATION x="0" y="0" z="-5.1" />
+                <LIFETIME>152.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 24. FUEGO DE RIFLE ALTERNATIVO (mf12) -->
+        <!-- TEXTURA: SFX/gz_sfx_mf12.bmp -->
+        <EMITTER name="rifle_fire_alt_12" type="point" enabled="false">
+            <POSITION x="4188" y="-3079" z="-300" />
+            <PARTICLES>
+                <TEXTURE>SFX/gz_sfx_mf12.bmp</TEXTURE>
+                <SIZE>16.5</SIZE>
+                <SPAWN_RATE>113</SPAWN_RATE>
+                <VELOCITY_MIN x="-13" y="-13" z="43" />
+                <VELOCITY_MAX x="13" y="13" z="83" />
+                <ACCELERATION x="0" y="0" z="-5.3" />
+                <LIFETIME>158.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 25. FUEGO DE RIFLE ALTERNATIVO (mf13) -->
+        <!-- TEXTURA: SFX/gz_sfx_mf13.bmp -->
+        <EMITTER name="rifle_fire_alt_13" type="point" enabled="false">
+            <POSITION x="4188" y="-3079" z="-300" />
+            <PARTICLES>
+                <TEXTURE>SFX/gz_sfx_mf13.bmp</TEXTURE>
+                <SIZE>14.5</SIZE>
+                <SPAWN_RATE>123</SPAWN_RATE>
+                <VELOCITY_MIN x="-9" y="-9" z="39" />
+                <VELOCITY_MAX x="9" y="9" z="79" />
+                <ACCELERATION x="0" y="0" z="-4.9" />
+                <LIFETIME>148.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 26. FUEGO DE RIFLE ALTERNATIVO (mf14) -->
+        <!-- TEXTURA: SFX/gz_sfx_mf14.bmp -->
+        <EMITTER name="rifle_fire_alt_14" type="point" enabled="false">
+            <POSITION x="4188" y="-3079" z="-300" />
+            <PARTICLES>
+                <TEXTURE>SFX/gz_sfx_mf14.bmp</TEXTURE>
+                <SIZE>17.5</SIZE>
+                <SPAWN_RATE>108</SPAWN_RATE>
+                <VELOCITY_MIN x="-16" y="-16" z="46" />
+                <VELOCITY_MAX x="16" y="16" z="86" />
+                <ACCELERATION x="0" y="0" z="-5.6" />
+                <LIFETIME>162.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 27. FUEGO DE PISTOLA (mf21) -->
+        <!-- TEXTURA: SFX/gz_sfx_mf21.bmp -->
+        <EMITTER name="pistol_fire_21" type="point" enabled="false">
+            <POSITION x="4188" y="-3079" z="-300" />
+            <PARTICLES>
+                <TEXTURE>SFX/gz_sfx_mf21.bmp</TEXTURE>
+                <SIZE>12.0</SIZE>
+                <SPAWN_RATE>100</SPAWN_RATE>
+                <VELOCITY_MIN x="-8" y="-8" z="35" />
+                <VELOCITY_MAX x="8" y="8" z="70" />
+                <ACCELERATION x="0" y="0" z="-4" />
+                <LIFETIME>120.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 28. FUEGO DE PISTOLA (mf22) -->
+        <!-- TEXTURA: SFX/gz_sfx_mf22.bmp -->
+        <EMITTER name="pistol_fire_22" type="point" enabled="false">
+            <POSITION x="4188" y="-3079" z="-300" />
+            <PARTICLES>
+                <TEXTURE>SFX/gz_sfx_mf22.bmp</TEXTURE>
+                <SIZE>13.0</SIZE>
+                <SPAWN_RATE>95</SPAWN_RATE>
+                <VELOCITY_MIN x="-10" y="-10" z="37" />
+                <VELOCITY_MAX x="10" y="10" z="72" />
+                <ACCELERATION x="0" y="0" z="-4.2" />
+                <LIFETIME>125.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 29. FUEGO DE PISTOLA (mf23) -->
+        <!-- TEXTURA: SFX/gz_sfx_mf23.bmp -->
+        <EMITTER name="pistol_fire_23" type="point" enabled="false">
+            <POSITION x="4188" y="-3079" z="-300" />
+            <PARTICLES>
+                <TEXTURE>SFX/gz_sfx_mf23.bmp</TEXTURE>
+                <SIZE>11.0</SIZE>
+                <SPAWN_RATE>105</SPAWN_RATE>
+                <VELOCITY_MIN x="-6" y="-6" z="33" />
+                <VELOCITY_MAX x="6" y="6" z="68" />
+                <ACCELERATION x="0" y="0" z="-3.8" />
+                <LIFETIME>115.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 30. FUEGO DE PISTOLA ALTERNATIVO (mf31) -->
+        <!-- TEXTURA: SFX/gz_sfx_mf31.bmp -->
+        <EMITTER name="pistol_fire_alt_31" type="point" enabled="false">
+            <POSITION x="4188" y="-3079" z="-300" />
+            <PARTICLES>
+                <TEXTURE>SFX/gz_sfx_mf31.bmp</TEXTURE>
+                <SIZE>12.5</SIZE>
+                <SPAWN_RATE>98</SPAWN_RATE>
+                <VELOCITY_MIN x="-9" y="-9" z="36" />
+                <VELOCITY_MAX x="9" y="9" z="71" />
+                <ACCELERATION x="0" y="0" z="-4.1" />
+                <LIFETIME>122.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 31. FUEGO DE PISTOLA ALTERNATIVO (mf32) -->
+        <!-- TEXTURA: SFX/gz_sfx_mf32.bmp -->
+        <EMITTER name="pistol_fire_alt_32" type="point" enabled="false">
+            <POSITION x="4188" y="-3079" z="-300" />
+            <PARTICLES>
+                <TEXTURE>SFX/gz_sfx_mf32.bmp</TEXTURE>
+                <SIZE>13.5</SIZE>
+                <SPAWN_RATE>93</SPAWN_RATE>
+                <VELOCITY_MIN x="-11" y="-11" z="38" />
+                <VELOCITY_MAX x="11" y="11" z="73" />
+                <ACCELERATION x="0" y="0" z="-4.3" />
+                <LIFETIME>127.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 32. FUEGO DE PISTOLA ALTERNATIVO (mf33) -->
+        <!-- TEXTURA: SFX/gz_sfx_mf33.bmp -->
+        <EMITTER name="pistol_fire_alt_33" type="point" enabled="false">
+            <POSITION x="4188" y="-3079" z="-300" />
+            <PARTICLES>
+                <TEXTURE>SFX/gz_sfx_mf33.bmp</TEXTURE>
+                <SIZE>11.5</SIZE>
+                <SPAWN_RATE>103</SPAWN_RATE>
+                <VELOCITY_MIN x="-7" y="-7" z="34" />
+                <VELOCITY_MAX x="7" y="7" z="69" />
+                <ACCELERATION x="0" y="0" z="-3.9" />
+                <LIFETIME>117.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 33. FUEGO DE ESCOPETA (mf41) -->
+        <!-- TEXTURA: SFX/gz_sfx_mf41.bmp -->
+        <EMITTER name="shotgun_fire_41" type="point" enabled="false">
+            <POSITION x="4188" y="-3079" z="-300" />
+            <PARTICLES>
+                <TEXTURE>SFX/gz_sfx_mf41.bmp</TEXTURE>
+                <SIZE>18.0</SIZE>
+                <SPAWN_RATE>80</SPAWN_RATE>
+                <VELOCITY_MIN x="-25" y="-25" z="20" />
+                <VELOCITY_MAX x="25" y="25" z="60" />
+                <ACCELERATION x="0" y="0" z="-6" />
+                <LIFETIME>180.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 34. FUEGO DE ESCOPETA (mf42) -->
+        <!-- TEXTURA: SFX/gz_sfx_mf42.bmp -->
+        <EMITTER name="shotgun_fire_42" type="point" enabled="false">
+            <POSITION x="4188" y="-3079" z="-300" />
+            <PARTICLES>
+                <TEXTURE>SFX/gz_sfx_mf42.bmp</TEXTURE>
+                <SIZE>19.0</SIZE>
+                <SPAWN_RATE>75</SPAWN_RATE>
+                <VELOCITY_MIN x="-27" y="-27" z="22" />
+                <VELOCITY_MAX x="27" y="27" z="62" />
+                <ACCELERATION x="0" y="0" z="-6.2" />
+                <LIFETIME>185.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 35. FUEGO DE ESCOPETA (mf43) -->
+        <!-- TEXTURA: SFX/gz_sfx_mf43.bmp -->
+        <EMITTER name="shotgun_fire_43" type="point" enabled="false">
+            <POSITION x="4188" y="-3079" z="-300" />
+            <PARTICLES>
+                <TEXTURE>SFX/gz_sfx_mf43.bmp</TEXTURE>
+                <SIZE>17.0</SIZE>
+                <SPAWN_RATE>85</SPAWN_RATE>
+                <VELOCITY_MIN x="-23" y="-23" z="18" />
+                <VELOCITY_MAX x="23" y="23" z="58" />
+                <ACCELERATION x="0" y="0" z="-5.8" />
+                <LIFETIME>175.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 36. FUEGO DE ESCOPETA (mf44) -->
+        <!-- TEXTURA: SFX/gz_sfx_mf44.bmp -->
+        <EMITTER name="shotgun_fire_44" type="point" enabled="false">
+            <POSITION x="4188" y="-3079" z="-300" />
+            <PARTICLES>
+                <TEXTURE>SFX/gz_sfx_mf44.bmp</TEXTURE>
+                <SIZE>20.0</SIZE>
+                <SPAWN_RATE>70</SPAWN_RATE>
+                <VELOCITY_MIN x="-30" y="-30" z="25" />
+                <VELOCITY_MAX x="30" y="30" z="65" />
+                <ACCELERATION x="0" y="0" z="-6.5" />
+                <LIFETIME>190.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- ============================================ -->
+        <!-- EFECTOS DE SANGRE -->
+        <!-- ============================================ -->
+        
+        <!-- 37. SANGRE (blood01) -->
+        <!-- TEXTURA: SFX/blood01.tga -->
+        <EMITTER name="blood_01" type="point" enabled="false">
+            <POSITION x="4188" y="-3079" z="-429" />
+            <PARTICLES>
+                <TEXTURE>SFX/blood01.tga</TEXTURE>
+                <SIZE>10.0</SIZE>
+                <SPAWN_RATE>200</SPAWN_RATE>
+                <VELOCITY_MIN x="-80" y="-80" z="20" />
+                <VELOCITY_MAX x="80" y="80" z="120" />
+                <ACCELERATION x="0" y="0" z="-30" />
+                <LIFETIME>300.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 38. SANGRE (blood02) -->
+        <!-- TEXTURA: SFX/blood02.tga -->
+        <EMITTER name="blood_02" type="point" enabled="false">
+            <POSITION x="4188" y="-3079" z="-429" />
+            <PARTICLES>
+                <TEXTURE>SFX/blood02.tga</TEXTURE>
+                <SIZE>11.0</SIZE>
+                <SPAWN_RATE>190</SPAWN_RATE>
+                <VELOCITY_MIN x="-85" y="-85" z="22" />
+                <VELOCITY_MAX x="85" y="85" z="125" />
+                <ACCELERATION x="0" y="0" z="-32" />
+                <LIFETIME>310.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 39. SANGRE (blood03) -->
+        <!-- TEXTURA: SFX/blood03.tga -->
+        <EMITTER name="blood_03" type="point" enabled="false">
+            <POSITION x="4188" y="-3079" z="-429" />
+            <PARTICLES>
+                <TEXTURE>SFX/blood03.tga</TEXTURE>
+                <SIZE>9.0</SIZE>
+                <SPAWN_RATE>210</SPAWN_RATE>
+                <VELOCITY_MIN x="-75" y="-75" z="18" />
+                <VELOCITY_MAX x="75" y="75" z="115" />
+                <ACCELERATION x="0" y="0" z="-28" />
+                <LIFETIME>290.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 40. SANGRE (blood04) -->
+        <!-- TEXTURA: SFX/blood04.tga -->
+        <EMITTER name="blood_04" type="point" enabled="false">
+            <POSITION x="4188" y="-3079" z="-429" />
+            <PARTICLES>
+                <TEXTURE>SFX/blood04.tga</TEXTURE>
+                <SIZE>12.0</SIZE>
+                <SPAWN_RATE>180</SPAWN_RATE>
+                <VELOCITY_MIN x="-90" y="-90" z="25" />
+                <VELOCITY_MAX x="90" y="90" z="130" />
+                <ACCELERATION x="0" y="0" z="-35" />
+                <LIFETIME>320.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 41. SANGRE (blood05) -->
+        <!-- TEXTURA: SFX/blood05.tga -->
+        <EMITTER name="blood_05" type="point" enabled="false">
+            <POSITION x="4188" y="-3079" z="-429" />
+            <PARTICLES>
+                <TEXTURE>SFX/blood05.tga</TEXTURE>
+                <SIZE>10.5</SIZE>
+                <SPAWN_RATE>195</SPAWN_RATE>
+                <VELOCITY_MIN x="-82" y="-82" z="21" />
+                <VELOCITY_MAX x="82" y="82" z="122" />
+                <ACCELERATION x="0" y="0" z="-31" />
+                <LIFETIME>305.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- ============================================ -->
+        <!-- EFECTOS ESPECIALES -->
+        <!-- ============================================ -->
+        
+        <!-- 42. ANILLO DE EFECTO (gd_effect_001) -->
+        <!-- TEXTURA: SFX/gd_effect_001.tga -->
+        <EMITTER name="ring_effect_001" type="sphere" enabled="false">
+            <POSITION x="4188" y="-3079" z="-200" />
+            <RADIUS>300</RADIUS>
+            <PARTICLES>
+                <TEXTURE>SFX/gd_effect_001.tga</TEXTURE>
+                <SIZE>20.0</SIZE>
+                <SPAWN_RATE>40</SPAWN_RATE>
+                <VELOCITY_MIN x="-15" y="-15" z="-15" />
+                <VELOCITY_MAX x="15" y="15" z="15" />
+                <ACCELERATION x="0" y="0" z="0" />
+                <LIFETIME>400.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 43. ANILLO DE EFECTO (gd_effect_002) -->
+        <!-- TEXTURA: SFX/gd_effect_002.tga -->
+        <EMITTER name="ring_effect_002" type="sphere" enabled="false">
+            <POSITION x="4188" y="-3079" z="-200" />
+            <RADIUS>300</RADIUS>
+            <PARTICLES>
+                <TEXTURE>SFX/gd_effect_002.tga</TEXTURE>
+                <SIZE>22.0</SIZE>
+                <SPAWN_RATE>38</SPAWN_RATE>
+                <VELOCITY_MIN x="-17" y="-17" z="-17" />
+                <VELOCITY_MAX x="17" y="17" z="17" />
+                <ACCELERATION x="0" y="0" z="0" />
+                <LIFETIME>420.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 44. EFECTO DE DASH (gz_effect_dash01) -->
+        <!-- TEXTURA: SFX/gz_effect_dash01.tga -->
+        <EMITTER name="dash_effect_01" type="point" enabled="false">
+            <POSITION x="4188" y="-3079" z="-300" />
+            <PARTICLES>
+                <TEXTURE>SFX/gz_effect_dash01.tga</TEXTURE>
+                <SIZE>25.0</SIZE>
+                <SPAWN_RATE>60</SPAWN_RATE>
+                <VELOCITY_MIN x="-100" y="-100" z="-50" />
+                <VELOCITY_MAX x="100" y="100" z="50" />
+                <ACCELERATION x="0" y="0" z="-5" />
+                <LIFETIME>250.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 45. EFECTO DE DASH (gz_effect_dash02) -->
+        <!-- TEXTURA: SFX/gz_effect_dash02.tga -->
+        <EMITTER name="dash_effect_02" type="point" enabled="false">
+            <POSITION x="4188" y="-3079" z="-300" />
+            <PARTICLES>
+                <TEXTURE>SFX/gz_effect_dash02.tga</TEXTURE>
+                <SIZE>27.0</SIZE>
+                <SPAWN_RATE>55</SPAWN_RATE>
+                <VELOCITY_MIN x="-110" y="-110" z="-55" />
+                <VELOCITY_MAX x="110" y="110" z="55" />
+                <ACCELERATION x="0" y="0" z="-5.5" />
+                <LIFETIME>270.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 46. HUELLA/PISADA (ef_gz_footstep) -->
+        <!-- TEXTURA: SFX/ef_gz_footstep.tga -->
+        <EMITTER name="footstep_effect" type="point" enabled="false">
+            <POSITION x="4188" y="-3079" z="-429" />
+            <PARTICLES>
+                <TEXTURE>SFX/ef_gz_footstep.tga</TEXTURE>
+                <SIZE>15.0</SIZE>
+                <SPAWN_RATE>10</SPAWN_RATE>
+                <VELOCITY_MIN x="-5" y="-5" z="0" />
+                <VELOCITY_MAX x="5" y="5" z="10" />
+                <ACCELERATION x="0" y="0" z="0" />
+                <LIFETIME>500.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 47. EFECTO DE MUNDO/ITEM (ef_sw) -->
+        <!-- TEXTURA: SFX/ef_sw.bmp -->
+        <EMITTER name="world_item_effect" type="point" enabled="false">
+            <POSITION x="4188" y="-3079" z="-200" />
+            <PARTICLES>
+                <TEXTURE>SFX/ef_sw.bmp</TEXTURE>
+                <SIZE>12.0</SIZE>
+                <SPAWN_RATE>30</SPAWN_RATE>
+                <VELOCITY_MIN x="-10" y="-10" z="5" />
+                <VELOCITY_MAX x="10" y="10" z="25" />
+                <ACCELERATION x="0" y="0" z="0" />
+                <LIFETIME>600.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 48. EFECTO GENÉRICO (gz_effect004) -->
+        <!-- TEXTURA: SFX/gz_effect004.tga -->
+        <EMITTER name="generic_effect_004" type="point" enabled="false">
+            <POSITION x="4188" y="-3079" z="-200" />
+            <PARTICLES>
+                <TEXTURE>SFX/gz_effect004.tga</TEXTURE>
+                <SIZE>18.0</SIZE>
+                <SPAWN_RATE>50</SPAWN_RATE>
+                <VELOCITY_MIN x="-20" y="-20" z="10" />
+                <VELOCITY_MAX x="20" y="20" z="40" />
+                <ACCELERATION x="0" y="0" z="-2" />
+                <LIFETIME>350.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 49. MARCA DE BALA (bulletmark01) -->
+        <!-- TEXTURA: SFX/gz_sfx_shotgun_bulletmark01.tga -->
+        <EMITTER name="bulletmark_01" type="point" enabled="false">
+            <POSITION x="4188" y="-3079" z="-429" />
+            <PARTICLES>
+                <TEXTURE>SFX/gz_sfx_shotgun_bulletmark01.tga</TEXTURE>
+                <SIZE>8.0</SIZE>
+                <SPAWN_RATE>5</SPAWN_RATE>
+                <VELOCITY_MIN x="0" y="0" z="0" />
+                <VELOCITY_MAX x="0" y="0" z="0" />
+                <ACCELERATION x="0" y="0" z="0" />
+                <LIFETIME>1000.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 50. MARCA DE BALA (bulletmark02) -->
+        <!-- TEXTURA: SFX/gz_sfx_shotgun_bulletmark02.tga -->
+        <EMITTER name="bulletmark_02" type="point" enabled="false">
+            <POSITION x="4188" y="-3079" z="-429" />
+            <PARTICLES>
+                <TEXTURE>SFX/gz_sfx_shotgun_bulletmark02.tga</TEXTURE>
+                <SIZE>9.0</SIZE>
+                <SPAWN_RATE>5</SPAWN_RATE>
+                <VELOCITY_MIN x="0" y="0" z="0" />
+                <VELOCITY_MAX x="0" y="0" z="0" />
+                <ACCELERATION x="0" y="0" z="0" />
+                <LIFETIME>1000.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 51. EFECTO ANIMADO (gd_effect_019) -->
+        <!-- TEXTURA: SFX/gd_effect_019.bmp -->
+        <EMITTER name="animated_effect_019" type="point" enabled="false">
+            <POSITION x="4188" y="-3079" z="-200" />
+            <PARTICLES>
+                <TEXTURE>SFX/gd_effect_019.bmp</TEXTURE>
+                <SIZE>20.0</SIZE>
+                <SPAWN_RATE>40</SPAWN_RATE>
+                <VELOCITY_MIN x="-15" y="-15" z="5" />
+                <VELOCITY_MAX x="15" y="15" z="30" />
+                <ACCELERATION x="0" y="0" z="-1" />
+                <LIFETIME>400.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 52. EFECTO ANIMADO (gd_effect_020) -->
+        <!-- TEXTURA: SFX/gd_effect_020.bmp -->
+        <EMITTER name="animated_effect_020" type="point" enabled="false">
+            <POSITION x="4188" y="-3079" z="-200" />
+            <PARTICLES>
+                <TEXTURE>SFX/gd_effect_020.bmp</TEXTURE>
+                <SIZE>22.0</SIZE>
+                <SPAWN_RATE>38</SPAWN_RATE>
+                <VELOCITY_MIN x="-17" y="-17" z="7" />
+                <VELOCITY_MAX x="17" y="17" z="32" />
+                <ACCELERATION x="0" y="0" z="-1.2" />
+                <LIFETIME>420.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 53. EFECTO ANIMADO (gd_effect_021) -->
+        <!-- TEXTURA: SFX/gd_effect_021.bmp -->
+        <EMITTER name="animated_effect_021" type="point" enabled="false">
+            <POSITION x="4188" y="-3079" z="-200" />
+            <PARTICLES>
+                <TEXTURE>SFX/gd_effect_021.bmp</TEXTURE>
+                <SIZE>24.0</SIZE>
+                <SPAWN_RATE>35</SPAWN_RATE>
+                <VELOCITY_MIN x="-19" y="-19" z="9" />
+                <VELOCITY_MAX x="19" y="19" z="35" />
+                <ACCELERATION x="0" y="0" z="-1.5" />
+                <LIFETIME>440.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 54. MISIL MÁGICO -->
+        <!-- TEXTURA: SFX/ef_magicmissile.bmp -->
+        <EMITTER name="magic_missile" type="point" enabled="false">
+            <POSITION x="4188" y="-3079" z="-200" />
+            <PARTICLES>
+                <TEXTURE>SFX/ef_magicmissile.bmp</TEXTURE>
+                <SIZE>15.0</SIZE>
+                <SPAWN_RATE>30</SPAWN_RATE>
+                <VELOCITY_MIN x="-10" y="-10" z="20" />
+                <VELOCITY_MAX x="10" y="10" z="50" />
+                <ACCELERATION x="0" y="0" z="0" />
+                <LIFETIME>500.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- ============================================ -->
+        <!-- EFECTOS AMBIENTALES ADICIONALES -->
+        <!-- ============================================ -->
+        
+        <!-- 55. POLVO/ARENA -->
+        <!-- TEXTURA: sfx/water_splash.bmp -->
+        <EMITTER name="dust_wind" type="box" enabled="false">
+            <POSITION x="0" y="0" z="100" />
+            <SIZE x="20000" y="20000" z="50" />
+            <PARTICLES>
+                <TEXTURE>sfx/water_splash.bmp</TEXTURE>
+                <SIZE>15.0</SIZE>
+                <SPAWN_RATE>200</SPAWN_RATE>
+                <VELOCITY_MIN x="-30" y="-30" z="-10" />
+                <VELOCITY_MAX x="30" y="30" z="10" />
+                <ACCELERATION x="0" y="0" z="-1" />
+                <LIFETIME>400.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 56. CENIZAS -->
+        <!-- TEXTURA: SFX/smoke01.tga -->
+        <EMITTER name="ash_fall" type="box" enabled="false">
+            <POSITION x="0" y="0" z="1000" />
+            <SIZE x="10000" y="10000" z="200" />
+            <PARTICLES>
+                <TEXTURE>SFX/smoke01.tga</TEXTURE>
+                <SIZE>20.0</SIZE>
+                <SPAWN_RATE>150</SPAWN_RATE>
+                <VELOCITY_MIN x="-20" y="-20" z="-80" />
+                <VELOCITY_MAX x="20" y="20" z="-40" />
+                <ACCELERATION x="0" y="0" z="-3" />
+                <LIFETIME>600.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 57. HOJAS CAYENDO -->
+        <!-- TEXTURA: sfx/water_splash.bmp -->
+        <EMITTER name="falling_leaves" type="box" enabled="false">
+            <POSITION x="0" y="0" z="800" />
+            <SIZE x="15000" y="15000" z="100" />
+            <PARTICLES>
+                <TEXTURE>sfx/water_splash.bmp</TEXTURE>
+                <SIZE>12.0</SIZE>
+                <SPAWN_RATE>80</SPAWN_RATE>
+                <VELOCITY_MIN x="-15" y="-15" z="-60" />
+                <VELOCITY_MAX x="15" y="15" z="-30" />
+                <ACCELERATION x="0" y="0" z="-2" />
+                <LIFETIME>400.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 58. NEBLINA BAJA -->
+        <!-- TEXTURA: SFX/smoke01.tga -->
+        <EMITTER name="ground_fog" type="box" enabled="false">
+            <POSITION x="0" y="0" z="50" />
+            <SIZE x="20000" y="20000" z="100" />
+            <PARTICLES>
+                <TEXTURE>SFX/smoke01.tga</TEXTURE>
+                <SIZE>40.0</SIZE>
+                <SPAWN_RATE>30</SPAWN_RATE>
+                <VELOCITY_MIN x="-5" y="-5" z="5" />
+                <VELOCITY_MAX x="5" y="5" z="15" />
+                <ACCELERATION x="0" y="0" z="0" />
+                <LIFETIME>1000.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 59. PARTÍCULAS MÁGICAS -->
+        <!-- TEXTURA: SFX/gz_sfx_tracer.bmp -->
+        <EMITTER name="magic_particles" type="sphere" enabled="false">
+            <POSITION x="4188" y="-3079" z="-200" />
+            <RADIUS>500</RADIUS>
+            <PARTICLES>
+                <TEXTURE>SFX/gz_sfx_tracer.bmp</TEXTURE>
+                <SIZE>6.0</SIZE>
+                <SPAWN_RATE>60</SPAWN_RATE>
+                <VELOCITY_MIN x="-20" y="-20" z="-20" />
+                <VELOCITY_MAX x="20" y="20" z="20" />
+                <ACCELERATION x="0" y="0" z="0" />
+                <LIFETIME>500.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+        <!-- 60. POLVO DE EXPLOSIÓN -->
+        <!-- TEXTURA: SFX/smoke01.tga -->
+        <EMITTER name="explosion_dust" type="sphere" enabled="false">
+            <POSITION x="4188" y="-3079" z="-429" />
+            <RADIUS>200</RADIUS>
+            <PARTICLES>
+                <TEXTURE>SFX/smoke01.tga</TEXTURE>
+                <SIZE>25.0</SIZE>
+                <SPAWN_RATE>200</SPAWN_RATE>
+                <VELOCITY_MIN x="-100" y="-100" z="-50" />
+                <VELOCITY_MAX x="100" y="100" z="100" />
+                <ACCELERATION x="0" y="0" z="-10" />
+                <LIFETIME>300.0</LIFETIME>
+            </PARTICLES>
+        </EMITTER>
+        
+    </EMITTERLIST>
+    
+    <!-- ============================================ -->
+    <!-- CONFIGURACIÓN DE COLISIONES -->
+    <!-- ============================================ -->
+    
+    <COLLISIONLIST>
+        
+        <!-- Detección automática con el mapa (HABILITADA POR DEFECTO) -->
+        <AUTO_MAP_COLLISION>
+            true
+            <BOUNCE>0.2</BOUNCE>
+            <FRICTION>0.8</FRICTION>
+            <KILL_ON_COLLISION>true</KILL_ON_COLLISION>
+        </AUTO_MAP_COLLISION>
+        
+    </COLLISIONLIST>
+    
+</XML>
+

@@ -48,6 +48,8 @@
 #include "C:\ogz-source-master-LITE\src\RealSpace2\Source\RNavigationMesh.cpp"
 #include "C:\ogz-source-master-LITE\src\RealSpace2\Source\RNavigationNode.cpp"
 #include "C:\ogz-source-master-LITE\src\RealSpace2\Source\ROcclusionList.cpp"
+#include "C:\ogz-source-master-LITE\src\RealSpace2\Source\RParticleCollision.cpp"
+#include "C:\ogz-source-master-LITE\src\RealSpace2\Source\RParticleEmitter.cpp"
 #include "C:\ogz-source-master-LITE\src\RealSpace2\Source\RParticleSystem.cpp"
 #include "C:\ogz-source-master-LITE\src\RealSpace2\Source\RRoam.cpp"
 #include "C:\ogz-source-master-LITE\src\RealSpace2\Source\RS2Vulkan.cpp"

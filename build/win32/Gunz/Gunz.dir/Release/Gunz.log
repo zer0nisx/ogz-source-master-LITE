@@ -1,4 +1,6 @@
-﻿LINK : warning LNK4098: la biblioteca predeterminada'LIBCMT' entra en conflicto con otras bibliotecas; use la biblioteca /NODEFAULTLIB:biblioteca
+﻿  Building Custom Rule C:/ogz-source-master-LITE/src/Gunz/CMakeLists.txt
+  WinMain.cpp
+LINK : warning LNK4098: la biblioteca predeterminada'LIBCMT' entra en conflicto con otras bibliotecas; use la biblioteca /NODEFAULTLIB:biblioteca
 msvcrt.lib(initializers.obj) : warning LNK4098: la biblioteca predeterminada'libcmtd.lib' entra en conflicto con otras bibliotecas; use la biblioteca /NODEFAULTLIB:biblioteca
   Gunz.vcxproj -> C:\ogz-source-master-LITE\build\win32\bin\Release\Gunz.exe
   "pwsh.exe" no se reconoce como un comando interno o externo,
