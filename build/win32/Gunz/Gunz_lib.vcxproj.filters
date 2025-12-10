@@ -105,6 +105,9 @@
     <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZBehavior_Script.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZBehavior_Stuck.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZBirdDummyAI.h">
       <Filter>Header Files</Filter>
     </ClInclude>

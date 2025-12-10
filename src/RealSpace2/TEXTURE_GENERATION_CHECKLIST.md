@@ -159,3 +159,7 @@ Para cada textura generada, verificar:
 
 **Total: 45 texturas a generar** 🎨✨
 
+
+
+
+

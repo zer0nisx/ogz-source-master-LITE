@@ -438,3 +438,7 @@ El sistema está **bien implementado** para su uso actual (nieve). Para efectos 
 
 **Conclusión**: `RParticleSystem` es ideal para efectos simples de partículas (nieve, lluvia, chispas), mientras que `ZEffectManager` maneja efectos más complejos.
 
+
+
+
+

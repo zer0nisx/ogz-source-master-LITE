@@ -11,6 +11,7 @@ enum ZBEHAVIOR_STATE
 	ZBEHAVIOR_STATE_PATROL,							///<
 	ZBEHAVIOR_STATE_ATTACK,							///<
 	ZBEHAVIOR_STATE_RETREAT,						///<
+	ZBEHAVIOR_STATE_STUCK,							///< MEJORA: Estado cuando está atascado
 	ZBEHAVIOR_STATE_SCRIPT,							///<ũƮ
 	ZBEHAVIOR_STATE_END
 };
@@ -25,6 +26,8 @@ enum ZBEHAVIOR_INPUT
 	ZBEHAVIOR_INPUT_TARGET_OUT_RANGE,				///< Objetivo fuera de rango
 	ZBEHAVIOR_INPUT_LOW_HEALTH,						///< Salud baja (retreat)
 	ZBEHAVIOR_INPUT_PATH_BLOCKED,					///< Camino bloqueado
+	ZBEHAVIOR_INPUT_STUCK,							///< MEJORA: NPC atascado
+	ZBEHAVIOR_INPUT_UNSTUCK,						///< MEJORA: NPC desatascado
 
 	ZBEHAVIOR_INPUT_END
 };

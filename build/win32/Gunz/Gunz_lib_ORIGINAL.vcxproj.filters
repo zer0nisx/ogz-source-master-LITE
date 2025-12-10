@@ -79,6 +79,9 @@
     <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZBehavior_Script.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZBehavior_Stuck.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="C:\ogz-source-master-LITE\src\Gunz\ZBirdDummyAI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -709,6 +712,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZBehavior_Script.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZBehavior_Stuck.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZBirdDummyAI.h">

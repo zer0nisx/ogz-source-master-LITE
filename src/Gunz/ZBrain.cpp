@@ -12,6 +12,9 @@
 #include "RBspObject.h"
 #include "ZPickInfo.h"
 
+// MEJORA: Duración del cache de rutas (2 segundos)
+const float ZBrain::CachedPath::CACHE_DURATION = 2.0f;
+
 ZBrain* ZBrain::CreateBrain(MQUEST_NPC nNPCType)
 {
 	return new ZBrain();
@@ -80,6 +83,9 @@ ZBrain::ZBrain() : m_pBody(NULL), m_uidTarget(MUID(0, 0))
 {
 	ResetStuckInState();
 	ResetStuckInStateForWarp();
+	// MEJORA: Inicializar cache de rutas
+	m_CachedPath.timestamp = 0.0f;
+	m_LastTargetPosition = rvector(0, 0, 0);
 }
 
 ZBrain::~ZBrain()
@@ -345,17 +351,50 @@ void ZBrain::ProcessBuildPath(float fDelta)
 		}
 	}
 
+	rvector tarpos = pTarget->GetPosition();
+	rvector currPos = m_pBody->GetPosition();
+
+	// MEJORA: Verificar cache antes de recalcular pathfinding
+	float targetMovement = MagnitudeSq(tarpos - m_LastTargetPosition);
+	float timeSinceCache = ZGetGame()->GetTime() - m_CachedPath.timestamp;
+	float selfMovement = MagnitudeSq(currPos - m_CachedPath.startPos);
+
+	// Usar cache si:
+	// 1. El objetivo no se movió mucho (<100 unidades)
+	// 2. La cache es reciente (<2 segundos)
+	// 3. Nosotros no nos movimos mucho (<1000 unidades desde donde calculamos)
+	//    Ajustado para mapas grandes de 15000+ unidades
+	// 4. La cache tiene waypoints válidos
+	if (targetMovement < 10000.0f &&  // 100 unidades cuadradas
+		timeSinceCache < CachedPath::CACHE_DURATION &&
+		selfMovement < 1000000.0f &&  // 1000 unidades cuadradas (ajustado para mapas grandes)
+		!m_CachedPath.waypoints.empty())
+	{
+		// Usar ruta cacheada
+		m_WayPointList = m_CachedPath.waypoints;
+		AdjustWayPointWithBound(m_WayPointList, ZGetGame()->GetWorld()->GetBsp()->GetNavigationMesh());
+		PushWayPointsToTask();
+		return;
+	}
+
 	RNavigationMesh* pNavMesh = ZGetGame()->GetWorld()->GetBsp()->GetNavigationMesh();
 	if (pNavMesh == NULL)
 		return;
 
-	rvector tarpos = pTarget->GetPosition();
-	if (!pNavMesh->BuildNavigationPath(m_pBody->GetPosition(), tarpos))
+	if (!pNavMesh->BuildNavigationPath(currPos, tarpos))
 		return;
+
+	// Guardar en cache
+	m_CachedPath.startPos = currPos;
+	m_CachedPath.endPos = tarpos;
+	m_CachedPath.timestamp = ZGetGame()->GetTime();
+	m_LastTargetPosition = tarpos;
 
 	m_WayPointList.clear();
 	for (list<rvector>::iterator itor = pNavMesh->GetWaypointList().begin(); itor != pNavMesh->GetWaypointList().end(); ++itor)
 		m_WayPointList.push_back((*itor));
+
+	m_CachedPath.waypoints = m_WayPointList;  // Guardar copia para cache
 
 	AdjustWayPointWithBound(m_WayPointList, pNavMesh);
 
@@ -372,6 +411,25 @@ void ZBrain::OnBody_AnimExit(ZA_ANIM_STATE nAnimState)
 
 void ZBrain::OnBody_CollisionWall()
 {
+	// MEJORA: Detección proactiva de colisiones con paredes
+	// En lugar de esperar 1 segundo sin moverse, detectamos inmediatamente
+
+	static DWORD s_dwLastCollisionTime = 0;
+	DWORD currTime = timeGetTime();
+
+	// Solo activar escape si hay múltiples colisiones en poco tiempo (500ms)
+	// Esto evita activar escape por colisiones temporales normales
+	if (s_dwLastCollisionTime > 0 && currTime - s_dwLastCollisionTime < 500)
+	{
+		// Múltiples colisiones = probablemente stuck en una esquina
+		// Cambiar a estado STUCK en el FSM
+		m_Behavior.Input(ZBEHAVIOR_INPUT_STUCK);
+
+		// También intentar escape inmediato usando el método mejorado
+		EscapeFromCorner(m_WayPointList);
+	}
+
+	s_dwLastCollisionTime = currTime;
 }
 
 void ZBrain::OnBody_OnTaskFinished(ZTASK_ID nLastID)
@@ -482,7 +540,7 @@ void ZBrain::DrawDebugPath()
 	const DWORD CURRENT_POS_COLOR = 0xFFFF0000;  // Rojo para posición actual
 
 	rvector currentPos = m_pBody->GetPosition();
-	
+
 	// Dibujar línea desde posición actual hasta el primer waypoint
 	if (!m_WayPointList.empty())
 	{
@@ -500,10 +558,10 @@ void ZBrain::DrawDebugPath()
 	{
 		rvector from = *itor;
 		rvector to = *itorNext;
-		
+
 		// Dibujar línea entre waypoints
 		RDrawLine(from, to, ROUTE_COLOR);
-		
+
 		// Dibujar esfera pequeña en el waypoint
 		const float WAYPOINT_SIZE = 20.0f;
 		rvector up = rvector(0, 0, WAYPOINT_SIZE);
@@ -774,7 +832,6 @@ bool ZBrain::EscapeFromStuckIn(std::list<rvector>& wayPointList)
 
 		if (MagnitudeSq(diff) < 100)
 		{
-			
 			RNavigationMesh* pNavMesh = ZGetGame()->GetWorld()->GetBsp()->GetNavigationMesh();
 			if (pNavMesh) {
 				float angle = (rand() % (314 * 2)) * 0.01f;
@@ -801,7 +858,7 @@ bool ZBrain::EscapeFromStuckIn(std::list<rvector>& wayPointList)
 						}
 					}
 					m_pBody->SetPosition(warpPos);
-		
+
 					return false;
 				}
 			}
@@ -828,7 +885,7 @@ bool ZBrain::EscapeFromStuckIn(std::list<rvector>& wayPointList)
 
 			dir *= m_pBody->GetCollRadius() * 0.8f;
 			rvector escapePos = m_pBody->GetPosition() + dir;
-			
+
 			// CORRECCIÓN: Asegurar que el waypoint de escape esté en el suelo
 			RNavigationMesh* pNavMesh = ZGetGame()->GetWorld()->GetBsp()->GetNavigationMesh();
 			if (pNavMesh)
@@ -839,12 +896,99 @@ bool ZBrain::EscapeFromStuckIn(std::list<rvector>& wayPointList)
 					escapePos = pNode->CenterVertex();
 				}
 			}
-			
+
 			wayPointList.push_back(escapePos);
 
 			PushWayPointsToTask();
 
 			return true;
+		}
+	}
+
+	return false;
+}
+
+bool ZBrain::EscapeFromCorner(std::list<rvector>& wayPointList)
+{
+	// MEJORA: Escape inteligente con múltiples direcciones
+	// Detección más rápida: 300ms en lugar de 1000ms
+	DWORD currTime = timeGetTime();
+
+	if (currTime - m_dwExPositionTime > 300)
+	{
+		rvector diff = m_exPosition - m_pBody->GetPosition();
+		ResetStuckInState();
+
+		if (MagnitudeSq(diff) < 100)
+		{
+			// Solo intentar escape si está en el suelo
+			if (!m_pBody->IsOnLand())
+				return false;
+
+			wayPointList.clear();
+
+			// MEJORA: Intentar múltiples direcciones de escape
+			rvector dirForward = m_pBody->GetDirection();
+			rvector directions[4] = {
+				dirForward,                                    // Adelante
+				rvector(-dirForward.y, dirForward.x, 0),      // Izquierda (90°)
+				rvector(dirForward.y, -dirForward.x, 0),      // Derecha (90°)
+				-dirForward                                    // Atrás
+			};
+
+			RNavigationMesh* pNavMesh = ZGetGame()->GetWorld()->GetBsp()->GetNavigationMesh();
+			if (!pNavMesh) return false;
+
+			RBspObject* pBsp = ZGetGame()->GetWorld()->GetBsp();
+
+			// Probar cada dirección hasta encontrar una válida
+			for (int i = 0; i < 4; i++)
+			{
+				rvector dir = directions[i];
+				Normalize(dir);
+
+				// MEJORA: Escape más largo (2.0 × radio en lugar de 0.8)
+				dir *= m_pBody->GetCollRadius() * 2.0f;
+				rvector escapePos = m_pBody->GetPosition() + dir;
+
+				// Verificar si es válido con navmesh
+				RNavigationNode* pNode = pNavMesh->FindClosestNode(escapePos);
+				if (pNode)
+				{
+					escapePos = pNode->CenterVertex();
+
+					// Verificar que no haya pared en el camino
+					if (pBsp)
+					{
+						rvector testOrigin = m_pBody->GetPosition();
+						testOrigin.z += m_pBody->GetCollHeight() * 0.5f;
+						rvector testTarget = escapePos;
+						testTarget.z = testOrigin.z;
+
+						// Si no hay pared, usar esta dirección
+						rvector testTargetCopy = testTarget;
+						if (!pBsp->CheckWall(testOrigin, testTargetCopy,
+							m_pBody->GetCollRadius(), 60, RCW_CYLINDER, 0, nullptr))
+						{
+							wayPointList.push_back(escapePos);
+							PushWayPointsToTask();
+							// MEJORA: Notificar al FSM que ya no está stuck
+							if (m_Behavior.GetCurrStateID() == ZBEHAVIOR_STATE_STUCK)
+							{
+								m_Behavior.Input(ZBEHAVIOR_INPUT_UNSTUCK);
+							}
+							return true;
+						}
+					}
+					else
+					{
+						// Si no hay BSP, usar directamente
+						wayPointList.push_back(escapePos);
+						PushWayPointsToTask();
+						return true;
+					}
+				}
+			}
 		}
 	}
 

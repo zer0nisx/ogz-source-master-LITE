@@ -415,6 +415,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZBehavior_Idle.h" />
     <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZBehavior_Patrol.h" />
     <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZBehavior_Script.h" />
+    <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZBehavior_Stuck.h" />
     <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZBirdDummyAI.h" />
     <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZBirdDummyClient.h" />
     <ClInclude Include="C:\ogz-source-master-LITE\src\Gunz\ZBmNumLabel.h" />

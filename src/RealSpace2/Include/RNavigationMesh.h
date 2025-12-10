@@ -49,6 +49,7 @@ private:
 	void LinkNodes();
 	void MakeNodes();
 	void ClearNodes();
+	void EnsureMinimumWaypoints(float minDistance, int minWaypoints);  // MEJORA: Garantizar mínimo de waypoints
 public:
 	// --- func ------------------
 	RNavigationMesh();

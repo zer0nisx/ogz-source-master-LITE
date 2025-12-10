@@ -228,3 +228,7 @@ Este documento lista **TODAS las texturas disponibles** y qué efecto usar para 
 
 ¡Usa esta guía para crear los efectos que necesites! 🎉
 
+
+
+
+

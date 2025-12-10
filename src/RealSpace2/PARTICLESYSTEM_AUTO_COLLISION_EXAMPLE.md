@@ -245,3 +245,7 @@ RGetParticleSystem()->GetCollisionManager()->SetKillOnMapCollision(true);
 
 Con la detección automática de colisiones, puedes crear efectos de partículas realistas sin necesidad de configurar manualmente cada superficie del mapa. El sistema se encarga de todo automáticamente. 🎉
 
+
+
+
+

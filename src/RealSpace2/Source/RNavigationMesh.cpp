@@ -395,7 +395,66 @@ bool RNavigationMesh::BuildNavigationPath(RNavigationNode* pStartNode,
 
 		if (LineOfSightTest(pVantageNode, vantagePos, pTestNode, testPos))
 		{
-			pLastNode = pTestNode;
+			// MEJORA: Aunque hay línea de vista, agregar waypoint intermedio si:
+			// 1. La distancia horizontal es grande (>500 unidades)
+			// 2. Hay cambio significativo de altura (>30 unidades) - para escaleras y relieve
+			rvector diff = testPos - vantagePos;
+			float distHorizontal = Magnitude(rvector(diff.x, diff.y, 0.0f));
+			float heightDiff = fabs(diff.z);
+			
+			// MEJORA: Agregar waypoint intermedio si hay cambio significativo de altura (escaleras/relieve)
+			// o si la distancia horizontal es grande, PERO solo si la distancia total es suficiente
+			// Evitar generar waypoints en distancias muy cortas
+			const float MIN_DISTANCE_FOR_WAYPOINT = 200.0f;  // Distancia mínima para generar waypoint (aumentado de 100 a 200)
+			bool needsIntermediate = false;
+			
+			if (heightDiff > 50.0f && distHorizontal > MIN_DISTANCE_FOR_WAYPOINT)  // Cambio de altura significativo (50 unidades) y distancia suficiente (200 unidades)
+			{
+				needsIntermediate = true;
+				// Para escaleras, agregar múltiples waypoints intermedios solo si la distancia es suficiente
+				int numHeightWaypoints = (int)(heightDiff / 40.0f);  // Cada 40 unidades de altura (menos frecuente)
+				// Solo agregar waypoints intermedios si la distancia horizontal justifica múltiples waypoints
+				if (numHeightWaypoints > 1 && distHorizontal > 300.0f && pLastNode != NULL)
+				{
+					for (int i = 1; i < numHeightWaypoints; i++)
+					{
+						float t = (float)i / numHeightWaypoints;
+						rvector intermediatePos = vantagePos + diff * t;
+						intermediatePos = SnapPointToNode(pLastNode, intermediatePos);
+						
+						// Validar que el waypoint intermedio no esté muy cerca del anterior
+						if (!m_WaypointList.empty())
+						{
+							rvector lastWaypoint = m_WaypointList.back();
+							float distToLast = Magnitude(intermediatePos - lastWaypoint);
+							if (distToLast < MIN_DISTANCE_FOR_WAYPOINT)
+								continue;  // Saltar si está muy cerca
+						}
+						
+						m_WaypointList.push_back(intermediatePos);
+					}
+				}
+			}
+			else if (distHorizontal > 800.0f)  // Distancia horizontal grande (aumentado de 500 a 800 para evitar waypoints innecesarios)
+			{
+				needsIntermediate = true;
+			}
+			
+			if (needsIntermediate && distHorizontal > MIN_DISTANCE_FOR_WAYPOINT && pLastNode != NULL)
+			{
+				// Agregar waypoint intermedio ANTES del punto final para mejor navegación
+				// Solo si la distancia es suficiente
+				rvector intermediatePos = (vantagePos + testPos) * 0.5f;
+				intermediatePos = SnapPointToNode(pLastNode, intermediatePos);
+				
+				// Validar que no esté muy cerca del waypoint anterior
+				if (m_WaypointList.empty() || Magnitude(intermediatePos - m_WaypointList.back()) >= MIN_DISTANCE_FOR_WAYPOINT)
+				{
+					m_WaypointList.push_back(intermediatePos);
+				}
+			}
+			
+mn 			pLastNode = pTestNode;
 			lastPos = testPos;
 			bPushed = false;
 		}
@@ -433,6 +492,10 @@ bool RNavigationMesh::BuildNavigationPath(RNavigationNode* pStartNode,
 
 	// ������ �ڹٲ۴�.
 	m_WaypointList.reverse();
+
+	// MEJORA: Garantizar mínimo de waypoints en rutas largas
+	// Ajustado para mapas grandes de 15000+ unidades
+	EnsureMinimumWaypoints(6000.0f, 8);  // Mínimo 8 waypoints en rutas >6000 unidades
 
 	return ret;
 }
@@ -601,5 +664,100 @@ void RNavigationMesh::ClearAllNodeWeight()
 	{
 		RNavigationNode* pNode = (*itor);
 		pNode->SetWeight(1.0f);
+	}
+}
+
+// MEJORA: Garantizar mínimo de waypoints en rutas largas
+void RNavigationMesh::EnsureMinimumWaypoints(float minDistance, int minWaypoints)
+{
+	if (m_WaypointList.size() < 2) return;
+	
+	// Calcular distancia total
+	float totalDistance = 0.0f;
+	rvector prevPos = *m_WaypointList.begin();
+	for (std::list<rvector>::iterator it = ++m_WaypointList.begin(); it != m_WaypointList.end(); ++it)
+	{
+		rvector diff = *it - prevPos;
+		totalDistance += Magnitude(diff);
+		prevPos = *it;
+	}
+	
+	// Si la ruta es larga pero tiene pocos waypoints, agregar intermedios
+	if (totalDistance > minDistance && m_WaypointList.size() < (size_t)minWaypoints)
+	{
+		std::list<rvector> newWaypoints;
+		prevPos = *m_WaypointList.begin();
+		newWaypoints.push_back(prevPos);
+		
+		for (std::list<rvector>::iterator it = ++m_WaypointList.begin(); it != m_WaypointList.end(); ++it)
+		{
+			rvector currentPos = *it;
+			rvector segment = currentPos - prevPos;
+			float segmentDist = Magnitude(segment);
+			float segmentDistHorizontal = Magnitude(rvector(segment.x, segment.y, 0.0f));
+			float heightDiff = fabs(segment.z);
+			
+			// MEJORA: Agregar waypoints intermedios si:
+			// 1. El segmento horizontal es muy largo (>1000 unidades)
+			// 2. Hay cambio significativo de altura (>30 unidades) - escaleras/pendientes
+			// PERO solo si la distancia es suficiente para evitar waypoints innecesarios en distancias cortas
+			const float MIN_DISTANCE_FOR_WAYPOINT = 200.0f;  // Distancia mínima entre waypoints (aumentado de 100 a 200)
+			const float MIN_SEGMENT_FOR_INTERMEDIATES = 400.0f;  // Distancia mínima del segmento para agregar intermedios (aumentado de 200 a 400)
+			
+			bool needsIntermediate = false;
+			int numIntermediates = 0;
+			
+			// Solo considerar agregar waypoints si el segmento es lo suficientemente largo
+			if (segmentDistHorizontal < MIN_SEGMENT_FOR_INTERMEDIATES)
+			{
+				// Segmento muy corto, no agregar waypoints intermedios
+				needsIntermediate = false;
+			}
+			else if (heightDiff > 50.0f && segmentDistHorizontal > MIN_SEGMENT_FOR_INTERMEDIATES)
+			{
+				// Cambio significativo de altura (escaleras/pendientes) - aumentado de 30 a 50 unidades
+				// Agregar waypoints más frecuentes para seguir el relieve correctamente
+				// Pero solo si la distancia horizontal justifica múltiples waypoints
+				float spacing = max(200.0f, min(segmentDistHorizontal / 4.0f, heightDiff / 4.0f));  // Mínimo 200 unidades entre waypoints (aumentado)
+				numIntermediates = (int)(segmentDistHorizontal / spacing);
+				
+				// Limitar número máximo de waypoints para evitar exceso
+				if (numIntermediates > 10)  // Máximo 10 waypoints intermedios
+					numIntermediates = 10;
+					
+				needsIntermediate = (numIntermediates > 0);
+			}
+			else if (segmentDistHorizontal > 1000.0f)
+			{
+				// Segmento largo horizontalmente
+				numIntermediates = (int)(segmentDistHorizontal / 600.0f);  // Cada 600 unidades
+				if (numIntermediates > 10)  // Máximo 10 waypoints intermedios
+					numIntermediates = 10;
+				needsIntermediate = (numIntermediates > 0);
+			}
+			
+			if (needsIntermediate && numIntermediates > 0)
+			{
+				Normalize(segment);
+				
+				for (int i = 1; i <= numIntermediates; i++)
+				{
+					rvector intermediate = prevPos + segment * (segmentDist * i / (numIntermediates + 1));
+					intermediate = SnapPointToMesh(nullptr, intermediate);
+					
+					// Validar que el waypoint intermedio no esté muy cerca del anterior
+					float distToPrev = Magnitude(intermediate - newWaypoints.back());
+					if (distToPrev >= MIN_DISTANCE_FOR_WAYPOINT)
+					{
+						newWaypoints.push_back(intermediate);
+					}
+				}
+			}
+			
+			newWaypoints.push_back(currentPos);
+			prevPos = currentPos;
+		}
+		
+		m_WaypointList = newWaypoints;
 	}
 }

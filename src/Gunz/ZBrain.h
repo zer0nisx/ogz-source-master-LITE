@@ -21,7 +21,6 @@ class ZBrain
 private:
 	virtual void OnBody_AnimEnter(ZA_ANIM_STATE nAnimState);
 	virtual void OnBody_AnimExit(ZA_ANIM_STATE nAnimState);
-	virtual void OnBody_CollisionWall();
 	virtual void OnBody_OnTaskFinished(ZTASK_ID nLastID);
 
 	ZUpdateTimer		m_PathFindingTimer;
@@ -47,6 +46,18 @@ protected:
 	DWORD				m_dwExPositionTime;       // Tiempo de última posición
 	rvector				m_exPositionForWarp;      // Posición para warp
 	DWORD				m_dwExPositionTimeForWarp;// Tiempo para warp
+
+	// MEJORA: Cache de rutas para evitar recalcular si el objetivo no se movió
+	struct CachedPath
+	{
+		rvector startPos;
+		rvector endPos;
+		std::list<rvector> waypoints;
+		float timestamp;
+		static const float CACHE_DURATION;  // 2 segundos
+	};
+	CachedPath m_CachedPath;
+	rvector m_LastTargetPosition;
 
 	std::list<rvector>		m_WayPointList;
 	bool BuildPath(rvector& vTarPos);
@@ -91,9 +102,12 @@ public:
 	ZObject* GetTarget();
 	void DebugTest();
 
-	// SUMMER-SOURCE: Método para cambiar comportamiento cuando recibe daño
-	void OnDamaged();
-
 	static float MakeSpeed(float fSpeed);
 	static ZBrain* CreateBrain(MQUEST_NPC nNPCType);
+
+	// MEJORA: Función pública para detección proactiva de colisiones con paredes
+	virtual void OnBody_CollisionWall();
+
+	// MEJORA: Función pública para escape mejorado con múltiples direcciones
+	bool EscapeFromCorner(std::list<rvector>& wayPointList);
 };

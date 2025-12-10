@@ -663,3 +663,7 @@ smooth gradients, glowing edges, vibrant colors"
 
 ¡Usa estos prompts para generar todas las texturas que necesites! ✨
 
+
+
+
+

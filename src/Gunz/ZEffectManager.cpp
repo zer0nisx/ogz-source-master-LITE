@@ -368,6 +368,8 @@ bool ZEffectManager::Create(void)
 
 	m_pSwordWaveEffect[0] = m_pEffectMeshMgr->Get("sword_wave_effect");
 	m_pSwordWaveEffect[1] = m_pEffectMeshMgr->Get("sword_slash_effect");
+	m_pSwordWaveEffect[3] = m_pEffectMeshMgr->Get("sword_wave_effect_white");
+	m_pSwordWaveEffect[4] = m_pEffectMeshMgr->Get("sword_slash_effect_white");
 
 	m_pChargingEffect = m_pEffectMeshMgr->Get("ef_spirits.elu");
 	m_pChargedEffect = m_pEffectMeshMgr->Get("ef_spirits.elu_1.elu");
@@ -653,42 +655,42 @@ void ZEffectManager::Add(ZEffect* pNew)
 	rvector	src_pos = pNew->GetSortPos();
 
 	_ASSERT(pNew->GetDrawMode() < ZEDM_COUNT);
-	
+
 	int mode = pNew->GetDrawMode();
-	
+
 	// Verificar límite por modo para prevenir degradación de rendimiento
 	if (m_Effects[mode].size() >= MAX_EFFECTS_PER_MODE) {
-		mlog("Warning: Too many effects in mode %d (%d/%d), removing oldest effect\n", 
+		mlog("Warning: Too many effects in mode %d (%d/%d), removing oldest effect\n",
 			mode, (int)m_Effects[mode].size(), MAX_EFFECTS_PER_MODE);
-		
+
 		// Eliminar el efecto más antiguo (primero en la lista)
 		if (!m_Effects[mode].empty()) {
 			ZEffect* pOldest = m_Effects[mode].front();
 			m_Effects[mode].pop_front();
-			
+
 #ifndef _PUBLISH
 			g_EffectValidator.Erase(pOldest);
 #endif
 			delete pOldest;
 		}
 	}
-	
+
 	// Verificar límite total de efectos
 	int totalEffects = 0;
 	for (int d = 0; d < ZEDM_COUNT; d++) {
 		totalEffects += (int)m_Effects[d].size();
 	}
-	
+
 	if (totalEffects >= MAX_TOTAL_EFFECTS) {
-		mlog("Warning: Too many total effects (%d/%d), removing oldest from any mode\n", 
+		mlog("Warning: Too many total effects (%d/%d), removing oldest from any mode\n",
 			totalEffects, MAX_TOTAL_EFFECTS);
-		
+
 		// Eliminar el efecto más antiguo de cualquier modo
 		for (int d = 0; d < ZEDM_COUNT; d++) {
 			if (!m_Effects[d].empty()) {
 				ZEffect* pOldest = m_Effects[d].front();
 				m_Effects[d].pop_front();
-				
+
 #ifndef _PUBLISH
 				g_EffectValidator.Erase(pOldest);
 #endif
@@ -697,7 +699,7 @@ void ZEffectManager::Add(ZEffect* pNew)
 			}
 		}
 	}
-	
+
 	m_Effects[mode].insert(m_Effects[mode].end(), pNew);
 
 #ifndef _PUBLISH
@@ -1485,7 +1487,8 @@ void ZEffectManager::AddShotgunEffect(const rvector& pos, const rvector& out, co
 		pNew = new ZEffectStaticMesh(m_pMeshEmptyCartridges[1], out, EMVelocity, pChar->GetUID());
 		if (!pNew) {
 			mlog("ZEffectManager::AddShotgunEffect - Failed to create ZEffectStaticMesh (shotgun cartridge) (out of memory)\n");
-		} else {
+		}
+		else {
 			Add(pNew);
 		}
 		pNew = NULL;
@@ -1515,7 +1518,8 @@ void ZEffectManager::AddShotEffect(rvector* pSource, int size, const rvector& Ta
 		pNew = new ZEffectLightTracer(m_pEBSLightTracer, Source, Target);
 		if (!pNew) {
 			mlog("ZEffectManager::AddShotEffect - Failed to create ZEffectLightTracer (out of memory)\n");
-		} else {
+		}
+		else {
 			Add(pNew);
 		}
 		pNew = NULL;
@@ -1555,7 +1559,7 @@ void ZEffectManager::AddShotEffect(rvector* pSource, int size, const rvector& Ta
 				bRenderSmoke = false;
 			}
 			toggleSmoke = !toggleSmoke;
-			
+
 			// Para armas automáticas, throttling adicional (cada 3 disparos)
 			if (wtype == MWT_MACHINEGUN) {
 				bRenderSmoke = (nSmokeCounter % 3 == 0);
@@ -1664,7 +1668,8 @@ void ZEffectManager::AddShotEffect(rvector* pSource, int size, const rvector& Ta
 			pNew = new ZEffectShot(m_pFlamePistol, Source, _dir, pObj);
 			if (!pNew) {
 				mlog("ZEffectManager::AddShotEffect - Failed to create ZEffectShot (dual) (out of memory)\n");
-			} else {
+			}
+			else {
 				((ZEffectShot*)pNew)->SetStartTime(120);
 				((ZEffectShot*)pNew)->SetIsLeftWeapon(true);
 				Add(pNew);
@@ -1701,7 +1706,7 @@ void ZEffectManager::AddShotEffect(rvector* pSource, int size, const rvector& Ta
 				bRender = false;
 			}
 			toggle = !toggle;
-			
+
 			// Para armas automáticas, throttling adicional (cada 3 disparos)
 			if (wtype == MWT_MACHINEGUN) {
 				bRender = (nCartridgeCounter % 3 == 0);
@@ -1730,7 +1735,8 @@ void ZEffectManager::AddShotEffect(rvector* pSource, int size, const rvector& Ta
 						EMVelocity, pObj->GetUID());
 					if (!pNew) {
 						mlog("ZEffectManager::AddShotEffect - Failed to create ZEffectStaticMesh (cartridge) (out of memory)\n");
-					} else {
+					}
+					else {
 						Add(pNew);
 					}
 					pNew = NULL;
@@ -1740,7 +1746,8 @@ void ZEffectManager::AddShotEffect(rvector* pSource, int size, const rvector& Ta
 						pNew = new ZEffectStaticMesh(m_pMeshEmptyCartridges[0], pSource[4], EMVelocityL, pObj->GetUID());
 						if (!pNew) {
 							mlog("ZEffectManager::AddShotEffect - Failed to create ZEffectStaticMesh (cartridge dual) (out of memory)\n");
-						} else {
+						}
+						else {
 							Add(pNew);
 						}
 						pNew = NULL;
@@ -1847,7 +1854,7 @@ void ZEffectManager::AddSwordWaveEffect(const MUID& UID, const rvector& Target, 
 				return Color;
 			};
 
-		pNew = MakeTexBlendEffect<ZEffectSlash>(GetColor, m_pSwordWaveEffect[1], Target, dir);
+		pNew = MakeTexBlendEffect<ZEffectSlash>(GetColor, m_pSwordWaveEffect[3], Target, dir);
 	}
 	else
 	{

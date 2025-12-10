@@ -71,106 +71,25 @@ public:
 	RGMain(const RGMain&) = delete;
 	~RGMain();
 
-	void OnUpdate(double Elapsed);
-	bool OnEvent(MEvent *pEvent);
-	void OnInvalidate();
-	void OnRestore();
-	void OnInitInterface(ZIDLResource &IDLResource);
-	void OnReplaySelected(MListBox* ReplayFileListWidget);
-	void OnCreateDevice();
-	void OnAppCreate();
-#ifdef VOICECHAT
-	auto MutePlayer(const MUID& UID) { return m_VoiceChat.MutePlayer(UID); }
-#endif
 
-	void OnDrawLobby(MDrawContext* pDC);
-	void OnDrawGame();
-	void OnPreDrawGame();
-	void OnDrawGameInterface(MDrawContext* pDC);
-	void OnGameCreate();
-	bool OnGameInput();
-
-	void Resize(int w, int h);
-
-	void OnSlash(ZCharacter* Char, const rvector& Pos, const rvector& Dir);
-	void OnMassive(ZCharacter* Char, const rvector& Pos, const rvector& Dir);
-
+	
 	void SetSwordColor(const MUID& UID, uint32_t Hue);
 
-	void AddMapBanner(const char* MapName, MBitmap* Bitmap) { MapBanners.insert({ MapName, Bitmap }); }
 
-	void OnReceiveVoiceChat(ZCharacter *Char, const uint8_t *Buffer, int Length);
-
-	bool IsCursorEnabled() const;
-
-	double GetTime() const { return Time; }
-	double GetElapsedTime() const { return Time - LastTime; }
 
 	std::pair<bool, uint32_t> GetPlayerSwordColor(const MUID& UID);
 
-	// Invokes a callback on the main thread
-	template<typename T>
-	void Invoke(T Callback, double Delay = 0)
-	{
-		std::lock_guard<std::mutex> lock(QueueMutex);
-		QueuedInvokations.push_back({ Callback, Time + Delay });
-	}
 
-	Chat& GetChat() { return m_Chat.value(); }
-	const Chat& GetChat() const { return m_Chat.value(); }
-	bool IsNewChatEnabled() const { return NewChatEnabled; }
 
-	void DrawReplayInfo(MDrawContext* pDC, MWidget* Widget) const;
-
-	void SetListeners();
-
-	// Lines created with /drawline
-	struct LineInfo
-	{
-		v3 v1, v2;
-		u32 Color;
-	};
-	std::vector<LineInfo> Lines;
-
-	struct {
-		bool Godmode{};
-		bool NoStuns{};
-	} TrainingSettings;
 
 private:
 	friend void LoadRGCommands(ZChatCmdManager& CmdManager);
 
-	double Time = 0;
-	double LastTime = 0;
 
-	struct Invokation
-	{
-		std::function<void()> fn;
-		double Time;
-	};
-
-	std::vector<Invokation> QueuedInvokations;
-	std::mutex QueueMutex;
-
-	bool Selected = false;
-	ReplayInfo SelectedReplayInfo;
-
-	std::unordered_map<std::string, MBitmap *> MapBanners;
 
 	std::unordered_map<MUID, uint32_t> SwordColors;
 
-#ifdef VOICECHAT
-	VoiceChat m_VoiceChat;
-#endif
-	HitboxManager m_HitboxManager;
 
-	optional<Chat> m_Chat;
-
-#ifdef NEW_CHAT
-	bool NewChatEnabled = true;
-#else
-	bool NewChatEnabled = false;
-#endif
 };
 
  RGMain& GetRGMain();
@@ -184,6 +103,3 @@ inline ZMyCharacter* MyChar()
 	return ZGetGame()->m_pMyCharacter;
 }
 
-inline auto FixedFOV(float x) {
-	return 2.f * atan(tan((2.f * atan(tan(x / 2.f) / (4.f / 3.f))) / 2.f) * RGetAspect());
-}

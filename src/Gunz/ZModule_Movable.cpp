@@ -6,6 +6,7 @@
 #include "ZGameConst.h"
 #include "Portal.h"
 #include "RBspObject.h"
+#include "ZActor.h"
 
 ZModule_Movable::ZModule_Movable() 
 			: m_Velocity(0,0,0), m_bFalling(false), m_bLanding(false),m_bRestrict(false),
@@ -111,7 +112,16 @@ bool ZModule_Movable::Move(rvector &diff)
 	pThisObj->SetPosition(targetpos - v3(0, 0, fCollUpHeight));
 
 	if (m_bAdjusted)
+	{
 		m_fLastAdjustedTime = g_pGame->GetTime();
+		
+		// MEJORA: Notificar a ZBrain si es un ZActor para detección proactiva de colisiones
+		ZActor* pActor = MDynamicCast(ZActor, pThisObj);
+		if (pActor && pActor->GetBrain())
+		{
+			pActor->GetBrain()->OnBody_CollisionWall();
+		}
+	}
 
 	return m_bAdjusted;
 }

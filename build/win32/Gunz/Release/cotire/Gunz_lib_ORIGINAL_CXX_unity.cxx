@@ -27,6 +27,7 @@
 #include "C:\ogz-source-master-LITE\src\Gunz\ZBehavior_Idle.cpp"
 #include "C:\ogz-source-master-LITE\src\Gunz\ZBehavior_Patrol.cpp"
 #include "C:\ogz-source-master-LITE\src\Gunz\ZBehavior_Script.cpp"
+#include "C:\ogz-source-master-LITE\src\Gunz\ZBehavior_Stuck.cpp"
 #include "C:\ogz-source-master-LITE\src\Gunz\ZBirdDummyAI.cpp"
 #include "C:\ogz-source-master-LITE\src\Gunz\ZBirdDummyClient.cpp"
 #include "C:\ogz-source-master-LITE\src\Gunz\ZBirdTest.cpp"
